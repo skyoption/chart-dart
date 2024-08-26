@@ -1,16 +1,9 @@
-# K Chart Plus Package Deeping
+# Candle Chart
 
 ## Feature
 
-### 2024-08-1 更新 double vol 显示
 
-### 2024-07-18 更新手势缩放功能 ｜ 科学计数功能
-
-### 2024-07-17 更新EMA指标
-
-### 2024-07-16 骨架屏功能
-
-Maybe this is the best k chart in Flutter.Support drag,scale,long press,fling.And easy to use.
+Maybe this is the best candle chart in Flutter.Support drag,scale,long press,fling.And easy to use.
 
 |         Example1          |         Example2          |
 |:-------------------------:|:-------------------------:|
@@ -18,21 +11,14 @@ Maybe this is the best k chart in Flutter.Support drag,scale,long press,fling.An
 
 ## Installation
 
-First, add `k_chart_plus` as
+First, add `candle_chart` as
 a [dependency in your pubspec.yaml file](https://flutter.dev/using-packages/).
 
 ```yaml
-candle_chart: ^1.0.0-tomo+2
+candle_chart:
+  git:
+    url: https://github.com/skyoption/chart-dart.git  
 ```
-
-> If you don't want to support selecting multiple secondary states, you need to use:
-> ```
-> flutter_k_chat_plus:
->    git:
->      url: https://github.com/sawwas/flutter_k_chat_plus
->      ref: single #branch name
-> ```
->
 
 ## Usage
 
@@ -139,9 +125,3 @@ YEAR_MONTH_DAY
 ```
 
 ### Thanks
-
-[TrangLeQuynh/k_chart_plus](https://github.com/TrangLeQuynh/k_chart_plus)
-
-[gwhcn/flutter_k_chart](https://github.com/gwhcn/flutter_k_chart)
-
-[OpenFlutter/k_chart](https://github.com/OpenFlutter/k_chart)
