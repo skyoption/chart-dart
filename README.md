@@ -124,4 +124,3 @@ YEAR_MONTH_DAY
 );
 ```
 
-### Thanks
