@@ -743,11 +743,6 @@ class ChartPainter extends BaseChartPainter {
   //   return false;
   // }
 
-  /// Whether the point is in MainRect
-  bool isInMainRect(Offset point) {
-    return mMainRect.contains(point);
-  }
-
   double getYPositionValue(double lineValue) {
     final scope = this.chartPosition.topPrice - this.chartPosition.bottomPrice;
     double perPixel = scope / screenHeight;
@@ -755,4 +750,11 @@ class ChartPainter extends BaseChartPainter {
     print(lineValue);
     return value;
   }
+
+  /// Whether the point is in MainRect
+  bool isInMainRect(Offset point) {
+    return mMainRect.contains(point);
+  }
+
+
 }
