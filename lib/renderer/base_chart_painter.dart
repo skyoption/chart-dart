@@ -536,7 +536,7 @@ TextSpan formatValueSpan(double? value, TextStyle style) {
     } else if (value >= 1000000) {
       realValueStr = '${_dollarValue(value / 1000000, 2)}M';
     } else if (value >= 1000) {
-      realValueStr = '${_dollarValue(value / 1000, 2)}K';
+      realValueStr = value.toStringAsFixed(2);
     } else {
       realValueStr = _dollarValue(value, 2);
     }

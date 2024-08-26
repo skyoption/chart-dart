@@ -55,11 +55,13 @@ class ChartPainter extends BaseChartPainter {
   final BaseDimension baseDimension;
   final List<TrackLineEntity> linesPrice;
   late final ChartPosition chartPosition;
+  final double screenHeight;
 
   ChartPainter(
     this.chartStyle,
     this.chartColors, {
     required this.lines, //For TrendLine
+    required this.screenHeight, //For TrendLine
     required this.isTrendLine, //For TrendLine
     required this.selectY, //For TrendLine
     required this.sink,
@@ -526,10 +528,9 @@ class ChartPainter extends BaseChartPainter {
     }
 
     for (var line in linesPrice) {
-      double value = line.value;
+      final value = getYPositionValue(line.value);
       if (value <= this.chartPosition.topPrice &&
           value >= this.chartPosition.bottomPrice) {
-        print(value);
         double y = getMainY(value);
 
         //view display area boundary value drawing
@@ -745,5 +746,13 @@ class ChartPainter extends BaseChartPainter {
   /// Whether the point is in MainRect
   bool isInMainRect(Offset point) {
     return mMainRect.contains(point);
+  }
+
+  double getYPositionValue(double lineValue) {
+    final scope = this.chartPosition.topPrice - this.chartPosition.bottomPrice;
+    double perPixel = scope / screenHeight;
+    final value = this.chartPosition.topPrice - lineValue * perPixel;
+    print(lineValue);
+    return value;
   }
 }
