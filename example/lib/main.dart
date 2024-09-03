@@ -34,11 +34,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<KLineEntity>? datas;
   bool showLoading = true;
-  bool _volHidden = true;
-  MainState _mainState = MainState.MA;
 
-  // final Set<SecondaryState> _secondaryStateLi = <SecondaryState>{};
-  final List<SecondaryState> _secondaryStateLi = [];
   List<DepthEntity>? _bids, _asks;
 
   ChartStyle chartStyle = ChartStyle();
@@ -101,11 +97,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     datas,
                     chartStyle,
                     chartColors,
-                    mBaseHeight: height * 0.95,
                     isTrendLine: false,
-                    mainState: _mainState,
-                    volHidden: _volHidden,
-                    secondaryStateLi: _secondaryStateLi.toSet(),
+                    // mainState: _mainState,
+                    // volHidden: _volHidden,
+                    // secondaryStateLi: _secondaryStateLi.toSet(),
                     fixedLength: 2,
                     timeFormat: TimeFormat.YEAR_MONTH_DAY,
                   ),
@@ -118,24 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                 ],
               ),
-              // _buildTitle(context, 'VOL'),
-              // buildVolButton(),
-              // _buildTitle(context, 'Main State'),
-              // buildMainButtons(),
-              // _buildTitle(context, 'Secondary State'),
-              // buildSecondButtons(),
-              // const SizedBox(height: 30),
-              // if (_bids != null && _asks != null)
-              //   Container(
-              //     color: Colors.white,
-              //     height: 320,
-              //     width: double.infinity,
-              //     child: DepthChart(
-              //       _bids!,
-              //       _asks!,
-              //       chartColors,
-              //     ),
-              //   )
+
             ],
           ),
         ),
@@ -143,118 +121,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _buildTitle(BuildContext context, String title) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 12, 15),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              // color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
-      ),
-    );
-  }
-
-  Widget buildVolButton() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: _buildButton(
-            context: context,
-            title: 'VOL',
-            isActive: !_volHidden,
-            onPress: () {
-              _volHidden = !_volHidden;
-              setState(() {});
-            }),
-      ),
-    );
-  }
-
-  Widget buildMainButtons() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Wrap(
-        alignment: WrapAlignment.start,
-        spacing: 10,
-        runSpacing: 10,
-        children: MainState.values.map((e) {
-          return _buildButton(
-            context: context,
-            title: e.name,
-            isActive: _mainState == e,
-            onPress: () => _mainState = e,
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget buildSecondButtons() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Wrap(
-        alignment: WrapAlignment.start,
-        spacing: 10,
-        runSpacing: 5,
-        children: SecondaryState.values.map((e) {
-          bool isActive = _secondaryStateLi.contains(e);
-          return _buildButton(
-            context: context,
-            title: e.name,
-            isActive: _secondaryStateLi.contains(e),
-            onPress: () {
-              if (isActive) {
-                _secondaryStateLi.remove(e);
-              } else {
-                _secondaryStateLi.add(e);
-              }
-            },
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildButton({
-    required BuildContext context,
-    required String title,
-    required isActive,
-    required Function onPress,
-  }) {
-    late Color? bgColor, txtColor;
-    if (isActive) {
-      bgColor = Theme.of(context).primaryColor.withOpacity(.15);
-      txtColor = Theme.of(context).primaryColor;
-    } else {
-      bgColor = Colors.transparent;
-      txtColor =
-          Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(.75);
-    }
-    return InkWell(
-      onTap: () {
-        onPress();
-        setState(() {});
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(6),
-        ),
-        constraints: const BoxConstraints(minWidth: 60),
-        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-        child: Text(
-          title,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: txtColor,
-              ),
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  }
 
   void getData(String period) {
     final Future<String> future = getChatDataFromInternet(period);

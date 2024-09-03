@@ -2,7 +2,11 @@ import 'dart:async';
 
 import 'package:candle_chart/chart_translations.dart';
 import 'package:candle_chart/components/popup_info_view.dart';
+import 'package:candle_chart/functions/chart_properties_screen.dart';
+import 'package:candle_chart/functions/widgets/svg.dart';
+import 'package:candle_chart/functions/objects_screen.dart';
 import 'package:candle_chart/k_chart_plus.dart';
+import 'package:candle_chart/utils/icons.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -30,9 +34,9 @@ class TimeFormat {
 
 class KChartWidget extends StatefulWidget {
   final List<KLineEntity>? datas;
-  final MainState mainState;
-  final bool volHidden;
-  final Set<SecondaryState> secondaryStateLi;
+  MainState mainState;
+  bool volHidden;
+  Set<SecondaryState> secondaryStateLi;
 
   // final Function()? onSecondaryTap;
   final bool isLine;
@@ -44,7 +48,6 @@ class KChartWidget extends StatefulWidget {
   final bool materialInfoDialog; // Material Style Information Popup
   final ChartTranslations chartTranslations;
   final List<String> timeFormat;
-  final double mBaseHeight;
 
   // It will be called when the screen scrolls to the end.
   // If true, it will be scrolled to the end of the right side of the screen.
@@ -73,7 +76,7 @@ class KChartWidget extends StatefulWidget {
     this.mainState = MainState.MA,
     this.secondaryStateLi = const <SecondaryState>{},
     // this.onSecondaryTap,
-    this.volHidden = false,
+    this.volHidden = true,
     this.isLine = false,
     this.isTapShowInfoDialog = false,
     this.hideGrid = false,
@@ -90,8 +93,6 @@ class KChartWidget extends StatefulWidget {
     this.flingCurve = Curves.decelerate,
     this.isOnDrag,
     this.verticalTextAlignment = VerticalTextAlignment.right,
-    this.mBaseHeight = 360,
-    //# 十字光标长按 / 短按切换 0.5秒后才触发
     this.isLongFocusDurationTime = 500,
   });
 
@@ -156,22 +157,24 @@ class _KChartWidgetState extends State<KChartWidget>
 
   Map<Type, GestureRecognizerFactory<GestureRecognizer>> gestures = {};
 
+  late final height = MediaQuery.of(context).size.height;
+  late double mBaseHeight = height * 0.88;
+
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
     if (widget.datas != null && widget.datas!.isEmpty) {
       mScrollX = mSelectX = 0.0;
       mScaleX = 1.0;
     }
     final BaseDimension baseDimension = BaseDimension(
-      mBaseHeight: widget.mBaseHeight,
+      mBaseHeight: mBaseHeight,
       volHidden: widget.volHidden,
       secondaryStateLi: widget.secondaryStateLi,
     );
     final _painter = ChartPainter(
       widget.chartStyle,
       widget.chartColors,
-      screenHeight: height,
+      screenHeight: mBaseHeight,
       baseDimension: baseDimension,
       lines: lines,
       linesPrice: linesPrice,
@@ -201,228 +204,317 @@ class _KChartWidgetState extends State<KChartWidget>
     );
 
     return SafeArea(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          mHeight = constraints.maxHeight;
-          mWidth = constraints.maxWidth;
-
-          if (enableObject) {
-            gestures[VerticalDragGestureRecognizer] =
-                GestureRecognizerFactoryWithHandlers<
-                        VerticalDragGestureRecognizer>(
-                    () => VerticalDragGestureRecognizer(),
-                    (VerticalDragGestureRecognizer instance) {
-              instance
-                ..onUpdate = (DragUpdateDetails details) {
-                  _updateObjectPosition(details.globalPosition);
-                }
-                ..onEnd = (DragEndDetails details) {
-                  enableObject = false;
-                  notifyChanged();
-                };
-            });
-          } else {
-            // Registering a ScaleGestureRecognizer to handle scale gestures
-
-            gestures[ScaleGestureRecognizer] =
-                GestureRecognizerFactoryWithHandlers<ScaleGestureRecognizer>(
-              () => ScaleGestureRecognizer(),
-              (ScaleGestureRecognizer instance) {
-                instance
-                  ..onStart = (_) {
-                    pointerCount = _.pointerCount;
-                    isScale = true;
-                  }
-                  ..onUpdate = (details) {
-                    pointerCount = details.pointerCount;
-                    // if (isDrag || isLongPress) return;
-                    // if (isLongPress) return;
-                    mScaleX = (_lastScale * details.scale).clamp(0.5, 2.2);
-                    notifyChanged();
-                  }
-                  ..onEnd = (details) {
-                    pointerCount = 1;
-                    isScale = false;
-                    _lastScale = mScaleX;
-                  };
-              },
-            );
-
-            // Registering a HorizontalDragGestureRecognizer to handle horizontal drag gestures
-
-            gestures[HorizontalDragGestureRecognizer] =
-                GestureRecognizerFactoryWithHandlers<
-                    HorizontalDragGestureRecognizer>(
-              () => HorizontalDragGestureRecognizer(),
-              (HorizontalDragGestureRecognizer instance) {
-                instance
-                  ..onDown = (details) {
-                    if (pointerCount > 1) {
-                      return;
-                    }
-                    isOnTap = false;
-                    _stopAnimation();
-                    _onDragChanged(true);
-                  }
-                  ..onUpdate = (details) {
-                    if (pointerCount > 1) {
-                      return;
-                    }
-                    if (isScale || isLongPress) return;
-                    mScrollX =
-                        ((details.primaryDelta ?? 0) / mScaleX + mScrollX)
-                            .clamp(0.0, ChartPainter.maxScrollX)
-                            .toDouble();
-                    notifyChanged();
-                  }
-                  ..onEnd = (details) {
-                    var velocity = details.velocity.pixelsPerSecond.dx;
-                    _onFling(velocity);
-                    _onDragChanged(false);
-                  }
-                  ..onCancel = () {
-                    _onDragChanged(false);
-                  };
-              },
-            );
-          }
-
-          return RawGestureDetector(
-            gestures: gestures,
-            child: GestureDetector(
-              onTapUp: (details) {
-                if (!enableObject) {
-                  if (!widget.isTrendLine &&
-                      _painter.isInMainRect(details.localPosition)) {
-                    isOnTap = true;
-
-                    if (mSelectX != details.localPosition.dx &&
-                        widget.isTapShowInfoDialog) {
-                      mSelectX = details.localPosition.dx;
-
-                      longPressTriggered = false;
-                      _timer?.cancel();
-
-                      Future.delayed(Duration(milliseconds: 12500), () {
-                        notifyChanged();
-                      });
-                    }
-                  }
-                  if (widget.isTrendLine && !isLongPress && enableCordRecord) {
-                    enableCordRecord = false;
-                    Offset p1 = Offset(getTrendLineX(), mSelectY);
-                    if (!waitingForOtherPairofCords) {
-                      lines.add(TrendLine(
-                          p1, Offset(-1, -1), trendLineMax!, trendLineScale!));
-                    }
-
-                    if (waitingForOtherPairofCords) {
-                      var a = lines.last;
-                      lines.removeLast();
-                      lines.add(
-                          TrendLine(a.p1, p1, trendLineMax!, trendLineScale!));
-                      waitingForOtherPairofCords = false;
-                    } else {
-                      waitingForOtherPairofCords = true;
-                    }
-                    notifyChanged();
-                  }
-                }
-              },
-              onLongPressStart: (details) {
-                if (!enableObject) {
-                  _timer?.cancel();
-                  _longPressStartTime = DateTime.now();
-                  longPressTriggered = false;
-
-                  isOnTap = false;
-                  isLongPress = true;
-                  if ((mSelectX != details.localPosition.dx ||
-                          mSelectY != details.globalPosition.dy) &&
-                      !widget.isTrendLine) {
-                    mSelectX = details.localPosition.dx;
-                    notifyChanged();
-                  }
-                  //For TrendLine
-                  if (widget.isTrendLine && changeinXposition == null) {
-                    mSelectX = changeinXposition = details.localPosition.dx;
-                    mSelectY = changeinYposition = details.globalPosition.dy;
-                    notifyChanged();
-                  }
-                  //For TrendLine
-                  if (widget.isTrendLine && changeinXposition != null) {
-                    changeinXposition = details.localPosition.dx;
-                    changeinYposition = details.globalPosition.dy;
-                    notifyChanged();
-                  }
-                }
-              },
-              onLongPressMoveUpdate: (details) {
-                if (!enableObject) {
-                  var longPressTemp =
-                      (_longPressStartTime?.millisecondsSinceEpoch ?? 0);
-                  if (DateTime.now().millisecondsSinceEpoch - longPressTemp >=
-                      500) {
-                    longPressTriggered = true;
-                    notifyChanged();
-                  } else {
-                    // longPressTriggered = false;
-                    // notifyChanged();
-                  }
-
-                  if ((mSelectX != details.localPosition.dx ||
-                          mSelectY != details.globalPosition.dy) &&
-                      !widget.isTrendLine) {
-                    mSelectX = details.localPosition.dx;
-                    mSelectY = details.localPosition.dy;
-                    notifyChanged();
-                  }
-                  if (widget.isTrendLine) {
-                    mSelectX = mSelectX +
-                        (details.localPosition.dx - changeinXposition!);
-                    changeinXposition = details.localPosition.dx;
-                    mSelectY = mSelectY +
-                        (details.globalPosition.dy - changeinYposition!);
-                    changeinYposition = details.globalPosition.dy;
-                    notifyChanged();
-                  }
-                }
-              },
-              onLongPressEnd: (details) {
-                if (!enableObject) {
-                  // _timer?.cancel();
-                  isLongPress = false;
-                  enableCordRecord = true;
-
-                  if (widget.isLongFocusDurationTime == 0) {
-                    mInfoWindowStream.sink.add(null);
-                    notifyChanged();
-                  }
-
-                  if (!longPressTriggered) {
-                    notifyChanged();
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      mInfoWindowStream.sink.add(null);
-                    });
-                  }
-                }
-              },
-              child: Stack(
-                children: <Widget>[
-                  CustomPaint(
-                    size: Size(double.infinity, baseDimension.mDisplayHeight),
-                    painter: _painter,
-                  ),
-                  //#十字光标长按0.5秒后才触发 -----------------------------------------------》》》》》 !! 关键 ！！ （isLongFocusDurationTime: 500/0 和 isLongFocus：true/false 切换）
-                  if (widget.showInfoDialog &&
-                      (widget.isLongFocusDurationTime == 0 ||
-                          longPressTriggered))
-                    _buildInfoDialog()
-                ],
-              ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsetsDirectional.only(
+              top: 12.0,
+              start: 12.0,
+              end: 12.0,
             ),
-          );
-        },
+            child: Stack(
+              children: [
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                    'M15',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ChartPropertiesScreen(
+                              volHidden: widget.volHidden,
+                              mainState: widget.mainState,
+                              secondaryStateLi:
+                                  widget.secondaryStateLi.toList(),
+                              setMode: (volHidden, mainState, secondaryState) {
+                                widget.volHidden = volHidden;
+                                widget.mainState = mainState;
+                                widget.secondaryStateLi =
+                                    secondaryState.toSet();
+                                if (widget.secondaryStateLi.isNotEmpty &&
+                                    !widget.volHidden) {
+                                  mBaseHeight = height * 0.63;
+                                } else if (widget.secondaryStateLi.isNotEmpty) {
+                                  mBaseHeight = height * 0.74;
+                                } else if (!widget.volHidden) {
+                                  mBaseHeight = height * 0.74;
+                                } else {
+                                  mBaseHeight = height * 0.88;
+                                }
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                      child: MSvg(
+                        name: Svgs.chartSettings,
+                        width: 20.0,
+                        height: 20.0,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(width: 20.0),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ObjectsScreen(),
+                          ),
+                        );
+                      },
+                      child: MSvg(
+                        name: Svgs.objects,
+                        width: 20.0,
+                        height: 20.0,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Divider(color: Colors.grey.withOpacity(0.2)),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              mHeight = constraints.maxHeight;
+              mWidth = constraints.maxWidth;
+
+              if (enableObject) {
+                gestures[VerticalDragGestureRecognizer] =
+                    GestureRecognizerFactoryWithHandlers<
+                            VerticalDragGestureRecognizer>(
+                        () => VerticalDragGestureRecognizer(),
+                        (VerticalDragGestureRecognizer instance) {
+                  instance
+                    ..onUpdate = (DragUpdateDetails details) {
+                      _updateObjectPosition(details.globalPosition);
+                    }
+                    ..onEnd = (DragEndDetails details) {
+                      enableObject = false;
+                      notifyChanged();
+                    };
+                });
+              } else {
+                // Registering a ScaleGestureRecognizer to handle scale gestures
+
+                gestures[ScaleGestureRecognizer] =
+                    GestureRecognizerFactoryWithHandlers<
+                        ScaleGestureRecognizer>(
+                  () => ScaleGestureRecognizer(),
+                  (ScaleGestureRecognizer instance) {
+                    instance
+                      ..onStart = (_) {
+                        pointerCount = _.pointerCount;
+                        isScale = true;
+                      }
+                      ..onUpdate = (details) {
+                        pointerCount = details.pointerCount;
+                        // if (isDrag || isLongPress) return;
+                        // if (isLongPress) return;
+                        mScaleX = (_lastScale * details.scale).clamp(0.5, 2.2);
+                        notifyChanged();
+                      }
+                      ..onEnd = (details) {
+                        pointerCount = 1;
+                        isScale = false;
+                        _lastScale = mScaleX;
+                      };
+                  },
+                );
+
+                // Registering a HorizontalDragGestureRecognizer to handle horizontal drag gestures
+
+                gestures[HorizontalDragGestureRecognizer] =
+                    GestureRecognizerFactoryWithHandlers<
+                        HorizontalDragGestureRecognizer>(
+                  () => HorizontalDragGestureRecognizer(),
+                  (HorizontalDragGestureRecognizer instance) {
+                    instance
+                      ..onDown = (details) {
+                        if (pointerCount > 1) {
+                          return;
+                        }
+                        isOnTap = false;
+                        _stopAnimation();
+                        _onDragChanged(true);
+                      }
+                      ..onUpdate = (details) {
+                        if (pointerCount > 1) {
+                          return;
+                        }
+                        if (isScale || isLongPress) return;
+                        mScrollX =
+                            ((details.primaryDelta ?? 0) / mScaleX + mScrollX)
+                                .clamp(0.0, ChartPainter.maxScrollX)
+                                .toDouble();
+                        notifyChanged();
+                      }
+                      ..onEnd = (details) {
+                        var velocity = details.velocity.pixelsPerSecond.dx;
+                        _onFling(velocity);
+                        _onDragChanged(false);
+                      }
+                      ..onCancel = () {
+                        _onDragChanged(false);
+                      };
+                  },
+                );
+              }
+
+              return RawGestureDetector(
+                gestures: gestures,
+                child: GestureDetector(
+                  onTapUp: (details) {
+                    if (!enableObject) {
+                      if (!widget.isTrendLine &&
+                          _painter.isInMainRect(details.localPosition)) {
+                        isOnTap = true;
+
+                        if (mSelectX != details.localPosition.dx &&
+                            widget.isTapShowInfoDialog) {
+                          mSelectX = details.localPosition.dx;
+
+                          longPressTriggered = false;
+                          _timer?.cancel();
+
+                          Future.delayed(Duration(milliseconds: 12500), () {
+                            notifyChanged();
+                          });
+                        }
+                      }
+                      if (widget.isTrendLine &&
+                          !isLongPress &&
+                          enableCordRecord) {
+                        enableCordRecord = false;
+                        Offset p1 = Offset(getTrendLineX(), mSelectY);
+                        if (!waitingForOtherPairofCords) {
+                          lines.add(TrendLine(p1, Offset(-1, -1), trendLineMax!,
+                              trendLineScale!));
+                        }
+
+                        if (waitingForOtherPairofCords) {
+                          var a = lines.last;
+                          lines.removeLast();
+                          lines.add(TrendLine(
+                              a.p1, p1, trendLineMax!, trendLineScale!));
+                          waitingForOtherPairofCords = false;
+                        } else {
+                          waitingForOtherPairofCords = true;
+                        }
+                        notifyChanged();
+                      }
+                    }
+                  },
+                  onLongPressStart: (details) {
+                    if (!enableObject) {
+                      _timer?.cancel();
+                      _longPressStartTime = DateTime.now();
+                      longPressTriggered = false;
+
+                      isOnTap = false;
+                      isLongPress = true;
+                      if ((mSelectX != details.localPosition.dx ||
+                              mSelectY != details.globalPosition.dy) &&
+                          !widget.isTrendLine) {
+                        mSelectX = details.localPosition.dx;
+                        notifyChanged();
+                      }
+                      //For TrendLine
+                      if (widget.isTrendLine && changeinXposition == null) {
+                        mSelectX = changeinXposition = details.localPosition.dx;
+                        mSelectY =
+                            changeinYposition = details.globalPosition.dy;
+                        notifyChanged();
+                      }
+                      //For TrendLine
+                      if (widget.isTrendLine && changeinXposition != null) {
+                        changeinXposition = details.localPosition.dx;
+                        changeinYposition = details.globalPosition.dy;
+                        notifyChanged();
+                      }
+                    }
+                  },
+                  onLongPressMoveUpdate: (details) {
+                    if (!enableObject) {
+                      var longPressTemp =
+                          (_longPressStartTime?.millisecondsSinceEpoch ?? 0);
+                      if (DateTime.now().millisecondsSinceEpoch -
+                              longPressTemp >=
+                          500) {
+                        longPressTriggered = true;
+                        notifyChanged();
+                      } else {
+                        // longPressTriggered = false;
+                        // notifyChanged();
+                      }
+
+                      if ((mSelectX != details.localPosition.dx ||
+                              mSelectY != details.globalPosition.dy) &&
+                          !widget.isTrendLine) {
+                        mSelectX = details.localPosition.dx;
+                        mSelectY = details.localPosition.dy;
+                        notifyChanged();
+                      }
+                      if (widget.isTrendLine) {
+                        mSelectX = mSelectX +
+                            (details.localPosition.dx - changeinXposition!);
+                        changeinXposition = details.localPosition.dx;
+                        mSelectY = mSelectY +
+                            (details.globalPosition.dy - changeinYposition!);
+                        changeinYposition = details.globalPosition.dy;
+                        notifyChanged();
+                      }
+                    }
+                  },
+                  onLongPressEnd: (details) {
+                    if (!enableObject) {
+                      // _timer?.cancel();
+                      isLongPress = false;
+                      enableCordRecord = true;
+
+                      if (widget.isLongFocusDurationTime == 0) {
+                        mInfoWindowStream.sink.add(null);
+                        notifyChanged();
+                      }
+
+                      if (!longPressTriggered) {
+                        notifyChanged();
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          mInfoWindowStream.sink.add(null);
+                        });
+                      }
+                    }
+                  },
+                  child: Stack(
+                    children: <Widget>[
+                      CustomPaint(
+                        size:
+                            Size(double.infinity, baseDimension.mDisplayHeight),
+                        painter: _painter,
+                      ),
+                      //#十字光标长按0.5秒后才触发 -----------------------------------------------》》》》》 !! 关键 ！！ （isLongFocusDurationTime: 500/0 和 isLongFocus：true/false 切换）
+                      if (widget.showInfoDialog &&
+                          (widget.isLongFocusDurationTime == 0 ||
+                              longPressTriggered))
+                        _buildInfoDialog()
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }

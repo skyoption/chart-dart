@@ -7,7 +7,7 @@ Maybe this is the best candle chart in Flutter.Support drag,scale,long press,fli
 
 |         Example1          |         Example2          |
 |:-------------------------:|:-------------------------:|
-| ![](assets/example_1.png) | ![](assets/example_2.png) |
+| ![](lib/assets/example_1.png) | ![](lib/assets/example_2.png) |
 
 ## Installation
 

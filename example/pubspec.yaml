@@ -28,3 +28,4 @@ flutter:
   assets:
     - assets/depth.json
     - assets/chatData.json
+    - assets/svgs/
