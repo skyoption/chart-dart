@@ -1,6 +1,6 @@
 library candle_chart;
 
-export 'package:candle_chart/entity/track_line_entity.dart';
+export 'package:candle_chart/entity/line_entity.dart';
 
 export 'chart_style.dart';
 export 'depth_chart.dart';

@@ -1,3 +1,4 @@
+import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/functions/bottom_sheets/color_picker.dart';
 import 'package:candle_chart/functions/object_properties_screen.dart';
 import 'package:candle_chart/functions/widgets/properties_item_widget.dart';
@@ -8,7 +9,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class ObjectStyleWidget extends StatefulWidget {
-  const ObjectStyleWidget({super.key});
+  final Function(
+    Color color,
+    bool drawAsBackground,
+    double lineHeight,
+    LineStyle style,
+  ) onChange;
+
+  const ObjectStyleWidget({
+    super.key,
+    required this.onChange,
+  });
 
   @override
   State<ObjectStyleWidget> createState() => _ObjectStyleWidgetState();
@@ -18,6 +29,19 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
   Color color = Colors.blueAccent;
   bool drawAsBackground = false;
   int index = 0;
+  double lineHeight = 1;
+  LineStyle style = LineStyle.normal;
+
+  @override
+  void initState() {
+    widget.onChange(
+      color,
+      drawAsBackground,
+      lineHeight,
+      style,
+    );
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,12 +74,14 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                     ][index],
                     width: 30.0,
                     height: 30.0,
+                    fit: BoxFit.fill,
                     color: color,
                   )
                 ],
               ),
               SizedBox(height: 8.0),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
                     onTap: () {
@@ -65,6 +91,12 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                         onColorChanged: (value) {
                           color = value;
                           setState(() {});
+                          widget.onChange(
+                            color,
+                            drawAsBackground,
+                            lineHeight,
+                            style,
+                          );
                         },
                       );
                     },
@@ -75,6 +107,62 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                         color: color,
                         shape: BoxShape.circle,
                       ),
+                    ),
+                  ),
+                  Spacer(),
+                  Expanded(
+                    flex: 8,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [1.0, 2.0, 3.0, 4.0].asMap().entries.map(
+                        (item) {
+                          return Expanded(
+                            child: Row(
+                              children: [
+                                InkResponse(
+                                  onTap: () {
+                                    lineHeight = item.value;
+                                    setState(() {});
+                                    widget.onChange(
+                                      color,
+                                      drawAsBackground,
+                                      lineHeight,
+                                      style,
+                                    );
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.all(1.0),
+                                    padding: EdgeInsets.all(
+                                      lineHeight == item.value ? 0.0 : 2.0,
+                                    ),
+                                    width:
+                                        lineHeight == item.value ? 10.0 : 8.0,
+                                    height:
+                                        lineHeight == item.value ? 10.0 : 8.0,
+                                    decoration: BoxDecoration(
+                                      color: lineHeight == item.value
+                                          ? Colors.black87
+                                          : Colors.blueAccent,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.blueAccent,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                if (item.key < 3)
+                                  Expanded(
+                                    child: Container(
+                                      height: 1.0,
+                                      color: Colors.blueAccent,
+                                    ),
+                                  )
+                              ],
+                            ),
+                          );
+                        },
+                      ).toList(),
                     ),
                   )
                 ],
@@ -102,6 +190,7 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                             onTap: () {
                               index = item.key;
                               setState(() {});
+                              _setStyle(index);
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 2.0),
@@ -143,12 +232,38 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                 onChanged: (value) {
                   drawAsBackground = !drawAsBackground;
                   setState(() {});
+                  widget.onChange(
+                    color,
+                    drawAsBackground,
+                    lineHeight,
+                    style,
+                  );
                 },
               ),
             ),
           ),
         ),
       ],
+    );
+  }
+
+  void _setStyle(index) {
+    switch (index) {
+      case 0:
+        style = LineStyle.normal;
+        break;
+      case 1:
+        style = LineStyle.longDash;
+        break;
+      case 2:
+        style = LineStyle.dash;
+        break;
+    }
+    widget.onChange(
+      color,
+      drawAsBackground,
+      lineHeight,
+      style,
     );
   }
 }

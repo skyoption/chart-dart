@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
@@ -113,14 +114,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                 ],
               ),
-
             ],
           ),
         ),
       ),
     );
   }
-
 
   void getData(String period) {
     final Future<String> future = getChatDataFromInternet(period);

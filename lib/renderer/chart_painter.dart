@@ -1,6 +1,6 @@
 import 'dart:async' show StreamSink;
 
-import 'package:candle_chart/entity/track_line_entity.dart';
+import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/utils/number_util.dart';
 import 'package:flutter/material.dart';
 
@@ -53,7 +53,7 @@ class ChartPainter extends BaseChartPainter {
   final bool showNowPrice;
   final VerticalTextAlignment verticalTextAlignment;
   final BaseDimension baseDimension;
-  final List<TrackLineEntity> linesPrice;
+  final List<LineEntity> linesPrice;
   late final ChartPosition chartPosition;
   final double screenHeight;
 
@@ -527,8 +527,11 @@ class ChartPainter extends BaseChartPainter {
       return;
     }
 
-    for (var line in linesPrice) {
-      final value = getYPositionValue(line.value);
+    for (int i = 0; i < linesPrice.length; i++) {
+      double value = linesPrice[i].value;
+      if (linesPrice[i].dy == 0) {
+        linesPrice[i].dy = getMainY(linesPrice[i].value);
+      }
       if (value <= this.chartPosition.topPrice &&
           value >= this.chartPosition.bottomPrice) {
         double y = getMainY(value);
@@ -542,14 +545,21 @@ class ChartPainter extends BaseChartPainter {
           y = getMainY(mMainHighMaxValue);
         }
         pricePaint
-          ..color = line.color
-          ..strokeWidth = line.height;
+          ..color = linesPrice[i].color
+          ..strokeWidth = linesPrice[i].height;
         //first draw the horizontal line
         double startX = 0;
         final max = -mTranslateX + mWidth / scaleX;
-        final space =
-            this.chartStyle.priceLineSpan + this.chartStyle.priceLineLength;
-        if (line.type == LineType.dash) {
+        double space = 0.0;
+        if (linesPrice[i].style == LineStyle.longDash) {
+          space = this.chartStyle.priceLineLongSpan +
+              this.chartStyle.priceLineLength;
+        } else {
+          space =
+              this.chartStyle.priceLineSpan + this.chartStyle.priceLineLength;
+        }
+        if (linesPrice[i].style == LineStyle.dash ||
+            linesPrice[i].style == LineStyle.longDash) {
           while (startX < max) {
             canvas.drawLine(
                 Offset(startX, y),
@@ -743,11 +753,19 @@ class ChartPainter extends BaseChartPainter {
   //   return false;
   // }
 
-  double getYPositionValue(double lineValue) {
+  double getYPositionValue(double dy) {
     final scope = this.chartPosition.topPrice - this.chartPosition.bottomPrice;
     double perPixel = scope / screenHeight;
-    final value = this.chartPosition.topPrice - lineValue * perPixel;
-    print(lineValue);
+    final value = this.chartPosition.topPrice - dy * perPixel;
+    print(dy);
+    return value;
+  }
+
+  double getPositionValueFromY(double lineValue) {
+    final scope = this.chartPosition.topPrice - this.chartPosition.bottomPrice;
+    double perPixel = scope / screenHeight;
+    final value = (lineValue / perPixel);
+    print('lineValue $value');
     return value;
   }
 
@@ -755,6 +773,4 @@ class ChartPainter extends BaseChartPainter {
   bool isInMainRect(Offset point) {
     return mMainRect.contains(point);
   }
-
-
 }

@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/functions/widgets/object_item_widget.dart';
 import 'package:candle_chart/functions/widgets/object_style_widget.dart';
 import 'package:candle_chart/functions/widgets/properties_item_widget.dart';
@@ -7,9 +10,11 @@ import 'package:flutter/material.dart';
 
 class ObjectPropertiesScreen extends StatefulWidget {
   static const id = 'ObjectPropertiesScreen';
+  final Function(LineEntity line) onDone;
 
   const ObjectPropertiesScreen({
     super.key,
+    required this.onDone,
   });
 
   @override
@@ -17,6 +22,17 @@ class ObjectPropertiesScreen extends StatefulWidget {
 }
 
 class _ObjectPropertiesScreenState extends State<ObjectPropertiesScreen> {
+  late final controller = TextEditingController(text: line.value.toString());
+  final rand = Random();
+  final LineEntity line = LineEntity();
+
+  @override
+  void initState() {
+    line.name = 'M15 Horizontal Line ${rand.nextInt(10000)}';
+    line.symbol = 'EURUSD';
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +69,10 @@ class _ObjectPropertiesScreenState extends State<ObjectPropertiesScreen> {
                 Align(
                   alignment: AlignmentDirectional.centerEnd,
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      widget.onDone(line);
+                      Navigator.of(context).pop();
+                    },
                     child: Text(
                       'Done',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -76,7 +95,7 @@ class _ObjectPropertiesScreenState extends State<ObjectPropertiesScreen> {
             PropertiesTitleWidget(title: 'Parameters'),
             PropertiesItemWidget(
               title: 'Name',
-              subTitle: 'M15 Horizontal Line 32025',
+              subTitle: line.name,
               margin: EdgeInsets.zero,
             ),
             PropertiesTitleWidget(title: 'Coordinates'),
@@ -92,7 +111,12 @@ class _ObjectPropertiesScreenState extends State<ObjectPropertiesScreen> {
                     color: Colors.blueAccent,
                     fontSize: 12.0,
                   ),
-                  controller: TextEditingController(text: '1.0765'),
+                  onChanged: (value) {
+                    if (value.isNotEmpty) {
+                      line.value = double.parse(value);
+                    }
+                  },
+                  controller: controller,
                   textAlignVertical: TextAlignVertical.center,
                   keyboardType: TextInputType.numberWithOptions(signed: false),
                   decoration: InputDecoration(
@@ -105,7 +129,7 @@ class _ObjectPropertiesScreenState extends State<ObjectPropertiesScreen> {
             PropertiesTitleWidget(title: 'visualization'),
             PropertiesItemWidget(
               title: 'Symbol',
-              subTitle: 'EURUSD',
+              subTitle: line.symbol,
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {},
@@ -118,11 +142,24 @@ class _ObjectPropertiesScreenState extends State<ObjectPropertiesScreen> {
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {},
             ),
-            ObjectStyleWidget(),
+            ObjectStyleWidget(
+              onChange: (color, drawAsBackground, lineHeight, style) {
+                line.color = color;
+                line.drawAsBackground = drawAsBackground;
+                line.height = lineHeight;
+                line.style = style;
+              },
+            ),
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 }
 

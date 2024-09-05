@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:candle_chart/entity/track_line_entity.dart';
+import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/utils/date_format_util.dart';
 import 'package:flutter/material.dart'
     show
@@ -26,7 +26,7 @@ export 'package:flutter/material.dart'
 abstract class BaseChartPainter extends CustomPainter {
   static double maxScrollX = 0.0;
   List<KLineEntity>? data; // data of chart
-  List<TrackLineEntity> linesPrice; // data of chart
+  List<LineEntity> linesPrice; // data of chart
   MainState mainState;
 
   Set<SecondaryState> secondaryStateLi;

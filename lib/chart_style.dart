@@ -252,7 +252,8 @@ class ChartStyle {
   double nowPriceLineLength = 4.5;
   double priceLineLength = 4.5;
   double nowPriceLineSpan = 3.5;
-  double priceLineSpan = 3.5;
+  double priceLineSpan = 2.5;
+  double priceLineLongSpan = 4.5;
   double nowPriceLineWidth = 1;
   double priceLineWidth = 1;
 

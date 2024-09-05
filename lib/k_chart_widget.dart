@@ -112,7 +112,7 @@ class _KChartWidgetState extends State<KChartWidget>
   Animation<double>? aniX;
 
   //For price lines
-  List<TrackLineEntity> linesPrice = [];
+  List<LineEntity> linesPrice = [];
 
   //For TrendLine
   List<TrendLine> lines = [];
@@ -131,7 +131,8 @@ class _KChartWidgetState extends State<KChartWidget>
   bool isScale = false, isDrag = false, isLongPress = false, isOnTap = false;
 
   int pointerCount = 0;
-  double verticalLastValue = 0, pointerValue = 50559.50;
+  String currentLineName = '';
+  int currentLineIndex = -1;
 
   @override
   void initState() {
@@ -217,7 +218,7 @@ class _KChartWidgetState extends State<KChartWidget>
                 Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: Text(
-                    'M15',
+                    currentLineName.split(' ').first,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
@@ -268,7 +269,12 @@ class _KChartWidgetState extends State<KChartWidget>
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => ObjectsScreen(),
+                            builder: (context) => ObjectsScreen(
+                              onDone: (line) {
+                                linesPrice.add(line);
+                                notifyChanged();
+                              },
+                            ),
                           ),
                         );
                       },
@@ -375,6 +381,9 @@ class _KChartWidgetState extends State<KChartWidget>
               return RawGestureDetector(
                 gestures: gestures,
                 child: GestureDetector(
+                  onDoubleTapDown: (details) {
+                    _objectSetOnUpdate( details.globalPosition);
+                  },
                   onTapUp: (details) {
                     if (!enableObject) {
                       if (!widget.isTrendLine &&
@@ -520,23 +529,24 @@ class _KChartWidgetState extends State<KChartWidget>
   }
 
   void _updateObjectPosition(Offset offset) {
-    if (linesPrice.isEmpty) {
-      linesPrice.add(
-        TrackLineEntity(
-          value: offset.dy,
-          color: Colors.deepOrange,
-          type: LineType.dash,
-        ),
-      );
-      notifyChanged();
-    } else {
-      linesPrice[0] = TrackLineEntity(
-        value: offset.dy,
-        color: Colors.deepOrange,
-        type: LineType.dash,
-      );
+    if (currentLineIndex != -1) {
+      linesPrice[currentLineIndex].dy = offset.dy;
       notifyChanged();
     }
+  }
+
+  void _objectSetOnUpdate(Offset offset) {
+    final index = linesPrice.indexWhere((e) {
+      print(e.dy);
+      print('${height - offset.dy} && ${(height -offset.dy)}');
+      return e.dy <= (height - offset.dy) && e.dy >= (height - offset.dy);
+    });
+    currentLineIndex = index;
+    if (currentLineIndex != -1) {
+      currentLineName = linesPrice[currentLineIndex].name;
+      notifyChanged();
+    }
+    print(index);
   }
 
   void _stopAnimation({bool needNotify = true}) {
