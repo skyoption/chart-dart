@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:candle_chart/entity/line_entity.dart';
+import 'package:candle_chart/renderer/draw_object_lines.dart';
 import 'package:candle_chart/utils/date_format_util.dart';
 import 'package:flutter/material.dart'
     show
@@ -23,7 +24,7 @@ export 'package:flutter/material.dart'
     show Color, required, TextStyle, Rect, Canvas, Size, CustomPainter;
 
 /// BaseChartPainter
-abstract class BaseChartPainter extends CustomPainter {
+abstract class BaseChartPainter extends CustomPainter implements DrawObjectLines{
   static double maxScrollX = 0.0;
   List<KLineEntity>? data; // data of chart
   List<LineEntity> linesPrice; // data of chart
@@ -58,8 +59,7 @@ abstract class BaseChartPainter extends CustomPainter {
   double mVolMaxValue = double.minPositive, mVolMinValue = double.maxFinite;
   double mTranslateX = double.minPositive;
   int mMainMaxIndex = 0, mMainMinIndex = 0;
-  double mMainHighMaxValue = double.minPositive,
-      mMainLowMinValue = double.maxFinite;
+
   int mItemCount = 0;
   double mDataLen = 0.0; // the data occupies the total length of the screen
   final ChartStyle chartStyle;
@@ -151,9 +151,8 @@ abstract class BaseChartPainter extends CustomPainter {
 
       drawText(canvas, data!.last, 5);
       drawMaxAndMin(canvas);
-      drawNowPrice(canvas);
+      // drawNowPrice(canvas);
       drawLinePrice(canvas, size);
-
       if (this.chartStyle.isLongFocus &&
           (isLongPress == true ||
               (isTapShowInfoDialog && longPressTriggered))) {
@@ -433,13 +432,7 @@ abstract class BaseChartPainter extends CustomPainter {
   double translateXtoX(double translateX) =>
       (translateX + mTranslateX) * scaleX;
 
-  /// define text style
-  TextStyle getTextStyle(Color color) {
-    return TextStyle(
-      fontSize: chartStyle.sizeText,
-      color: color,
-    );
-  }
+
 
   @override
   bool shouldRepaint(BaseChartPainter oldDelegate) {

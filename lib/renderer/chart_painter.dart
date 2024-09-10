@@ -1,6 +1,9 @@
 import 'dart:async' show StreamSink;
 
 import 'package:candle_chart/entity/line_entity.dart';
+import 'package:candle_chart/renderer/chart_details.dart';
+import 'package:candle_chart/renderer/draw_object_lines.dart';
+import 'package:candle_chart/renderer/update_point_position.dart';
 import 'package:candle_chart/utils/number_util.dart';
 import 'package:flutter/material.dart';
 
@@ -30,7 +33,8 @@ double getTrendLineX() {
   return trendLineX ?? 0;
 }
 
-class ChartPainter extends BaseChartPainter {
+class ChartPainter extends BaseChartPainter
+    with ChartDetails, DrawObjectLines, ChartCalc {
   final List<TrendLine> lines; //For TrendLine
   final bool isTrendLine; //For TrendLine
   bool isrecordingCord = false; //For TrendLine
@@ -56,6 +60,11 @@ class ChartPainter extends BaseChartPainter {
   final List<LineEntity> linesPrice;
   late final ChartPosition chartPosition;
   final double screenHeight;
+  double mMainHighMaxValue = double.minPositive,
+      mMainLowMinValue = double.maxFinite;
+  final double scaleX;
+
+   UpdatePointPosition? updatePointPosition;
 
   ChartPainter(
     this.chartStyle,
@@ -65,8 +74,8 @@ class ChartPainter extends BaseChartPainter {
     required this.isTrendLine, //For TrendLine
     required this.selectY, //For TrendLine
     required this.sink,
+    required this.scaleX,
     required datas,
-    required scaleX,
     required scrollX,
     required isLongPass,
     required selectX,
@@ -161,6 +170,12 @@ class ChartPainter extends BaseChartPainter {
         chartColors,
       ));
     }
+    updatePointPosition = UpdatePointPosition(
+      chartPosition: chartPosition,
+      screenHeight: screenHeight,
+      mMainRenderer: mMainRenderer,
+      mMainRect: mMainRect,
+    );
   }
 
   @override
@@ -521,82 +536,6 @@ class ChartPainter extends BaseChartPainter {
     tp.paint(canvas, Offset(offsetX - 6, top + 2));
   }
 
-  @override
-  void drawLinePrice(Canvas canvas, Size size) {
-    if (linesPrice.isEmpty) {
-      return;
-    }
-
-    for (int i = 0; i < linesPrice.length; i++) {
-      double value = linesPrice[i].value;
-      if (linesPrice[i].dy == 0) {
-        linesPrice[i].dy = getMainY(linesPrice[i].value);
-      }
-      if (value <= this.chartPosition.topPrice &&
-          value >= this.chartPosition.bottomPrice) {
-        double y = getMainY(value);
-
-        //view display area boundary value drawing
-        if (y > getMainY(mMainLowMinValue)) {
-          y = getMainY(mMainLowMinValue);
-        }
-
-        if (y < getMainY(mMainHighMaxValue)) {
-          y = getMainY(mMainHighMaxValue);
-        }
-        pricePaint
-          ..color = linesPrice[i].color
-          ..strokeWidth = linesPrice[i].height;
-        //first draw the horizontal line
-        double startX = 0;
-        final max = -mTranslateX + mWidth / scaleX;
-        double space = 0.0;
-        if (linesPrice[i].style == LineStyle.longDash) {
-          space = this.chartStyle.priceLineLongSpan +
-              this.chartStyle.priceLineLength;
-        } else {
-          space =
-              this.chartStyle.priceLineSpan + this.chartStyle.priceLineLength;
-        }
-        if (linesPrice[i].style == LineStyle.dash ||
-            linesPrice[i].style == LineStyle.longDash) {
-          while (startX < max) {
-            canvas.drawLine(
-                Offset(startX, y),
-                Offset(startX + this.chartStyle.priceLineLength, y),
-                pricePaint);
-            startX += space;
-          }
-        } else {
-          canvas.drawLine(Offset(startX, y), Offset(max, y), pricePaint);
-        }
-        //repaint the background and text
-        TextPainter tp = getTextPainter(
-          value.toStringAsFixed(fixedLength),
-          this.chartColors.priceTextColor,
-        );
-
-        // switch (verticalTextAlignment) {
-        //   case VerticalTextAlignment.left:
-        //     offsetX = mWidth - tp.width;
-        //     break;
-        //   case VerticalTextAlignment.right:
-        //     offsetX = 0;
-        //     break;
-        // }
-
-        double offsetX = mWidth - tp.width + this.chartStyle.priceWidth + 4;
-
-        double top = y - tp.height / 2;
-        canvas.drawRect(
-            Rect.fromLTRB(
-                offsetX - 12, top - 2, offsetX + tp.width, top + tp.height + 3),
-            pricePaint);
-        tp.paint(canvas, Offset(offsetX - 6, top + 2));
-      }
-    }
-  }
-
   void drawCrossLine(Canvas canvas, Size size) {
     var index = calculateSelectedX(selectX);
     KLineEntity point = getItem(index);
@@ -705,72 +644,5 @@ class ChartPainter extends BaseChartPainter {
       double endY = start.dy + (end.dy - start.dy) * ((i + 0.5) / dashCount);
       canvas.drawLine(Offset(startX, startY), Offset(endX, endY), paint);
     }
-  }
-
-  TextPainter getTextPainter(text, color, {addTextSpan, isLeft}) {
-    if (color == null) {
-      color = this.chartColors.defaultTextColor;
-    }
-
-    TextSpan? spanAll;
-
-    TextSpan span = TextSpan(text: "$text", style: getTextStyle(color));
-    if (addTextSpan != null) {
-      TextSpan spanS = addTextSpan();
-      List<InlineSpan> children = [];
-      if (isLeft != null && isLeft) {
-        children.add(span);
-        children.add(spanS);
-      } else {
-        children.add(spanS);
-        children.add(span);
-      }
-      spanAll = TextSpan(children: children);
-    } else {
-      List<InlineSpan> children = [];
-      children.add(span);
-      spanAll = TextSpan(children: children);
-    }
-    TextPainter tp =
-        TextPainter(text: spanAll, textDirection: TextDirection.ltr);
-    tp.layout();
-    return tp;
-  }
-
-  String getDate(int? date) => dateFormat(
-        DateTime.fromMillisecondsSinceEpoch(
-            date ?? DateTime.now().millisecondsSinceEpoch),
-        mFormats,
-      );
-
-  double getMainY(double y) => mMainRenderer.getY(y);
-
-  double getMainYInChart(double y) => mMainRenderer.getYInChart(y);
-
-  /// Whether the point is in the SecondaryRect
-  // bool isInSecondaryRect(Offset point) {
-  //   // return mSecondaryRect.contains(point) == true);
-  //   return false;
-  // }
-
-  double getYPositionValue(double dy) {
-    final scope = this.chartPosition.topPrice - this.chartPosition.bottomPrice;
-    double perPixel = scope / screenHeight;
-    final value = this.chartPosition.topPrice - dy * perPixel;
-    print(dy);
-    return value;
-  }
-
-  double getPositionValueFromY(double lineValue) {
-    final scope = this.chartPosition.topPrice - this.chartPosition.bottomPrice;
-    double perPixel = scope / screenHeight;
-    final value = (lineValue / perPixel);
-    print('lineValue $value');
-    return value;
-  }
-
-  /// Whether the point is in MainRect
-  bool isInMainRect(Offset point) {
-    return mMainRect.contains(point);
   }
 }

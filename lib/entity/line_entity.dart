@@ -7,7 +7,7 @@ enum LineStyle { dash, normal, longDash }
 enum LineType { vertical, horizontal, trend }
 
 class LineEntity {
-  double dy;
+  double dy,newDy;
   double value;
   Color color;
   LineStyle style;
@@ -16,10 +16,13 @@ class LineEntity {
   String name;
   String symbol;
   bool drawAsBackground;
+  bool editable;
 
   LineEntity({
     this.value = 50559.50,
     this.dy = 0,
+    this.newDy = 0,
+    this.editable = false,
     this.color = Colors.black,
     this.name = '',
     this.symbol = '',

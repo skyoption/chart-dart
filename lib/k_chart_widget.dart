@@ -6,6 +6,7 @@ import 'package:candle_chart/functions/chart_properties_screen.dart';
 import 'package:candle_chart/functions/widgets/svg.dart';
 import 'package:candle_chart/functions/objects_screen.dart';
 import 'package:candle_chart/k_chart_plus.dart';
+import 'package:candle_chart/renderer/update_point_position.dart';
 import 'package:candle_chart/utils/icons.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -121,7 +122,7 @@ class _KChartWidgetState extends State<KChartWidget>
   double mSelectY = 0.0;
   bool waitingForOtherPairofCords = false;
   bool enableCordRecord = false;
-  bool enableObject = true;
+  bool objectEditable = false;
 
   double getMinScrollX() {
     return mScaleX;
@@ -159,6 +160,7 @@ class _KChartWidgetState extends State<KChartWidget>
   Map<Type, GestureRecognizerFactory<GestureRecognizer>> gestures = {};
 
   late final height = MediaQuery.of(context).size.height;
+  ChartPainter? _painter;
   late double mBaseHeight = height * 0.88;
 
   @override
@@ -172,7 +174,7 @@ class _KChartWidgetState extends State<KChartWidget>
       volHidden: widget.volHidden,
       secondaryStateLi: widget.secondaryStateLi,
     );
-    final _painter = ChartPainter(
+    _painter = ChartPainter(
       widget.chartStyle,
       widget.chartColors,
       screenHeight: mBaseHeight,
@@ -215,15 +217,15 @@ class _KChartWidgetState extends State<KChartWidget>
             ),
             child: Stack(
               children: [
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text(
-                    currentLineName.split(' ').first,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
-                  ),
-                ),
+                // Align(
+                //   alignment: AlignmentDirectional.centerStart,
+                //   child: Text(
+                //     '${currentLineName.split(' ').first} ${currentLineName.split(' ').last}',
+                //     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                //           fontWeight: FontWeight.w500,
+                //         ),
+                //   ),
+                // ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -296,214 +298,36 @@ class _KChartWidgetState extends State<KChartWidget>
               mHeight = constraints.maxHeight;
               mWidth = constraints.maxWidth;
 
-              if (enableObject) {
+              if (objectEditable) {
                 gestures[VerticalDragGestureRecognizer] =
-                    GestureRecognizerFactoryWithHandlers<
-                            VerticalDragGestureRecognizer>(
-                        () => VerticalDragGestureRecognizer(),
-                        (VerticalDragGestureRecognizer instance) {
-                  instance
-                    ..onUpdate = (DragUpdateDetails details) {
-                      _updateObjectPosition(details.globalPosition);
-                    }
-                    ..onEnd = (DragEndDetails details) {
-                      enableObject = false;
-                      notifyChanged();
-                    };
-                });
+                    verticalDragGestureRecognizer();
               } else {
                 // Registering a ScaleGestureRecognizer to handle scale gestures
-
-                gestures[ScaleGestureRecognizer] =
-                    GestureRecognizerFactoryWithHandlers<
-                        ScaleGestureRecognizer>(
-                  () => ScaleGestureRecognizer(),
-                  (ScaleGestureRecognizer instance) {
-                    instance
-                      ..onStart = (_) {
-                        pointerCount = _.pointerCount;
-                        isScale = true;
-                      }
-                      ..onUpdate = (details) {
-                        pointerCount = details.pointerCount;
-                        // if (isDrag || isLongPress) return;
-                        // if (isLongPress) return;
-                        mScaleX = (_lastScale * details.scale).clamp(0.5, 2.2);
-                        notifyChanged();
-                      }
-                      ..onEnd = (details) {
-                        pointerCount = 1;
-                        isScale = false;
-                        _lastScale = mScaleX;
-                      };
-                  },
-                );
+                gestures[ScaleGestureRecognizer] = scaleGestureRecognizer();
 
                 // Registering a HorizontalDragGestureRecognizer to handle horizontal drag gestures
-
                 gestures[HorizontalDragGestureRecognizer] =
-                    GestureRecognizerFactoryWithHandlers<
-                        HorizontalDragGestureRecognizer>(
-                  () => HorizontalDragGestureRecognizer(),
-                  (HorizontalDragGestureRecognizer instance) {
-                    instance
-                      ..onDown = (details) {
-                        if (pointerCount > 1) {
-                          return;
-                        }
-                        isOnTap = false;
-                        _stopAnimation();
-                        _onDragChanged(true);
-                      }
-                      ..onUpdate = (details) {
-                        if (pointerCount > 1) {
-                          return;
-                        }
-                        if (isScale || isLongPress) return;
-                        mScrollX =
-                            ((details.primaryDelta ?? 0) / mScaleX + mScrollX)
-                                .clamp(0.0, ChartPainter.maxScrollX)
-                                .toDouble();
-                        notifyChanged();
-                      }
-                      ..onEnd = (details) {
-                        var velocity = details.velocity.pixelsPerSecond.dx;
-                        _onFling(velocity);
-                        _onDragChanged(false);
-                      }
-                      ..onCancel = () {
-                        _onDragChanged(false);
-                      };
-                  },
-                );
+                    horizontalDragGestureRecognizer();
               }
 
               return RawGestureDetector(
                 gestures: gestures,
                 child: GestureDetector(
-                  onDoubleTapDown: (details) {
-                    _objectSetOnUpdate( details.globalPosition);
-                  },
+                  // onDoubleTapDown: (details) {
+                  //   _objectSetOnUpdate(details.localPosition);
+                  // },
                   onTapUp: (details) {
-                    if (!enableObject) {
-                      if (!widget.isTrendLine &&
-                          _painter.isInMainRect(details.localPosition)) {
-                        isOnTap = true;
-
-                        if (mSelectX != details.localPosition.dx &&
-                            widget.isTapShowInfoDialog) {
-                          mSelectX = details.localPosition.dx;
-
-                          longPressTriggered = false;
-                          _timer?.cancel();
-
-                          Future.delayed(Duration(milliseconds: 12500), () {
-                            notifyChanged();
-                          });
-                        }
-                      }
-                      if (widget.isTrendLine &&
-                          !isLongPress &&
-                          enableCordRecord) {
-                        enableCordRecord = false;
-                        Offset p1 = Offset(getTrendLineX(), mSelectY);
-                        if (!waitingForOtherPairofCords) {
-                          lines.add(TrendLine(p1, Offset(-1, -1), trendLineMax!,
-                              trendLineScale!));
-                        }
-
-                        if (waitingForOtherPairofCords) {
-                          var a = lines.last;
-                          lines.removeLast();
-                          lines.add(TrendLine(
-                              a.p1, p1, trendLineMax!, trendLineScale!));
-                          waitingForOtherPairofCords = false;
-                        } else {
-                          waitingForOtherPairofCords = true;
-                        }
-                        notifyChanged();
-                      }
-                    }
+                    if (!objectEditable) _onTapUp(details);
                   },
                   onLongPressStart: (details) {
-                    if (!enableObject) {
-                      _timer?.cancel();
-                      _longPressStartTime = DateTime.now();
-                      longPressTriggered = false;
-
-                      isOnTap = false;
-                      isLongPress = true;
-                      if ((mSelectX != details.localPosition.dx ||
-                              mSelectY != details.globalPosition.dy) &&
-                          !widget.isTrendLine) {
-                        mSelectX = details.localPosition.dx;
-                        notifyChanged();
-                      }
-                      //For TrendLine
-                      if (widget.isTrendLine && changeinXposition == null) {
-                        mSelectX = changeinXposition = details.localPosition.dx;
-                        mSelectY =
-                            changeinYposition = details.globalPosition.dy;
-                        notifyChanged();
-                      }
-                      //For TrendLine
-                      if (widget.isTrendLine && changeinXposition != null) {
-                        changeinXposition = details.localPosition.dx;
-                        changeinYposition = details.globalPosition.dy;
-                        notifyChanged();
-                      }
-                    }
+                    _objectSetOnUpdate(details.localPosition);
+                    if (!objectEditable) _longPressStart(details);
                   },
                   onLongPressMoveUpdate: (details) {
-                    if (!enableObject) {
-                      var longPressTemp =
-                          (_longPressStartTime?.millisecondsSinceEpoch ?? 0);
-                      if (DateTime.now().millisecondsSinceEpoch -
-                              longPressTemp >=
-                          500) {
-                        longPressTriggered = true;
-                        notifyChanged();
-                      } else {
-                        // longPressTriggered = false;
-                        // notifyChanged();
-                      }
-
-                      if ((mSelectX != details.localPosition.dx ||
-                              mSelectY != details.globalPosition.dy) &&
-                          !widget.isTrendLine) {
-                        mSelectX = details.localPosition.dx;
-                        mSelectY = details.localPosition.dy;
-                        notifyChanged();
-                      }
-                      if (widget.isTrendLine) {
-                        mSelectX = mSelectX +
-                            (details.localPosition.dx - changeinXposition!);
-                        changeinXposition = details.localPosition.dx;
-                        mSelectY = mSelectY +
-                            (details.globalPosition.dy - changeinYposition!);
-                        changeinYposition = details.globalPosition.dy;
-                        notifyChanged();
-                      }
-                    }
+                    if (!objectEditable) _onLongPressMoveUpdate(details);
                   },
                   onLongPressEnd: (details) {
-                    if (!enableObject) {
-                      // _timer?.cancel();
-                      isLongPress = false;
-                      enableCordRecord = true;
-
-                      if (widget.isLongFocusDurationTime == 0) {
-                        mInfoWindowStream.sink.add(null);
-                        notifyChanged();
-                      }
-
-                      if (!longPressTriggered) {
-                        notifyChanged();
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          mInfoWindowStream.sink.add(null);
-                        });
-                      }
-                    }
+                    if (!objectEditable) _onLongPressEnd();
                   },
                   child: Stack(
                     children: <Widget>[
@@ -536,17 +360,91 @@ class _KChartWidgetState extends State<KChartWidget>
   }
 
   void _objectSetOnUpdate(Offset offset) {
-    final index = linesPrice.indexWhere((e) {
-      print(e.dy);
-      print('${height - offset.dy} && ${(height -offset.dy)}');
-      return e.dy <= (height - offset.dy) && e.dy >= (height - offset.dy);
+    final index = _painter!.updatePointPosition
+        ?.updateLineOffsetPoint(offset: offset, linesPrice: linesPrice);
+    currentLineIndex = index!;
+    objectEditable = index != -1;
+    notifyChanged();
+    print(currentLineIndex);
+  }
+
+  GestureRecognizerFactoryWithHandlers<VerticalDragGestureRecognizer>
+      verticalDragGestureRecognizer() {
+    return GestureRecognizerFactoryWithHandlers<VerticalDragGestureRecognizer>(
+        () => VerticalDragGestureRecognizer(),
+        (VerticalDragGestureRecognizer instance) {
+      instance
+        ..onUpdate = (DragUpdateDetails details) {
+          _updateObjectPosition(details.globalPosition);
+        }
+        ..onEnd = (DragEndDetails details) {
+          // enableObject = false;
+          notifyChanged();
+        };
     });
-    currentLineIndex = index;
-    if (currentLineIndex != -1) {
-      currentLineName = linesPrice[currentLineIndex].name;
-      notifyChanged();
-    }
-    print(index);
+  }
+
+  GestureRecognizerFactoryWithHandlers<ScaleGestureRecognizer>
+      scaleGestureRecognizer() {
+    return GestureRecognizerFactoryWithHandlers<ScaleGestureRecognizer>(
+      () => ScaleGestureRecognizer(),
+      (ScaleGestureRecognizer instance) {
+        instance
+          ..onStart = (_) {
+            pointerCount = _.pointerCount;
+            isScale = true;
+          }
+          ..onUpdate = (details) {
+            pointerCount = details.pointerCount;
+            if (isDrag || isLongPress) return;
+            if (isLongPress) return;
+            mScaleX = (_lastScale * details.scale).clamp(0.5, 2.2);
+            notifyChanged();
+          }
+          ..onEnd = (details) {
+            pointerCount = 1;
+            isScale = false;
+            _lastScale = mScaleX;
+          };
+      },
+    );
+  }
+
+  GestureRecognizerFactoryWithHandlers<HorizontalDragGestureRecognizer>
+      horizontalDragGestureRecognizer() {
+    return GestureRecognizerFactoryWithHandlers<
+        HorizontalDragGestureRecognizer>(
+      () => HorizontalDragGestureRecognizer(),
+      (HorizontalDragGestureRecognizer instance) {
+        instance
+          ..onDown = (details) {
+            if (pointerCount > 1) {
+              return;
+            }
+            isOnTap = false;
+            _stopAnimation();
+            _onDragChanged(true);
+          }
+          ..onUpdate = (details) {
+            if (pointerCount > 1) {
+              return;
+            }
+            if (isScale || isLongPress) return;
+            mScrollX = ((details.primaryDelta ?? 0) / mScaleX + mScrollX)
+                .clamp(0.0, ChartPainter.maxScrollX)
+                .toDouble();
+            notifyChanged();
+          }
+          ..onEnd = (details) {
+            var velocity = details.velocity.pixelsPerSecond.dx;
+            _onFling(velocity);
+            _onDragChanged(false);
+          }
+          ..onCancel = () {
+            _onDragChanged(false);
+          };
+      },
+    );
   }
 
   void _stopAnimation({bool needNotify = true}) {
@@ -563,6 +461,41 @@ class _KChartWidgetState extends State<KChartWidget>
     isDrag = isOnDrag;
     if (widget.isOnDrag != null) {
       widget.isOnDrag!(isDrag);
+    }
+  }
+
+  void _onTapUp(details) {
+    if (!widget.isTrendLine && _painter!.isInMainRect(details.localPosition)) {
+      isOnTap = true;
+
+      if (mSelectX != details.localPosition.dx && widget.isTapShowInfoDialog) {
+        mSelectX = details.localPosition.dx;
+
+        longPressTriggered = false;
+        _timer?.cancel();
+
+        Future.delayed(Duration(milliseconds: 12500), () {
+          notifyChanged();
+        });
+      }
+    }
+    if (widget.isTrendLine && !isLongPress && enableCordRecord) {
+      enableCordRecord = false;
+      Offset p1 = Offset(getTrendLineX(), mSelectY);
+      if (!waitingForOtherPairofCords) {
+        lines
+            .add(TrendLine(p1, Offset(-1, -1), trendLineMax!, trendLineScale!));
+      }
+
+      if (waitingForOtherPairofCords) {
+        var a = lines.last;
+        lines.removeLast();
+        lines.add(TrendLine(a.p1, p1, trendLineMax!, trendLineScale!));
+        waitingForOtherPairofCords = false;
+      } else {
+        waitingForOtherPairofCords = true;
+      }
+      notifyChanged();
     }
   }
 
@@ -601,7 +534,78 @@ class _KChartWidgetState extends State<KChartWidget>
     _controller!.forward();
   }
 
-  void notifyChanged() => setState(() {});
+  void notifyChanged() => Future.delayed(Duration.zero, () => setState(() {}));
+
+  void _onLongPressMoveUpdate(details) {
+    var longPressTemp = (_longPressStartTime?.millisecondsSinceEpoch ?? 0);
+    if (DateTime.now().millisecondsSinceEpoch - longPressTemp >= 500) {
+      longPressTriggered = true;
+      notifyChanged();
+    } else {
+      // longPressTriggered = false;
+      // notifyChanged();
+    }
+
+    if ((mSelectX != details.localPosition.dx ||
+            mSelectY != details.globalPosition.dy) &&
+        !widget.isTrendLine) {
+      mSelectX = details.localPosition.dx;
+      mSelectY = details.localPosition.dy;
+      notifyChanged();
+    }
+    if (widget.isTrendLine) {
+      mSelectX = mSelectX + (details.localPosition.dx - changeinXposition!);
+      changeinXposition = details.localPosition.dx;
+      mSelectY = mSelectY + (details.globalPosition.dy - changeinYposition!);
+      changeinYposition = details.globalPosition.dy;
+      notifyChanged();
+    }
+  }
+
+  void _longPressStart(details) {
+    _timer?.cancel();
+    _longPressStartTime = DateTime.now();
+    longPressTriggered = false;
+
+    isOnTap = false;
+    isLongPress = true;
+    if ((mSelectX != details.localPosition.dx ||
+            mSelectY != details.globalPosition.dy) &&
+        !widget.isTrendLine) {
+      mSelectX = details.localPosition.dx;
+      notifyChanged();
+    }
+    //For TrendLine
+    if (widget.isTrendLine && changeinXposition == null) {
+      mSelectX = changeinXposition = details.localPosition.dx;
+      mSelectY = changeinYposition = details.globalPosition.dy;
+      notifyChanged();
+    }
+    //For TrendLine
+    if (widget.isTrendLine && changeinXposition != null) {
+      changeinXposition = details.localPosition.dx;
+      changeinYposition = details.globalPosition.dy;
+      notifyChanged();
+    }
+  }
+
+  void _onLongPressEnd() {
+    // _timer?.cancel();
+    isLongPress = false;
+    enableCordRecord = true;
+
+    if (widget.isLongFocusDurationTime == 0) {
+      mInfoWindowStream.sink.add(null);
+      notifyChanged();
+    }
+
+    if (!longPressTriggered) {
+      notifyChanged();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        mInfoWindowStream.sink.add(null);
+      });
+    }
+  }
 
   late List<String> infos;
 
