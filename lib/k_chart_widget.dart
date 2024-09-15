@@ -245,11 +245,11 @@ class _KChartWidgetState extends State<KChartWidget>
                                     secondaryState.toSet();
                                 if (widget.secondaryStateLi.isNotEmpty &&
                                     !widget.volHidden) {
-                                  mBaseHeight = height * 0.45;
+                                  mBaseHeight = height * 0.58;
                                 } else if (widget.secondaryStateLi.isNotEmpty) {
-                                  mBaseHeight = height * 0.56;
+                                  mBaseHeight = height * 0.58;
                                 } else if (!widget.volHidden) {
-                                  mBaseHeight = height * 0.56;
+                                  mBaseHeight = height * 0.58;
                                 } else {
                                   mBaseHeight = height * 0.70;
                                 }
