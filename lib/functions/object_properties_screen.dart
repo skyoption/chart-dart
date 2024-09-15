@@ -106,11 +106,10 @@ class _ObjectPropertiesScreenState extends State<ObjectPropertiesScreen> {
                 height: 18.0,
                 child: TextField(
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    color: Colors.blueAccent,
-                    fontSize: 12.0,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w400,
+                        color: Colors.blueAccent,
+                      ),
                   onChanged: (value) {
                     if (value.isNotEmpty) {
                       line.value = double.parse(value);
@@ -174,7 +173,7 @@ class PropertiesTitleWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 21.0),
       child: Text(
         title.toUpperCase(),
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(

@@ -66,7 +66,7 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 'Lines',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w400,
                     ),
               ),

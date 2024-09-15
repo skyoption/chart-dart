@@ -62,7 +62,7 @@ class PropertiesItemWidget extends StatelessWidget {
                   if (onTap != null)
                     Icon(
                       Icons.arrow_forward_ios_sharp,
-                      size: 14.0,
+                      size: 16.0,
                       color: Colors.black,
                     ),
                 ],

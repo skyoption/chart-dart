@@ -161,7 +161,7 @@ class _KChartWidgetState extends State<KChartWidget>
 
   late final height = MediaQuery.of(context).size.height;
   ChartPainter? _painter;
-  late double mBaseHeight = height * 0.78;
+  late double mBaseHeight = height * 0.75;
 
   @override
   Widget build(BuildContext context) {
@@ -245,13 +245,13 @@ class _KChartWidgetState extends State<KChartWidget>
                                     secondaryState.toSet();
                                 if (widget.secondaryStateLi.isNotEmpty &&
                                     !widget.volHidden) {
-                                  mBaseHeight = height * 0.53;
+                                  mBaseHeight = height * 0.50;
                                 } else if (widget.secondaryStateLi.isNotEmpty) {
-                                  mBaseHeight = height * 0.64;
+                                  mBaseHeight = height * 0.61;
                                 } else if (!widget.volHidden) {
-                                  mBaseHeight = height * 0.64;
+                                  mBaseHeight = height * 0.61;
                                 } else {
-                                  mBaseHeight = height * 0.78;
+                                  mBaseHeight = height * 0.75;
                                 }
                                 setState(() {});
                               },
