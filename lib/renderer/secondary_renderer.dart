@@ -6,7 +6,7 @@ import 'base_chart_renderer.dart';
 
 class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
   late double mMACDWidth;
-  SecondaryState state;
+  SecondaryState? state;
   final ChartStyle chartStyle;
   final ChartColors chartColors;
 

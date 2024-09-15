@@ -24,13 +24,14 @@ export 'package:flutter/material.dart'
     show Color, required, TextStyle, Rect, Canvas, Size, CustomPainter;
 
 /// BaseChartPainter
-abstract class BaseChartPainter extends CustomPainter implements DrawObjectLines{
+abstract class BaseChartPainter extends CustomPainter
+    implements DrawObjectLines {
   static double maxScrollX = 0.0;
   List<KLineEntity>? data; // data of chart
   List<LineEntity> linesPrice; // data of chart
   MainState mainState;
 
-  Set<SecondaryState> secondaryStateLi;
+  SecondaryState? secondaryStateLi;
 
   bool volHidden;
   bool isTapShowInfoDialog;
@@ -88,7 +89,7 @@ abstract class BaseChartPainter extends CustomPainter implements DrawObjectLines
     this.mainState = MainState.MA,
     this.volHidden = false,
     this.isTapShowInfoDialog = false,
-    this.secondaryStateLi = const <SecondaryState>{},
+    this.secondaryStateLi,
     this.isLine = false,
   }) {
     mItemCount = data?.length ?? 0;
@@ -208,7 +209,7 @@ abstract class BaseChartPainter extends CustomPainter implements DrawObjectLines
 
     double mainHeight = mDisplayHeight;
     mainHeight -= volHeight;
-    mainHeight -= (secondaryHeight * secondaryStateLi.length);
+    mainHeight -= (secondaryHeight * (secondaryStateLi != null ? 1 : 0));
 
     mMainRect = Rect.fromLTRB(0, mTopPadding, mWidth, mTopPadding + mainHeight);
 
@@ -218,15 +219,15 @@ abstract class BaseChartPainter extends CustomPainter implements DrawObjectLines
     }
 
     mSecondaryRectList.clear();
-    for (int i = 0; i < secondaryStateLi.length; ++i) {
+    if (secondaryStateLi != null) {
       mSecondaryRectList.add(RenderRect(
         Rect.fromLTRB(
             0,
-            mMainRect.bottom + volHeight + i * secondaryHeight + mChildPadding,
+            mMainRect.bottom + volHeight  * secondaryHeight + mChildPadding,
             mWidth,
             mMainRect.bottom +
                 volHeight +
-                i * secondaryHeight +
+                 secondaryHeight +
                 secondaryHeight),
       ));
     }
@@ -309,8 +310,8 @@ abstract class BaseChartPainter extends CustomPainter implements DrawObjectLines
 
   // compute maximum and minimum of secondary value
   getSecondaryMaxMinValue(int index, KLineEntity item) {
-    SecondaryState secondaryState = secondaryStateLi.elementAt(index);
-    switch (secondaryState) {
+    // SecondaryState secondaryState = .elementAt(index);
+    switch (secondaryStateLi) {
       // MACD
       case SecondaryState.MACD:
         if (item.macd != null) {
@@ -431,8 +432,6 @@ abstract class BaseChartPainter extends CustomPainter implements DrawObjectLines
   /// translateX is converted to X in view
   double translateXtoX(double translateX) =>
       (translateX + mTranslateX) * scaleX;
-
-
 
   @override
   bool shouldRepaint(BaseChartPainter oldDelegate) {
