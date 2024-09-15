@@ -360,12 +360,12 @@ class _KChartWidgetState extends State<KChartWidget>
   }
 
   void _objectSetOnUpdate(Offset offset) {
-    final index = _painter!.updatePointPosition
-        ?.updateLineOffsetPoint(offset: offset, linesPrice: linesPrice);
-    currentLineIndex = index!;
-    objectEditable = index != -1;
-    notifyChanged();
-    print(currentLineIndex);
+    // final index = _painter!.updatePointPosition
+    //     ?.updateLineOffsetPoint(offset: offset, linesPrice: linesPrice);
+    // currentLineIndex = index!;
+    // objectEditable = index != -1;
+    // notifyChanged();
+    // print(currentLineIndex);
   }
 
   GestureRecognizerFactoryWithHandlers<VerticalDragGestureRecognizer>
