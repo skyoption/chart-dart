@@ -21,8 +21,8 @@ class ObjectItemWidget extends StatelessWidget {
       child: Container(
         color: Colors.grey.withOpacity(0.2),
         padding: EdgeInsetsDirectional.symmetric(
-          vertical: 10.0,
-          horizontal: 12.0,
+          vertical: 16.0,
+          horizontal: 21.0,
         ),
         margin: EdgeInsets.only(bottom: 6.0),
         child: Row(
@@ -31,7 +31,7 @@ class ObjectItemWidget extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  width: 30.0,
+                  width: iconSize + 5,
                   margin: EdgeInsetsDirectional.only(end: 12.0),
                   child: MSvg(
                     name: icon,
