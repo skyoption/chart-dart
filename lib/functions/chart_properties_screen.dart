@@ -48,7 +48,7 @@ class _ChartPropertiesScreenState extends State<ChartPropertiesScreen> {
                     onTap: () => Navigator.of(context).pop(),
                     child: Icon(
                       Icons.arrow_back_ios_new_rounded,
-                      size: 16.0,
+                      size: 21.0,
                       color: Colors.black,
                     ),
                   ),

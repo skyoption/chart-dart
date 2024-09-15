@@ -49,7 +49,7 @@ class ObjectItemWidget extends StatelessWidget {
             ),
             Icon(
               Icons.arrow_forward_ios_sharp,
-              size: 14.0,
+              size: 20.0,
               color: Colors.black,
             )
           ],

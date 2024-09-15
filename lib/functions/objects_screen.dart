@@ -38,7 +38,7 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
                     onTap: () => Navigator.of(context).pop(),
                     child: Icon(
                       Icons.arrow_back_ios_new_rounded,
-                      size: 16.0,
+                      size: 21.0,
                       color: Colors.black,
                     ),
                   ),
@@ -72,7 +72,7 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
               ),
             ),
             ObjectItemWidget(
-              iconSize: 27.0,
+              iconSize: 35.0,
               icon: Svgs.horizontalLine,
               title: 'Horizontal Line',
               onTap: () {
@@ -86,13 +86,13 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
               },
             ),
             ObjectItemWidget(
-              iconSize: 22.0,
+              iconSize: 30.0,
               icon: Svgs.verticalLine,
               title: 'Vertical Line',
               onTap: () {},
             ),
             ObjectItemWidget(
-              iconSize: 22.0,
+              iconSize: 30.0,
               icon: Svgs.trendLine,
               title: 'Trend Line',
               onTap: () {},

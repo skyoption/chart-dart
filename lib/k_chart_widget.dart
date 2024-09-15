@@ -261,8 +261,8 @@ class _KChartWidgetState extends State<KChartWidget>
                       },
                       child: MSvg(
                         name: Svgs.chartSettings,
-                        width: 20.0,
-                        height: 20.0,
+                        width: widget.chartStyle.iconSize,
+                        height: widget.chartStyle.iconSize,
                         color: Colors.black,
                       ),
                     ),
@@ -282,8 +282,8 @@ class _KChartWidgetState extends State<KChartWidget>
                       },
                       child: MSvg(
                         name: Svgs.objects,
-                        width: 20.0,
-                        height: 20.0,
+                        width: widget.chartStyle.iconSize,
+                        height: widget.chartStyle.iconSize,
                         color: Colors.black,
                       ),
                     ),
