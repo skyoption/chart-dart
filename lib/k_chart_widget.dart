@@ -37,7 +37,7 @@ class KChartWidget extends StatefulWidget {
   final List<KLineEntity>? datas;
   MainState mainState;
   bool volHidden;
-  SecondaryState? secondaryStateLi;
+  Set<SecondaryState> secondaryStateLi;
 
   // final Function()? onSecondaryTap;
   final bool isLine;
@@ -75,7 +75,7 @@ class KChartWidget extends StatefulWidget {
     required this.isTrendLine,
     this.xFrontPadding = 100,
     this.mainState = MainState.MA,
-    this.secondaryStateLi,
+    this.secondaryStateLi = const <SecondaryState>{},
     // this.onSecondaryTap,
     this.volHidden = true,
     this.isLine = false,
@@ -236,15 +236,17 @@ class _KChartWidgetState extends State<KChartWidget>
                             builder: (context) => ChartPropertiesScreen(
                               volHidden: widget.volHidden,
                               mainState: widget.mainState,
-                              secondaryStateLi: widget.secondaryStateLi,
+                              secondaryStateLi:
+                                  widget.secondaryStateLi.toList(),
                               setMode: (volHidden, mainState, secondaryState) {
                                 widget.volHidden = volHidden;
                                 widget.mainState = mainState;
-                                widget.secondaryStateLi = secondaryState;
-                                if (widget.secondaryStateLi != null &&
+                                widget.secondaryStateLi =
+                                    secondaryState.toSet();
+                                if (widget.secondaryStateLi.isNotEmpty &&
                                     !widget.volHidden) {
                                   mBaseHeight = height * 0.47;
-                                } else if (widget.secondaryStateLi != null) {
+                                } else if (widget.secondaryStateLi.isNotEmpty) {
                                   mBaseHeight = height * 0.58;
                                 } else if (!widget.volHidden) {
                                   mBaseHeight = height * 0.58;

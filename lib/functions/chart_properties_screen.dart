@@ -7,11 +7,10 @@ class ChartPropertiesScreen extends StatefulWidget {
   static const id = 'ChartPropertiesScreen';
   final bool volHidden;
   final MainState mainState;
-  final SecondaryState? secondaryStateLi;
+  final List<SecondaryState> secondaryStateLi;
 
-  final Function(
-          bool volHidden, MainState mainState, SecondaryState? secondaryState)
-      setMode;
+  final Function(bool volHidden, MainState mainState,
+      List<SecondaryState> secondaryState) setMode;
 
   const ChartPropertiesScreen({
     super.key,
@@ -28,7 +27,7 @@ class ChartPropertiesScreen extends StatefulWidget {
 class _ChartPropertiesScreenState extends State<ChartPropertiesScreen> {
   late bool _volHidden = widget.volHidden;
   late MainState _mainState = widget.mainState;
-  late SecondaryState? _secondaryStateLi = widget.secondaryStateLi;
+  late List<SecondaryState> _secondaryStateLi = widget.secondaryStateLi;
 
   @override
   Widget build(BuildContext context) {
@@ -158,13 +157,21 @@ class _ChartPropertiesScreenState extends State<ChartPropertiesScreen> {
         spacing: 10,
         runSpacing: 5,
         children: SecondaryState.values.map((e) {
-          bool isActive = _secondaryStateLi == e;
+          bool isActive = _secondaryStateLi.contains(e);
           return _buildButton(
             context: context,
             title: e.name,
             isActive: isActive,
             onPress: () {
-              _secondaryStateLi = e;
+              if (isActive) {
+                _secondaryStateLi.remove(e);
+              } else {
+                if (_secondaryStateLi.isNotEmpty) {
+                  _secondaryStateLi[0] = e;
+                } else {
+                  _secondaryStateLi.add(e);
+                }
+              }
               widget.setMode(_volHidden, _mainState, _secondaryStateLi);
             },
           );

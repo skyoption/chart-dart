@@ -164,7 +164,7 @@ class ChartPainter extends BaseChartPainter
         mSecondaryRectList[i].mMaxValue,
         mSecondaryRectList[i].mMinValue,
         mChildPadding,
-        secondaryStateLi,
+        secondaryStateLi.elementAt(i),
         fixedLength,
         chartStyle,
         chartColors,
