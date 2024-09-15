@@ -1,9 +1,9 @@
 class Svgs {
-  static String objects = 'objects-icon';
-  static String chartSettings = 'chart-icon';
-  static String horizontalLine = 'line-icon';
-  static String verticalLine = 'vertical-line-icon';
-  static String trendLine = 'trend-line-icon';
-  static String longDashLine = 'line-long-dash-icon';
-  static String dashLine = 'line-dash-icon';
+  static String objects = 'chart/objects-icon';
+  static String chartSettings = 'chart/chart-icon';
+  static String horizontalLine = 'chart/line-icon';
+  static String verticalLine = 'chart/vertical-line-icon';
+  static String trendLine = 'chart/trend-line-icon';
+  static String longDashLine = 'chart/line-long-dash-icon';
+  static String dashLine = 'chart/line-dash-icon';
 }
