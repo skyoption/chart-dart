@@ -37,7 +37,7 @@ class KChartWidget extends StatefulWidget {
   final List<KLineEntity>? datas;
   MainState mainState;
   bool volHidden;
-  Set<SecondaryState> secondaryStateLi;
+  SecondaryState? secondaryStateLi;
 
   // final Function()? onSecondaryTap;
   final bool isLine;
@@ -75,7 +75,7 @@ class KChartWidget extends StatefulWidget {
     required this.isTrendLine,
     this.xFrontPadding = 100,
     this.mainState = MainState.MA,
-    this.secondaryStateLi = const <SecondaryState>{},
+    this.secondaryStateLi,
     // this.onSecondaryTap,
     this.volHidden = true,
     this.isLine = false,
@@ -161,7 +161,7 @@ class _KChartWidgetState extends State<KChartWidget>
 
   late final height = MediaQuery.of(context).size.height;
   ChartPainter? _painter;
-  late double mBaseHeight = height * 0.75;
+  late double mBaseHeight = height * 0.72;
 
   @override
   Widget build(BuildContext context) {
@@ -236,22 +236,20 @@ class _KChartWidgetState extends State<KChartWidget>
                             builder: (context) => ChartPropertiesScreen(
                               volHidden: widget.volHidden,
                               mainState: widget.mainState,
-                              secondaryStateLi:
-                                  widget.secondaryStateLi.toList(),
+                              secondaryStateLi: widget.secondaryStateLi,
                               setMode: (volHidden, mainState, secondaryState) {
                                 widget.volHidden = volHidden;
                                 widget.mainState = mainState;
-                                widget.secondaryStateLi =
-                                    secondaryState.toSet();
-                                if (widget.secondaryStateLi.isNotEmpty &&
+                                widget.secondaryStateLi = secondaryState;
+                                if (widget.secondaryStateLi != null &&
                                     !widget.volHidden) {
-                                  mBaseHeight = height * 0.50;
-                                } else if (widget.secondaryStateLi.isNotEmpty) {
-                                  mBaseHeight = height * 0.61;
+                                  mBaseHeight = height * 0.47;
+                                } else if (widget.secondaryStateLi != null) {
+                                  mBaseHeight = height * 0.58;
                                 } else if (!widget.volHidden) {
-                                  mBaseHeight = height * 0.61;
+                                  mBaseHeight = height * 0.58;
                                 } else {
-                                  mBaseHeight = height * 0.75;
+                                  mBaseHeight = height * 0.72;
                                 }
                                 setState(() {});
                               },

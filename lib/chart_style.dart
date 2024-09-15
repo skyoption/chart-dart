@@ -195,7 +195,7 @@ class ChartStyle {
 
   double rightPadding = 0.0;
 
-  double priceWidth = 70.0;
+  double priceWidth = 60.0;
 
   // 是否保留小数点 - 左侧刻度
   bool isNotPoint = false;

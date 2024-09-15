@@ -115,7 +115,7 @@ abstract class BaseChartRenderer<T> {
   }
 
   TextStyle getTextStyle(Color color) {
-    return TextStyle(fontSize: 11.0, color: color);
+    return TextStyle(fontSize: 10.0, color: color);
   }
 }
 

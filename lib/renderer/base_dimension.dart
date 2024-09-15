@@ -4,12 +4,15 @@ import '../k_chart_widget.dart';
 class BaseDimension {
   // the height of base chart
   double _mBaseHeight = 380;
+
   // default: 0
   // the height of volume chart
   double _mVolumeHeight = 0;
+
   // default: 0
   // the height of a secondary chart
   double _mSecondaryHeight = 0;
+
   // total height of chart: _mBaseHeight + _mVolumeHeight + (_mSecondaryHeight * n)
   // n : number of secondary charts
   //
@@ -17,8 +20,10 @@ class BaseDimension {
 
   // getter the vol height
   double get mVolumeHeight => _mVolumeHeight;
+
   // getter the secondary height
   double get mSecondaryHeight => _mSecondaryHeight;
+
   // getter the total height
   double get mDisplayHeight => _mDisplayHeight;
 
@@ -30,13 +35,13 @@ class BaseDimension {
   BaseDimension({
     required double mBaseHeight,
     required bool volHidden,
-    required Set<SecondaryState> secondaryStateLi,
+    SecondaryState? secondaryStateLi,
   }) {
     _mBaseHeight = mBaseHeight;
     _mVolumeHeight = volHidden != true ? _mBaseHeight * 0.2 : 0;
     _mSecondaryHeight = _mBaseHeight * 0.2;
     _mDisplayHeight = _mBaseHeight +
         _mVolumeHeight +
-        (_mSecondaryHeight * secondaryStateLi.length);
+        (_mSecondaryHeight * (secondaryStateLi != null ? 1 : 0));
   }
 }
