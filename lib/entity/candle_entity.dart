@@ -8,6 +8,8 @@ mixin CandleEntity {
   List<double>? maValueList;
   //EMA
   List<double>? emaValueList;
+  //SMA
+  List<double>? smaValueList;
 
 //  上轨线
   double? up;

@@ -113,6 +113,21 @@ class ChartColors {
     }
   }
 
+  //SMA
+  /// get SMA color via index
+  Color getSMAColor(int index) {
+    switch (index % 4) {
+      case 1:
+        return ma10Color;
+      case 2:
+        return ma30Color;
+      case 3:
+        return Colors.blueAccent;
+      default:
+        return ma5Color;
+    }
+  }
+
   /// constructor chart color
   ChartColors({
     this.bgColor = const Color(0xffffffff),
@@ -216,7 +231,7 @@ class ChartStyle {
   bool isShowStrategyTypeBottomForMaxVol = true;
 
   // 是否显示策略类型EMA
-  bool isShowEma = true;
+  // bool isShowEma = true;
 
   // 是否显示策略类型底部的MA标题
   bool isShowBottomMa = true;

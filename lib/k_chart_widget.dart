@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 
 import 'renderer/base_dimension.dart';
 
-enum MainState { MA, BOLL, NONE }
+enum MainState { MA, EMA, SMA, BOLL, NONE }
 
 // enum SecondaryState { MACD, KDJ, RSI, WR, CCI, NONE }
 enum SecondaryState { MACD, KDJ, RSI, WR, CCI } //no support NONE
