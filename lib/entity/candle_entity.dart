@@ -10,6 +10,10 @@ mixin CandleEntity {
   List<double>? emaValueList;
   //SMA
   List<double>? smaValueList;
+  //LWMA
+  List<double>? lwmaValueList;
+  //SMMA
+  List<double>? smmaValueList;
 
 //  上轨线
   double? up;

@@ -4,26 +4,120 @@ import '../entity/index.dart';
 // import '../extends_futures/ema_indicator.dart';
 
 class DataUtil {
-  static calculate(List<KLineEntity> dataList,
-      //EMA
-      [List<int> maDayList = const [5, 10, 20],
-      int n = 20,
-      k = 2,
-      List<int> emaDayList = const [5, 10, 20, 60],
-      List<int> smaDayList = const [5, 10, 30]]) {
-    calcMA(dataList, maDayList);
-    // 新增EMA计算
+  static calculate(
+    List<KLineEntity> dataList,
     //EMA
-    calcEMA(dataList, emaDayList);
-    //SMA
+    [
+    int n = 20,
+    k = 2,
+    List<int> emaDayList = const [5],
+    List<int> smaDayList = const [5],
+    List<int> lwmaDayList = const [5],
+    List<int> smmaDayList = const [5],
+  ]) {
+    ///[MA]
     calcSMA(dataList, smaDayList);
+    calcEMA(dataList, emaDayList);
+    calcLinearMa(dataList, lwmaDayList);
+    calcSmoothedMa(dataList, smmaDayList);
+
+    ///[BOLL]
     calcBOLL(dataList, n, k);
+
+    ///[VOLUME]
     calcVolumeMA(dataList);
+
+    ///[KDJ]
     calcKDJ(dataList);
+
+    ///[MACD]
     calcMACD(dataList);
+
+    ///[RSI]
     calcRSI(dataList);
+
+    ///[WR]
     calcWR(dataList);
+
+    ///[CCI]
     calcCCI(dataList);
+  }
+
+  /// Calculates the Smoothed Moving Average (SMMA) for the given periods.
+  static void calcSmoothedMa(
+      List<KLineEntity> dataList, List<int> smmaDayList) {
+    for (int period in smmaDayList) {
+      // Initialize a map to keep track of the previous SMMA for each period
+      double? previousSmma;
+
+      for (int i = 0; i < dataList.length; i++) {
+        KLineEntity entity = dataList[i];
+
+        if (i + 1 < period) {
+          // Not enough data points to calculate SMMA
+          entity.smmaValueList ??= List<double>.filled(smmaDayList.length, 0);
+          entity.smmaValueList![smmaDayList.indexOf(period)] = 0;
+        } else if (i + 1 == period) {
+          // Calculate the initial SMMA as the SMA of the first 'period' data points
+          double sum = 0;
+          for (int j = 0; j < period; j++) {
+            sum += dataList[j].close;
+          }
+          double initialSma = sum / period;
+          entity.smmaValueList ??= List<double>.filled(smmaDayList.length, 0);
+          entity.smmaValueList![smmaDayList.indexOf(period)] = initialSma;
+          previousSmma = initialSma;
+        } else {
+          // Calculate SMMA using the previous SMMA value
+          if (previousSmma == null) {
+            // If previous SMMA is not set, fallback to SMA
+            double sum = 0;
+            for (int j = i - period + 1; j <= i; j++) {
+              sum += dataList[j].close;
+            }
+            previousSmma = sum / period;
+          }
+
+          double currentClose = entity.close;
+          double currentSmma =
+              ((previousSmma * (period - 1)) + currentClose) / period;
+
+          entity.smmaValueList ??= List<double>.filled(smmaDayList.length, 0);
+          entity.smmaValueList![smmaDayList.indexOf(period)] = currentSmma;
+
+          // Update the previous SMMA for the next iteration
+          previousSmma = currentSmma;
+        }
+      }
+    }
+  }
+
+  static void calcLinearMa(List<KLineEntity> dataList, List<int> lwmaDayList) {
+    for (int period in lwmaDayList) {
+      List<double> lwma = List<double>.filled(dataList.length, 0);
+
+      for (int i = 0; i < dataList.length; i++) {
+        if (i >= period - 1) {
+          double numerator = 0;
+          double denominator = (period * (period + 1)) / 2;
+          for (int j = 0; j < period; j++) {
+            numerator += dataList[i - j].close * (period - j);
+          }
+          lwma[i] = numerator / denominator;
+
+          // Initialize the list if null
+          dataList[i].lwmaValueList ??=
+              List<double>.filled(lwmaDayList.length, 0);
+          dataList[i].lwmaValueList![lwmaDayList.indexOf(period)] = lwma[i];
+        } else {
+          // Not enough data to calculate LWMA
+          dataList[i].lwmaValueList ??=
+              List<double>.filled(lwmaDayList.length, 0);
+          dataList[i].lwmaValueList![lwmaDayList.indexOf(period)] =
+              0; // Or null
+        }
+      }
+    }
   }
 
   static void calcSMA(List<KLineEntity> dataList, List<int> smaDayList) {
@@ -43,30 +137,6 @@ class DataUtil {
         } else {
           entity.smaValueList ??= List<double>.filled(smaDayList.length, 0);
           entity.smaValueList![smaDayList.indexOf(day)] = 0; // No value yet
-        }
-      }
-    }
-  }
-
-  static calcMA(List<KLineEntity> dataList, List<int> maDayList) {
-    List<double> ma = List<double>.filled(maDayList.length, 0);
-
-    if (dataList.isNotEmpty) {
-      for (int i = 0; i < dataList.length; i++) {
-        KLineEntity entity = dataList[i];
-        final closePrice = entity.close;
-        entity.maValueList = List<double>.filled(maDayList.length, 0);
-
-        for (int j = 0; j < maDayList.length; j++) {
-          ma[j] += closePrice;
-          if (i == maDayList[j] - 1) {
-            entity.maValueList?[j] = ma[j] / maDayList[j];
-          } else if (i >= maDayList[j]) {
-            ma[j] -= dataList[i - maDayList[j]].close;
-            entity.maValueList?[j] = ma[j] / maDayList[j];
-          } else {
-            entity.maValueList?[j] = 0;
-          }
         }
       }
     }
@@ -311,4 +381,28 @@ class DataUtil {
       }
     }
   }
+
+// static calcMA(List<KLineEntity> dataList, List<int> maDayList) {
+//   List<double> ma = List<double>.filled(maDayList.length, 0);
+//
+//   if (dataList.isNotEmpty) {
+//     for (int i = 0; i < dataList.length; i++) {
+//       KLineEntity entity = dataList[i];
+//       final closePrice = entity.close;
+//       entity.maValueList = List<double>.filled(maDayList.length, 0);
+//
+//       for (int j = 0; j < maDayList.length; j++) {
+//         ma[j] += closePrice;
+//         if (i == maDayList[j] - 1) {
+//           entity.maValueList?[j] = ma[j] / maDayList[j];
+//         } else if (i >= maDayList[j]) {
+//           ma[j] -= dataList[i - maDayList[j]].close;
+//           entity.maValueList?[j] = ma[j] / maDayList[j];
+//         } else {
+//           entity.maValueList?[j] = 0;
+//         }
+//       }
+//     }
+//   }
+// }
 }

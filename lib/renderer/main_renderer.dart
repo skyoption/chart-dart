@@ -130,93 +130,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     // }
   }
 
-  //
-  // List<InlineSpan> _createMATextSpan(CandleEntity data) {
-  //   List<InlineSpan> result = [];
-  //   for (int i = 0; i < (data.maValueList?.length ?? 0); i++) {
-  //     if (data.maValueList?[i] != 0) {
-  //       String value = '${format(data.maValueList![i])}';
-  //       //
-  //       // var item = TextSpan(
-  //       //     text: "MA${maDayList[i]}:$value    ",
-  //       //     style: getTextStyle(this.chartColors.getMAColor(i)));
-  //
-  //       //科学计算 下标
-  //       List<InlineSpan> children = [];
-  //
-  //       TextSpan span = TextSpan(
-  //           text: "MA${maDayList[i]}:",
-  //           style: getTextStyle(this.chartColors.getMAColor(i)));
-  //       final spanS = formatValueSpan(
-  //           (double.tryParse('${data.maValueList![i]}') ?? 0.0),
-  //           getTextStyle(this.chartColors.getMAColor(i)));
-  //       children.add(span);
-  //       children.add(spanS);
-  //       TextSpan? item = TextSpan(children: children);
-  //
-  //       result.add(item);
-  //       if (value.length > 13 && i > 0 && i % 1 == 0)
-  //         result.add(TextSpan(text: '\n'));
-  //     }
-  //   }
-  //   return result;
-  // }
-
-// //EMA
-//   List<InlineSpan> _createEMATextSpan(CandleEntity data) {
-//     List<InlineSpan> result = [];
-//     for (int i = 0; i < (data.emaValueList?.length ?? 0); i++) {
-//       if (data.emaValueList?[i] != 0) {
-//         // String value = '${format(data.emaValueList![i])}';
-//         String value = '${format(data.emaValueList![i])}';
-//         // var item = TextSpan(
-//         //     text: "EMA${emaValueList[i]}:$value    ",
-//         //     style: getTextStyle(this.chartColors.getEMAColor(i)));
-//
-//         //科学计算 下标
-//         List<InlineSpan> children = [];
-//
-//         TextSpan span = TextSpan(
-//             text: "EMA${emaValueList[i]}:",
-//             style: getTextStyle(this.chartColors.getEMAColor(i)));
-//         final spanS = formatValueSpan(
-//             (double.tryParse('${data.emaValueList![i]}') ?? 0.0),
-//             getTextStyle(this.chartColors.getEMAColor(i)));
-//         children.add(span);
-//         children.add(spanS);
-//         TextSpan? item = TextSpan(children: children);
-//
-//         if ((value.length > 13 && i > 0 && i % 2 == 0) ||
-//             (value.length <= 13 && i > 2)) result.add(TextSpan(text: '\n'));
-//         result.add(item);
-//         // if (i == 2) {
-//         //   result.add(TextSpan(text: '\n'));
-//         // }
-//       }
-//     }
-//     return result;
-//   }
-
-  // // 添加EMA计算函数
-  // //EMA
-  // List<double> calculateEMA(List<double> prices, int period) {
-  //   List<double> ema = [];
-  //   double multiplier = 2 / (period + 1);
-  //
-  //   double sum = 0;
-  //   for (int i = 0; i < period; i++) {
-  //     sum += prices[i];
-  //   }
-  //   ema.add(sum / period);
-  //
-  //   for (int i = period; i < prices.length; i++) {
-  //     double value = (prices[i] - ema.last) * multiplier + ema.last;
-  //     ema.add(value);
-  //   }
-  //
-  //   return ema;
-  // }
-
   @override
   void drawChart(CandleEntity lastPoint, CandleEntity curPoint, double lastX,
       double curX, Size size, Canvas canvas) {
@@ -224,13 +137,15 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       drawPolyline(lastPoint.close, curPoint.close, canvas, lastX, curX);
     } else {
       drawCandle(curPoint, canvas, curX);
-      if (state == MainState.MA) {
-        drawMaLine(lastPoint, curPoint, canvas, lastX, curX);
-      } else if (state == MainState.BOLL) {
+      if (state == MainState.BOLL) {
         drawBollLine(lastPoint, curPoint, canvas, lastX, curX);
       } else if (state == MainState.EMA) {
         drawEmaLine(lastPoint, curPoint, canvas, lastX, curX);
+      } else if (state == MainState.LINEARMA) {
+        drawLINEARMALine(lastPoint, curPoint, canvas, lastX, curX);
       } else if (state == MainState.SMA) {
+        drawSmaLine(lastPoint, curPoint, canvas, lastX, curX);
+      } else if (state == MainState.SMMA) {
         drawSmaLine(lastPoint, curPoint, canvas, lastX, curX);
       }
     }
@@ -246,7 +161,22 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       }
       if (lastPoint.emaValueList?[i] != 0) {
         drawLine(lastPoint.emaValueList?[i], curPoint.emaValueList?[i], canvas,
-            lastX, curX, this.chartColors.getEMAColor(i));
+            lastX, curX, this.chartColors.getMAColor(i));
+      }
+    }
+  }
+
+  // 实现EMA绘制函数
+  //LINEARMA
+  void drawLINEARMALine(CandleEntity lastPoint, CandleEntity curPoint,
+      Canvas canvas, double lastX, double curX) {
+    for (int i = 0; i < (curPoint.lwmaValueList?.length ?? 0); i++) {
+      if (i == 4) {
+        break;
+      }
+      if (lastPoint.lwmaValueList?[i] != 0) {
+        drawLine(lastPoint.lwmaValueList?[i], curPoint.lwmaValueList?[i],
+            canvas, lastX, curX, this.chartColors.getMAColor(i));
       }
     }
   }
@@ -261,7 +191,22 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       }
       if (lastPoint.smaValueList?[i] != 0) {
         drawLine(lastPoint.smaValueList?[i], curPoint.smaValueList?[i], canvas,
-            lastX, curX, this.chartColors.getSMAColor(i));
+            lastX, curX, this.chartColors.getMAColor(i));
+      }
+    }
+  }
+
+  // 实现SMMA绘制函数
+  //SMMA
+  void drawSmmaLine(CandleEntity lastPoint, CandleEntity curPoint,
+      Canvas canvas, double lastX, double curX) {
+    for (int i = 0; i < (curPoint.smmaValueList?.length ?? 0); i++) {
+      if (i == 4) {
+        break;
+      }
+      if (lastPoint.smmaValueList?[i] != 0) {
+        drawLine(lastPoint.smmaValueList?[i], curPoint.smmaValueList?[i],
+            canvas, lastX, curX, this.chartColors.getMAColor(i));
       }
     }
   }
@@ -318,19 +263,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     canvas.drawPath(mLinePath!,
         mLinePaint..strokeWidth = (mLineStrokeWidth / scaleX).clamp(0.1, 1.0));
     mLinePath!.reset();
-  }
-
-  void drawMaLine(CandleEntity lastPoint, CandleEntity curPoint, Canvas canvas,
-      double lastX, double curX) {
-    for (int i = 0; i < (curPoint.maValueList?.length ?? 0); i++) {
-      if (i == 3) {
-        break;
-      }
-      if (lastPoint.maValueList?[i] != 0) {
-        drawLine(lastPoint.maValueList?[i], curPoint.maValueList?[i], canvas,
-            lastX, curX, this.chartColors.getMAColor(i));
-      }
-    }
   }
 
   void drawBollLine(CandleEntity lastPoint, CandleEntity curPoint,
@@ -453,4 +385,106 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     trendLineScale = scaleY;
     trendLineContentRec = _contentRect.top;
   }
+
+// void drawMaLine(CandleEntity lastPoint, CandleEntity curPoint, Canvas canvas,
+//     double lastX, double curX) {
+//   for (int i = 0; i < (curPoint.maValueList?.length ?? 0); i++) {
+//     if (i == 3) {
+//       break;
+//     }
+//     if (lastPoint.maValueList?[i] != 0) {
+//       drawLine(lastPoint.maValueList?[i], curPoint.maValueList?[i], canvas,
+//           lastX, curX, this.chartColors.getMAColor(i));
+//     }
+//   }
+// }
+
+
+//
+// List<InlineSpan> _createMATextSpan(CandleEntity data) {
+//   List<InlineSpan> result = [];
+//   for (int i = 0; i < (data.maValueList?.length ?? 0); i++) {
+//     if (data.maValueList?[i] != 0) {
+//       String value = '${format(data.maValueList![i])}';
+//       //
+//       // var item = TextSpan(
+//       //     text: "MA${maDayList[i]}:$value    ",
+//       //     style: getTextStyle(this.chartColors.getMAColor(i)));
+//
+//       //科学计算 下标
+//       List<InlineSpan> children = [];
+//
+//       TextSpan span = TextSpan(
+//           text: "MA${maDayList[i]}:",
+//           style: getTextStyle(this.chartColors.getMAColor(i)));
+//       final spanS = formatValueSpan(
+//           (double.tryParse('${data.maValueList![i]}') ?? 0.0),
+//           getTextStyle(this.chartColors.getMAColor(i)));
+//       children.add(span);
+//       children.add(spanS);
+//       TextSpan? item = TextSpan(children: children);
+//
+//       result.add(item);
+//       if (value.length > 13 && i > 0 && i % 1 == 0)
+//         result.add(TextSpan(text: '\n'));
+//     }
+//   }
+//   return result;
+// }
+
+// //EMA
+//   List<InlineSpan> _createEMATextSpan(CandleEntity data) {
+//     List<InlineSpan> result = [];
+//     for (int i = 0; i < (data.emaValueList?.length ?? 0); i++) {
+//       if (data.emaValueList?[i] != 0) {
+//         // String value = '${format(data.emaValueList![i])}';
+//         String value = '${format(data.emaValueList![i])}';
+//         // var item = TextSpan(
+//         //     text: "EMA${emaValueList[i]}:$value    ",
+//         //     style: getTextStyle(this.chartColors.getEMAColor(i)));
+//
+//         //科学计算 下标
+//         List<InlineSpan> children = [];
+//
+//         TextSpan span = TextSpan(
+//             text: "EMA${emaValueList[i]}:",
+//             style: getTextStyle(this.chartColors.getEMAColor(i)));
+//         final spanS = formatValueSpan(
+//             (double.tryParse('${data.emaValueList![i]}') ?? 0.0),
+//             getTextStyle(this.chartColors.getEMAColor(i)));
+//         children.add(span);
+//         children.add(spanS);
+//         TextSpan? item = TextSpan(children: children);
+//
+//         if ((value.length > 13 && i > 0 && i % 2 == 0) ||
+//             (value.length <= 13 && i > 2)) result.add(TextSpan(text: '\n'));
+//         result.add(item);
+//         // if (i == 2) {
+//         //   result.add(TextSpan(text: '\n'));
+//         // }
+//       }
+//     }
+//     return result;
+//   }
+
+// // 添加EMA计算函数
+// //EMA
+// List<double> calculateEMA(List<double> prices, int period) {
+//   List<double> ema = [];
+//   double multiplier = 2 / (period + 1);
+//
+//   double sum = 0;
+//   for (int i = 0; i < period; i++) {
+//     sum += prices[i];
+//   }
+//   ema.add(sum / period);
+//
+//   for (int i = period; i < prices.length; i++) {
+//     double value = (prices[i] - ema.last) * multiplier + ema.last;
+//     ema.add(value);
+//   }
+//
+//   return ema;
+// }
+
 }

@@ -98,35 +98,6 @@ class ChartColors {
     }
   }
 
-//EMA
-  /// get EMA color via index
-  Color getEMAColor(int index) {
-    switch (index % 4) {
-      case 1:
-        return ma10Color;
-      case 2:
-        return ma30Color;
-      case 3:
-        return Colors.blueAccent;
-      default:
-        return ma5Color;
-    }
-  }
-
-  //SMA
-  /// get SMA color via index
-  Color getSMAColor(int index) {
-    switch (index % 4) {
-      case 1:
-        return ma10Color;
-      case 2:
-        return ma30Color;
-      case 3:
-        return Colors.blueAccent;
-      default:
-        return ma5Color;
-    }
-  }
 
   /// constructor chart color
   ChartColors({
@@ -140,7 +111,7 @@ class ChartColors {
     this.lineFillInsideColor = const Color(0x00000000),
 
     ///
-    this.ma5Color = const Color(0xffB48CE3),
+    this.ma5Color = const Color(0xffD5405D),
     this.ma10Color = const Color(0xff1FD1AC),
     this.ma30Color = const Color(0xffE5B767),
     this.upColor = const Color(0xFF14AD8F),

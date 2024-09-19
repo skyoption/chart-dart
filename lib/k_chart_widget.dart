@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 
 import 'renderer/base_dimension.dart';
 
-enum MainState { MA, EMA, SMA, BOLL, NONE }
+enum MainState { LINEARMA, SMMA, EMA, SMA, BOLL, NONE }
 
 // enum SecondaryState { MACD, KDJ, RSI, WR, CCI, NONE }
 enum SecondaryState { MACD, KDJ, RSI, WR, CCI } //no support NONE
@@ -74,7 +74,7 @@ class KChartWidget extends StatefulWidget {
     this.chartColors, {
     required this.isTrendLine,
     this.xFrontPadding = 100,
-    this.mainState = MainState.MA,
+    this.mainState = MainState.SMA,
     this.secondaryStateLi = const <SecondaryState>{},
     // this.onSecondaryTap,
     this.volHidden = true,

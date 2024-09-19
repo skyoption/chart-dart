@@ -24,7 +24,8 @@ export 'package:flutter/material.dart'
     show Color, required, TextStyle, Rect, Canvas, Size, CustomPainter;
 
 /// BaseChartPainter
-abstract class BaseChartPainter extends CustomPainter implements DrawObjectLines{
+abstract class BaseChartPainter extends CustomPainter
+    implements DrawObjectLines {
   static double maxScrollX = 0.0;
   List<KLineEntity>? data; // data of chart
   List<LineEntity> linesPrice; // data of chart
@@ -85,7 +86,7 @@ abstract class BaseChartPainter extends CustomPainter implements DrawObjectLines
     required this.xFrontPadding,
     required this.baseDimension,
     this.isOnTap = false,
-    this.mainState = MainState.MA,
+    this.mainState = MainState.SMA,
     this.volHidden = false,
     this.isTapShowInfoDialog = false,
     this.secondaryStateLi = const <SecondaryState>{},
@@ -253,9 +254,15 @@ abstract class BaseChartPainter extends CustomPainter implements DrawObjectLines
   /// compute maximum and minimum value
   void getMainMaxMinValue(KLineEntity item, int i) {
     double maxPrice, minPrice;
-    if (mainState == MainState.MA) {
-      maxPrice = max(item.high, _findMaxMA(item.maValueList ?? [0]));
-      minPrice = min(item.low, _findMinMA(item.maValueList ?? [0]));
+    if (mainState == MainState.LINEARMA) {
+      maxPrice = max(item.high, _findMaxMA(item.lwmaValueList ?? [0]));
+      minPrice = min(item.low, _findMinMA(item.lwmaValueList ?? [0]));
+    } else if (mainState == MainState.EMA) {
+      maxPrice = max(item.high, _findMaxMA(item.emaValueList ?? [0]));
+      minPrice = min(item.low, _findMinMA(item.emaValueList ?? [0]));
+    } else if (mainState == MainState.SMA) {
+      maxPrice = max(item.high, _findMaxMA(item.smaValueList ?? [0]));
+      minPrice = min(item.low, _findMinMA(item.smaValueList ?? [0]));
     } else if (mainState == MainState.BOLL) {
       maxPrice = max(item.up ?? 0, item.high);
       minPrice = min(item.dn ?? 0, item.low);
@@ -431,8 +438,6 @@ abstract class BaseChartPainter extends CustomPainter implements DrawObjectLines
   /// translateX is converted to X in view
   double translateXtoX(double translateX) =>
       (translateX + mTranslateX) * scaleX;
-
-
 
   @override
   bool shouldRepaint(BaseChartPainter oldDelegate) {
