@@ -5,7 +5,7 @@ class PropertiesItemWidget extends StatelessWidget {
   final String? subTitle;
   final String title;
   final Function? onTap;
-  final Color subTitleColor;
+  final Color subTitleColor, titleColor;
   final EdgeInsetsGeometry? margin;
   final Widget? child;
 
@@ -17,6 +17,7 @@ class PropertiesItemWidget extends StatelessWidget {
     this.margin,
     this.child,
     this.subTitleColor = Colors.blueAccent,
+    this.titleColor = Colors.black,
   });
 
   @override
@@ -41,6 +42,7 @@ class PropertiesItemWidget extends StatelessWidget {
               title,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w400,
+                    color: titleColor,
                   ),
             ),
             if (child != null)

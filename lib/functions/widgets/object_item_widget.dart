@@ -2,14 +2,18 @@ import 'package:candle_chart/functions/widgets/svg.dart';
 import 'package:flutter/material.dart';
 
 class ObjectItemWidget extends StatelessWidget {
-  final String icon, title;
+  final String? icon, title;
   final Function onTap;
-  final double iconSize;
+  final double? iconSize;
+  final Widget? child;
+  final Color? color;
 
   const ObjectItemWidget({
     super.key,
-    required this.icon,
-    required this.title,
+    this.icon,
+    this.title,
+    this.child,
+    this.color,
     required this.onTap,
     this.iconSize = 25.0,
   });
@@ -30,28 +34,32 @@ class ObjectItemWidget extends StatelessWidget {
           children: [
             Row(
               children: [
-                Container(
-                  width: iconSize + 5,
-                  margin: EdgeInsetsDirectional.only(end: 12.0),
-                  child: MSvg(
-                    name: icon,
-                    width: iconSize,
-                    height: iconSize,
+                if (iconSize != null && icon != null)
+                  Container(
+                    width: iconSize! + 5,
+                    margin: EdgeInsetsDirectional.only(end: 12.0),
+                    child: MSvg(
+                      name: icon,
+                      width: iconSize,
+                      height: iconSize,
+                    ),
                   ),
-                ),
                 Text(
-                  title,
+                  title!,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w400,
+                        color: color,
                       ),
                 ),
               ],
             ),
-            Icon(
-              Icons.arrow_forward_ios_sharp,
-              size: 20.0,
-              color: Colors.black,
-            )
+            if (child != null) child!,
+            if (child == null)
+              Icon(
+                Icons.arrow_forward_ios_sharp,
+                size: 20.0,
+                color: color ?? Colors.black,
+              )
           ],
         ),
       ),

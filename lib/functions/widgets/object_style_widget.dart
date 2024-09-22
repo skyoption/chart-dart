@@ -16,9 +16,12 @@ class ObjectStyleWidget extends StatefulWidget {
     LineStyle style,
   ) onChange;
 
+  final bool hideDrawAsBackground;
+
   const ObjectStyleWidget({
     super.key,
     required this.onChange,
+    this.hideDrawAsBackground = false,
   });
 
   @override
@@ -136,9 +139,9 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                                       lineHeight == item.value ? 0.0 : 2.0,
                                     ),
                                     width:
-                                        lineHeight == item.value ? 10.0 : 8.0,
+                                        lineHeight == item.value ? 12.0 : 10.0,
                                     height:
-                                        lineHeight == item.value ? 10.0 : 8.0,
+                                        lineHeight == item.value ? 12.0 : 10.0,
                                     decoration: BoxDecoration(
                                       color: lineHeight == item.value
                                           ? Colors.black87
@@ -219,30 +222,32 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
             ],
           ),
         ),
-        Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-        PropertiesItemWidget(
-          title: 'Draw as background',
-          child: SizedBox(
-            height: 18.0,
-            child: Transform.scale(
-              scale: 0.7,
-              child: CupertinoSwitch(
-                value: drawAsBackground,
-                activeColor: Colors.blueAccent,
-                onChanged: (value) {
-                  drawAsBackground = !drawAsBackground;
-                  setState(() {});
-                  widget.onChange(
-                    color,
-                    drawAsBackground,
-                    lineHeight,
-                    style,
-                  );
-                },
+        if (!widget.hideDrawAsBackground)
+          Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+        if (!widget.hideDrawAsBackground)
+          PropertiesItemWidget(
+            title: 'Draw as background',
+            child: SizedBox(
+              height: 18.0,
+              child: Transform.scale(
+                scale: 0.7,
+                child: CupertinoSwitch(
+                  value: drawAsBackground,
+                  activeColor: Colors.blueAccent,
+                  onChanged: (value) {
+                    drawAsBackground = !drawAsBackground;
+                    setState(() {});
+                    widget.onChange(
+                      color,
+                      drawAsBackground,
+                      lineHeight,
+                      style,
+                    );
+                  },
+                ),
               ),
             ),
           ),
-        ),
       ],
     );
   }

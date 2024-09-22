@@ -5,6 +5,7 @@ import 'package:candle_chart/components/popup_info_view.dart';
 import 'package:candle_chart/functions/chart_properties_screen.dart';
 import 'package:candle_chart/functions/widgets/svg.dart';
 import 'package:candle_chart/functions/objects_screen.dart';
+import 'package:candle_chart/indectors/indicators_screen.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/renderer/update_point_position.dart';
 import 'package:candle_chart/utils/icons.dart';
@@ -233,27 +234,27 @@ class _KChartWidgetState extends State<KChartWidget>
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => ChartPropertiesScreen(
-                              volHidden: widget.volHidden,
-                              mainState: widget.mainState,
-                              secondaryStateLi:
-                                  widget.secondaryStateLi.toList(),
-                              setMode: (volHidden, mainState, secondaryState) {
-                                widget.volHidden = volHidden;
-                                widget.mainState = mainState;
-                                widget.secondaryStateLi =
-                                    secondaryState.toSet();
-                                if (widget.secondaryStateLi.isNotEmpty &&
-                                    !widget.volHidden) {
-                                  mBaseHeight = height * 0.50;
-                                } else if (widget.secondaryStateLi.isNotEmpty ||
-                                    !widget.volHidden) {
-                                  mBaseHeight = height * 0.58;
-                                } else {
-                                  mBaseHeight = height * 0.70;
-                                }
-                                setState(() {});
-                              },
+                            builder: (context) => IndicatorsScreen(
+                              // volHidden: widget.volHidden,
+                              // mainState: widget.mainState,
+                              // secondaryStateLi:
+                              //     widget.secondaryStateLi.toList(),
+                              // setMode: (volHidden, mainState, secondaryState) {
+                              //   widget.volHidden = volHidden;
+                              //   widget.mainState = mainState;
+                              //   widget.secondaryStateLi =
+                              //       secondaryState.toSet();
+                              //   if (widget.secondaryStateLi.isNotEmpty &&
+                              //       !widget.volHidden) {
+                              //     mBaseHeight = height * 0.50;
+                              //   } else if (widget.secondaryStateLi.isNotEmpty ||
+                              //       !widget.volHidden) {
+                              //     mBaseHeight = height * 0.58;
+                              //   } else {
+                              //     mBaseHeight = height * 0.70;
+                              //   }
+                              //   setState(() {});
+                              // },
                             ),
                           ),
                         );
