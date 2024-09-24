@@ -1,7 +1,8 @@
+import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:flutter/material.dart';
 
 import '../entity/candle_entity.dart';
-import '../k_chart_widget.dart' show MainState;
+import '../k_chart_widget.dart' show IndicatorType;
 import 'base_chart_painter.dart';
 import 'base_chart_renderer.dart';
 
@@ -15,19 +16,12 @@ double? trendLineContentRec;
 class MainRenderer extends BaseChartRenderer<CandleEntity> {
   late double mCandleWidth;
   late double mCandleLineWidth;
-  MainState state;
   bool isLine;
 
   //绘制的内容区域
   late Rect _contentRect;
   double _contentPadding = 5.0;
-  List<int> maDayList;
 
-  //EMA
-  List<int> emaValueList;
-
-  //SMA
-  List<int> smaValueList;
   final ChartStyle chartStyle;
   final ChartPosition chartPositions;
   final ChartColors chartColors;
@@ -36,25 +30,22 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   late Paint mLinePaint;
   final VerticalTextAlignment verticalTextAlignment;
 
+  final List<IndicatorEntity> indicators;
+
   MainRenderer(
     Rect mainRect,
     double maxValue,
     double minValue,
     double topPadding,
     this.chartPositions,
-    this.state,
     this.isLine,
     int fixedLength,
     this.chartStyle,
     this.chartColors,
     this.scaleX,
     this.verticalTextAlignment,
-    //EMA
-    [
-    this.maDayList = const [5, 10, 20],
-    this.emaValueList = const [5, 10, 30, 60],
-    this.smaValueList = const [5, 10, 20],
-  ]) : super(
+    this.indicators,
+  ) : super(
             chartRect: mainRect,
             maxValue: maxValue,
             minValue: minValue,
@@ -89,7 +80,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     //   // span = TextSpan(
     //   //   children: _createMATextSpan(data),
     //   // );
-    //   String value = '${format((data.maValueList ?? [0])[0])}';
+    //   String value = '${format((data.maValues ?? [0])[0])}';
     //   span = TextSpan(
     //     children: [
     //       TextSpan(
@@ -137,16 +128,18 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       drawPolyline(lastPoint.close, curPoint.close, canvas, lastX, curX);
     } else {
       drawCandle(curPoint, canvas, curX);
-      if (state == MainState.BOLL) {
-        drawBollLine(lastPoint, curPoint, canvas, lastX, curX);
-      } else if (state == MainState.EMA) {
-        drawEmaLine(lastPoint, curPoint, canvas, lastX, curX);
-      } else if (state == MainState.LINEARMA) {
-        drawLINEARMALine(lastPoint, curPoint, canvas, lastX, curX);
-      } else if (state == MainState.SMA) {
-        drawSmaLine(lastPoint, curPoint, canvas, lastX, curX);
-      } else if (state == MainState.SMMA) {
-        drawSmaLine(lastPoint, curPoint, canvas, lastX, curX);
+      for (var item in indicators) {
+        if (item.type == IndicatorType.BOLL) {
+          drawBollLine(lastPoint, curPoint, canvas, lastX, curX);
+        } else if (item.type == IndicatorType.EMA) {
+          drawEmaLine(lastPoint, curPoint, canvas, lastX, curX);
+        } else if (item.type == IndicatorType.LINEARMA) {
+          drawLINEARMALine(lastPoint, curPoint, canvas, lastX, curX);
+        } else if (item.type == IndicatorType.SMA) {
+          drawSmaLine(lastPoint, curPoint, canvas, lastX, curX);
+        } else if (item.type == IndicatorType.SMMA) {
+          drawSmmaLine(lastPoint, curPoint, canvas, lastX, curX);
+        }
       }
     }
   }
@@ -155,13 +148,19 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   //EMA
   void drawEmaLine(CandleEntity lastPoint, CandleEntity curPoint, Canvas canvas,
       double lastX, double curX) {
-    for (int i = 0; i < (curPoint.emaValueList?.length ?? 0); i++) {
+    for (int i = 0; i < (curPoint.emaValues?.length ?? 0); i++) {
       if (i == 4) {
         break;
       }
-      if (lastPoint.emaValueList?[i] != 0) {
-        drawLine(lastPoint.emaValueList?[i], curPoint.emaValueList?[i], canvas,
-            lastX, curX, this.chartColors.getMAColor(i));
+      if (lastPoint.emaValues?[i] != 0) {
+        drawLine(
+          lastPoint.emaValues?[i].value,
+          curPoint.emaValues?[i].value,
+          canvas,
+          lastX,
+          curX,
+          curPoint.emaValues![i].color,
+        );
       }
     }
   }
@@ -170,13 +169,19 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   //LINEARMA
   void drawLINEARMALine(CandleEntity lastPoint, CandleEntity curPoint,
       Canvas canvas, double lastX, double curX) {
-    for (int i = 0; i < (curPoint.lwmaValueList?.length ?? 0); i++) {
+    for (int i = 0; i < (curPoint.lwmaValues?.length ?? 0); i++) {
       if (i == 4) {
         break;
       }
-      if (lastPoint.lwmaValueList?[i] != 0) {
-        drawLine(lastPoint.lwmaValueList?[i], curPoint.lwmaValueList?[i],
-            canvas, lastX, curX, this.chartColors.getMAColor(i));
+      if (lastPoint.lwmaValues?[i] != 0) {
+        drawLine(
+          lastPoint.lwmaValues?[i].value,
+          curPoint.lwmaValues?[i].value,
+          canvas,
+          lastX,
+          curX,
+          curPoint.lwmaValues![i].color,
+        );
       }
     }
   }
@@ -185,13 +190,19 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   //SMA
   void drawSmaLine(CandleEntity lastPoint, CandleEntity curPoint, Canvas canvas,
       double lastX, double curX) {
-    for (int i = 0; i < (curPoint.smaValueList?.length ?? 0); i++) {
+    for (int i = 0; i < (curPoint.smaValues?.length ?? 0); i++) {
       if (i == 4) {
         break;
       }
-      if (lastPoint.smaValueList?[i] != 0) {
-        drawLine(lastPoint.smaValueList?[i], curPoint.smaValueList?[i], canvas,
-            lastX, curX, this.chartColors.getMAColor(i));
+      if (lastPoint.smaValues?[i] != 0) {
+        drawLine(
+          lastPoint.smaValues?[i].value,
+          curPoint.smaValues?[i].value,
+          canvas,
+          lastX,
+          curX,
+          curPoint.smaValues![i].color,
+        );
       }
     }
   }
@@ -200,13 +211,19 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   //SMMA
   void drawSmmaLine(CandleEntity lastPoint, CandleEntity curPoint,
       Canvas canvas, double lastX, double curX) {
-    for (int i = 0; i < (curPoint.smmaValueList?.length ?? 0); i++) {
+    for (int i = 0; i < (curPoint.smmaValues?.length ?? 0); i++) {
       if (i == 4) {
         break;
       }
-      if (lastPoint.smmaValueList?[i] != 0) {
-        drawLine(lastPoint.smmaValueList?[i], curPoint.smmaValueList?[i],
-            canvas, lastX, curX, this.chartColors.getMAColor(i));
+      if (lastPoint.smmaValues?[i] != 0) {
+        drawLine(
+          lastPoint.smmaValues?[i].value,
+          curPoint.smmaValues?[i].value,
+          canvas,
+          lastX,
+          curX,
+          curPoint.smmaValues![i].color,
+        );
       }
     }
   }
@@ -388,24 +405,23 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 
 // void drawMaLine(CandleEntity lastPoint, CandleEntity curPoint, Canvas canvas,
 //     double lastX, double curX) {
-//   for (int i = 0; i < (curPoint.maValueList?.length ?? 0); i++) {
+//   for (int i = 0; i < (curPoint.maValues?.length ?? 0); i++) {
 //     if (i == 3) {
 //       break;
 //     }
-//     if (lastPoint.maValueList?[i] != 0) {
-//       drawLine(lastPoint.maValueList?[i], curPoint.maValueList?[i], canvas,
+//     if (lastPoint.maValues?[i] != 0) {
+//       drawLine(lastPoint.maValues?[i], curPoint.maValues?[i], canvas,
 //           lastX, curX, this.chartColors.getMAColor(i));
 //     }
 //   }
 // }
 
-
 //
 // List<InlineSpan> _createMATextSpan(CandleEntity data) {
 //   List<InlineSpan> result = [];
-//   for (int i = 0; i < (data.maValueList?.length ?? 0); i++) {
-//     if (data.maValueList?[i] != 0) {
-//       String value = '${format(data.maValueList![i])}';
+//   for (int i = 0; i < (data.maValues?.length ?? 0); i++) {
+//     if (data.maValues?[i] != 0) {
+//       String value = '${format(data.maValues![i])}';
 //       //
 //       // var item = TextSpan(
 //       //     text: "MA${maDayList[i]}:$value    ",
@@ -418,7 +434,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 //           text: "MA${maDayList[i]}:",
 //           style: getTextStyle(this.chartColors.getMAColor(i)));
 //       final spanS = formatValueSpan(
-//           (double.tryParse('${data.maValueList![i]}') ?? 0.0),
+//           (double.tryParse('${data.maValues![i]}') ?? 0.0),
 //           getTextStyle(this.chartColors.getMAColor(i)));
 //       children.add(span);
 //       children.add(spanS);
@@ -435,22 +451,22 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 // //EMA
 //   List<InlineSpan> _createEMATextSpan(CandleEntity data) {
 //     List<InlineSpan> result = [];
-//     for (int i = 0; i < (data.emaValueList?.length ?? 0); i++) {
-//       if (data.emaValueList?[i] != 0) {
-//         // String value = '${format(data.emaValueList![i])}';
-//         String value = '${format(data.emaValueList![i])}';
+//     for (int i = 0; i < (data.emaValues?.length ?? 0); i++) {
+//       if (data.emaValues?[i] != 0) {
+//         // String value = '${format(data.emaValues![i])}';
+//         String value = '${format(data.emaValues![i])}';
 //         // var item = TextSpan(
-//         //     text: "EMA${emaValueList[i]}:$value    ",
+//         //     text: "EMA${emaValues[i]}:$value    ",
 //         //     style: getTextStyle(this.chartColors.getEMAColor(i)));
 //
 //         //科学计算 下标
 //         List<InlineSpan> children = [];
 //
 //         TextSpan span = TextSpan(
-//             text: "EMA${emaValueList[i]}:",
+//             text: "EMA${emaValues[i]}:",
 //             style: getTextStyle(this.chartColors.getEMAColor(i)));
 //         final spanS = formatValueSpan(
-//             (double.tryParse('${data.emaValueList![i]}') ?? 0.0),
+//             (double.tryParse('${data.emaValues![i]}') ?? 0.0),
 //             getTextStyle(this.chartColors.getEMAColor(i)));
 //         children.add(span);
 //         children.add(spanS);
@@ -486,5 +502,4 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 //
 //   return ema;
 // }
-
 }

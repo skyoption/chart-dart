@@ -1,19 +1,22 @@
 // ignore_for_file: non_constant_identifier_names,library_prefixes,unused_import,camel_case_types
+import 'package:candle_chart/entity/indicator_entity.dart';
+
 mixin CandleEntity {
   late double open;
   late double high;
   late double low;
   late double close;
 
-  List<double>? maValueList;
+
+
   //EMA
-  List<double>? emaValueList;
+  List<IndicatorEntity>? emaValues;
   //SMA
-  List<double>? smaValueList;
+  List<IndicatorEntity>? smaValues;
   //LWMA
-  List<double>? lwmaValueList;
+  List<IndicatorEntity>? lwmaValues;
   //SMMA
-  List<double>? smmaValueList;
+  List<IndicatorEntity>? smmaValues;
 
 //  上轨线
   double? up;

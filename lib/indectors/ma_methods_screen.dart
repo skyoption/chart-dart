@@ -1,7 +1,7 @@
 import 'package:candle_chart/functions/widgets/properties_item_widget.dart';
 import 'package:flutter/material.dart';
 
-enum MaMethods { Simple, Exponential, Smoothed, Linear_Weighted }
+enum Methods { Simple, Exponential, Smoothed, Linear_Weighted }
 
 class MaMethodsScreen extends StatefulWidget {
   const MaMethodsScreen({super.key});
@@ -11,7 +11,7 @@ class MaMethodsScreen extends StatefulWidget {
 }
 
 class _MaMethodsScreenState extends State<MaMethodsScreen> {
-  MaMethods method = MaMethods.Simple;
+  Methods method = Methods.Simple;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,7 @@ class _MaMethodsScreenState extends State<MaMethodsScreen> {
         padding: EdgeInsets.symmetric(vertical: 14.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: MaMethods.values.asMap().entries.map((item) {
+          children: Methods.values.asMap().entries.map((item) {
             return Column(
               children: [
                 PropertiesItemWidget(

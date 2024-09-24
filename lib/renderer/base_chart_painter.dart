@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:candle_chart/components/kprint.dart';
+import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/renderer/draw_object_lines.dart';
 import 'package:candle_chart/utils/date_format_util.dart';
@@ -29,7 +31,8 @@ abstract class BaseChartPainter extends CustomPainter
   static double maxScrollX = 0.0;
   List<KLineEntity>? data; // data of chart
   List<LineEntity> linesPrice; // data of chart
-  MainState mainState;
+
+  final List<IndicatorEntity> indicators;
 
   Set<SecondaryState> secondaryStateLi;
 
@@ -86,7 +89,7 @@ abstract class BaseChartPainter extends CustomPainter
     required this.xFrontPadding,
     required this.baseDimension,
     this.isOnTap = false,
-    this.mainState = MainState.SMA,
+    this.indicators = const [],
     this.volHidden = false,
     this.isTapShowInfoDialog = false,
     this.secondaryStateLi = const <SecondaryState>{},
@@ -253,22 +256,22 @@ abstract class BaseChartPainter extends CustomPainter
 
   /// compute maximum and minimum value
   void getMainMaxMinValue(KLineEntity item, int i) {
-    double maxPrice, minPrice;
-    if (mainState == MainState.LINEARMA) {
-      maxPrice = max(item.high, _findMaxMA(item.lwmaValueList ?? [0]));
-      minPrice = min(item.low, _findMinMA(item.lwmaValueList ?? [0]));
-    } else if (mainState == MainState.EMA) {
-      maxPrice = max(item.high, _findMaxMA(item.emaValueList ?? [0]));
-      minPrice = min(item.low, _findMinMA(item.emaValueList ?? [0]));
-    } else if (mainState == MainState.SMA) {
-      maxPrice = max(item.high, _findMaxMA(item.smaValueList ?? [0]));
-      minPrice = min(item.low, _findMinMA(item.smaValueList ?? [0]));
-    } else if (mainState == MainState.BOLL) {
-      maxPrice = max(item.up ?? 0, item.high);
-      minPrice = min(item.dn ?? 0, item.low);
-    } else {
-      maxPrice = item.high;
-      minPrice = item.low;
+    double maxPrice = item.high, minPrice = item.low;
+
+    for (var indicator in indicators) {
+      if (indicator.type == IndicatorType.LINEARMA) {
+        maxPrice = max(item.high, _findMaxMA(item.lwmaValues ?? []));
+        minPrice = min(item.low, _findMinMA(item.lwmaValues ?? []));
+      } else if (indicator.type == IndicatorType.EMA) {
+        maxPrice = max(item.high, _findMaxMA(item.emaValues ?? []));
+        minPrice = min(item.low, _findMinMA(item.emaValues ?? []));
+      } else if (indicator.type == IndicatorType.SMA) {
+        maxPrice = max(item.high, _findMaxMA(item.smaValues ?? []));
+        minPrice = min(item.low, _findMinMA(item.smaValues ?? []));
+      } else if (indicator.type == IndicatorType.BOLL) {
+        maxPrice = max(item.up ?? 0, item.high);
+        minPrice = min(item.dn ?? 0, item.low);
+      }
     }
     mMainMaxValue = max(mMainMaxValue, maxPrice);
     mMainMinValue = min(mMainMinValue, minPrice);
@@ -289,19 +292,19 @@ abstract class BaseChartPainter extends CustomPainter
   }
 
   // find maximum of the MA
-  double _findMaxMA(List<double> a) {
+  double _findMaxMA(List<IndicatorEntity> a) {
     double result = double.minPositive;
-    for (double i in a) {
-      result = max(result, i);
+    for (IndicatorEntity i in a) {
+      result = max(result, i.value);
     }
     return result;
   }
 
   // find minimum of the MA
-  double _findMinMA(List<double> a) {
+  double _findMinMA(List<IndicatorEntity> a) {
     double result = double.maxFinite;
-    for (double i in a) {
-      result = min(result, i == 0 ? double.maxFinite : i);
+    for (IndicatorEntity i in a) {
+      result = min(result, i.value == 0 ? double.maxFinite : i.value);
     }
     return result;
   }

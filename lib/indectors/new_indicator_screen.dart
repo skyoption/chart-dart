@@ -67,7 +67,7 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => IndicatorPropertiesScreen(),
                   ),

@@ -2,21 +2,19 @@ import 'dart:async';
 
 import 'package:candle_chart/chart_translations.dart';
 import 'package:candle_chart/components/popup_info_view.dart';
-import 'package:candle_chart/functions/chart_properties_screen.dart';
+import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/functions/widgets/svg.dart';
 import 'package:candle_chart/functions/objects_screen.dart';
 import 'package:candle_chart/indectors/indicators_screen.dart';
 import 'package:candle_chart/k_chart_plus.dart';
-import 'package:candle_chart/renderer/update_point_position.dart';
 import 'package:candle_chart/utils/icons.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'renderer/base_dimension.dart';
 
-enum MainState { LINEARMA, SMMA, EMA, SMA, BOLL, NONE }
+enum IndicatorType { LINEARMA, SMMA, EMA, SMA, BOLL, NONE }
 
-// enum SecondaryState { MACD, KDJ, RSI, WR, CCI, NONE }
 enum SecondaryState { MACD, KDJ, RSI, WR, CCI } //no support NONE
 
 class TimeFormat {
@@ -35,25 +33,18 @@ class TimeFormat {
 }
 
 class KChartWidget extends StatefulWidget {
-  final List<KLineEntity>? datas;
-  MainState mainState;
+  final List<KLineEntity>? data;
   bool volHidden;
   Set<SecondaryState> secondaryStateLi;
-
-  // final Function()? onSecondaryTap;
   final bool isLine;
-  final bool
-      isTapShowInfoDialog; //Whether to enable click to display detailed data
+  final bool isTapShowInfoDialog;
   final bool hideGrid;
   final bool showNowPrice;
   final bool showInfoDialog;
-  final bool materialInfoDialog; // Material Style Information Popup
+  final bool materialInfoDialog;
   final ChartTranslations chartTranslations;
   final List<String> timeFormat;
 
-  // It will be called when the screen scrolls to the end.
-  // If true, it will be scrolled to the end of the right side of the screen.
-  // If it is false, it will be scrolled to the end of the left side of the screen.
   final Function(bool)? onLoadMore;
 
   final int fixedLength;
@@ -70,14 +61,12 @@ class KChartWidget extends StatefulWidget {
   final int isLongFocusDurationTime;
 
   KChartWidget(
-    this.datas,
+    this.data,
     this.chartStyle,
     this.chartColors, {
     required this.isTrendLine,
     this.xFrontPadding = 100,
-    this.mainState = MainState.SMA,
     this.secondaryStateLi = const <SecondaryState>{},
-    // this.onSecondaryTap,
     this.volHidden = true,
     this.isLine = false,
     this.isTapShowInfoDialog = false,
@@ -118,10 +107,10 @@ class _KChartWidgetState extends State<KChartWidget>
 
   //For TrendLine
   List<TrendLine> lines = [];
-  double? changeinXposition;
-  double? changeinYposition;
+  double? changeInXposition;
+  double? changeInYposition;
   double mSelectY = 0.0;
-  bool waitingForOtherPairofCords = false;
+  bool waitingForOtherPairOfCords = false;
   bool enableCordRecord = false;
   bool objectEditable = false;
 
@@ -135,15 +124,55 @@ class _KChartWidgetState extends State<KChartWidget>
   int pointerCount = 0;
   String currentLineName = '';
   int currentLineIndex = -1;
+  List<IndicatorEntity> indicators = [];
 
   @override
   void initState() {
+    indicators = [
+      IndicatorEntity(
+        period: 20,
+        type: IndicatorType.LINEARMA,
+        color: Colors.red,
+      ),
+      // IndicatorEntity(
+      //   period: 20,
+      //   type: IndicatorType.BOLL,
+      //   color: Colors.deepPurple,
+      // ),
+      IndicatorEntity(
+        period: 20,
+        type: IndicatorType.EMA,
+        color: Colors.orange,
+      ),
+      IndicatorEntity(
+        period: 10,
+        type: IndicatorType.EMA,
+        color: Colors.black,
+      ),
+      IndicatorEntity(
+        period: 20,
+        type: IndicatorType.SMA,
+        color: Colors.green,
+      ),
+      IndicatorEntity(
+        period: 10,
+        type: IndicatorType.SMA,
+        color: Colors.yellowAccent,
+      ),
+      IndicatorEntity(
+        period: 20,
+        type: IndicatorType.SMMA,
+        color: Colors.blueAccent,
+      ),
+    ];
+    Future.delayed(Duration(seconds: 5), () {
+      DataUtil.calculate(
+        widget.data!,
+        indicators: indicators,
+      );
+      setState(() {});
+    });
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
   }
 
   @override
@@ -166,7 +195,7 @@ class _KChartWidgetState extends State<KChartWidget>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.datas != null && widget.datas!.isEmpty) {
+    if (widget.data != null && widget.data!.isEmpty) {
       mScrollX = mSelectX = 0.0;
       mScaleX = 1.0;
     }
@@ -177,7 +206,7 @@ class _KChartWidgetState extends State<KChartWidget>
     );
     _painter = ChartPainter(
       widget.chartStyle,
-      widget.chartColors,
+      widget.chartColors, indicators: indicators,
       screenHeight: mBaseHeight,
       baseDimension: baseDimension,
       lines: lines,
@@ -189,21 +218,19 @@ class _KChartWidgetState extends State<KChartWidget>
       //For TrendLine
       selectY: mSelectY,
       //For TrendLine
-      datas: widget.datas,
+      datas: widget.data,
       scaleX: mScaleX,
       scrollX: mScrollX,
       selectX: mSelectX,
       isLongPass: isLongPress,
       isOnTap: isOnTap,
       isTapShowInfoDialog: widget.isTapShowInfoDialog,
-      mainState: widget.mainState,
       volHidden: widget.volHidden,
       secondaryStateLi: widget.secondaryStateLi,
       isLine: widget.isLine,
       hideGrid: widget.hideGrid,
       showNowPrice: widget.showNowPrice,
       fixedLength: widget.fixedLength,
-      maDayList: widget.maDayList,
       verticalTextAlignment: widget.verticalTextAlignment,
     );
 
@@ -235,27 +262,27 @@ class _KChartWidgetState extends State<KChartWidget>
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => IndicatorsScreen(
-                              // volHidden: widget.volHidden,
-                              // mainState: widget.mainState,
-                              // secondaryStateLi:
-                              //     widget.secondaryStateLi.toList(),
-                              // setMode: (volHidden, mainState, secondaryState) {
-                              //   widget.volHidden = volHidden;
-                              //   widget.mainState = mainState;
-                              //   widget.secondaryStateLi =
-                              //       secondaryState.toSet();
-                              //   if (widget.secondaryStateLi.isNotEmpty &&
-                              //       !widget.volHidden) {
-                              //     mBaseHeight = height * 0.50;
-                              //   } else if (widget.secondaryStateLi.isNotEmpty ||
-                              //       !widget.volHidden) {
-                              //     mBaseHeight = height * 0.58;
-                              //   } else {
-                              //     mBaseHeight = height * 0.70;
-                              //   }
-                              //   setState(() {});
-                              // },
-                            ),
+                                // volHidden: widget.volHidden,
+                                // mainState: widget.mainState,
+                                // secondaryStateLi:
+                                //     widget.secondaryStateLi.toList(),
+                                // setMode: (volHidden, mainState, secondaryState) {
+                                //   widget.volHidden = volHidden;
+                                //   widget.mainState = mainState;
+                                //   widget.secondaryStateLi =
+                                //       secondaryState.toSet();
+                                //   if (widget.secondaryStateLi.isNotEmpty &&
+                                //       !widget.volHidden) {
+                                //     mBaseHeight = height * 0.50;
+                                //   } else if (widget.secondaryStateLi.isNotEmpty ||
+                                //       !widget.volHidden) {
+                                //     mBaseHeight = height * 0.58;
+                                //   } else {
+                                //     mBaseHeight = height * 0.70;
+                                //   }
+                                //   setState(() {});
+                                // },
+                                ),
                           ),
                         );
                       },
@@ -482,18 +509,18 @@ class _KChartWidgetState extends State<KChartWidget>
     if (widget.isTrendLine && !isLongPress && enableCordRecord) {
       enableCordRecord = false;
       Offset p1 = Offset(getTrendLineX(), mSelectY);
-      if (!waitingForOtherPairofCords) {
+      if (!waitingForOtherPairOfCords) {
         lines
             .add(TrendLine(p1, Offset(-1, -1), trendLineMax!, trendLineScale!));
       }
 
-      if (waitingForOtherPairofCords) {
+      if (waitingForOtherPairOfCords) {
         var a = lines.last;
         lines.removeLast();
         lines.add(TrendLine(a.p1, p1, trendLineMax!, trendLineScale!));
-        waitingForOtherPairofCords = false;
+        waitingForOtherPairOfCords = false;
       } else {
-        waitingForOtherPairofCords = true;
+        waitingForOtherPairOfCords = true;
       }
       notifyChanged();
     }
@@ -554,10 +581,10 @@ class _KChartWidgetState extends State<KChartWidget>
       notifyChanged();
     }
     if (widget.isTrendLine) {
-      mSelectX = mSelectX + (details.localPosition.dx - changeinXposition!);
-      changeinXposition = details.localPosition.dx;
-      mSelectY = mSelectY + (details.globalPosition.dy - changeinYposition!);
-      changeinYposition = details.globalPosition.dy;
+      mSelectX = mSelectX + (details.localPosition.dx - changeInXposition!);
+      changeInXposition = details.localPosition.dx;
+      mSelectY = mSelectY + (details.globalPosition.dy - changeInYposition!);
+      changeInYposition = details.globalPosition.dy;
       notifyChanged();
     }
   }
@@ -576,15 +603,15 @@ class _KChartWidgetState extends State<KChartWidget>
       notifyChanged();
     }
     //For TrendLine
-    if (widget.isTrendLine && changeinXposition == null) {
-      mSelectX = changeinXposition = details.localPosition.dx;
-      mSelectY = changeinYposition = details.globalPosition.dy;
+    if (widget.isTrendLine && changeInXposition == null) {
+      mSelectX = changeInXposition = details.localPosition.dx;
+      mSelectY = changeInYposition = details.globalPosition.dy;
       notifyChanged();
     }
     //For TrendLine
-    if (widget.isTrendLine && changeinXposition != null) {
-      changeinXposition = details.localPosition.dx;
-      changeinYposition = details.globalPosition.dy;
+    if (widget.isTrendLine && changeInXposition != null) {
+      changeInXposition = details.localPosition.dx;
+      changeInYposition = details.globalPosition.dy;
       notifyChanged();
     }
   }

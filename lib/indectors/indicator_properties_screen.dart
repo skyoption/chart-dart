@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:candle_chart/functions/object_properties_screen.dart';
 import 'package:candle_chart/functions/widgets/object_style_widget.dart';
 import 'package:candle_chart/functions/widgets/properties_item_widget.dart';
+import 'package:candle_chart/indectors/apply_to_screen.dart';
 import 'package:candle_chart/indectors/ma_methods_screen.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:flutter/material.dart';
@@ -133,7 +134,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => MaMethodsScreen(),
                   ),
@@ -146,7 +147,13 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
               subTitle: 'Close',
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ApplyToScreen(),
+                  ),
+                );
+              },
             ),
             PropertiesTitleWidget(title: 'LEVELS'),
             PropertiesItemWidget(

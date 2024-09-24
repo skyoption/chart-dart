@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -159,7 +160,7 @@ class _MyHomePageState extends State<MyHomePage> {
         .reversed
         .toList()
         .cast<KLineEntity>();
-    DataUtil.calculate(datas!);
+
     showLoading = false;
     setState(() {});
   }

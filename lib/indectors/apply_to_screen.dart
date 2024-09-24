@@ -1,17 +1,18 @@
-import 'package:candle_chart/functions/widgets/object_item_widget.dart';
+import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/functions/widgets/properties_item_widget.dart';
-import 'package:candle_chart/indectors/new_indicator_screen.dart';
-import 'package:candle_chart/utils/icons.dart';
 import 'package:flutter/material.dart';
 
-class IndicatorsScreen extends StatefulWidget {
-  const IndicatorsScreen({super.key});
+
+class ApplyToScreen extends StatefulWidget {
+  const ApplyToScreen({super.key});
 
   @override
-  State<IndicatorsScreen> createState() => _IndicatorsScreenState();
+  State<ApplyToScreen> createState() => _ApplyToScreenState();
 }
 
-class _IndicatorsScreenState extends State<IndicatorsScreen> {
+class _ApplyToScreenState extends State<ApplyToScreen> {
+  ApplyTo applyTo = ApplyTo.Close;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +40,7 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                 Align(
                   alignment: AlignmentDirectional.center,
                   child: Text(
-                    'Indicators',
+                    'Method',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
@@ -54,36 +55,25 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
         padding: EdgeInsets.symmetric(vertical: 14.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            PropertiesItemWidget(
-              title: 'Main window',
-              margin: EdgeInsets.zero,
-              titleColor: Colors.blueAccent,
-              child: Icon(
-                Icons.add_circle_outline_rounded,
-                color: Colors.blueAccent,
-              ),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => NewIndicatorScreen(),
-                  ),
-                );
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: 'Moving Average',
-              margin: EdgeInsets.zero,
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => NewIndicatorScreen(),
-                  ),
-                );
-              },
-            ),
-          ],
+          children: ApplyTo.values.asMap().entries.map((item) {
+            return Column(
+              children: [
+                PropertiesItemWidget(
+                  title: item.value.name.replaceAll('_', ' '),
+                  margin: EdgeInsets.zero,
+                  child: item.value == applyTo
+                      ? Icon(Icons.check, color: Colors.blueAccent)
+                      : const SizedBox(height: 24.0),
+                  onTap: () {
+                    applyTo = item.value;
+                    setState(() {});
+                  },
+                ),
+                if (item.key != 3)
+                  Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+              ],
+            );
+          }).toList(),
         ),
       ),
     );

@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 class ChartPropertiesScreen extends StatefulWidget {
   static const id = 'ChartPropertiesScreen';
   final bool volHidden;
-  final MainState mainState;
+  final IndicatorType mainState;
   final List<SecondaryState> secondaryStateLi;
 
-  final Function(bool volHidden, MainState mainState,
+  final Function(bool volHidden, IndicatorType mainState,
       List<SecondaryState> secondaryState) setMode;
 
   const ChartPropertiesScreen({
@@ -26,7 +26,7 @@ class ChartPropertiesScreen extends StatefulWidget {
 
 class _ChartPropertiesScreenState extends State<ChartPropertiesScreen> {
   late bool _volHidden = widget.volHidden;
-  late MainState _mainState = widget.mainState;
+  late IndicatorType _mainState = widget.mainState;
   late List<SecondaryState> _secondaryStateLi = widget.secondaryStateLi;
 
   @override
@@ -134,7 +134,7 @@ class _ChartPropertiesScreenState extends State<ChartPropertiesScreen> {
         alignment: WrapAlignment.start,
         spacing: 10,
         runSpacing: 10,
-        children: MainState.values.map((e) {
+        children: IndicatorType.values.map((e) {
           return _buildButton(
             context: context,
             title: e.name,

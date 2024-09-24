@@ -1,9 +1,11 @@
 import 'dart:async' show StreamSink;
 
+import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
 import 'package:candle_chart/renderer/draw_object_lines.dart';
 import 'package:candle_chart/renderer/update_point_position.dart';
+import 'package:candle_chart/utils/data_util.dart';
 import 'package:candle_chart/utils/number_util.dart';
 import 'package:flutter/material.dart';
 
@@ -49,7 +51,6 @@ class ChartPainter extends BaseChartPainter
   Color? volColor;
   Color? macdColor, difColor, deaColor, jColor;
   int fixedLength;
-  List<int> maDayList;
   final ChartColors chartColors;
   late Paint selectPointPaint, selectorBorderPaint, nowPricePaint, pricePaint;
   final ChartStyle chartStyle;
@@ -58,13 +59,14 @@ class ChartPainter extends BaseChartPainter
   final VerticalTextAlignment verticalTextAlignment;
   final BaseDimension baseDimension;
   final List<LineEntity> linesPrice;
+  final List<IndicatorEntity> indicators;
   late final ChartPosition chartPosition;
   final double screenHeight;
   double mMainHighMaxValue = double.minPositive,
       mMainLowMinValue = double.maxFinite;
   final double scaleX;
 
-   UpdatePointPosition? updatePointPosition;
+  UpdatePointPosition? updatePointPosition;
 
   ChartPainter(
     this.chartStyle,
@@ -81,18 +83,17 @@ class ChartPainter extends BaseChartPainter
     required selectX,
     required xFrontPadding,
     required this.baseDimension,
+    required this.indicators,
     this.linesPrice = const [],
     isOnTap,
     isTapShowInfoDialog,
     required this.verticalTextAlignment,
-    mainState,
     volHidden,
     secondaryStateLi,
     bool isLine = false,
     this.hideGrid = false,
     this.showNowPrice = true,
     this.fixedLength = 2,
-    this.maDayList = const [5, 10, 20],
   }) : super(chartStyle,
             data: datas,
             scaleX: scaleX,
@@ -103,7 +104,7 @@ class ChartPainter extends BaseChartPainter
             isTapShowInfoDialog: isTapShowInfoDialog,
             selectX: selectX,
             linesPrice: linesPrice,
-            mainState: mainState,
+            indicators: indicators,
             volHidden: volHidden,
             secondaryStateLi: secondaryStateLi,
             xFrontPadding: xFrontPadding,
@@ -144,14 +145,13 @@ class ChartPainter extends BaseChartPainter
       mMainMinValue,
       mTopPadding,
       chartPosition,
-      mainState,
       isLine,
       fixedLength,
       this.chartStyle,
       this.chartColors,
       this.scaleX,
       verticalTextAlignment,
-      maDayList,
+      indicators,
     );
     if (mVolRect != null) {
       mVolRenderer = VolRenderer(mVolRect!, mVolMaxValue, mVolMinValue,
