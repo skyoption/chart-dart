@@ -1,3 +1,4 @@
+import 'package:candle_chart/entity/line_entity.dart';
 import 'package:flutter/material.dart';
 
 export '../chart_style.dart';
@@ -101,8 +102,16 @@ abstract class BaseChartRenderer<T> {
   void drawChart(T lastPoint, T curPoint, double lastX, double curX, Size size,
       Canvas canvas);
 
-  void drawLine(double? lastPrice, double? curPrice, Canvas canvas,
-      double lastX, double curX, Color color) {
+  void drawLine(
+    double? lastPrice,
+    double? curPrice,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    Color color, {
+    LineStyle lineStyle = LineStyle.normal,
+    double strokeWidth = 1.0,
+  }) {
     if (lastPrice == null || curPrice == null) {
       return;
     }
@@ -110,8 +119,50 @@ abstract class BaseChartRenderer<T> {
     double lastY = getY(lastPrice);
     double curY = getY(curPrice);
     //print("lastX-----==" + lastX.toString() + "==lastY==" + lastY.toString() + "==curX==" + curX.toString() + "==curY==" + curY.toString());
-    canvas.drawLine(
-        Offset(lastX, lastY), Offset(curX, curY), chartPaint..color = color);
+    _drawLine(
+      lastPrice,
+      curPrice,
+      canvas,
+      lastX,
+      curX,
+      color,
+      lineStyle,
+      strokeWidth,
+    );
+  }
+
+  void _drawLine(
+    double? lastPrice,
+    double? curPrice,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    Color color,
+    LineStyle style,
+    double strokeWidth,
+  ) {
+    if (lastPrice == null || curPrice == null) {
+      return;
+    }
+    double lastY = getY(lastPrice);
+    double curY = getY(curPrice);
+    if (style == LineStyle.dash || style == LineStyle.longDash) {
+      canvas.drawLine(
+        Offset(lastX, lastY),
+        Offset(curX, curY),
+        chartPaint
+          ..color = color
+          ..strokeWidth = strokeWidth,
+      );
+    } else {
+      canvas.drawLine(
+        Offset(lastX, lastY),
+        Offset(curX, curY),
+        chartPaint
+          ..color = color
+          ..strokeWidth = strokeWidth,
+      );
+    }
   }
 
   TextStyle getTextStyle(Color color) {

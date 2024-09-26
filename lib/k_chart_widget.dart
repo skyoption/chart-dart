@@ -16,7 +16,7 @@ import 'renderer/base_dimension.dart';
 
 enum IndicatorType { LINEARMA, SMMA, EMA, SMA, BOLL, NONE }
 
-enum SecondaryState { MACD, KDJ, RSI, WR, CCI } //no support NONE
+enum SecondaryState { MACD, KDJ, RSI, WR, CCI }
 
 class TimeFormat {
   static const List<String> YEAR_MONTH_DAY = [yyyy, '-', mm, '-', dd];
@@ -147,6 +147,8 @@ class _KChartWidgetState extends State<KChartWidget>
       period: 20,
       type: IndicatorType.SMA,
       color: Colors.green,
+      style: LineStyle.longDash,
+      lineHeight: 2.0,
     ));
     chartProperties.addIndicator(IndicatorEntity(
       period: 10,
@@ -157,6 +159,9 @@ class _KChartWidgetState extends State<KChartWidget>
       period: 20,
       type: IndicatorType.SMMA,
       color: Colors.blueAccent,
+      applyTo: ApplyTo.Weighted_Close_HLCC$4,
+      lineHeight: 1.0,
+      style: LineStyle.dash,
     ));
     Future.delayed(Duration(seconds: 6), () {
       DataUtil.calculate(widget.data!);

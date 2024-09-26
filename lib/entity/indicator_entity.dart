@@ -1,7 +1,16 @@
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:flutter/material.dart';
 
-enum ApplyTo { Close, Open, High, Low }
+enum ApplyTo {
+  Close,
+  Open,
+  High,
+  Low,
+  Median_Price_HL$2,
+  Middle_Price_OC$2,
+  Typical_Price_HLC$3,
+  Weighted_Close_HLCC$4,
+}
 
 enum Levels { None }
 

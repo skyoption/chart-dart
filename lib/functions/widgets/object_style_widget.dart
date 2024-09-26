@@ -17,11 +17,13 @@ class ObjectStyleWidget extends StatefulWidget {
   ) onChange;
 
   final bool hideDrawAsBackground;
+  final bool hideStyle;
 
   const ObjectStyleWidget({
     super.key,
     required this.onChange,
     this.hideDrawAsBackground = false,
+    this.hideStyle = false,
   });
 
   @override
@@ -171,54 +173,55 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                 ],
               ),
               SizedBox(height: 8.0),
-              Container(
-                margin: EdgeInsets.symmetric(
-                  vertical: 10.0,
-                  horizontal: 21.0,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.2),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(4.0),
-                  child: Row(
-                    children: [
-                      Svgs.horizontalLine,
-                      Svgs.longDashLine,
-                      Svgs.dashLine,
-                    ].asMap().entries.map(
-                      (item) {
-                        return Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              index = item.key;
-                              setState(() {});
-                              _setStyle(index);
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 2.0),
-                              decoration: BoxDecoration(
-                                color: index == item.key
-                                    ? Colors.white10
-                                    : Colors.grey.withOpacity(0.2),
-                                borderRadius: index == item.key
-                                    ? BorderRadius.circular(4.0)
-                                    : null,
-                              ),
-                              child: MSvg(
-                                name: item.value,
-                                width: 25.0,
-                                height: 25.0,
-                                color: Colors.black,
+              if (!widget.hideStyle)
+                Container(
+                  margin: EdgeInsets.symmetric(
+                    vertical: 10.0,
+                    horizontal: 21.0,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.2),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(4.0),
+                    child: Row(
+                      children: [
+                        Svgs.horizontalLine,
+                        Svgs.longDashLine,
+                        Svgs.dashLine,
+                      ].asMap().entries.map(
+                        (item) {
+                          return Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                index = item.key;
+                                setState(() {});
+                                _setStyle(index);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 2.0),
+                                decoration: BoxDecoration(
+                                  color: index == item.key
+                                      ? Colors.white10
+                                      : Colors.grey.withOpacity(0.2),
+                                  borderRadius: index == item.key
+                                      ? BorderRadius.circular(4.0)
+                                      : null,
+                                ),
+                                child: MSvg(
+                                  name: item.value,
+                                  width: 25.0,
+                                  height: 25.0,
+                                  color: Colors.black,
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    ).toList(),
+                          );
+                        },
+                      ).toList(),
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         ),

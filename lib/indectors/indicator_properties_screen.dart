@@ -177,6 +177,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
               onTap: () {},
             ),
             ObjectStyleWidget(
+              hideStyle: true,
               hideDrawAsBackground: true,
               onChange: (color, drawAsBackground, lineHeight, style) {},
             ),

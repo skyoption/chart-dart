@@ -160,6 +160,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           curPoint.emaValues![i].color,
+          lineStyle: curPoint.emaValues![i].style,
+          strokeWidth: curPoint.emaValues![i].lineHeight,
         );
       }
     }
@@ -181,6 +183,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           curPoint.lwmaValues![i].color,
+          lineStyle: curPoint.lwmaValues![i].style,
+          strokeWidth: curPoint.lwmaValues![i].lineHeight,
         );
       }
     }
@@ -202,6 +206,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           curPoint.smaValues![i].color,
+          lineStyle: curPoint.smaValues![i].style,
+          strokeWidth: curPoint.smaValues![i].lineHeight,
         );
       }
     }
@@ -223,6 +229,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           curPoint.smmaValues![i].color,
+          lineStyle: curPoint.smmaValues![i].style,
+          strokeWidth: curPoint.smmaValues![i].lineHeight,
         );
       }
     }

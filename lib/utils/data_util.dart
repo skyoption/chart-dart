@@ -48,12 +48,12 @@ class DataUtil {
     List<IndicatorEntity> indicators,
   ) {
     for (var indicator in indicators) {
-      for (int i = indicator.period - 1; i < dataList.length; i++) {
+      for (int i = indicator.period; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
         if (i >= indicator.period - 1) {
           double sum = 0;
           for (int j = i; j > i - indicator.period; j--) {
-            sum += dataList[j].close;
+            sum += _currentPriceValue(indicator, dataList[j]);
           }
           double smaValue = sum / indicator.period;
           entity.smaValues ??= List<IndicatorEntity>.filled(
@@ -77,7 +77,8 @@ class DataUtil {
           double numerator = 0;
           double denominator = (indicator.period * (indicator.period + 1)) / 2;
           for (int j = 0; j < indicator.period; j++) {
-            numerator += dataList[i - j].close * (indicator.period - j);
+            numerator += _currentPriceValue(indicator, dataList[i - j]) *
+                (indicator.period - j);
           }
           double lwmaValue = numerator / denominator;
           dataList[i].lwmaValues ??= List<IndicatorEntity>.filled(
@@ -100,19 +101,21 @@ class DataUtil {
 
     for (var indicator in indicators) {
       double? previousEma;
-      for (int i = indicator.period - 1; i < dataList.length; i++) {
+      for (int i = indicator.period; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
         entity.emaValues ??= List<IndicatorEntity>.filled(
             indicators.length, indicator.copy(value: 0));
 
         if (i == 0) {
           // Initialize the first EMA value with the close price
-          previousEma = entity.close;
+          previousEma = _currentPriceValue(indicator, entity);
         } else {
           double multiplier = 2 / (indicator.period + 1);
           previousEma = previousEma != null
-              ? ((entity.close - previousEma) * multiplier + previousEma)
-              : entity.close;
+              ? ((_currentPriceValue(indicator, entity) - previousEma) *
+                      multiplier +
+                  previousEma)
+              : _currentPriceValue(indicator, entity);
         }
 
         entity.emaValues![indicators.indexOf(indicator)].value = previousEma;
@@ -139,14 +142,14 @@ class DataUtil {
           // First SMMA value: Simple Moving Average (SMA)
           double sum = 0;
           for (int j = 0; j < indicator.period; j++) {
-            sum += dataList[j].close;
+            sum += _currentPriceValue(indicator, dataList[j]);
           }
           previousSmma = sum / indicator.period;
           entity.smmaValues?[indicators.indexOf(indicator)].value =
               previousSmma;
         } else {
           // Subsequent SMMA values
-          double currentClose = entity.close;
+          double currentClose = _currentPriceValue(indicator, entity);
           previousSmma =
               ((previousSmma! * (indicator.period - 1)) + currentClose) /
                   indicator.period;
@@ -362,6 +365,29 @@ class DataUtil {
       if (kline.cci!.isNaN) {
         kline.cci = 0.0;
       }
+    }
+  }
+
+  static double _currentPriceValue(
+    IndicatorEntity indicator,
+    KLineEntity point,
+  ) {
+    if (indicator.applyTo == ApplyTo.Open) {
+      return point.open;
+    } else if (indicator.applyTo == ApplyTo.Low) {
+      return point.low;
+    } else if (indicator.applyTo == ApplyTo.High) {
+      return point.high;
+    } else if (indicator.applyTo == ApplyTo.Median_Price_HL$2) {
+      return (point.high + point.low) / 2;
+    } else if (indicator.applyTo == ApplyTo.Middle_Price_OC$2) {
+      return (point.open + point.close) / 2;
+    } else if (indicator.applyTo == ApplyTo.Typical_Price_HLC$3) {
+      return (point.high + point.low + point.close) / 3;
+    } else if (indicator.applyTo == ApplyTo.Weighted_Close_HLCC$4) {
+      return (point.high + point.low + (point.close * 2)) / 4;
+    } else {
+      return point.close;
     }
   }
 

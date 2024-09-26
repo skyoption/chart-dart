@@ -2,7 +2,6 @@ import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/functions/widgets/properties_item_widget.dart';
 import 'package:flutter/material.dart';
 
-
 class ApplyToScreen extends StatefulWidget {
   const ApplyToScreen({super.key});
 
@@ -59,7 +58,9 @@ class _ApplyToScreenState extends State<ApplyToScreen> {
             return Column(
               children: [
                 PropertiesItemWidget(
-                  title: item.value.name.replaceAll('_', ' '),
+                  title: item.value.name
+                      .replaceAll('_', ' ')
+                      .replaceAll('\$', '/'),
                   margin: EdgeInsets.zero,
                   child: item.value == applyTo
                       ? Icon(Icons.check, color: Colors.blueAccent)
@@ -69,7 +70,7 @@ class _ApplyToScreenState extends State<ApplyToScreen> {
                     setState(() {});
                   },
                 ),
-                if (item.key != 3)
+                if (item.key != ApplyTo.values.length - 1)
                   Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
               ],
             );

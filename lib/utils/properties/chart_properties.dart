@@ -1,5 +1,3 @@
-import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/utils/properties/indicators.dart';
 import 'package:candle_chart/utils/properties/line_price_object.dart';
 import 'package:candle_chart/utils/properties/trend_line_object.dart';
