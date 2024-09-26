@@ -103,8 +103,6 @@ class _KChartWidgetState extends State<KChartWidget>
   AnimationController? _controller;
   Animation<double>? aniX;
 
-  //For TrendLine
-  List<TrendLine> lines = [];
   double? changeInXposition;
   double? changeInYposition;
   double mSelectY = 0.0;
@@ -198,11 +196,12 @@ class _KChartWidgetState extends State<KChartWidget>
     );
     _painter = ChartPainter(
       widget.chartStyle,
-      widget.chartColors, indicators: chartProperties.indicators,
+      widget.chartColors,
+      indicators: chartProperties.indicators,
+      lines: chartProperties.trendLines,
+      linesPrice: chartProperties.linesPrice,
       screenHeight: mBaseHeight,
       baseDimension: baseDimension,
-      lines: lines,
-      linesPrice: chartProperties.linesPrice,
       //For TrendLine
       sink: mInfoWindowStream.sink,
       xFrontPadding: widget.xFrontPadding,
@@ -485,14 +484,15 @@ class _KChartWidgetState extends State<KChartWidget>
       enableCordRecord = false;
       Offset p1 = Offset(getTrendLineX(), mSelectY);
       if (!waitingForOtherPairOfCords) {
-        lines
-            .add(TrendLine(p1, Offset(-1, -1), trendLineMax!, trendLineScale!));
+        chartProperties.addTrendLine(
+            TrendLine(p1, Offset(-1, -1), trendLineMax!, trendLineScale!));
       }
 
       if (waitingForOtherPairOfCords) {
-        var a = lines.last;
-        lines.removeLast();
-        lines.add(TrendLine(a.p1, p1, trendLineMax!, trendLineScale!));
+        var a = chartProperties.trendLines.last;
+        chartProperties.trendLines.removeLast();
+        chartProperties
+            .addTrendLine(TrendLine(a.p1, p1, trendLineMax!, trendLineScale!));
         waitingForOtherPairOfCords = false;
       } else {
         waitingForOtherPairOfCords = true;
