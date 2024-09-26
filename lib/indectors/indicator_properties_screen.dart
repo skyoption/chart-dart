@@ -9,7 +9,12 @@ import 'package:candle_chart/k_chart_plus.dart';
 import 'package:flutter/material.dart';
 
 class IndicatorPropertiesScreen extends StatefulWidget {
-  const IndicatorPropertiesScreen({super.key});
+  final Function onDone;
+
+  const IndicatorPropertiesScreen({
+    super.key,
+    required this.onDone,
+  });
 
   @override
   State<IndicatorPropertiesScreen> createState() =>
@@ -57,6 +62,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                   alignment: AlignmentDirectional.centerEnd,
                   child: InkWell(
                     onTap: () {
+                      widget.onDone();
                       Navigator.of(context).pop();
                     },
                     child: Text(

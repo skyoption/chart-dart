@@ -3,7 +3,12 @@ import 'package:candle_chart/indectors/indicator_properties_screen.dart';
 import 'package:flutter/material.dart';
 
 class NewIndicatorScreen extends StatefulWidget {
-  const NewIndicatorScreen({super.key});
+  final Function onDone;
+
+  const NewIndicatorScreen({
+    super.key,
+    required this.onDone,
+  });
 
   @override
   State<NewIndicatorScreen> createState() => _NewIndicatorScreenState();
@@ -69,7 +74,9 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => IndicatorPropertiesScreen(),
+                    builder: (context) => IndicatorPropertiesScreen(
+                      onDone: widget.onDone,
+                    ),
                   ),
                 );
               },

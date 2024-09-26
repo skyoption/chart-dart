@@ -4,6 +4,7 @@ import 'package:candle_chart/components/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/indectors/ma_methods_screen.dart';
 import 'package:candle_chart/k_chart_widget.dart';
+import 'package:candle_chart/utils/properties/chart_properties.dart';
 
 import '../entity/index.dart';
 
@@ -13,14 +14,20 @@ class DataUtil {
     List<KLineEntity> dataList, {
     int n = 20,
     k = 2,
-    List<IndicatorEntity> indicators = const [],
   }) {
     // Group the indicators by type
-    final SMA = indicators.where((e) => e.type == IndicatorType.SMA).toList();
-    final EMA = indicators.where((e) => e.type == IndicatorType.EMA).toList();
-    final LINEARMA =
-        indicators.where((e) => e.type == IndicatorType.LINEARMA).toList();
-    final SMMA = indicators.where((e) => e.type == IndicatorType.SMMA).toList();
+    final SMA = chartProperties.indicators
+        .where((e) => e.type == IndicatorType.SMA)
+        .toList();
+    final EMA = chartProperties.indicators
+        .where((e) => e.type == IndicatorType.EMA)
+        .toList();
+    final LINEARMA = chartProperties.indicators
+        .where((e) => e.type == IndicatorType.LINEARMA)
+        .toList();
+    final SMMA = chartProperties.indicators
+        .where((e) => e.type == IndicatorType.SMMA)
+        .toList();
     if (SMA.isNotEmpty) calcSMA(dataList, SMA);
     if (EMA.isNotEmpty) calcEMA(dataList, EMA);
     if (LINEARMA.isNotEmpty) calcLinearMa(dataList, LINEARMA);
@@ -114,9 +121,9 @@ class DataUtil {
   }
 
   static void calcSmoothedMa(
-      List<KLineEntity> dataList,
-      List<IndicatorEntity> indicators,
-      ) {
+    List<KLineEntity> dataList,
+    List<IndicatorEntity> indicators,
+  ) {
     for (var indicator in indicators) {
       double? previousSmma;
 
@@ -125,7 +132,8 @@ class DataUtil {
         KLineEntity entity = dataList[i];
 
         // Initialize smmaValues list if it's null
-        entity.smmaValues ??= List<IndicatorEntity>.filled(indicators.length, indicator.copy(value: 0));
+        entity.smmaValues ??= List<IndicatorEntity>.filled(
+            indicators.length, indicator.copy(value: 0));
 
         if (i == indicator.period - 1) {
           // First SMMA value: Simple Moving Average (SMA)
@@ -134,15 +142,18 @@ class DataUtil {
             sum += dataList[j].close;
           }
           previousSmma = sum / indicator.period;
-          entity.smmaValues?[indicators.indexOf(indicator)].value = previousSmma;
+          entity.smmaValues?[indicators.indexOf(indicator)].value =
+              previousSmma;
         } else {
           // Subsequent SMMA values
           double currentClose = entity.close;
           previousSmma =
-              ((previousSmma! * (indicator.period - 1)) + currentClose) / indicator.period;
+              ((previousSmma! * (indicator.period - 1)) + currentClose) /
+                  indicator.period;
 
           // Set the current SMMA value in the list
-          entity.smmaValues?[indicators.indexOf(indicator)].value = previousSmma;
+          entity.smmaValues?[indicators.indexOf(indicator)].value =
+              previousSmma;
         }
       }
     }

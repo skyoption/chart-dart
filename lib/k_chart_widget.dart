@@ -7,6 +7,7 @@ import 'package:candle_chart/functions/widgets/svg.dart';
 import 'package:candle_chart/functions/objects_screen.dart';
 import 'package:candle_chart/indectors/indicators_screen.dart';
 import 'package:candle_chart/k_chart_plus.dart';
+import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:candle_chart/utils/icons.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -102,9 +103,6 @@ class _KChartWidgetState extends State<KChartWidget>
   AnimationController? _controller;
   Animation<double>? aniX;
 
-  //For price lines
-  List<LineEntity> linesPrice = [];
-
   //For TrendLine
   List<TrendLine> lines = [];
   double? changeInXposition;
@@ -124,52 +122,46 @@ class _KChartWidgetState extends State<KChartWidget>
   int pointerCount = 0;
   String currentLineName = '';
   int currentLineIndex = -1;
-  List<IndicatorEntity> indicators = [];
 
   @override
   void initState() {
-    indicators = [
-      IndicatorEntity(
-        period: 20,
-        type: IndicatorType.LINEARMA,
-        color: Colors.red,
-      ),
-      // IndicatorEntity(
-      //   period: 20,
-      //   type: IndicatorType.BOLL,
-      //   color: Colors.deepPurple,
-      // ),
-      IndicatorEntity(
-        period: 20,
-        type: IndicatorType.EMA,
-        color: Colors.orange,
-      ),
-      IndicatorEntity(
-        period: 10,
-        type: IndicatorType.EMA,
-        color: Colors.black,
-      ),
-      IndicatorEntity(
-        period: 20,
-        type: IndicatorType.SMA,
-        color: Colors.green,
-      ),
-      IndicatorEntity(
-        period: 10,
-        type: IndicatorType.SMA,
-        color: Colors.yellowAccent,
-      ),
-      IndicatorEntity(
-        period: 20,
-        type: IndicatorType.SMMA,
-        color: Colors.blueAccent,
-      ),
-    ];
-    Future.delayed(Duration(seconds: 5), () {
-      DataUtil.calculate(
-        widget.data!,
-        indicators: indicators,
-      );
+    chartProperties.addIndicator(IndicatorEntity(
+      period: 20,
+      type: IndicatorType.LINEARMA,
+      color: Colors.red,
+    ));
+    chartProperties.addIndicator(IndicatorEntity(
+      period: 20,
+      type: IndicatorType.EMA,
+      color: Colors.orange,
+    ));
+    // chartProperties.addIndicator(IndicatorEntity(
+    //   period: 20,
+    //   type: IndicatorType.BOLL,
+    //   color: Colors.deepPurple,
+    // ),);
+    chartProperties.addIndicator(IndicatorEntity(
+      period: 10,
+      type: IndicatorType.EMA,
+      color: Colors.black,
+    ));
+    chartProperties.addIndicator(IndicatorEntity(
+      period: 20,
+      type: IndicatorType.SMA,
+      color: Colors.green,
+    ));
+    chartProperties.addIndicator(IndicatorEntity(
+      period: 10,
+      type: IndicatorType.SMA,
+      color: Colors.yellowAccent,
+    ));
+    chartProperties.addIndicator(IndicatorEntity(
+      period: 20,
+      type: IndicatorType.SMMA,
+      color: Colors.blueAccent,
+    ));
+    Future.delayed(Duration(seconds: 6), () {
+      DataUtil.calculate(widget.data!);
       setState(() {});
     });
     super.initState();
@@ -206,11 +198,11 @@ class _KChartWidgetState extends State<KChartWidget>
     );
     _painter = ChartPainter(
       widget.chartStyle,
-      widget.chartColors, indicators: indicators,
+      widget.chartColors, indicators: chartProperties.indicators,
       screenHeight: mBaseHeight,
       baseDimension: baseDimension,
       lines: lines,
-      linesPrice: linesPrice,
+      linesPrice: chartProperties.linesPrice,
       //For TrendLine
       sink: mInfoWindowStream.sink,
       xFrontPadding: widget.xFrontPadding,
@@ -262,27 +254,10 @@ class _KChartWidgetState extends State<KChartWidget>
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => IndicatorsScreen(
-                                // volHidden: widget.volHidden,
-                                // mainState: widget.mainState,
-                                // secondaryStateLi:
-                                //     widget.secondaryStateLi.toList(),
-                                // setMode: (volHidden, mainState, secondaryState) {
-                                //   widget.volHidden = volHidden;
-                                //   widget.mainState = mainState;
-                                //   widget.secondaryStateLi =
-                                //       secondaryState.toSet();
-                                //   if (widget.secondaryStateLi.isNotEmpty &&
-                                //       !widget.volHidden) {
-                                //     mBaseHeight = height * 0.50;
-                                //   } else if (widget.secondaryStateLi.isNotEmpty ||
-                                //       !widget.volHidden) {
-                                //     mBaseHeight = height * 0.58;
-                                //   } else {
-                                //     mBaseHeight = height * 0.70;
-                                //   }
-                                //   setState(() {});
-                                // },
-                                ),
+                              onDone: () {
+                                notifyChanged();
+                              },
+                            ),
                           ),
                         );
                       },
@@ -300,7 +275,7 @@ class _KChartWidgetState extends State<KChartWidget>
                           MaterialPageRoute(
                             builder: (context) => ObjectsScreen(
                               onDone: (line) {
-                                linesPrice.add(line);
+                                chartProperties.linesPrice.add(line);
                                 notifyChanged();
                               },
                             ),
@@ -381,7 +356,7 @@ class _KChartWidgetState extends State<KChartWidget>
 
   void _updateObjectPosition(Offset offset) {
     if (currentLineIndex != -1) {
-      linesPrice[currentLineIndex].dy = offset.dy;
+      chartProperties.linesPrice[currentLineIndex].dy = offset.dy;
       notifyChanged();
     }
   }
