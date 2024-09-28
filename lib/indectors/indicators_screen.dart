@@ -1,5 +1,5 @@
-import 'package:candle_chart/functions/widgets/object_item_widget.dart';
-import 'package:candle_chart/functions/widgets/properties_item_widget.dart';
+import 'package:candle_chart/objects/widgets/object_item_widget.dart';
+import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/indectors/indicator_properties_screen.dart';
 import 'package:candle_chart/indectors/new_indicator_screen.dart';
 import 'package:candle_chart/utils/icons.dart';

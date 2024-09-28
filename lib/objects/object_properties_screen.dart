@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:candle_chart/entity/line_entity.dart';
-import 'package:candle_chart/functions/widgets/object_item_widget.dart';
-import 'package:candle_chart/functions/widgets/object_style_widget.dart';
-import 'package:candle_chart/functions/widgets/properties_item_widget.dart';
+import 'package:candle_chart/objects/widgets/object_item_widget.dart';
+import 'package:candle_chart/objects/widgets/object_style_widget.dart';
+import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/utils/icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -103,8 +103,9 @@ class _ObjectPropertiesScreenState extends State<ObjectPropertiesScreen> {
               title: 'Point',
               child: SizedBox(
                 width: 60.0,
-                height: 18.0,
+                height: 20.0,
                 child: TextField(
+                  cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w400,

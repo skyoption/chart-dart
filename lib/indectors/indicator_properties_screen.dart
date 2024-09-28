@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/functions/object_properties_screen.dart';
-import 'package:candle_chart/functions/widgets/object_style_widget.dart';
-import 'package:candle_chart/functions/widgets/properties_item_widget.dart';
+import 'package:candle_chart/objects/object_properties_screen.dart';
+import 'package:candle_chart/objects/widgets/object_style_widget.dart';
+import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/indectors/apply_to_screen.dart';
 import 'package:candle_chart/indectors/ma_methods_screen.dart';
 import 'package:candle_chart/k_chart_plus.dart';
@@ -126,8 +126,9 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
               title: 'Period',
               child: SizedBox(
                 width: 60.0,
-                height: 18.0,
+                height: 20.0,
                 child: TextField(
+                  cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w400,
@@ -137,6 +138,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                     final res = int.tryParse(value);
                     if (res != null) widget.indicator?.period = res;
                   },
+                  autofocus: false,
                   controller: periodController,
                   textAlignVertical: TextAlignVertical.center,
                   keyboardType: TextInputType.numberWithOptions(signed: false),
@@ -158,8 +160,10 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
               margin: EdgeInsets.zero,
               child: SizedBox(
                 width: 60.0,
-                height: 18.0,
+                height: 20.0,
                 child: TextField(
+                  cursorHeight: 12.0,
+                  autofocus: false,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w400,
@@ -187,7 +191,8 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
               title: 'Method',
-              subTitle: _setMethod(widget.indicator?.type)?.name ?? 'Sample',
+              subTitle: (_setMethod(widget.indicator?.type)?.name ?? 'Sample')
+                  .replaceAll('_', ' '),
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {
@@ -207,7 +212,9 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
               title: 'Apply To',
-              subTitle: widget.indicator?.applyTo.name ?? 'Close',
+              subTitle: (widget.indicator?.applyTo.name ?? 'Close')
+                  .replaceAll('_', ' ')
+                  .replaceAll('\$', '/'),
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {

@@ -1,4 +1,4 @@
-import 'package:candle_chart/functions/widgets/object_item_widget.dart';
+import 'package:candle_chart/objects/widgets/object_item_widget.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/utils/icons.dart';
 import 'package:flutter/material.dart';

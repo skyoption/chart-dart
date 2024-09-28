@@ -1,5 +1,5 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/functions/widgets/properties_item_widget.dart';
+import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:flutter/material.dart';
 
 class ApplyToScreen extends StatefulWidget {

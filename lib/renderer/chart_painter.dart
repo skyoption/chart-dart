@@ -132,6 +132,7 @@ class ChartPainter extends BaseChartPainter
       ..isAntiAlias = true;
   }
 
+
   @override
   void initChartRenderer() {
     if (data != null && data!.isNotEmpty) {
@@ -153,6 +154,7 @@ class ChartPainter extends BaseChartPainter
       verticalTextAlignment,
       indicators,
     );
+
     if (mVolRect != null) {
       mVolRenderer = VolRenderer(mVolRect!, mVolMaxValue, mVolMinValue,
           mChildPadding, fixedLength, this.chartStyle, this.chartColors);

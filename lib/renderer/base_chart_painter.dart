@@ -216,6 +216,7 @@ abstract class BaseChartPainter extends CustomPainter
 
     mMainRect = Rect.fromLTRB(0, mTopPadding, mWidth, mTopPadding + mainHeight);
 
+
     if (volHidden != true) {
       mVolRect = Rect.fromLTRB(0, mMainRect.bottom + mChildPadding, mWidth,
           mMainRect.bottom + volHeight);

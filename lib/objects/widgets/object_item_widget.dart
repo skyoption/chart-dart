@@ -1,4 +1,4 @@
-import 'package:candle_chart/functions/widgets/svg.dart';
+import 'package:candle_chart/objects/widgets/svg.dart';
 import 'package:flutter/material.dart';
 
 class ObjectItemWidget extends StatelessWidget {

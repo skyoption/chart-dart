@@ -1,4 +1,4 @@
-import 'package:candle_chart/functions/widgets/properties_item_widget.dart';
+import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:flutter/material.dart';
 
 enum Methods { Simple, Exponential, Smoothed, Linear_Weighted }
