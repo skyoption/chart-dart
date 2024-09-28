@@ -12,18 +12,27 @@ class ObjectStyleWidget extends StatefulWidget {
   final Function(
     Color color,
     bool drawAsBackground,
-    double lineHeight,
+    double strokeWidth,
     LineStyle style,
   ) onChange;
 
   final bool hideDrawAsBackground;
   final bool hideStyle;
 
+  final Color? color;
+  final bool? drawAsBackground;
+  final double? strokeWidth;
+  final LineStyle? style;
+
   const ObjectStyleWidget({
     super.key,
     required this.onChange,
     this.hideDrawAsBackground = false,
     this.hideStyle = false,
+    this.color,
+    this.drawAsBackground,
+    this.strokeWidth,
+    this.style,
   });
 
   @override
@@ -31,18 +40,18 @@ class ObjectStyleWidget extends StatefulWidget {
 }
 
 class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
-  Color color = Colors.blueAccent;
-  bool drawAsBackground = false;
+  late Color color = widget.color ?? Colors.blueAccent;
+  late bool drawAsBackground = widget.drawAsBackground ?? false;
   int index = 0;
-  double lineHeight = 1;
-  LineStyle style = LineStyle.normal;
+  late double strokeWidth = widget.strokeWidth ?? 1.0;
+  late LineStyle style = widget.style ?? LineStyle.normal;
 
   @override
   void initState() {
     widget.onChange(
       color,
       drawAsBackground,
-      lineHeight,
+      strokeWidth,
       style,
     );
     super.initState();
@@ -99,7 +108,7 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                           widget.onChange(
                             color,
                             drawAsBackground,
-                            lineHeight,
+                            strokeWidth,
                             style,
                           );
                         },
@@ -126,26 +135,26 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                               children: [
                                 InkResponse(
                                   onTap: () {
-                                    lineHeight = item.value;
+                                    strokeWidth = item.value;
                                     setState(() {});
                                     widget.onChange(
                                       color,
                                       drawAsBackground,
-                                      lineHeight,
+                                      strokeWidth,
                                       style,
                                     );
                                   },
                                   child: Container(
                                     margin: EdgeInsets.all(1.0),
                                     padding: EdgeInsets.all(
-                                      lineHeight == item.value ? 0.0 : 2.0,
+                                      strokeWidth == item.value ? 0.0 : 2.0,
                                     ),
                                     width:
-                                        lineHeight == item.value ? 12.0 : 10.0,
+                                        strokeWidth == item.value ? 12.0 : 10.0,
                                     height:
-                                        lineHeight == item.value ? 12.0 : 10.0,
+                                        strokeWidth == item.value ? 12.0 : 10.0,
                                     decoration: BoxDecoration(
-                                      color: lineHeight == item.value
+                                      color: strokeWidth == item.value
                                           ? Colors.black87
                                           : Colors.blueAccent,
                                       shape: BoxShape.circle,
@@ -243,7 +252,7 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                     widget.onChange(
                       color,
                       drawAsBackground,
-                      lineHeight,
+                      strokeWidth,
                       style,
                     );
                   },
@@ -270,7 +279,7 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
     widget.onChange(
       color,
       drawAsBackground,
-      lineHeight,
+      strokeWidth,
       style,
     );
   }

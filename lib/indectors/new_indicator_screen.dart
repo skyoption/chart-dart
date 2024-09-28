@@ -72,10 +72,11 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
-                Navigator.of(context).push(
+                Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => IndicatorPropertiesScreen(
                       onDone: widget.onDone,
+                      name: 'Moving Average',
                     ),
                   ),
                 );

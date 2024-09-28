@@ -50,6 +50,9 @@ class DataUtil {
     for (var indicator in indicators) {
       for (int i = indicator.period; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
+        if (i == indicator.period) {
+          entity.smaValues = null;
+        }
         if (i >= indicator.period - 1) {
           double sum = 0;
           for (int j = i; j > i - indicator.period; j--) {
@@ -58,6 +61,15 @@ class DataUtil {
           double smaValue = sum / indicator.period;
           entity.smaValues ??= List<IndicatorEntity>.filled(
               indicators.length, indicator.copy(value: 0));
+          if (entity.smaValues?.length != indicators.length) {
+            entity.smaValues = [
+              ...entity.smaValues!,
+              ...List<IndicatorEntity>.filled(
+                indicators.length - entity.smaValues!.length,
+                indicator.copy(value: 0),
+              )
+            ];
+          }
           entity.smaValues![indicators.indexOf(indicator)].value = smaValue;
         } else {
           entity.smaValues ??= List<IndicatorEntity>.filled(
@@ -73,6 +85,9 @@ class DataUtil {
   ) {
     for (var indicator in indicators) {
       for (int i = indicator.period - 1; i < dataList.length; i++) {
+        if (i == indicator.period - 1) {
+          dataList[i].lwmaValues = null;
+        }
         if (i >= indicator.period - 1) {
           double numerator = 0;
           double denominator = (indicator.period * (indicator.period + 1)) / 2;
@@ -83,6 +98,15 @@ class DataUtil {
           double lwmaValue = numerator / denominator;
           dataList[i].lwmaValues ??= List<IndicatorEntity>.filled(
               indicators.length, indicator.copy(value: 0));
+          if (dataList[i].lwmaValues?.length != indicators.length) {
+            dataList[i].lwmaValues = [
+              ...dataList[i].lwmaValues!,
+              ...List<IndicatorEntity>.filled(
+                indicators.length - dataList[i].lwmaValues!.length,
+                indicator.copy(value: 0),
+              )
+            ];
+          }
           dataList[i].lwmaValues![indicators.indexOf(indicator)].value =
               lwmaValue;
         } else {
@@ -103,9 +127,20 @@ class DataUtil {
       double? previousEma;
       for (int i = indicator.period; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
+        if (i == indicator.period) {
+          entity.emaValues = null;
+        }
         entity.emaValues ??= List<IndicatorEntity>.filled(
             indicators.length, indicator.copy(value: 0));
-
+        if (entity.emaValues?.length != indicators.length) {
+          entity.emaValues = [
+            ...entity.emaValues!,
+            ...List<IndicatorEntity>.filled(
+              indicators.length - entity.emaValues!.length,
+              indicator.copy(value: 0),
+            )
+          ];
+        }
         if (i == 0) {
           // Initialize the first EMA value with the close price
           previousEma = _currentPriceValue(indicator, entity);
@@ -133,11 +168,21 @@ class DataUtil {
       // Loop through data starting from the period - 1
       for (int i = indicator.period - 1; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
-
+        if (i == indicator.period- 1) {
+          entity.smmaValues = null;
+        }
         // Initialize smmaValues list if it's null
         entity.smmaValues ??= List<IndicatorEntity>.filled(
             indicators.length, indicator.copy(value: 0));
-
+        if (entity.smmaValues?.length != indicators.length) {
+          entity.smmaValues = [
+            ...entity.smmaValues!,
+            ...List<IndicatorEntity>.filled(
+              indicators.length - entity.smmaValues!.length,
+              indicator.copy(value: 0),
+            )
+          ];
+        }
         if (i == indicator.period - 1) {
           // First SMMA value: Simple Moving Average (SMA)
           double sum = 0;

@@ -3,14 +3,21 @@ import 'package:candle_chart/functions/widgets/properties_item_widget.dart';
 import 'package:flutter/material.dart';
 
 class ApplyToScreen extends StatefulWidget {
-  const ApplyToScreen({super.key});
+  final Function(ApplyTo apply) onApply;
+  final ApplyTo? apply;
+
+  const ApplyToScreen({
+    super.key,
+    required this.onApply,
+    this.apply,
+  });
 
   @override
   State<ApplyToScreen> createState() => _ApplyToScreenState();
 }
 
 class _ApplyToScreenState extends State<ApplyToScreen> {
-  ApplyTo applyTo = ApplyTo.Close;
+  late ApplyTo applyTo = widget.apply ?? ApplyTo.Close;
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +75,7 @@ class _ApplyToScreenState extends State<ApplyToScreen> {
                   onTap: () {
                     applyTo = item.value;
                     setState(() {});
+                    widget.onApply(applyTo);
                   },
                 ),
                 if (item.key != ApplyTo.values.length - 1)

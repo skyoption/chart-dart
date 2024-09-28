@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:candle_chart/chart_translations.dart';
+import 'package:candle_chart/components/kprint.dart';
 import 'package:candle_chart/components/popup_info_view.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/functions/widgets/svg.dart';
@@ -122,55 +123,6 @@ class _KChartWidgetState extends State<KChartWidget>
   int currentLineIndex = -1;
 
   @override
-  void initState() {
-    chartProperties.addIndicator(IndicatorEntity(
-      period: 20,
-      type: IndicatorType.LINEARMA,
-      color: Colors.red,
-    ));
-    chartProperties.addIndicator(IndicatorEntity(
-      period: 20,
-      type: IndicatorType.EMA,
-      color: Colors.orange,
-    ));
-    // chartProperties.addIndicator(IndicatorEntity(
-    //   period: 20,
-    //   type: IndicatorType.BOLL,
-    //   color: Colors.deepPurple,
-    // ),);
-    chartProperties.addIndicator(IndicatorEntity(
-      period: 10,
-      type: IndicatorType.EMA,
-      color: Colors.black,
-    ));
-    chartProperties.addIndicator(IndicatorEntity(
-      period: 20,
-      type: IndicatorType.SMA,
-      color: Colors.green,
-      style: LineStyle.longDash,
-      lineHeight: 2.0,
-    ));
-    chartProperties.addIndicator(IndicatorEntity(
-      period: 10,
-      type: IndicatorType.SMA,
-      color: Colors.yellowAccent,
-    ));
-    chartProperties.addIndicator(IndicatorEntity(
-      period: 20,
-      type: IndicatorType.SMMA,
-      color: Colors.blueAccent,
-      applyTo: ApplyTo.Weighted_Close_HLCC$4,
-      lineHeight: 1.0,
-      style: LineStyle.dash,
-    ));
-    Future.delayed(Duration(seconds: 6), () {
-      DataUtil.calculate(widget.data!);
-      setState(() {});
-    });
-    super.initState();
-  }
-
-  @override
   void dispose() {
     mInfoWindowStream.sink.close();
     mInfoWindowStream.close();
@@ -259,6 +211,8 @@ class _KChartWidgetState extends State<KChartWidget>
                           MaterialPageRoute(
                             builder: (context) => IndicatorsScreen(
                               onDone: () {
+                                DataUtil.calculate(widget.data!);
+                                kPrint('notifyChanged');
                                 notifyChanged();
                               },
                             ),

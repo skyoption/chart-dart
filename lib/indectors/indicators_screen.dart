@@ -1,7 +1,9 @@
 import 'package:candle_chart/functions/widgets/object_item_widget.dart';
 import 'package:candle_chart/functions/widgets/properties_item_widget.dart';
+import 'package:candle_chart/indectors/indicator_properties_screen.dart';
 import 'package:candle_chart/indectors/new_indicator_screen.dart';
 import 'package:candle_chart/utils/icons.dart';
+import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:flutter/material.dart';
 
 class IndicatorsScreen extends StatefulWidget {
@@ -69,7 +71,7 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                 color: Colors.blueAccent,
               ),
               onTap: () {
-                Navigator.of(context).push(
+                Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => NewIndicatorScreen(
                       onDone: widget.onDone,
@@ -78,20 +80,30 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                 );
               },
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: 'Moving Average',
-              margin: EdgeInsets.zero,
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => NewIndicatorScreen(
-                      onDone: widget.onDone,
+            ...chartProperties.indicators.asMap().entries.map(
+              (e) {
+                return Column(
+                  children: [
+                    Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+                    PropertiesItemWidget(
+                      title: '${e.value.name} (${e.value.type?.name})',
+                      margin: EdgeInsets.zero,
+                      onTap: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => IndicatorPropertiesScreen(
+                              index: e.key,
+                              indicator: e.value,
+                              onDone: widget.onDone,
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  ),
+                  ],
                 );
               },
-            ),
+            )
           ],
         ),
       ),
