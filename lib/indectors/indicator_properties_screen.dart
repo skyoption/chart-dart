@@ -119,7 +119,9 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            PropertiesTitleWidget(title: widget.indicator!.name.toUpperCase()),
+            PropertiesTitleWidget(
+              title: '${widget.indicator?.name.toUpperCase()}',
+            ),
             PropertiesItemWidget(
               title: 'Period',
               child: SizedBox(

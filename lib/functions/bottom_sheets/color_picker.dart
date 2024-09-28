@@ -37,6 +37,7 @@ class _PickerColorWidgetState extends State<PickerColorWidget> {
                   pickerColor: widget.pickerColor,
                   onColorChanged: (value) {
                     widget.pickerColor = value;
+                    // setState(() {});
                   },
                   colorPickerWidth: 320.0,
                   pickerAreaHeightPercent: 0.6,

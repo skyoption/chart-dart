@@ -212,7 +212,6 @@ class _KChartWidgetState extends State<KChartWidget>
                             builder: (context) => IndicatorsScreen(
                               onDone: () {
                                 DataUtil.calculate(widget.data!);
-                                kPrint('notifyChanged');
                                 notifyChanged();
                               },
                             ),

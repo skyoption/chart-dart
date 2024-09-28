@@ -35,7 +35,7 @@ class IndicatorEntity {
     this.type = IndicatorType.SMA,
     this.value = 0,
     this.applyTo = ApplyTo.Close,
-    this.strokeWidth = 1.2,
+    this.strokeWidth = 1.0,
     this.style = LineStyle.normal,
     this.level = Levels.None,
     this.timeframe = Timeframes.All_Timeframes,

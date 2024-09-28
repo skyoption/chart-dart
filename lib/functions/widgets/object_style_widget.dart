@@ -1,3 +1,4 @@
+import 'package:candle_chart/components/kprint.dart';
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/functions/bottom_sheets/color_picker.dart';
 import 'package:candle_chart/functions/object_properties_screen.dart';
@@ -43,11 +44,12 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
   late Color color = widget.color ?? Colors.blueAccent;
   late bool drawAsBackground = widget.drawAsBackground ?? false;
   int index = 0;
-  late double strokeWidth = widget.strokeWidth ?? 1.0;
+  double strokeWidth = 1.0;
   late LineStyle style = widget.style ?? LineStyle.normal;
 
   @override
   void initState() {
+    if (widget.strokeWidth != null) strokeWidth = widget.strokeWidth!;
     widget.onChange(
       color,
       drawAsBackground,
@@ -149,18 +151,16 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                                     padding: EdgeInsets.all(
                                       strokeWidth == item.value ? 0.0 : 2.0,
                                     ),
-                                    width:
-                                        strokeWidth == item.value ? 12.0 : 10.0,
-                                    height:
-                                        strokeWidth == item.value ? 12.0 : 10.0,
+                                    width: (item.value * 1.5) + 10,
+                                    height: (item.value * 1.5) + 10,
                                     decoration: BoxDecoration(
                                       color: strokeWidth == item.value
                                           ? Colors.black87
-                                          : Colors.blueAccent,
+                                          : color,
                                       shape: BoxShape.circle,
                                       border: Border.all(
-                                        color: Colors.blueAccent,
-                                        width: 1.0,
+                                        color: color,
+                                        width: 1.2,
                                       ),
                                     ),
                                   ),
@@ -169,7 +169,7 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                                   Expanded(
                                     child: Container(
                                       height: 1.0,
-                                      color: Colors.blueAccent,
+                                      color: color,
                                     ),
                                   )
                               ],
