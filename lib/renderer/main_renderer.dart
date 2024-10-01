@@ -1,3 +1,4 @@
+import 'package:candle_chart/components/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:flutter/material.dart';
 
@@ -130,15 +131,16 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       drawCandle(curPoint, canvas, curX);
       for (var item in indicators) {
         if (item.type == IndicatorType.BOLL) {
-          drawBollLine(lastPoint, curPoint, canvas, lastX, curX);
+          drawBollLine(lastPoint, curPoint, canvas, lastX, curX, item.period);
         } else if (item.type == IndicatorType.EMA) {
-          drawEmaLine(lastPoint, curPoint, canvas, lastX, curX);
+          drawEmaLine(lastPoint, curPoint, canvas, lastX, curX, item.period);
         } else if (item.type == IndicatorType.LINEARMA) {
-          drawLINEARMALine(lastPoint, curPoint, canvas, lastX, curX);
+          drawLINEARMALine(
+              lastPoint, curPoint, canvas, lastX, curX, item.period);
         } else if (item.type == IndicatorType.SMA) {
-          drawSmaLine(lastPoint, curPoint, canvas, lastX, curX);
+          drawSmaLine(lastPoint, curPoint, canvas, lastX, curX, item.period);
         } else if (item.type == IndicatorType.SMMA) {
-          drawSmmaLine(lastPoint, curPoint, canvas, lastX, curX);
+          drawSmmaLine(lastPoint, curPoint, canvas, lastX, curX, item.period);
         }
       }
     }
@@ -147,12 +149,13 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   // 实现EMA绘制函数
   //EMA
   void drawEmaLine(CandleEntity lastPoint, CandleEntity curPoint, Canvas canvas,
-      double lastX, double curX) {
+      double lastX, double curX, int period) {
     for (int i = 0; i < (curPoint.emaValues?.length ?? 0); i++) {
       if (i == 4) {
         break;
       }
-      if (lastPoint.emaValues?[i] != 0) {
+      if (lastPoint.emaValues?[i] != 0 &&
+          period == curPoint.emaValues?[i].period) {
         drawLine(
           lastPoint.emaValues?[i].value,
           curPoint.emaValues?[i].value,
@@ -170,12 +173,13 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   // 实现EMA绘制函数
   //LINEARMA
   void drawLINEARMALine(CandleEntity lastPoint, CandleEntity curPoint,
-      Canvas canvas, double lastX, double curX) {
+      Canvas canvas, double lastX, double curX, int period) {
     for (int i = 0; i < (curPoint.lwmaValues?.length ?? 0); i++) {
       if (i == 4) {
         break;
       }
-      if (lastPoint.lwmaValues?[i] != 0) {
+      if (lastPoint.lwmaValues?[i] != 0 &&
+          period == curPoint.lwmaValues?[i].period) {
         drawLine(
           lastPoint.lwmaValues?[i].value,
           curPoint.lwmaValues?[i].value,
@@ -193,12 +197,13 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   // 实现SMA绘制函数
   //SMA
   void drawSmaLine(CandleEntity lastPoint, CandleEntity curPoint, Canvas canvas,
-      double lastX, double curX) {
+      double lastX, double curX, int period) {
     for (int i = 0; i < (curPoint.smaValues?.length ?? 0); i++) {
       if (i == 4) {
         break;
       }
-      if (lastPoint.smaValues?[i] != 0) {
+      if (lastPoint.smaValues?[i] != 0 &&
+          period == curPoint.smaValues?[i].period) {
         drawLine(
           lastPoint.smaValues?[i].value,
           curPoint.smaValues?[i].value,
@@ -216,12 +221,13 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   // 实现SMMA绘制函数
   //SMMA
   void drawSmmaLine(CandleEntity lastPoint, CandleEntity curPoint,
-      Canvas canvas, double lastX, double curX) {
+      Canvas canvas, double lastX, double curX, int period) {
     for (int i = 0; i < (curPoint.smmaValues?.length ?? 0); i++) {
       if (i == 4) {
         break;
       }
-      if (lastPoint.smmaValues?[i] != 0) {
+      if (lastPoint.smmaValues?[i] != 0 &&
+          period == curPoint.smmaValues?[i].period) {
         drawLine(
           lastPoint.smmaValues?[i].value,
           curPoint.smmaValues?[i].value,
@@ -291,7 +297,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   }
 
   void drawBollLine(CandleEntity lastPoint, CandleEntity curPoint,
-      Canvas canvas, double lastX, double curX) {
+      Canvas canvas, double lastX, double curX, int period) {
     if (lastPoint.up != 0) {
       drawLine(lastPoint.up, curPoint.up, canvas, lastX, curX,
           this.chartColors.ma10Color);
