@@ -216,7 +216,6 @@ abstract class BaseChartPainter extends CustomPainter
 
     mMainRect = Rect.fromLTRB(0, mTopPadding, mWidth, mTopPadding + mainHeight);
 
-
     if (volHidden != true) {
       mVolRect = Rect.fromLTRB(0, mMainRect.bottom + mChildPadding, mWidth,
           mMainRect.bottom + volHeight);
@@ -260,18 +259,21 @@ abstract class BaseChartPainter extends CustomPainter
     double maxPrice = item.high, minPrice = item.low;
 
     for (var indicator in indicators) {
-      if (indicator.type == IndicatorType.LINEARMA) {
-        maxPrice = max(item.high, _findMaxMA(item.lwmaValues ?? []));
-        minPrice = min(item.low, _findMinMA(item.lwmaValues ?? []));
-      } else if (indicator.type == IndicatorType.EMA) {
-        maxPrice = max(item.high, _findMaxMA(item.emaValues ?? []));
-        minPrice = min(item.low, _findMinMA(item.emaValues ?? []));
-      } else if (indicator.type == IndicatorType.SMA) {
-        maxPrice = max(item.high, _findMaxMA(item.smaValues ?? []));
-        minPrice = min(item.low, _findMinMA(item.smaValues ?? []));
+      if (indicator.type == IndicatorType.LINEAR_MA) {
+        maxPrice = max(item.high, _findMaxMA(item.lwmaMaValues ?? []));
+        minPrice = min(item.low, _findMinMA(item.lwmaMaValues ?? []));
+      } else if (indicator.type == IndicatorType.EMA_MA) {
+        maxPrice = max(item.high, _findMaxMA(item.emaMaValues ?? []));
+        minPrice = min(item.low, _findMinMA(item.emaMaValues ?? []));
+      } else if (indicator.type == IndicatorType.SMA_MA) {
+        maxPrice = max(item.high, _findMaxMA(item.smaMaValues ?? []));
+        minPrice = min(item.low, _findMinMA(item.smaMaValues ?? []));
+      }else if (indicator.type == IndicatorType.PARABOLIC) {
+        maxPrice = max(item.high, _findMaxMA(item.parabolicValues ?? []));
+        minPrice = min(item.low, _findMinMA(item.parabolicValues ?? []));
       } else if (indicator.type == IndicatorType.BOLL) {
-        maxPrice = max(item.up ?? 0, item.high);
-        minPrice = min(item.dn ?? 0, item.low);
+        maxPrice = max(_findMaxUP(item.bollValues ?? []), item.high);
+        minPrice = min(_findMinDN(item.bollValues ?? []), item.low);
       }
     }
     mMainMaxValue = max(mMainMaxValue, maxPrice);
@@ -301,6 +303,16 @@ abstract class BaseChartPainter extends CustomPainter
     return result;
   }
 
+  // find minimum of the UP
+  double _findMaxUP(List<IndicatorEntity> a) {
+    double result = double.minPositive;
+    for (IndicatorEntity i in a) {
+      result = max(result, i.up ?? 0);
+    }
+    return result;
+  }
+
+
   // find minimum of the MA
   double _findMinMA(List<IndicatorEntity> a) {
     double result = double.maxFinite;
@@ -309,6 +321,17 @@ abstract class BaseChartPainter extends CustomPainter
     }
     return result;
   }
+
+  // find minimum of the DN
+  double _findMinDN(List<IndicatorEntity> a) {
+    double result = double.maxFinite;
+    for (IndicatorEntity i in a) {
+      result = min(result, i.dn == 0 ? double.maxFinite : i.dn ?? result);
+    }
+    return result;
+  }
+
+
 
   // get the maximum and minimum of the Vol value
   void getVolMaxMinValue(KLineEntity item) {

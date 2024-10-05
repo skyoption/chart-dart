@@ -6,7 +6,7 @@ import 'package:candle_chart/components/popup_info_view.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/objects/widgets/svg.dart';
 import 'package:candle_chart/objects/objects_screen.dart';
-import 'package:candle_chart/indectors/indicators_screen.dart';
+import 'package:candle_chart/indicators/indicators_screen.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:candle_chart/utils/icons.dart';
@@ -15,7 +15,19 @@ import 'package:flutter/material.dart';
 
 import 'renderer/base_dimension.dart';
 
-enum IndicatorType { LINEARMA, SMMA, EMA, SMA, BOLL, NONE }
+enum IndicatorType {
+  LINEAR_MA,
+  SMMA_MA,
+  EMA_MA,
+  SMA_MA,
+  LINEAR_ENVELOPS,
+  SMMA_ENVELOPS,
+  EMA_ENVELOPS,
+  SMA_ENVELOPS,
+  BOLL,
+  PARABOLIC,
+  ICHIMOKU,
+}
 
 enum SecondaryState { MACD, KDJ, RSI, WR, CCI }
 
@@ -211,7 +223,7 @@ class _KChartWidgetState extends State<KChartWidget>
                           MaterialPageRoute(
                             builder: (context) => IndicatorsScreen(
                               onDone: () {
-                                DataUtil.calculate(widget.data!);
+                                IndicatorUtils.calculate(widget.data!);
                                 notifyChanged();
                               },
                             ),

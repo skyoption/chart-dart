@@ -1,10 +1,12 @@
-import 'package:candle_chart/objects/widgets/object_item_widget.dart';
+import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/indicators/properties/parabolic_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
-import 'package:candle_chart/indectors/indicator_properties_screen.dart';
-import 'package:candle_chart/indectors/new_indicator_screen.dart';
-import 'package:candle_chart/utils/icons.dart';
+import 'package:candle_chart/indicators/properties/indicator_properties_screen.dart';
+import 'package:candle_chart/indicators/new_indicator_screen.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:flutter/material.dart';
+
+import 'properties/ichimoku_properties_screen.dart';
 
 class IndicatorsScreen extends StatefulWidget {
   final Function onDone;
@@ -88,17 +90,7 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                     PropertiesItemWidget(
                       title: '${e.value.name} (${e.value.type?.name})',
                       margin: EdgeInsets.zero,
-                      onTap: () {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => IndicatorPropertiesScreen(
-                              index: e.key,
-                              indicator: e.value,
-                              onDone: widget.onDone,
-                            ),
-                          ),
-                        );
-                      },
+                      onTap: () => _onTap(e),
                     ),
                   ],
                 );
@@ -108,5 +100,45 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
         ),
       ),
     );
+  }
+
+  void _onTap(MapEntry<int, IndicatorEntity> e) {
+    if (e.value.ichimoku != null) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => IchimokuPropertiesScreen(
+            index: e.key,
+            indicator: e.value,
+            onDone: widget.onDone,
+          ),
+        ),
+      );
+    } else if (e.value.steps != null) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => ParabolicPropertiesScreen(
+            index: e.key,
+            indicator: e.value,
+            onDone: widget.onDone,
+          ),
+        ),
+      );
+    } else {
+      final isENVELOPS = e.value.type?.name.contains('ENVELOPS') ?? false;
+      final isMA = e.value.type?.name.contains('MA') ?? false;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => IndicatorPropertiesScreen(
+            index: e.key,
+            indicator: e.value,
+            onDone: widget.onDone,
+            haveDeviations: isENVELOPS,
+            haveMethods: isENVELOPS || isMA,
+            haveTwoBands: isENVELOPS,
+            isENVELOPS: isENVELOPS,
+          ),
+        ),
+      );
+    }
   }
 }

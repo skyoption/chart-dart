@@ -7,25 +7,21 @@ mixin CandleEntity {
   late double low;
   late double close;
 
+  ///MA
+  List<IndicatorEntity>? emaMaValues;
+  List<IndicatorEntity>? smaMaValues;
+  List<IndicatorEntity>? lwmaMaValues;
+  List<IndicatorEntity>? smmaMaValues;
 
+  ///Envelops
+  List<IndicatorEntity>? emaEnvelopsValues;
+  List<IndicatorEntity>? smaEnvelopsValues;
+  List<IndicatorEntity>? lwmaEnvelopsValues;
+  List<IndicatorEntity>? smmaEnvelopsValues;
 
-  //EMA
-  List<IndicatorEntity>? emaValues;
-  //SMA
-  List<IndicatorEntity>? smaValues;
-  //LWMA
-  List<IndicatorEntity>? lwmaValues;
-  //SMMA
-  List<IndicatorEntity>? smmaValues;
+  ///BOLL
+  List<IndicatorEntity>? bollValues;
 
-//  上轨线
-  double? up;
-
-//  中轨线
-  double? mb;
-
-//  下轨线
-  double? dn;
-
-  double? BOLLMA;
+  ///Parabolic
+  List<IndicatorEntity>? parabolicValues;
 }

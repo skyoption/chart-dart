@@ -3,21 +3,21 @@ import 'package:flutter/material.dart';
 
 enum Methods { Simple, Exponential, Smoothed, Linear_Weighted }
 
-class MAMethodsScreen extends StatefulWidget {
+class IndicatorMethodsScreen extends StatefulWidget {
   final Function(Methods method) onMethod;
   final Methods? method;
 
-  const MAMethodsScreen({
+  const IndicatorMethodsScreen({
     super.key,
     required this.onMethod,
     this.method,
   });
 
   @override
-  State<MAMethodsScreen> createState() => _MAMethodsScreenState();
+  State<IndicatorMethodsScreen> createState() => _IndicatorMethodsScreenState();
 }
 
-class _MAMethodsScreenState extends State<MAMethodsScreen> {
+class _IndicatorMethodsScreenState extends State<IndicatorMethodsScreen> {
   late Methods method = widget.method ?? Methods.Simple;
 
   @override

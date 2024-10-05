@@ -1,23 +1,21 @@
-import 'dart:math';
-
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/indicators/properties/indicator_properties_screen.dart';
+import 'package:candle_chart/indicators/widgets/indicator_color_widget.dart';
 import 'package:candle_chart/objects/object_properties_screen.dart';
-import 'package:candle_chart/objects/widgets/object_style_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
-import 'package:candle_chart/indectors/apply_to_screen.dart';
-import 'package:candle_chart/indectors/ma_methods_screen.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class IndicatorPropertiesScreen extends StatefulWidget {
-  final Function onDone;
+@immutable
+class ParabolicPropertiesScreen extends StatefulWidget {
   String? name;
   IndicatorEntity? indicator;
   final int? index;
+  final Function onDone;
 
-  IndicatorPropertiesScreen({
+  ParabolicPropertiesScreen({
     super.key,
     required this.onDone,
     this.name,
@@ -26,26 +24,26 @@ class IndicatorPropertiesScreen extends StatefulWidget {
   });
 
   @override
-  State<IndicatorPropertiesScreen> createState() =>
-      _IndicatorPropertiesScreenState();
+  State<ParabolicPropertiesScreen> createState() =>
+      _ParabolicPropertiesScreenState();
 }
 
-class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
-  late final periodController = TextEditingController(text: '5');
-  late final shiftController = TextEditingController(text: '0');
+class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
+  late final stepsController = TextEditingController(text: '0.006');
+  late final maximumController = TextEditingController(text: '0.006');
 
   @override
   void initState() {
     if (widget.indicator != null) {
       widget.name = widget.indicator!.name;
-      periodController.text = widget.indicator!.period.toString();
-      shiftController.text = widget.indicator!.shift.toString();
+      stepsController.text = widget.indicator!.steps.toString();
+      maximumController.text = widget.indicator!.maximum.toString();
     } else {
       widget.indicator = IndicatorEntity(
-        period: 5,
-        shift: 0,
+        maximum: 0.006,
+        steps: 0.006,
         name: widget.name!,
-        applyTo: ApplyTo.Close,
+        type: IndicatorType.PARABOLIC,
       );
     }
     super.initState();
@@ -123,7 +121,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
               title: '${widget.indicator?.name.toUpperCase()}',
             ),
             PropertiesItemWidget(
-              title: 'Period',
+              title: 'Steps',
               child: SizedBox(
                 width: 60.0,
                 height: 20.0,
@@ -139,7 +137,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                     if (res != null) widget.indicator?.period = res;
                   },
                   autofocus: false,
-                  controller: periodController,
+                  controller: stepsController,
                   textAlignVertical: TextAlignVertical.center,
                   keyboardType: TextInputType.numberWithOptions(signed: false),
                   decoration: InputDecoration(
@@ -147,8 +145,8 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                     contentPadding: EdgeInsets.symmetric(vertical: 11.0),
                   ),
                   inputFormatters: [
-                    LengthLimitingTextInputFormatter(3),
-                    NumericalRangeFormatter(min: 1, max: 100),
+                    LengthLimitingTextInputFormatter(6),
+                    NumericalDoubleRangeFormatter(min: 0, max: 10),
                   ],
                 ),
               ),
@@ -156,7 +154,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'Shift',
+              title: 'Maximum',
               margin: EdgeInsets.zero,
               child: SizedBox(
                 width: 60.0,
@@ -173,7 +171,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                     final res = int.tryParse(value);
                     if (res != null) widget.indicator?.shift = res;
                   },
-                  controller: shiftController,
+                  controller: maximumController,
                   textAlignVertical: TextAlignVertical.center,
                   keyboardType: TextInputType.numberWithOptions(signed: false),
                   decoration: InputDecoration(
@@ -181,82 +179,29 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                     contentPadding: EdgeInsets.symmetric(vertical: 11.0),
                   ),
                   inputFormatters: [
-                    LengthLimitingTextInputFormatter(2),
-                    NumericalRangeFormatter(min: 1, max: 5),
+                    LengthLimitingTextInputFormatter(6),
+                    NumericalDoubleRangeFormatter(min: 0, max: 10),
                   ],
                 ),
               ),
               onTap: () {},
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: 'Method',
-              subTitle: (_setMethod(widget.indicator?.type)?.name ?? 'Sample')
-                  .replaceAll('_', ' '),
-              margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => MAMethodsScreen(
-                      method: _setMethod(widget.indicator?.type),
-                      onMethod: (method) {
-                        _setType(method);
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: 'Apply To',
-              subTitle: (widget.indicator?.applyTo.name ?? 'Close')
-                  .replaceAll('_', ' ')
-                  .replaceAll('\$', '/'),
-              margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => ApplyToScreen(
-                      apply: widget.indicator?.applyTo,
-                      onApply: (apply) {
-                        widget.indicator?.applyTo = apply;
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
-            PropertiesTitleWidget(title: 'LEVELS'),
-            PropertiesItemWidget(
-              title: 'Levels',
-              margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
-              onTap: () {},
-            ),
-            PropertiesTitleWidget(title: 'visualization'),
-            PropertiesItemWidget(
-              title: 'Timeframe',
-              subTitle: 'All timeframes',
-              margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
-              onTap: () {},
-            ),
-            ObjectStyleWidget(
-              hideStyle: true,
-              hideDrawAsBackground: true,
+            PropertiesTitleWidget(title: 'style'),
+            IndicatorColorWidget(
+              title: 'Style :',
               color: widget.indicator?.color,
-              strokeWidth: widget.indicator?.strokeWidth,
-              style: widget.indicator?.style,
-              onChange: (color, drawAsBackground, strokeWidth, style) {
-                widget.indicator?.style = style;
-                widget.indicator?.strokeWidth = strokeWidth;
+              onChange: (color) {
                 widget.indicator?.color = color;
               },
+              // hideStyle: true,
+              // hideDrawAsBackground: true,
+              // strokeWidth: widget.indicator?.strokeWidth,
+              // style: widget.indicator?.style,
+              // onChange: (color, drawAsBackground, strokeWidth, style) {
+              //   widget.indicator?.style = style;
+              //   widget.indicator?.strokeWidth = strokeWidth;
+              //   widget.indicator?.color = color;
+              // },
             ),
           ],
         ),
@@ -264,54 +209,10 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
     );
   }
 
-  void _setType(method) {
-    widget.indicator?.type = method == Methods.Exponential
-        ? IndicatorType.EMA
-        : method == Methods.Linear_Weighted
-            ? IndicatorType.LINEARMA
-            : method == Methods.Simple
-                ? IndicatorType.SMA
-                : IndicatorType.SMMA;
-  }
-
-  Methods? _setMethod(IndicatorType? type) {
-    if (widget.indicator == null) return null;
-    if (type == IndicatorType.EMA) {
-      return Methods.Exponential;
-    } else if (type == IndicatorType.LINEARMA) {
-      return Methods.Linear_Weighted;
-    } else if (type == IndicatorType.SMA) {
-      return Methods.Simple;
-    } else {
-      return Methods.Smoothed;
-    }
-  }
-
   @override
   void dispose() {
-    periodController.dispose();
-    shiftController.dispose();
+    stepsController.dispose();
+    maximumController.dispose();
     super.dispose();
-  }
-}
-
-class NumericalRangeFormatter extends TextInputFormatter {
-  final double min;
-  final double max;
-
-  NumericalRangeFormatter({required this.min, required this.max});
-
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    if (newValue.text == '') {
-      return newValue;
-    } else if (int.parse(newValue.text) < min) {
-      return TextEditingValue().copyWith(text: min.toStringAsFixed(2));
-    } else {
-      return int.parse(newValue.text) > max ? oldValue : newValue;
-    }
   }
 }

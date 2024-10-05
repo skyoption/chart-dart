@@ -1,5 +1,8 @@
+import 'package:candle_chart/indicators/properties/ichimoku_properties_screen.dart';
+import 'package:candle_chart/indicators/properties/parabolic_properties_screen.dart';
+import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
-import 'package:candle_chart/indectors/indicator_properties_screen.dart';
+import 'package:candle_chart/indicators/properties/indicator_properties_screen.dart';
 import 'package:flutter/material.dart';
 
 class NewIndicatorScreen extends StatefulWidget {
@@ -77,6 +80,7 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                     builder: (context) => IndicatorPropertiesScreen(
                       onDone: widget.onDone,
                       name: 'Moving Average',
+                      haveMethods: true,
                     ),
                   ),
                 );
@@ -84,10 +88,75 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'Standard Deviation',
+              title: 'Bollinger Bands',
               margin: EdgeInsets.zero,
               child: const SizedBox(),
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => IndicatorPropertiesScreen(
+                      onDone: widget.onDone,
+                      name: 'Bollinger Bands',
+                      haveDeviations: true,
+                      haveMethods: false,
+                      type: IndicatorType.BOLL,
+                    ),
+                  ),
+                );
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
+              title: 'Envelops',
+              margin: EdgeInsets.zero,
+              child: const SizedBox(),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => IndicatorPropertiesScreen(
+                      onDone: widget.onDone,
+                      name: 'Envelops',
+                      haveDeviations: true,
+                      haveMethods: true,
+                      haveTwoBands: true,
+                      isENVELOPS: true,
+                      type: IndicatorType.SMA_ENVELOPS,
+                    ),
+                  ),
+                );
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
+              title: 'Parabolic SAR',
+              margin: EdgeInsets.zero,
+              child: const SizedBox(),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => ParabolicPropertiesScreen(
+                      onDone: widget.onDone,
+                      name: 'Parabolic SAR',
+                    ),
+                  ),
+                );
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
+              title: 'Ichimoku Kinko Hyo',
+              margin: EdgeInsets.zero,
+              child: const SizedBox(),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => IchimokuPropertiesScreen(
+                      onDone: widget.onDone,
+                      name: 'Ichimoku Kinko Hyo',
+                    ),
+                  ),
+                );
+              },
             ),
             Padding(
               padding: EdgeInsetsDirectional.only(

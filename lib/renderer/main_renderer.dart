@@ -123,120 +123,452 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   }
 
   @override
-  void drawChart(CandleEntity lastPoint, CandleEntity curPoint, double lastX,
-      double curX, Size size, Canvas canvas) {
+  void drawChart(
+    CandleEntity lastPoint,
+    CandleEntity curPoint,
+    double lastX,
+    double curX,
+    Size size,
+    Canvas canvas,
+  ) {
     if (isLine) {
-      drawPolyline(lastPoint.close, curPoint.close, canvas, lastX, curX);
+      drawPolyline(
+        lastPoint.close,
+        curPoint.close,
+        canvas,
+        lastX,
+        curX,
+      );
     } else {
       drawCandle(curPoint, canvas, curX);
       for (var item in indicators) {
-        if (item.type == IndicatorType.BOLL) {
-          drawBollLine(lastPoint, curPoint, canvas, lastX, curX, item.period);
-        } else if (item.type == IndicatorType.EMA) {
-          drawEmaLine(lastPoint, curPoint, canvas, lastX, curX, item.period);
-        } else if (item.type == IndicatorType.LINEARMA) {
-          drawLINEARMALine(
-              lastPoint, curPoint, canvas, lastX, curX, item.period);
-        } else if (item.type == IndicatorType.SMA) {
-          drawSmaLine(lastPoint, curPoint, canvas, lastX, curX, item.period);
-        } else if (item.type == IndicatorType.SMMA) {
-          drawSmmaLine(lastPoint, curPoint, canvas, lastX, curX, item.period);
+        if (item.type == IndicatorType.EMA_MA) {
+          drawEMA_MA(
+            lastPoint,
+            curPoint,
+            canvas,
+            lastX,
+            curX,
+            item.period,
+          );
+        } else if (item.type == IndicatorType.LINEAR_MA) {
+          drawLINEAR_MA(
+            lastPoint,
+            curPoint,
+            canvas,
+            lastX,
+            curX,
+            item.period,
+          );
+        } else if (item.type == IndicatorType.SMA_MA) {
+          drawSMA_MA(
+            lastPoint,
+            curPoint,
+            canvas,
+            lastX,
+            curX,
+            item.period,
+          );
+        } else if (item.type == IndicatorType.SMMA_MA) {
+          drawSMMA_MA(
+            lastPoint,
+            curPoint,
+            canvas,
+            lastX,
+            curX,
+            item.period,
+          );
+        } else if (item.type == IndicatorType.EMA_ENVELOPS) {
+          drawEMA_ENVELOPS(
+            lastPoint,
+            curPoint,
+            canvas,
+            lastX,
+            curX,
+            item.period,
+          );
+        } else if (item.type == IndicatorType.LINEAR_ENVELOPS) {
+          drawLINEAR_ENVELOPS(
+            lastPoint,
+            curPoint,
+            canvas,
+            lastX,
+            curX,
+            item.period,
+          );
+        } else if (item.type == IndicatorType.SMA_ENVELOPS) {
+          drawSMA_ENVELOPS(
+            lastPoint,
+            curPoint,
+            canvas,
+            lastX,
+            curX,
+            item.period,
+          );
+        } else if (item.type == IndicatorType.SMMA_ENVELOPS) {
+          drawSMMA_ENVELOPS(
+            lastPoint,
+            curPoint,
+            canvas,
+            lastX,
+            curX,
+            item.period,
+          );
+        } else if (item.type == IndicatorType.BOLL) {
+          drawBollLine(
+            lastPoint,
+            curPoint,
+            canvas,
+            lastX,
+            curX,
+            item.period,
+          );
+        } else if (item.type == IndicatorType.PARABOLIC) {
+          drawParabolicLine(
+            lastPoint,
+            curPoint,
+            canvas,
+            lastX,
+            curX,
+            item.period,
+          );
         }
       }
     }
   }
 
-  // 实现EMA绘制函数
-  //EMA
-  void drawEmaLine(CandleEntity lastPoint, CandleEntity curPoint, Canvas canvas,
-      double lastX, double curX, int period) {
-    for (int i = 0; i < (curPoint.emaValues?.length ?? 0); i++) {
+  void drawEMA_MA(
+    CandleEntity lastPoint,
+    CandleEntity curPoint,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    int period,
+  ) {
+    for (int i = 0; i < (curPoint.emaMaValues?.length ?? 0); i++) {
       if (i == 4) {
         break;
       }
-      if (lastPoint.emaValues?[i] != 0 &&
-          period == curPoint.emaValues?[i].period) {
+      if (lastPoint.emaMaValues?[i] != 0 &&
+          period == curPoint.emaMaValues?[i].period) {
         drawLine(
-          lastPoint.emaValues?[i].value,
-          curPoint.emaValues?[i].value,
+          lastPoint.emaMaValues?[i].value,
+          curPoint.emaMaValues?[i].value,
           canvas,
           lastX,
           curX,
-          curPoint.emaValues![i].color,
-          lineStyle: curPoint.emaValues![i].style,
-          strokeWidth: curPoint.emaValues![i].strokeWidth,
+          curPoint.emaMaValues![i].color,
+          lineStyle: curPoint.emaMaValues![i].style,
+          strokeWidth: curPoint.emaMaValues![i].strokeWidth,
         );
       }
     }
   }
 
-  // 实现EMA绘制函数
-  //LINEARMA
-  void drawLINEARMALine(CandleEntity lastPoint, CandleEntity curPoint,
-      Canvas canvas, double lastX, double curX, int period) {
-    for (int i = 0; i < (curPoint.lwmaValues?.length ?? 0); i++) {
+  void drawLINEAR_MA(
+    CandleEntity lastPoint,
+    CandleEntity curPoint,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    int period,
+  ) {
+    for (int i = 0; i < (curPoint.lwmaMaValues?.length ?? 0); i++) {
       if (i == 4) {
         break;
       }
-      if (lastPoint.lwmaValues?[i] != 0 &&
-          period == curPoint.lwmaValues?[i].period) {
+      if (lastPoint.lwmaMaValues?[i] != 0 &&
+          period == curPoint.lwmaMaValues?[i].period) {
         drawLine(
-          lastPoint.lwmaValues?[i].value,
-          curPoint.lwmaValues?[i].value,
+          lastPoint.lwmaMaValues?[i].value,
+          curPoint.lwmaMaValues?[i].value,
           canvas,
           lastX,
           curX,
-          curPoint.lwmaValues![i].color,
-          lineStyle: curPoint.lwmaValues![i].style,
-          strokeWidth: curPoint.lwmaValues![i].strokeWidth,
+          curPoint.lwmaMaValues![i].color,
+          lineStyle: curPoint.lwmaMaValues![i].style,
+          strokeWidth: curPoint.lwmaMaValues![i].strokeWidth,
         );
       }
     }
   }
 
-  // 实现SMA绘制函数
-  //SMA
-  void drawSmaLine(CandleEntity lastPoint, CandleEntity curPoint, Canvas canvas,
-      double lastX, double curX, int period) {
-    for (int i = 0; i < (curPoint.smaValues?.length ?? 0); i++) {
+  void drawSMA_MA(
+    CandleEntity lastPoint,
+    CandleEntity curPoint,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    int period,
+  ) {
+    for (int i = 0; i < (curPoint.smaMaValues?.length ?? 0); i++) {
       if (i == 4) {
         break;
       }
-      if (lastPoint.smaValues?[i] != 0 &&
-          period == curPoint.smaValues?[i].period) {
+      if (lastPoint.smaMaValues?[i] != 0 &&
+          period == curPoint.smaMaValues?[i].period) {
         drawLine(
-          lastPoint.smaValues?[i].value,
-          curPoint.smaValues?[i].value,
+          lastPoint.smaMaValues?[i].value,
+          curPoint.smaMaValues?[i].value,
           canvas,
           lastX,
           curX,
-          curPoint.smaValues![i].color,
-          lineStyle: curPoint.smaValues![i].style,
-          strokeWidth: curPoint.smaValues![i].strokeWidth,
+          curPoint.smaMaValues![i].color,
+          lineStyle: curPoint.smaMaValues![i].style,
+          strokeWidth: curPoint.smaMaValues![i].strokeWidth,
         );
       }
     }
   }
 
-  // 实现SMMA绘制函数
-  //SMMA
-  void drawSmmaLine(CandleEntity lastPoint, CandleEntity curPoint,
-      Canvas canvas, double lastX, double curX, int period) {
-    for (int i = 0; i < (curPoint.smmaValues?.length ?? 0); i++) {
+  void drawSMMA_MA(
+    CandleEntity lastPoint,
+    CandleEntity curPoint,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    int period,
+  ) {
+    for (int i = 0; i < (curPoint.smmaMaValues?.length ?? 0); i++) {
       if (i == 4) {
         break;
       }
-      if (lastPoint.smmaValues?[i] != 0 &&
-          period == curPoint.smmaValues?[i].period) {
+      if (lastPoint.smmaMaValues?[i] != 0 &&
+          period == curPoint.smmaMaValues?[i].period) {
         drawLine(
-          lastPoint.smmaValues?[i].value,
-          curPoint.smmaValues?[i].value,
+          lastPoint.smmaMaValues?[i].value,
+          curPoint.smmaMaValues?[i].value,
           canvas,
           lastX,
           curX,
-          curPoint.smmaValues![i].color,
-          lineStyle: curPoint.smmaValues![i].style,
-          strokeWidth: curPoint.smmaValues![i].strokeWidth,
+          curPoint.smmaMaValues![i].color,
+          lineStyle: curPoint.smmaMaValues![i].style,
+          strokeWidth: curPoint.smmaMaValues![i].strokeWidth,
+        );
+      }
+    }
+  }
+
+  void drawParabolicLine(
+    CandleEntity lastPoint,
+    CandleEntity curPoint,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    int period,
+  ) {
+    for (int i = 0; i < (curPoint.parabolicValues?.length ?? 0); i++) {
+      if (i == 4) {
+        break;
+      }
+      if (lastPoint.parabolicValues?[i] != 0 &&
+          period == curPoint.parabolicValues?[i].period) {
+        drawLine(
+          lastPoint.parabolicValues?[i].value,
+          curPoint.parabolicValues?[i].value,
+          canvas,
+          lastX,
+          curX,
+          curPoint.parabolicValues![i].color,
+          lineStyle: curPoint.parabolicValues![i].style,
+          strokeWidth: curPoint.parabolicValues![i].strokeWidth,
+        );
+      }
+    }
+  }
+
+  void drawEMA_ENVELOPS(
+    CandleEntity lastPoint,
+    CandleEntity curPoint,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    int period,
+  ) {
+    for (int i = 0; i < (curPoint.emaEnvelopsValues?.length ?? 0); i++) {
+      if (i == 4) {
+        break;
+      }
+      if (lastPoint.emaEnvelopsValues?[i].up != 0 &&
+          period == curPoint.emaEnvelopsValues?[i].period) {
+        drawLine(
+          lastPoint.emaEnvelopsValues?[i].up,
+          curPoint.emaEnvelopsValues?[i].up,
+          canvas,
+          lastX,
+          curX,
+          curPoint.emaEnvelopsValues![i].color,
+        );
+      }
+
+      if (lastPoint.emaEnvelopsValues?[i].dn != 0 &&
+          period == curPoint.emaEnvelopsValues?[i].period) {
+        drawLine(
+          lastPoint.emaEnvelopsValues?[i].dn,
+          curPoint.emaEnvelopsValues?[i].dn,
+          canvas,
+          lastX,
+          curX,
+          curPoint.emaEnvelopsValues![i].secondColor,
+        );
+      }
+    }
+  }
+
+  void drawSMA_ENVELOPS(
+    CandleEntity lastPoint,
+    CandleEntity curPoint,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    int period,
+  ) {
+    for (int i = 0; i < (curPoint.smaEnvelopsValues?.length ?? 0); i++) {
+      if (i == 4) {
+        break;
+      }
+      if (lastPoint.smaEnvelopsValues?[i].up != 0 &&
+          period == curPoint.smaEnvelopsValues?[i].period) {
+        drawLine(
+          lastPoint.smaEnvelopsValues?[i].up,
+          curPoint.smaEnvelopsValues?[i].up,
+          canvas,
+          lastX,
+          curX,
+          curPoint.smaEnvelopsValues![i].color,
+        );
+      }
+
+      if (lastPoint.smaEnvelopsValues?[i].dn != 0 &&
+          period == curPoint.smaEnvelopsValues?[i].period) {
+        drawLine(
+          lastPoint.smaEnvelopsValues?[i].dn,
+          curPoint.smaEnvelopsValues?[i].dn,
+          canvas,
+          lastX,
+          curX,
+          curPoint.smaEnvelopsValues![i].secondColor,
+        );
+      }
+    }
+  }
+
+  void drawSMMA_ENVELOPS(
+    CandleEntity lastPoint,
+    CandleEntity curPoint,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    int period,
+  ) {
+    for (int i = 0; i < (curPoint.smmaEnvelopsValues?.length ?? 0); i++) {
+      if (i == 4) {
+        break;
+      }
+      if (lastPoint.smmaEnvelopsValues?[i].up != 0 &&
+          period == curPoint.smmaEnvelopsValues?[i].period) {
+        drawLine(
+          lastPoint.smmaEnvelopsValues?[i].up,
+          curPoint.smmaEnvelopsValues?[i].up,
+          canvas,
+          lastX,
+          curX,
+          curPoint.smmaEnvelopsValues![i].color,
+        );
+      }
+
+      if (lastPoint.smmaEnvelopsValues?[i].dn != 0 &&
+          period == curPoint.smmaEnvelopsValues?[i].period) {
+        drawLine(
+          lastPoint.smmaEnvelopsValues?[i].dn,
+          curPoint.smmaEnvelopsValues?[i].dn,
+          canvas,
+          lastX,
+          curX,
+          curPoint.smmaEnvelopsValues![i].secondColor,
+        );
+      }
+    }
+  }
+
+  void drawLINEAR_ENVELOPS(
+    CandleEntity lastPoint,
+    CandleEntity curPoint,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    int period,
+  ) {
+    for (int i = 0; i < (curPoint.lwmaEnvelopsValues?.length ?? 0); i++) {
+      if (i == 4) {
+        break;
+      }
+      if (lastPoint.lwmaEnvelopsValues?[i].up != 0 &&
+          period == curPoint.lwmaEnvelopsValues?[i].period) {
+        drawLine(
+          lastPoint.lwmaEnvelopsValues?[i].up,
+          curPoint.lwmaEnvelopsValues?[i].up,
+          canvas,
+          lastX,
+          curX,
+          curPoint.lwmaEnvelopsValues![i].color,
+        );
+      }
+
+      if (lastPoint.lwmaEnvelopsValues?[i].dn != 0 &&
+          period == curPoint.lwmaEnvelopsValues?[i].period) {
+        drawLine(
+          lastPoint.lwmaEnvelopsValues?[i].dn,
+          curPoint.lwmaEnvelopsValues?[i].dn,
+          canvas,
+          lastX,
+          curX,
+          curPoint.lwmaEnvelopsValues![i].secondColor,
+        );
+      }
+    }
+  }
+
+  void drawBollLine(
+    CandleEntity lastPoint,
+    CandleEntity curPoint,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    int period,
+  ) {
+    for (int i = 0; i < (curPoint.bollValues?.length ?? 0); i++) {
+      if (i == 4) {
+        break;
+      }
+      if (lastPoint.bollValues?[i].up != 0) {
+        drawLine(
+          lastPoint.bollValues?[i].up,
+          curPoint.bollValues?[i].up,
+          canvas,
+          lastX,
+          curX,
+          this.chartColors.ma10Color,
+        );
+      }
+      if (lastPoint.bollValues?[i].value != 0) {
+        drawLine(
+          lastPoint.bollValues?[i].value,
+          curPoint.bollValues?[i].value,
+          canvas,
+          lastX,
+          curX,
+          curPoint.bollValues![i].color,
+        );
+      }
+      if (lastPoint.bollValues?[i].dn != 0) {
+        drawLine(
+          lastPoint.bollValues?[i].dn,
+          curPoint.bollValues?[i].dn,
+          canvas,
+          lastX,
+          curX,
+          this.chartColors.ma30Color,
         );
       }
     }
@@ -294,22 +626,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     canvas.drawPath(mLinePath!,
         mLinePaint..strokeWidth = (mLineStrokeWidth / scaleX).clamp(0.1, 1.0));
     mLinePath!.reset();
-  }
-
-  void drawBollLine(CandleEntity lastPoint, CandleEntity curPoint,
-      Canvas canvas, double lastX, double curX, int period) {
-    if (lastPoint.up != 0) {
-      drawLine(lastPoint.up, curPoint.up, canvas, lastX, curX,
-          this.chartColors.ma10Color);
-    }
-    if (lastPoint.mb != 0) {
-      drawLine(lastPoint.mb, curPoint.mb, canvas, lastX, curX,
-          this.chartColors.ma5Color);
-    }
-    if (lastPoint.dn != 0) {
-      drawLine(lastPoint.dn, curPoint.dn, canvas, lastX, curX,
-          this.chartColors.ma30Color);
-    }
   }
 
   void drawCandle(CandleEntity curPoint, Canvas canvas, double curX) {

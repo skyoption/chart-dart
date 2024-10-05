@@ -5,7 +5,7 @@ import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
 import 'package:candle_chart/renderer/draw_object_lines.dart';
 import 'package:candle_chart/renderer/update_point_position.dart';
-import 'package:candle_chart/utils/data_util.dart';
+import 'package:candle_chart/utils/indicator_utils.dart';
 import 'package:candle_chart/utils/number_util.dart';
 import 'package:flutter/material.dart';
 
