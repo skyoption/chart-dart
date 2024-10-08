@@ -1,3 +1,4 @@
+import 'package:candle_chart/components/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/indicators/properties/indicator_properties_screen.dart';
 import 'package:candle_chart/indicators/widgets/indicator_color_widget.dart';
@@ -38,6 +39,7 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
       widget.name = widget.indicator!.name;
       stepsController.text = widget.indicator!.steps.toString();
       maximumController.text = widget.indicator!.maximum.toString();
+      kPrint(stepsController.text);
     } else {
       widget.indicator = IndicatorEntity(
         maximum: 0.006,
@@ -133,8 +135,8 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
                         color: Colors.blueAccent,
                       ),
                   onChanged: (value) {
-                    final res = int.tryParse(value);
-                    if (res != null) widget.indicator?.period = res;
+                    final res = double.tryParse(value);
+                    if (res != null) widget.indicator?.steps = res;
                   },
                   autofocus: false,
                   controller: stepsController,
@@ -168,8 +170,8 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
                         color: Colors.blueAccent,
                       ),
                   onChanged: (value) {
-                    final res = int.tryParse(value);
-                    if (res != null) widget.indicator?.shift = res;
+                    final res = double.tryParse(value);
+                    if (res != null) widget.indicator?.maximum = res;
                   },
                   controller: maximumController,
                   textAlignVertical: TextAlignVertical.center,

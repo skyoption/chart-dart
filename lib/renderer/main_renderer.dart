@@ -358,22 +358,17 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
   ) {
     for (int i = 0; i < (curPoint.parabolicValues?.length ?? 0); i++) {
-      if (i == 4) {
-        break;
-      }
-      if (lastPoint.parabolicValues?[i] != 0 &&
-          period == curPoint.parabolicValues?[i].period) {
-        drawLine(
-          lastPoint.parabolicValues?[i].value,
-          curPoint.parabolicValues?[i].value,
-          canvas,
-          lastX,
-          curX,
-          curPoint.parabolicValues![i].color,
-          lineStyle: curPoint.parabolicValues![i].style,
-          strokeWidth: curPoint.parabolicValues![i].strokeWidth,
-        );
-      }
+      drawLine(
+        lastPoint.parabolicValues?[i].value,
+        curPoint.parabolicValues?[i].value,
+        canvas,
+        lastX,
+        curX,
+        curPoint.parabolicValues![i].color,
+        lineStyle: curPoint.parabolicValues![i].style,
+        strokeWidth: 4.0,
+        isDot: true,
+      );
     }
   }
 

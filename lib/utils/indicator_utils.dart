@@ -264,65 +264,75 @@ class IndicatorUtils {
   ) {
     if (dataList.isEmpty) return;
 
+    // Loop through each indicator
     for (var indicator in indicators) {
-      // Initialize variables
-      bool uptrend = true; // Start assuming an uptrend (you can modify this)
-      double sar = dataList.first.low; // Initial SAR value
-      double af = indicator.steps!; // Initial acceleration factor (AF)
-      double extremePoint = dataList.first.high; // Initial extreme point (EP)
+      // Initialize trend-related variables
+      bool uptrend =
+          true; // Start by assuming an uptrend (this could be made more dynamic)
+      double sar =
+          dataList.first.low; // Initial SAR value, set to first bar's low
+      double af = indicator.steps ?? 0.02; // Initial acceleration factor (AF)
+      double extremePoint =
+          dataList.first.high; // Set initial extreme point (EP) to first high
 
+      // Loop through all data points
       for (int i = 1; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
 
-        entity.parabolicValues = null;
-        // Initialize smmaValues list if it's null
+        // Ensure each entity has space to store the parabolic SAR values
         entity.parabolicValues ??= List<IndicatorEntity>.filled(
             indicators.length, indicator.copy(value: 0));
-        // Update the SAR value
+
+        // Update the SAR value using the formula
         sar = sar + af * (extremePoint - sar);
 
         if (uptrend) {
-          // In an uptrend, SAR can't exceed the low of the current or previous bar
+          // In an uptrend, SAR is placed below the candle (so, limit SAR below the lows)
           sar = min(sar, dataList[i - 1].low);
           sar = min(sar, entity.low);
 
-          // If price falls below the SAR, trend reverses to downtrend
+          // Check for a trend reversal (price drops below SAR)
           if (entity.low < sar) {
+            // Trend reversal to downtrend
             uptrend = false;
-            sar = extremePoint; // Reset SAR to the extreme point
+            sar = extremePoint; // Reset SAR to extreme point
             extremePoint =
-                entity.low; // Set the extreme point for the downtrend
-            af = indicator.steps!; // Reset AF
+                entity.low; // Set new extreme point (low for downtrend)
+            af = indicator.steps ?? 0.02; // Reset acceleration factor
           } else {
-            // Update extreme point if a new high is reached
+            // Update extreme point if a new high is reached during the uptrend
             if (entity.high > extremePoint) {
               extremePoint = entity.high;
-              af = min(af + indicator.steps!,
-                  indicator.maximum!); // Increase AF but not beyond the maximum
+              sar = extremePoint; // Reset SAR to extreme point
+              af =
+                  min(af + (indicator.steps ?? 0.02), indicator.maximum ?? 0.2);
             }
           }
         } else {
-          // In a downtrend, SAR can't fall below the high of the current or previous bar
+          // In a downtrend, SAR is placed above the candle (so, limit SAR above the highs)
           sar = max(sar, dataList[i - 1].high);
           sar = max(sar, entity.high);
 
-          // If price rises above the SAR, trend reverses to uptrend
+          // Check for a trend reversal (price rises above SAR)
           if (entity.high > sar) {
+            // Trend reversal to uptrend
             uptrend = true;
-            sar = extremePoint; // Reset SAR to the extreme point
-            extremePoint = entity.high; // Set the extreme point for the uptrend
-            af = indicator.steps!; // Reset AF
+            sar = extremePoint; // Reset SAR to extreme point
+            extremePoint =
+                entity.high; // Set new extreme point (high for uptrend)
+            af = indicator.steps ?? 0.02; // Reset acceleration factor
           } else {
-            // Update extreme point if a new low is reached
+            // Update extreme point if a new low is reached during the downtrend
             if (entity.low < extremePoint) {
               extremePoint = entity.low;
-              af = min(af + indicator.steps!,
-                  indicator.maximum!); // Increase AF but not beyond the maximum
+              sar = extremePoint; // Reset SAR to extreme point
+              af =
+                  min(af + (indicator.steps ?? 0.02), indicator.maximum ?? 0.2);
             }
           }
         }
 
-        // Assign the SAR value to the current candle
+
         entity.parabolicValues?[indicators.indexOf(indicator)].value = sar;
       }
     }

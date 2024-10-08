@@ -1,5 +1,6 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/indicators/properties/parabolic_properties_screen.dart';
+import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/indicators/properties/indicator_properties_screen.dart';
 import 'package:candle_chart/indicators/new_indicator_screen.dart';
@@ -132,7 +133,7 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
             index: e.key,
             indicator: e.value,
             onDone: widget.onDone,
-            haveDeviations: isENVELOPS,
+            haveDeviations: isENVELOPS || e.value.type == IndicatorType.BOLL,
             haveMethods: isENVELOPS || isMA,
             haveTwoBands: isENVELOPS,
             isENVELOPS: isENVELOPS,

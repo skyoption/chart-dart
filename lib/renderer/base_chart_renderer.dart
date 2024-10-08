@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:flutter/material.dart';
 
@@ -111,14 +113,11 @@ abstract class BaseChartRenderer<T> {
     Color color, {
     LineStyle lineStyle = LineStyle.normal,
     double strokeWidth = 1.0,
+    bool isDot = false,
   }) {
     if (lastPrice == null || curPrice == null) {
       return;
     }
-    //("lasePrice==" + lastPrice.toString() + "==curPrice==" + curPrice.toString());
-    double lastY = getY(lastPrice);
-    double curY = getY(curPrice);
-    //print("lastX-----==" + lastX.toString() + "==lastY==" + lastY.toString() + "==curX==" + curX.toString() + "==curY==" + curY.toString());
     _drawLine(
       lastPrice,
       curPrice,
@@ -128,6 +127,7 @@ abstract class BaseChartRenderer<T> {
       color,
       lineStyle,
       strokeWidth,
+      isDot: isDot,
     );
   }
 
@@ -139,20 +139,29 @@ abstract class BaseChartRenderer<T> {
     double curX,
     Color color,
     LineStyle style,
-    double strokeWidth,
-  ) {
+    double strokeWidth, {
+    bool isDot = false,
+  }) {
     if (lastPrice == null || curPrice == null) {
       return;
     }
     double lastY = getY(lastPrice);
     double curY = getY(curPrice);
     if (style == LineStyle.dash || style == LineStyle.longDash) {
-      canvas.drawLine(
-        Offset(lastX, lastY),
-        Offset(curX, curY),
+      canvas.drawPoints(
+        PointMode.points,
+        [Offset(curX, curY)],
         chartPaint
           ..color = color
-          ..strokeWidth = strokeWidth,
+          ..strokeWidth = 3.0,
+      );
+    } else if (isDot) {
+      canvas.drawCircle(
+        Offset(curX, curY),
+        strokeWidth / 2,
+        chartPaint
+          ..color = color
+          ..style = PaintingStyle.fill,
       );
     } else {
       canvas.drawLine(
