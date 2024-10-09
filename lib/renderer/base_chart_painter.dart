@@ -268,12 +268,15 @@ abstract class BaseChartPainter extends CustomPainter
       } else if (indicator.type == IndicatorType.SMA_MA) {
         maxPrice = max(item.high, _findMaxMA(item.smaMaValues ?? []));
         minPrice = min(item.low, _findMinMA(item.smaMaValues ?? []));
-      }else if (indicator.type == IndicatorType.PARABOLIC) {
+      } else if (indicator.type == IndicatorType.PARABOLIC) {
         maxPrice = max(item.high, _findMaxMA(item.parabolicValues ?? []));
         minPrice = min(item.low, _findMinMA(item.parabolicValues ?? []));
       } else if (indicator.type == IndicatorType.BOLL) {
         maxPrice = max(_findMaxUP(item.bollValues ?? []), item.high);
         minPrice = min(_findMinDN(item.bollValues ?? []), item.low);
+      } else if (indicator.type == IndicatorType.ICHIMOKU) {
+        maxPrice = max(_findMaxChikouSpan(item.ichimokuValues ?? []), item.high);
+        minPrice = min(_findMinChikouSpan(item.ichimokuValues ?? []), item.low);
       }
     }
     mMainMaxValue = max(mMainMaxValue, maxPrice);
@@ -312,12 +315,30 @@ abstract class BaseChartPainter extends CustomPainter
     return result;
   }
 
+  // find minimum of the ChikouSpan
+  double _findMaxChikouSpan(List<IndicatorEntity> a) {
+    double result = double.minPositive;
+    for (IndicatorEntity i in a) {
+      result = max(result, i.chikouSpan ?? 0);
+    }
+    return result;
+  }
 
   // find minimum of the MA
   double _findMinMA(List<IndicatorEntity> a) {
     double result = double.maxFinite;
     for (IndicatorEntity i in a) {
       result = min(result, i.value == 0 ? double.maxFinite : i.value);
+    }
+    return result;
+  }
+
+  // find minimum of the ChikouSpan
+  double _findMinChikouSpan(List<IndicatorEntity> a) {
+    double result = double.maxFinite;
+    for (IndicatorEntity i in a) {
+      result = min(result,
+          i.chikouSpan == 0 ? double.maxFinite : i.chikouSpan ?? result);
     }
     return result;
   }
@@ -330,8 +351,6 @@ abstract class BaseChartPainter extends CustomPainter
     }
     return result;
   }
-
-
 
   // get the maximum and minimum of the Vol value
   void getVolMaxMinValue(KLineEntity item) {

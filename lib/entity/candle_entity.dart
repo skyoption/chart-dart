@@ -24,4 +24,6 @@ mixin CandleEntity {
 
   ///Parabolic
   List<IndicatorEntity>? parabolicValues;
+  /// Ichimoku
+  List<IndicatorEntity>? ichimokuValues;
 }

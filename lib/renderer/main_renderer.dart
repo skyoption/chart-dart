@@ -1,5 +1,6 @@
 import 'package:candle_chart/components/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/entity/line_entity.dart';
 import 'package:flutter/material.dart';
 
 import '../entity/candle_entity.dart';
@@ -232,6 +233,15 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
             curX,
             item.period,
           );
+        } else if (item.type == IndicatorType.ICHIMOKU) {
+          drawIchimokuLine(
+            lastPoint,
+            curPoint,
+            canvas,
+            lastX,
+            curX,
+            item.period,
+          );
         }
       }
     }
@@ -369,6 +379,88 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         strokeWidth: 4.0,
         isDot: true,
       );
+    }
+  }
+
+  void drawIchimokuLine(
+    CandleEntity lastPoint,
+    CandleEntity curPoint,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    int period,
+  ) {
+    for (int i = 0; i < (curPoint.ichimokuValues?.length ?? 0); i++) {
+      drawLine(
+        lastPoint.ichimokuValues?[i].tenkanSen,
+        curPoint.ichimokuValues?[i].tenkanSen,
+        canvas,
+        lastX,
+        curX,
+        curPoint.ichimokuValues![i].ichimoku!.tenkanSenColor,
+        lineStyle: curPoint.ichimokuValues![i].style,
+        strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+      );
+      drawLine(
+        lastPoint.ichimokuValues?[i].chikouSpan,
+        curPoint.ichimokuValues?[i].chikouSpan,
+        canvas,
+        lastX,
+        curX,
+        curPoint.ichimokuValues![i].ichimoku!.chikouSpanColor,
+        lineStyle: curPoint.ichimokuValues![i].style,
+        strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+      );
+      drawLine(
+        lastPoint.ichimokuValues?[i].kijunSen,
+        curPoint.ichimokuValues?[i].kijunSen,
+        canvas,
+        lastX,
+        curX,
+        curPoint.ichimokuValues![i].ichimoku!.kijuSenColor,
+        lineStyle: curPoint.ichimokuValues![i].style,
+        strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+      );
+      drawLine(
+        lastPoint.ichimokuValues?[i].senkouSpanA,
+        curPoint.ichimokuValues?[i].senkouSpanA,
+        canvas,
+        lastX,
+        curX,
+        curPoint.ichimokuValues![i].ichimoku!.upKumoColor,
+        lineStyle: curPoint.ichimokuValues![i].style,
+        strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+      );
+      drawLine(
+        lastPoint.ichimokuValues?[i].senkouSpanB,
+        curPoint.ichimokuValues?[i].senkouSpanB,
+        canvas,
+        lastX,
+        curX,
+        curPoint.ichimokuValues![i].ichimoku!.downKumoColor,
+        lineStyle: curPoint.ichimokuValues![i].style,
+        strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+      );
+
+      if (lastPoint.ichimokuValues != null) {
+        /// ----
+        final senkouSpanA = lastPoint.ichimokuValues![i].senkouSpanA!;
+        final senkouSpanB = lastPoint.ichimokuValues![i].senkouSpanB!;
+        final color = senkouSpanA < senkouSpanB
+            ? curPoint.ichimokuValues![i].ichimoku!.downKumoColor
+            : curPoint.ichimokuValues![i].ichimoku!.upKumoColor;
+
+        /// ----
+        drawDashLine(
+          senkouSpanA,
+          senkouSpanB,
+          canvas,
+          lastX,
+          lastX,
+          color,
+          strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+        );
+      }
     }
   }
 

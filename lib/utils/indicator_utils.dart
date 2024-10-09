@@ -16,6 +16,7 @@ class IndicatorUtils {
         LINEAR_ENVELOPS = [],
         SMMA_ENVELOPS = [],
         BOLL = [],
+        ICHIMOKU = [],
         PARABOLIC = [];
 
     /// Group the indicators by type
@@ -40,6 +41,8 @@ class IndicatorUtils {
         BOLL.add(indicator);
       } else if (indicator.type == IndicatorType.PARABOLIC) {
         PARABOLIC.add(indicator);
+      } else if (indicator.type == IndicatorType.ICHIMOKU) {
+        ICHIMOKU.add(indicator);
       }
     }
 
@@ -53,6 +56,7 @@ class IndicatorUtils {
     if (SMMA_ENVELOPS.isNotEmpty) calc_Smoothed_Envelops(data, SMMA_ENVELOPS);
     if (BOLL.isNotEmpty) calc_BOLL(data, BOLL);
     if (PARABOLIC.isNotEmpty) calc_Parabolic_SAR(data, PARABOLIC);
+    if (ICHIMOKU.isNotEmpty) calc_Ichimoku(data, ICHIMOKU);
 
     /// calc the volume indicator
     calcVolumeMA(data);
@@ -332,7 +336,6 @@ class IndicatorUtils {
           }
         }
 
-
         entity.parabolicValues?[indicators.indexOf(indicator)].value = sar;
       }
     }
@@ -484,6 +487,73 @@ class IndicatorUtils {
             upperEnvelope;
         entity.smmaEnvelopsValues![indicators.indexOf(indicator)].dn =
             lowerEnvelope;
+      }
+    }
+  }
+
+  static void calc_Ichimoku(
+      List<KLineEntity> dataList, List<IndicatorEntity> indicators) {
+    for (var indicator in indicators) {
+      if (indicator.ichimoku != null) {
+        Ichimoku ichimoku = indicator.ichimoku!;
+
+        for (int i = ichimoku.kijuSen; i < dataList.length; i++) {
+          KLineEntity entity = dataList[i];
+          entity.ichimokuValues =
+              null; // Create or clear existing ichimokuValues
+
+          // Initialize ichimokuValues list if it's null
+          entity.ichimokuValues ??= List<IndicatorEntity>.filled(
+              indicators.length + 4, indicator.copy(value: 0));
+
+          // Calculate Tenkan-sen (Conversion Line)
+          double tenkanSen = (dataList
+                      .getRange(max(0, i - ichimoku.tenkanSen + 1), i + 1)
+                      .map((e) => e.high)
+                      .reduce(max) +
+                  dataList
+                      .getRange(max(0, i - ichimoku.tenkanSen + 1), i + 1)
+                      .map((e) => e.low)
+                      .reduce(min)) /
+              2;
+
+          // Calculate Kijun-sen (Base Line)
+          double kijunSen = (dataList
+                      .getRange(max(0, i - ichimoku.kijuSen + 1), i + 1)
+                      .map((e) => e.high)
+                      .reduce(max) +
+                  dataList
+                      .getRange(max(0, i - ichimoku.kijuSen + 1), i + 1)
+                      .map((e) => e.low)
+                      .reduce(min)) /
+              2;
+
+          // Calculate Senkou Span A
+          double senkouSpanA = (tenkanSen + kijunSen) / 2;
+
+          // Calculate Senkou Span B
+          double senkouSpanB = (dataList
+                      .getRange(max(0, i - ichimoku.senkouSpan + 1), i + 1)
+                      .map((e) => e.high)
+                      .reduce(max) +
+                  dataList
+                      .getRange(max(0, i - ichimoku.senkouSpan + 1), i + 1)
+                      .map((e) => e.low)
+                      .reduce(min)) /
+              2;
+
+          // Set values to ichimokuValues
+          entity.ichimokuValues![indicators.indexOf(indicator)].tenkanSen =
+              tenkanSen; // Tenkan-sen
+          entity.ichimokuValues![indicators.indexOf(indicator)].kijunSen =
+              kijunSen; // Kijun-sen
+          entity.ichimokuValues![indicators.indexOf(indicator)].senkouSpanA =
+              senkouSpanA; // Senkou Span A
+          entity.ichimokuValues![indicators.indexOf(indicator)].senkouSpanB =
+              senkouSpanB; // Senkou Span B
+          entity.ichimokuValues![indicators.indexOf(indicator)].chikouSpan =
+              dataList[i - ichimoku.kijuSen].close; // Chikou Span
+        }
       }
     }
   }

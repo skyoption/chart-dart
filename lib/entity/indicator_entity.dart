@@ -31,6 +31,11 @@ class IndicatorEntity {
   double value = 0;
   double? up;
   double? dn;
+  double? tenkanSen;
+  double? kijunSen;
+  double? senkouSpanA;
+  double? senkouSpanB;
+  double? chikouSpan;
 
   IndicatorEntity({
     this.name = '',
@@ -39,6 +44,11 @@ class IndicatorEntity {
     this.type,
     this.dn,
     this.up,
+    this.chikouSpan,
+    this.senkouSpanB,
+    this.senkouSpanA,
+    this.kijunSen,
+    this.tenkanSen,
     this.value = 0,
     this.deviations,
     this.maximum,
@@ -73,6 +83,12 @@ class IndicatorEntity {
     sar,
     mb,
     up,
+    chikouSpan,
+    senkouSpanB,
+    senkouSpanA,
+    kijunSen,
+    tenkanSen,
+    secondColor,
   }) {
     return IndicatorEntity(
       period: period ?? this.period,
@@ -92,6 +108,12 @@ class IndicatorEntity {
       style: style ?? this.style,
       maximum: maximum ?? this.maximum,
       timeframe: timeframe ?? this.timeframe,
+      secondColor: secondColor ?? this.secondColor,
+      tenkanSen: tenkanSen ?? this.tenkanSen,
+      chikouSpan: chikouSpan ?? this.chikouSpan,
+      kijunSen: kijunSen ?? this.kijunSen,
+      senkouSpanA: senkouSpanA ?? this.senkouSpanA,
+      senkouSpanB: senkouSpanB ?? this.senkouSpanB,
     );
   }
 }

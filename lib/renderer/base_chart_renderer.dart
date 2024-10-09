@@ -131,6 +131,29 @@ abstract class BaseChartRenderer<T> {
     );
   }
 
+  void drawDashLine(
+    double? lastPrice,
+    double? curPrice,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    Color color, {
+    double strokeWidth = 1.0,
+  }) {
+    if (lastPrice == null || curPrice == null) {
+      return;
+    }
+    _drawDashLine(
+      lastPrice,
+      curPrice,
+      canvas,
+      lastX,
+      curX,
+      color,
+      strokeWidth,
+    );
+  }
+
   void _drawLine(
     double? lastPrice,
     double? curPrice,
@@ -171,6 +194,48 @@ abstract class BaseChartRenderer<T> {
           ..color = color
           ..strokeWidth = strokeWidth,
       );
+    }
+  }
+
+  void _drawDashLine(
+    double? lastPrice,
+    double? curPrice,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    Color color,
+    double strokeWidth,
+  ) {
+    if (lastPrice == null || curPrice == null) {
+      return;
+    }
+    double lastY = getY(lastPrice);
+    double curY = getY(curPrice);
+    while (lastY < curY) {
+      canvas.drawPoints(
+        PointMode.lines,
+        [
+          Offset(lastX, lastY),
+          Offset(curX, lastY + 1.0),
+        ],
+        chartPaint
+          ..color = color
+          ..strokeWidth = strokeWidth,
+      );
+      lastY += 2.0;
+    }
+    while (curY < lastY) {
+      canvas.drawPoints(
+        PointMode.lines,
+        [
+          Offset(lastX, curY),
+          Offset(curX, curY + 1.0),
+        ],
+        chartPaint
+          ..color = color
+          ..strokeWidth = strokeWidth,
+      );
+      curY += 2.0;
     }
   }
 
