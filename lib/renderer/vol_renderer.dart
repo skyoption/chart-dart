@@ -140,4 +140,15 @@ class VolRenderer extends BaseChartRenderer<VolumeEntity> {
           Offset(columnSpace * i, chartRect.bottom), gridPaint);
     }
   }
+
+  @override
+  void drawIndicators(
+    VolumeEntity lastPoint,
+    VolumeEntity curPoint,
+    double lastX,
+    double curX,
+    Size size,
+    Canvas canvas,
+      bool drawAsBackground,
+  ) {}
 }

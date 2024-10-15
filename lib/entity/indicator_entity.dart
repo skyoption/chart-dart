@@ -26,6 +26,7 @@ class IndicatorEntity {
   Levels level;
   Timeframes timeframe;
   double strokeWidth;
+  bool drawAsBackground;
   LineStyle style;
   Color color, secondColor;
   double value = 0;
@@ -54,6 +55,7 @@ class IndicatorEntity {
     this.maximum,
     this.steps,
     this.ichimoku,
+    this.drawAsBackground = false,
     this.applyTo = ApplyTo.Close,
     this.strokeWidth = 1.0,
     this.style = LineStyle.normal,
@@ -78,6 +80,7 @@ class IndicatorEntity {
     ichimoku,
     steps,
     color,
+    drawAsBackground,
     maximum,
     dn,
     sar,
@@ -114,6 +117,7 @@ class IndicatorEntity {
       kijunSen: kijunSen ?? this.kijunSen,
       senkouSpanA: senkouSpanA ?? this.senkouSpanA,
       senkouSpanB: senkouSpanB ?? this.senkouSpanB,
+      drawAsBackground: drawAsBackground ?? this.drawAsBackground,
     );
   }
 }

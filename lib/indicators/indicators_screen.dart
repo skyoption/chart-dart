@@ -22,6 +22,8 @@ class IndicatorsScreen extends StatefulWidget {
 }
 
 class _IndicatorsScreenState extends State<IndicatorsScreen> {
+  DismissDirection? direction;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,15 +87,46 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
             ),
             ...chartProperties.indicators.asMap().entries.map(
               (e) {
-                return Column(
-                  children: [
-                    Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-                    PropertiesItemWidget(
-                      title: '${e.value.name} (${e.value.type?.name})',
-                      margin: EdgeInsets.zero,
-                      onTap: () => _onTap(e),
+                final name = '${e.value.name} (${e.value.type?.name})';
+                return Dismissible(
+                  key: Key(name),
+                  onUpdate: (details) {
+                    direction = details.direction;
+                    setState(() {});
+                  },
+                  onDismissed: (value) {
+                    chartProperties.removeIndicator(e.key);
+                    widget.onDone();
+                  },
+                  background: Container(
+                    color: Colors.red.withOpacity(0.1),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 21.0),
+                      child: Row(
+                        mainAxisAlignment:
+                            direction == DismissDirection.startToEnd
+                                ? MainAxisAlignment.start
+                                : MainAxisAlignment.end,
+                        children: [
+                          Icon(
+                            Icons.delete_outline_outlined,
+                            color: Colors.red,
+                            size: 28.0,
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
+                  ),
+                  child: Column(
+                    children: [
+                      Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+                      PropertiesItemWidget(
+                        title: name,
+                        margin: EdgeInsets.zero,
+                        onTap: () => _onTap(e),
+                      ),
+                    ],
+                  ),
                 );
               },
             )

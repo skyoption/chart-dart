@@ -8,6 +8,7 @@ class PropertiesItemWidget extends StatelessWidget {
   final Color subTitleColor, titleColor;
   final EdgeInsetsGeometry? margin;
   final Widget? child;
+  final double? height;
 
   const PropertiesItemWidget({
     super.key,
@@ -16,6 +17,7 @@ class PropertiesItemWidget extends StatelessWidget {
     this.onTap,
     this.margin,
     this.child,
+    this.height,
     this.subTitleColor = Colors.blueAccent,
     this.titleColor = Colors.black,
   });
@@ -29,9 +31,10 @@ class PropertiesItemWidget extends StatelessWidget {
         }
       },
       child: Container(
+        height: height,
         color: Colors.grey.withOpacity(0.2),
         padding: EdgeInsetsDirectional.symmetric(
-          vertical: 12.0,
+          vertical: 16.0,
           horizontal: 12.0,
         ),
         margin: margin ?? EdgeInsets.only(bottom: 6.0),

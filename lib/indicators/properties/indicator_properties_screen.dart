@@ -309,11 +309,15 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
             IndicatorColorWidget(
               title: widget.haveTwoBands ? 'Upper Band :' : 'Style :',
               color: widget.indicator?.color,
-              onChange: (color) {
+              hideDrawAsBackground: widget.haveTwoBands,
+              drawAsBackground: widget.indicator!.drawAsBackground,
+              onChange: (color, drawAsBackground) {
                 widget.indicator?.color = color;
+                if(!widget.haveTwoBands) {
+                  widget.indicator?.drawAsBackground = drawAsBackground;
+                }
               },
               // hideStyle: true,
-              // hideDrawAsBackground: true,
               // strokeWidth: widget.indicator?.strokeWidth,
               // style: widget.indicator?.style,
               // onChange: (color, drawAsBackground, strokeWidth, style) {
@@ -327,9 +331,12 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
             if (widget.haveTwoBands)
               IndicatorColorWidget(
                 title: 'Lower Band :',
+                hideDrawAsBackground: false,
+                drawAsBackground: widget.indicator!.drawAsBackground,
                 color: widget.indicator?.secondColor,
-                onChange: (color) {
+                onChange: (color, drawAsBackground) {
                   widget.indicator?.secondColor = color;
+                  widget.indicator?.drawAsBackground = drawAsBackground;
                 },
               ),
           ],

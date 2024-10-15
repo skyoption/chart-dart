@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:flutter/material.dart';
 
@@ -101,8 +102,44 @@ abstract class BaseChartRenderer<T> {
 
   void drawVerticalText(canvas, textStyle, int gridRows);
 
-  void drawChart(T lastPoint, T curPoint, double lastX, double curX, Size size,
-      Canvas canvas);
+  void drawChart(
+    T lastPoint,
+    T curPoint,
+    double lastX,
+    double curX,
+    Size size,
+    Canvas canvas,
+  );
+
+  void drawIndicators(
+    T lastPoint,
+    T curPoint,
+    double lastX,
+    double curX,
+    Size size,
+    Canvas canvas,
+    bool drawAsBackground,
+  );
+
+  void drawRect(
+    List<Offset> offsets,
+    Color color,
+    Canvas canvas,
+  ) {
+    if (offsets.isEmpty) return;
+    final path = Path();
+    path.moveTo(offsets[0].dx, offsets[0].dy);
+    for (var offset in offsets.skip(1)) {
+      path.lineTo(offset.dx, offset.dy);
+    }
+    path.close();
+    canvas.drawPath(
+      path,
+      chartPaint
+        ..color = color
+        ..style = PaintingStyle.fill,
+    );
+  }
 
   void drawLine(
     double? lastPrice,
@@ -211,7 +248,7 @@ abstract class BaseChartRenderer<T> {
     }
     double lastY = getY(lastPrice);
     double curY = getY(curPrice);
-    while (lastY < curY) {
+    while (lastY < curY - 2) {
       canvas.drawPoints(
         PointMode.lines,
         [
@@ -224,7 +261,7 @@ abstract class BaseChartRenderer<T> {
       );
       lastY += 2.0;
     }
-    while (curY < lastY) {
+    while (curY < lastY - 2) {
       canvas.drawPoints(
         PointMode.lines,
         [

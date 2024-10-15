@@ -132,7 +132,6 @@ class ChartPainter extends BaseChartPainter
       ..isAntiAlias = true;
   }
 
-
   @override
   void initChartRenderer() {
     if (data != null && data!.isNotEmpty) {
@@ -220,13 +219,30 @@ class ChartPainter extends BaseChartPainter
     canvas.save();
     canvas.translate(mTranslateX * scaleX + this.chartStyle.leftPadding, 0.0);
     canvas.scale(scaleX, 1.0);
+
     for (int i = mStartIndex; data != null && i <= mStopIndex; i++) {
       KLineEntity? curPoint = data?[i];
       if (curPoint == null) continue;
       KLineEntity lastPoint = i == 0 ? curPoint : data![i - 1];
       double curX = getX(i);
       double lastX = i == 0 ? curX : getX(i - 1);
+      mMainRenderer.drawIndicators(
+        lastPoint,
+        curPoint,
+        lastX,
+        curX,
+        size,
+        canvas,
+        true,
+      );
+    }
 
+    for (int i = mStartIndex; data != null && i <= mStopIndex; i++) {
+      KLineEntity? curPoint = data?[i];
+      if (curPoint == null) continue;
+      KLineEntity lastPoint = i == 0 ? curPoint : data![i - 1];
+      double curX = getX(i);
+      double lastX = i == 0 ? curX : getX(i - 1);
       mMainRenderer.drawChart(lastPoint, curPoint, lastX, curX, size, canvas);
       mVolRenderer?.drawChart(lastPoint, curPoint, lastX, curX, size, canvas);
       mSecondaryRendererList.forEach((element) {

@@ -140,109 +140,140 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         lastX,
         curX,
       );
-    } else {
-      drawCandle(curPoint, canvas, curX);
-      for (var item in indicators) {
-        if (item.type == IndicatorType.EMA_MA) {
-          drawEMA_MA(
-            lastPoint,
-            curPoint,
-            canvas,
-            lastX,
-            curX,
-            item.period,
-          );
-        } else if (item.type == IndicatorType.LINEAR_MA) {
-          drawLINEAR_MA(
-            lastPoint,
-            curPoint,
-            canvas,
-            lastX,
-            curX,
-            item.period,
-          );
-        } else if (item.type == IndicatorType.SMA_MA) {
-          drawSMA_MA(
-            lastPoint,
-            curPoint,
-            canvas,
-            lastX,
-            curX,
-            item.period,
-          );
-        } else if (item.type == IndicatorType.SMMA_MA) {
-          drawSMMA_MA(
-            lastPoint,
-            curPoint,
-            canvas,
-            lastX,
-            curX,
-            item.period,
-          );
-        } else if (item.type == IndicatorType.EMA_ENVELOPS) {
-          drawEMA_ENVELOPS(
-            lastPoint,
-            curPoint,
-            canvas,
-            lastX,
-            curX,
-            item.period,
-          );
-        } else if (item.type == IndicatorType.LINEAR_ENVELOPS) {
-          drawLINEAR_ENVELOPS(
-            lastPoint,
-            curPoint,
-            canvas,
-            lastX,
-            curX,
-            item.period,
-          );
-        } else if (item.type == IndicatorType.SMA_ENVELOPS) {
-          drawSMA_ENVELOPS(
-            lastPoint,
-            curPoint,
-            canvas,
-            lastX,
-            curX,
-            item.period,
-          );
-        } else if (item.type == IndicatorType.SMMA_ENVELOPS) {
-          drawSMMA_ENVELOPS(
-            lastPoint,
-            curPoint,
-            canvas,
-            lastX,
-            curX,
-            item.period,
-          );
-        } else if (item.type == IndicatorType.BOLL) {
-          drawBollLine(
-            lastPoint,
-            curPoint,
-            canvas,
-            lastX,
-            curX,
-            item.period,
-          );
-        } else if (item.type == IndicatorType.PARABOLIC) {
-          drawParabolicLine(
-            lastPoint,
-            curPoint,
-            canvas,
-            lastX,
-            curX,
-            item.period,
-          );
-        } else if (item.type == IndicatorType.ICHIMOKU) {
-          drawIchimokuLine(
-            lastPoint,
-            curPoint,
-            canvas,
-            lastX,
-            curX,
-            item.period,
-          );
-        }
+    }
+    drawCandle(curPoint, canvas, curX);
+    drawIndicators(
+      lastPoint,
+      curPoint,
+      lastX,
+      curX,
+      size,
+      canvas,
+      false,
+    );
+  }
+
+  @override
+  void drawIndicators(
+    CandleEntity lastPoint,
+    CandleEntity curPoint,
+    double lastX,
+    double curX,
+    Size size,
+    Canvas canvas,
+    bool drawAsBackground,
+  ) {
+    for (var item in indicators) {
+      if (item.type == IndicatorType.EMA_MA &&
+          item.drawAsBackground == drawAsBackground) {
+        drawEMA_MA(
+          lastPoint,
+          curPoint,
+          canvas,
+          lastX,
+          curX,
+          item.period,
+        );
+      } else if (item.type == IndicatorType.LINEAR_MA &&
+          item.drawAsBackground == drawAsBackground) {
+        drawLINEAR_MA(
+          lastPoint,
+          curPoint,
+          canvas,
+          lastX,
+          curX,
+          item.period,
+        );
+      } else if (item.type == IndicatorType.SMA_MA &&
+          item.drawAsBackground == drawAsBackground) {
+        drawSMA_MA(
+          lastPoint,
+          curPoint,
+          canvas,
+          lastX,
+          curX,
+          item.period,
+        );
+      } else if (item.type == IndicatorType.SMMA_MA &&
+          item.drawAsBackground == drawAsBackground) {
+        drawSMMA_MA(
+          lastPoint,
+          curPoint,
+          canvas,
+          lastX,
+          curX,
+          item.period,
+        );
+      } else if (item.type == IndicatorType.EMA_ENVELOPS &&
+          item.drawAsBackground == drawAsBackground) {
+        drawEMA_ENVELOPS(
+          lastPoint,
+          curPoint,
+          canvas,
+          lastX,
+          curX,
+          item.period,
+        );
+      } else if (item.type == IndicatorType.LINEAR_ENVELOPS &&
+          item.drawAsBackground == drawAsBackground) {
+        drawLINEAR_ENVELOPS(
+          lastPoint,
+          curPoint,
+          canvas,
+          lastX,
+          curX,
+          item.period,
+        );
+      } else if (item.type == IndicatorType.SMA_ENVELOPS &&
+          item.drawAsBackground == drawAsBackground) {
+        drawSMA_ENVELOPS(
+          lastPoint,
+          curPoint,
+          canvas,
+          lastX,
+          curX,
+          item.period,
+        );
+      } else if (item.type == IndicatorType.SMMA_ENVELOPS &&
+          item.drawAsBackground == drawAsBackground) {
+        drawSMMA_ENVELOPS(
+          lastPoint,
+          curPoint,
+          canvas,
+          lastX,
+          curX,
+          item.period,
+        );
+      } else if (item.type == IndicatorType.BOLL &&
+          item.drawAsBackground == drawAsBackground) {
+        drawBollLine(
+          lastPoint,
+          curPoint,
+          canvas,
+          lastX,
+          curX,
+          item.period,
+        );
+      } else if (item.type == IndicatorType.PARABOLIC &&
+          item.drawAsBackground == drawAsBackground) {
+        drawParabolicLine(
+          lastPoint,
+          curPoint,
+          canvas,
+          lastX,
+          curX,
+          item.period,
+        );
+      } else if (item.type == IndicatorType.ICHIMOKU &&
+          item.drawAsBackground == drawAsBackground) {
+        drawIchimokuLine(
+          lastPoint,
+          curPoint,
+          canvas,
+          lastX,
+          curX,
+          item.period,
+        );
       }
     }
   }
@@ -390,6 +421,32 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     double curX,
     int period,
   ) {
+    ///-- for drawing background of SpanA and SpanB
+    List<Offset> senkouSpanAOffsets = [], senkouSpanBOffsets = [];
+    for (int i = 0; i < (curPoint.ichimokuValues?.length ?? 0); i++) {
+      if (curPoint.ichimokuValues != null && lastPoint.ichimokuValues != null) {
+        double SpanAY = getY(curPoint.ichimokuValues![i].senkouSpanA!);
+        double lastSpanAY = getY(lastPoint.ichimokuValues![i].senkouSpanA!);
+        double SpanBY = getY(curPoint.ichimokuValues![i].senkouSpanB!);
+        double lastSpanBY = getY(lastPoint.ichimokuValues![i].senkouSpanB!);
+        senkouSpanAOffsets.addAll([
+          Offset(curX, SpanAY),
+          Offset(lastX, lastSpanAY),
+        ]);
+        senkouSpanBOffsets.addAll([
+          Offset(lastX, lastSpanBY),
+          Offset(curX, SpanBY),
+        ]);
+      }
+    }
+
+    drawRect(
+      [...senkouSpanAOffsets, ...senkouSpanBOffsets],
+      Colors.green.withOpacity(0.15),
+      canvas,
+    );
+
+    ///--
     for (int i = 0; i < (curPoint.ichimokuValues?.length ?? 0); i++) {
       drawLine(
         lastPoint.ichimokuValues?[i].tenkanSen,
@@ -421,27 +478,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         lineStyle: curPoint.ichimokuValues![i].style,
         strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
       );
-      drawLine(
-        lastPoint.ichimokuValues?[i].senkouSpanA,
-        curPoint.ichimokuValues?[i].senkouSpanA,
-        canvas,
-        lastX,
-        curX,
-        curPoint.ichimokuValues![i].ichimoku!.upKumoColor,
-        lineStyle: curPoint.ichimokuValues![i].style,
-        strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
-      );
-      drawLine(
-        lastPoint.ichimokuValues?[i].senkouSpanB,
-        curPoint.ichimokuValues?[i].senkouSpanB,
-        canvas,
-        lastX,
-        curX,
-        curPoint.ichimokuValues![i].ichimoku!.downKumoColor,
-        lineStyle: curPoint.ichimokuValues![i].style,
-        strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
-      );
 
+      ///--
       if (lastPoint.ichimokuValues != null) {
         /// ----
         final senkouSpanA = lastPoint.ichimokuValues![i].senkouSpanA!;
@@ -458,9 +496,33 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           lastX,
           color,
-          strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+          strokeWidth: 0.3,
         );
       }
+
+      drawLine(
+        lastPoint.ichimokuValues?[i].senkouSpanA,
+        curPoint.ichimokuValues?[i].senkouSpanA,
+        canvas,
+        lastX,
+        curX,
+        curPoint.ichimokuValues![i].ichimoku!.upKumoColor,
+        lineStyle: curPoint.ichimokuValues![i].style,
+        strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+      );
+
+      drawLine(
+        lastPoint.ichimokuValues?[i].senkouSpanB,
+        curPoint.ichimokuValues?[i].senkouSpanB,
+        canvas,
+        lastX,
+        curX,
+        curPoint.ichimokuValues![i].ichimoku!.downKumoColor,
+        lineStyle: curPoint.ichimokuValues![i].style,
+        strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+      );
+
+
     }
   }
 
@@ -670,22 +732,12 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 //画折线图
   drawPolyline(double lastPrice, double curPrice, Canvas canvas, double lastX,
       double curX) {
-//    drawLine(lastPrice + 100, curPrice + 100, canvas, lastX, curX, ChartColors.kLineColor);
     mLinePath ??= Path();
-
-//    if (lastX == curX) {
-//      mLinePath.moveTo(lastX, getY(lastPrice));
-//    } else {
-////      mLinePath.lineTo(curX, getY(curPrice));
-//      mLinePath.cubicTo(
-//          (lastX + curX) / 2, getY(lastPrice), (lastX + curX) / 2, getY(curPrice), curX, getY(curPrice));
-//    }
-    if (lastX == curX) lastX = 0; //起点位置填充
+    if (lastX == curX) lastX = 0;
     mLinePath!.moveTo(lastX, getY(lastPrice));
     mLinePath!.cubicTo((lastX + curX) / 2, getY(lastPrice), (lastX + curX) / 2,
         getY(curPrice), curX, getY(curPrice));
 
-    //画阴影
     mLineFillShader ??= LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
@@ -723,7 +775,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     double r = mCandleWidth / 2;
     double lineR = mCandleLineWidth / 2;
     if (open >= close) {
-      // 实体高度>= CandleLineWidth
       if (open - close < mCandleLineWidth) {
         open = close + mCandleLineWidth;
       }
@@ -733,7 +784,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       canvas.drawRect(
           Rect.fromLTRB(curX - lineR, high, curX + lineR, low), chartPaint);
     } else if (close > open) {
-      // 实体高度>= CandleLineWidth
       if (close - open < mCandleLineWidth) {
         open = close - mCandleLineWidth;
       }
@@ -757,11 +807,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       if (i == gridRows) {
         chartPositions.bottomPrice = value;
       }
-      // TextSpan span = TextSpan(
-      //     text: "${format(value, isNotPoint: this.chartStyle.isNotPoint)}",
-      //     style: textStyle);
-
-      //右侧文字科学计数
       final realStyle = getTextStyle(chartColors.maxColor);
       TextSpan span = formatValueSpan(value, realStyle);
 
@@ -794,7 +839,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 
   @override
   void drawGrid(Canvas canvas, int gridRows, int gridColumns) {
-//    final int gridRows = 4, gridColumns = 4;
     double rowSpace = chartRect.height / gridRows;
     for (int i = 0; i <= gridRows; i++) {
       canvas.drawLine(Offset(0, rowSpace * i + topPadding),
@@ -809,7 +853,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 
   @override
   double getY(double y) {
-    //For TrendLine
     updateTrendLineData();
     return (maxValue - y) * scaleY + _contentRect.top;
   }

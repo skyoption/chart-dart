@@ -229,7 +229,7 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
             IndicatorColorWidget(
               title: 'Tenkan-sen:',
               color: widget.indicator!.ichimoku!.tenkanSenColor,
-              onChange: (color) {
+              onChange: (color, drawAsBackground) {
                 widget.indicator!.ichimoku!.tenkanSenColor = color;
               },
             ),
@@ -237,7 +237,7 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
             IndicatorColorWidget(
               title: 'Kiju-sen:',
               color: widget.indicator!.ichimoku!.kijuSenColor,
-              onChange: (color) {
+              onChange: (color, drawAsBackground) {
                 widget.indicator!.ichimoku!.kijuSenColor = color;
               },
             ),
@@ -245,7 +245,7 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
             IndicatorColorWidget(
               title: 'Chikou Span:',
               color: widget.indicator!.ichimoku!.chikouSpanColor,
-              onChange: (color) {
+              onChange: (color, drawAsBackground) {
                 widget.indicator!.ichimoku!.chikouSpanColor = color;
               },
             ),
@@ -253,16 +253,19 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
             IndicatorColorWidget(
               title: 'Up Kumo:',
               color: widget.indicator!.ichimoku!.upKumoColor,
-              onChange: (color) {
+              onChange: (color, drawAsBackground) {
                 widget.indicator!.ichimoku!.upKumoColor = color;
               },
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
+              drawAsBackground: widget.indicator!.drawAsBackground,
+              hideDrawAsBackground: false,
               title: 'Down Kumo:',
               color: widget.indicator!.ichimoku!.downKumoColor,
-              onChange: (color) {
+              onChange: (color, drawAsBackground) {
                 widget.indicator!.ichimoku!.downKumoColor = color;
+                widget.indicator?.drawAsBackground = drawAsBackground;
               },
             ),
           ],

@@ -189,4 +189,16 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
           Offset(columnSpace * i, chartRect.bottom), gridPaint);
     }
   }
+
+  @override
+  void drawIndicators(
+    MACDEntity lastPoint,
+    MACDEntity curPoint,
+    double lastX,
+    double curX,
+    Size size,
+    Canvas canvas,
+      bool drawAsBackground,
+  ) {
+  }
 }

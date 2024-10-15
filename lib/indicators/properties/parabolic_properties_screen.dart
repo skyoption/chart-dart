@@ -192,18 +192,12 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
             IndicatorColorWidget(
               title: 'Style :',
               color: widget.indicator?.color,
-              onChange: (color) {
+              hideDrawAsBackground: false,
+              drawAsBackground: widget.indicator!.drawAsBackground,
+              onChange: (color, drawAsBackground) {
                 widget.indicator?.color = color;
+                widget.indicator?.drawAsBackground = drawAsBackground;
               },
-              // hideStyle: true,
-              // hideDrawAsBackground: true,
-              // strokeWidth: widget.indicator?.strokeWidth,
-              // style: widget.indicator?.style,
-              // onChange: (color, drawAsBackground, strokeWidth, style) {
-              //   widget.indicator?.style = style;
-              //   widget.indicator?.strokeWidth = strokeWidth;
-              //   widget.indicator?.color = color;
-              // },
             ),
           ],
         ),
