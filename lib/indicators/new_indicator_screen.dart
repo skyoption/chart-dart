@@ -26,7 +26,7 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              vertical: 21.0,
+              vertical: 14.0,
               horizontal: 21.0,
             ),
             child: Stack(
