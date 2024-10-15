@@ -56,12 +56,12 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size(double.infinity, 50.0),
+        preferredSize: const Size(double.infinity, 60.0),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              vertical: 12.0,
-              horizontal: 12.0,
+              vertical: 21.0,
+              horizontal: 21.0,
             ),
             child: Stack(
               children: [
