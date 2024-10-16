@@ -35,7 +35,7 @@ class PropertiesItemWidget extends StatelessWidget {
         color: Colors.grey.withOpacity(0.2),
         padding: EdgeInsetsDirectional.symmetric(
           vertical: 16.0,
-          horizontal: 12.0,
+          horizontal: 21.0,
         ),
         margin: margin ?? EdgeInsets.only(bottom: 6.0),
         child: Row(
