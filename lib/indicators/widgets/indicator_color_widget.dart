@@ -23,10 +23,10 @@ class IndicatorColorWidget extends StatefulWidget {
 }
 
 class _IndicatorColorWidgetState extends State<IndicatorColorWidget> {
+
+  late bool drawAsBackground = widget.drawAsBackground;
   late Color color = widget.color ?? Colors.blueAccent;
   int index = 0;
-
-  late bool drawAsBackground = widget.drawAsBackground ?? false;
 
   @override
   void initState() {
