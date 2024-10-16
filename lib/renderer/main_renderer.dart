@@ -537,6 +537,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           curPoint.emaEnvelopsValues![i].color,
+          strokeWidth: curPoint.emaEnvelopsValues![i].strokeWidth,
         );
       }
 
@@ -550,6 +551,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           curPoint.emaEnvelopsValues![i].secondColor,
+          strokeWidth: curPoint.emaEnvelopsValues![i].strokeWidth,
         );
       }
     }
@@ -574,6 +576,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           curPoint.smaEnvelopsValues![i].color,
+          strokeWidth: curPoint.smaEnvelopsValues![i].strokeWidth,
         );
       }
 
@@ -586,6 +589,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas,
           lastX,
           curX,
+          strokeWidth: curPoint.smaEnvelopsValues![i].strokeWidth,
           curPoint.smaEnvelopsValues![i].secondColor,
         );
       }
@@ -611,6 +615,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           curPoint.smmaEnvelopsValues![i].color,
+          strokeWidth: curPoint.smmaEnvelopsValues![i].strokeWidth,
         );
       }
 
@@ -624,6 +629,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           curPoint.smmaEnvelopsValues![i].secondColor,
+          strokeWidth: curPoint.smmaEnvelopsValues![i].strokeWidth,
         );
       }
     }
@@ -647,6 +653,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas,
           lastX,
           curX,
+          strokeWidth: curPoint.lwmaEnvelopsValues![i].strokeWidth,
           curPoint.lwmaEnvelopsValues![i].color,
         );
       }
@@ -661,6 +668,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           curPoint.lwmaEnvelopsValues![i].secondColor,
+          strokeWidth: curPoint.lwmaEnvelopsValues![i].strokeWidth,
         );
       }
     }
@@ -684,6 +692,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           this.chartColors.ma10Color,
+          strokeWidth: curPoint.bollValues![i].strokeWidth,
         );
       }
       if ((lastPoint.bollValues?.length ?? 0) - 1 >= i &&
@@ -695,6 +704,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           curPoint.bollValues![i].color,
+          strokeWidth: curPoint.bollValues![i].strokeWidth,
         );
       }
       if ((lastPoint.bollValues?.length ?? 0) - 1 >= i &&
@@ -706,6 +716,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           this.chartColors.ma30Color,
+          strokeWidth: curPoint.bollValues![i].strokeWidth,
         );
       }
     }
