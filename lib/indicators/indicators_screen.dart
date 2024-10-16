@@ -89,7 +89,7 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
               (e) {
                 final name = '${e.value.name} (${e.value.type?.name})';
                 return Dismissible(
-                  key: Key(name),
+                  key: Key('$name ${e.key} ${e.value.period}'),
                   onUpdate: (details) {
                     direction = details.direction;
                     setState(() {});

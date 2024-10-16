@@ -183,8 +183,8 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
                     contentPadding: EdgeInsets.symmetric(vertical: 11.0),
                   ),
                   inputFormatters: [
-                    LengthLimitingTextInputFormatter(2),
-                    NumericalRangeFormatter(min: 1, max: 5),
+                    LengthLimitingTextInputFormatter(3),
+                    NumericalRangeFormatter(min: 1, max: 100),
                   ],
                 ),
               ),
@@ -218,8 +218,8 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
                     contentPadding: EdgeInsets.symmetric(vertical: 11.0),
                   ),
                   inputFormatters: [
-                    LengthLimitingTextInputFormatter(2),
-                    NumericalRangeFormatter(min: 1, max: 5),
+                    LengthLimitingTextInputFormatter(3),
+                    NumericalRangeFormatter(min: 1, max: 100),
                   ],
                 ),
               ),

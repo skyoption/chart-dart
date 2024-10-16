@@ -39,7 +39,6 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
       widget.name = widget.indicator!.name;
       stepsController.text = widget.indicator!.steps.toString();
       maximumController.text = widget.indicator!.maximum.toString();
-      kPrint(stepsController.text);
     } else {
       widget.indicator = IndicatorEntity(
         maximum: 0.006,
@@ -148,7 +147,7 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
                   ),
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(6),
-                    NumericalDoubleRangeFormatter(min: 0, max: 10),
+                    NumericalDoubleRangeFormatter(min: 0, max: 100),
                   ],
                 ),
               ),
@@ -182,7 +181,7 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
                   ),
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(6),
-                    NumericalDoubleRangeFormatter(min: 0, max: 10),
+                    NumericalDoubleRangeFormatter(min: 0, max: 100),
                   ],
                 ),
               ),

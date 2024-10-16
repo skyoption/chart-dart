@@ -12,7 +12,7 @@ class IndicatorColorWidget extends StatefulWidget {
   const IndicatorColorWidget({
     super.key,
     required this.onChange,
-    this.title = 'Style :',
+    this.title = 'Style',
     this.color,
     this.drawAsBackground = false,
     this.hideDrawAsBackground = true,

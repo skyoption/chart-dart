@@ -1,4 +1,5 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/indicators/indicator_pixels_screen.dart';
 import 'package:candle_chart/indicators/widgets/indicator_color_widget.dart';
 import 'package:candle_chart/objects/object_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
@@ -20,6 +21,7 @@ class IndicatorPropertiesScreen extends StatefulWidget {
       haveMethods,
       haveTimeframe,
       haveLevels,
+      havePixels,
       haveTwoBands,
       isENVELOPS;
 
@@ -31,6 +33,7 @@ class IndicatorPropertiesScreen extends StatefulWidget {
     this.indicator,
     this.haveDeviations = false,
     this.haveTimeframe = false,
+    this.havePixels = true,
     this.haveLevels = false,
     this.haveMethods = false,
     this.haveTwoBands = false,
@@ -198,8 +201,8 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                     contentPadding: EdgeInsets.symmetric(vertical: 11.0),
                   ),
                   inputFormatters: [
-                    LengthLimitingTextInputFormatter(2),
-                    NumericalRangeFormatter(min: 1, max: 5),
+                    LengthLimitingTextInputFormatter(4),
+                    NumericalRangeFormatter(min: 1, max: 1000),
                   ],
                 ),
               ),
@@ -235,8 +238,8 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                       contentPadding: EdgeInsets.symmetric(vertical: 11.0),
                     ),
                     inputFormatters: [
-                      LengthLimitingTextInputFormatter(1),
-                      NumericalRangeFormatter(min: 1, max: 5),
+                      LengthLimitingTextInputFormatter(6),
+                      NumericalDoubleRangeFormatter(min: 0, max: 100),
                     ],
                   ),
                 ),
@@ -306,14 +309,36 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                 onTap: () {},
               ),
             PropertiesTitleWidget(title: 'style'),
+            if (widget.havePixels)
+              PropertiesItemWidget(
+                title: 'Pixel',
+                subTitle: '${widget.indicator?.strokeWidth ?? 1} Pixel',
+                margin: EdgeInsets.zero,
+                subTitleColor: Colors.grey.withOpacity(0.8),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => IndicatorPixelsScreen(
+                        pixel: widget.indicator?.strokeWidth,
+                        onConfirm: (pixel) {
+                          widget.indicator?.strokeWidth = pixel;
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+            if (widget.havePixels)
+              Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
-              title: widget.haveTwoBands ? 'Upper Band :' : 'Style :',
+              title: widget.haveTwoBands ? 'Upper Band ' : 'Style ',
               color: widget.indicator?.color,
               hideDrawAsBackground: widget.haveTwoBands,
               drawAsBackground: widget.indicator!.drawAsBackground,
               onChange: (color, drawAsBackground) {
                 widget.indicator?.color = color;
-                if(!widget.haveTwoBands) {
+                if (!widget.haveTwoBands) {
                   widget.indicator?.drawAsBackground = drawAsBackground;
                 }
               },
@@ -330,7 +355,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
               Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             if (widget.haveTwoBands)
               IndicatorColorWidget(
-                title: 'Lower Band :',
+                title: 'Lower Band ',
                 hideDrawAsBackground: false,
                 drawAsBackground: widget.indicator!.drawAsBackground,
                 color: widget.indicator?.secondColor,
@@ -338,7 +363,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                   widget.indicator?.secondColor = color;
                   widget.indicator?.drawAsBackground = drawAsBackground;
                 },
-              ),
+              )
           ],
         ),
       ),

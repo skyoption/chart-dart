@@ -287,10 +287,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
   ) {
     for (int i = 0; i < (curPoint.emaMaValues?.length ?? 0); i++) {
-      if (i == 4) {
-        break;
-      }
-      if (lastPoint.emaMaValues?[i] != 0 &&
+      if ((lastPoint.emaMaValues?.length ?? 0) - 1 >= i &&
+          lastPoint.emaMaValues?[i] != 0 &&
           period == curPoint.emaMaValues?[i].period) {
         drawLine(
           lastPoint.emaMaValues?[i].value,
@@ -315,10 +313,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
   ) {
     for (int i = 0; i < (curPoint.lwmaMaValues?.length ?? 0); i++) {
-      if (i == 4) {
-        break;
-      }
-      if (lastPoint.lwmaMaValues?[i] != 0 &&
+      if ((lastPoint.lwmaMaValues?.length ?? 0) - 1 >= i &&
+          lastPoint.lwmaMaValues?[i] != 0 &&
           period == curPoint.lwmaMaValues?[i].period) {
         drawLine(
           lastPoint.lwmaMaValues?[i].value,
@@ -343,10 +339,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
   ) {
     for (int i = 0; i < (curPoint.smaMaValues?.length ?? 0); i++) {
-      if (i == 4) {
-        break;
-      }
-      if (lastPoint.smaMaValues?[i] != 0 &&
+      if ((lastPoint.smaMaValues?.length ?? 0) - 1 >= i &&
+          lastPoint.smaMaValues?[i] != 0 &&
           period == curPoint.smaMaValues?[i].period) {
         drawLine(
           lastPoint.smaMaValues?[i].value,
@@ -371,10 +365,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
   ) {
     for (int i = 0; i < (curPoint.smmaMaValues?.length ?? 0); i++) {
-      if (i == 4) {
-        break;
-      }
-      if (lastPoint.smmaMaValues?[i] != 0 &&
+      if ((lastPoint.smmaMaValues?.length ?? 0) - 1 >= i &&
+          lastPoint.smmaMaValues?[i] != 0 &&
           period == curPoint.smmaMaValues?[i].period) {
         drawLine(
           lastPoint.smmaMaValues?[i].value,
@@ -422,9 +414,11 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
   ) {
     ///-- for drawing background of SpanA and SpanB
-    List<Offset> senkouSpanAOffsets = [], senkouSpanBOffsets = [];
     for (int i = 0; i < (curPoint.ichimokuValues?.length ?? 0); i++) {
-      if (curPoint.ichimokuValues != null && lastPoint.ichimokuValues != null) {
+      List<Offset> senkouSpanAOffsets = [], senkouSpanBOffsets = [];
+      if (curPoint.ichimokuValues != null &&
+          lastPoint.ichimokuValues != null &&
+          curPoint.ichimokuValues![i].senkouSpanA != null) {
         double SpanAY = getY(curPoint.ichimokuValues![i].senkouSpanA!);
         double lastSpanAY = getY(lastPoint.ichimokuValues![i].senkouSpanA!);
         double SpanBY = getY(curPoint.ichimokuValues![i].senkouSpanB!);
@@ -437,14 +431,13 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           Offset(lastX, lastSpanBY),
           Offset(curX, SpanBY),
         ]);
+        drawRect(
+          [...senkouSpanAOffsets, ...senkouSpanBOffsets],
+          Colors.green.withOpacity(0.15),
+          canvas,
+        );
       }
     }
-
-    drawRect(
-      [...senkouSpanAOffsets, ...senkouSpanBOffsets],
-      Colors.green.withOpacity(0.15),
-      canvas,
-    );
 
     ///--
     for (int i = 0; i < (curPoint.ichimokuValues?.length ?? 0); i++) {
@@ -480,7 +473,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       );
 
       ///--
-      if (lastPoint.ichimokuValues != null) {
+      if (lastPoint.ichimokuValues != null &&
+          lastPoint.ichimokuValues![i].senkouSpanA != null) {
         /// ----
         final senkouSpanA = lastPoint.ichimokuValues![i].senkouSpanA!;
         final senkouSpanB = lastPoint.ichimokuValues![i].senkouSpanB!;
@@ -496,7 +490,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           lastX,
           color,
-          strokeWidth: 0.3,
+          strokeWidth: 0.5,
         );
       }
 
@@ -521,8 +515,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         lineStyle: curPoint.ichimokuValues![i].style,
         strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
       );
-
-
     }
   }
 
@@ -535,10 +527,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
   ) {
     for (int i = 0; i < (curPoint.emaEnvelopsValues?.length ?? 0); i++) {
-      if (i == 4) {
-        break;
-      }
-      if (lastPoint.emaEnvelopsValues?[i].up != 0 &&
+      if ((lastPoint.emaEnvelopsValues?.length ?? 0) - 1 >= i &&
+          lastPoint.emaEnvelopsValues?[i].up != 0 &&
           period == curPoint.emaEnvelopsValues?[i].period) {
         drawLine(
           lastPoint.emaEnvelopsValues?[i].up,
@@ -550,7 +540,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         );
       }
 
-      if (lastPoint.emaEnvelopsValues?[i].dn != 0 &&
+      if ((lastPoint.emaEnvelopsValues?.length ?? 0) - 1 >= i &&
+          lastPoint.emaEnvelopsValues?[i].dn != 0 &&
           period == curPoint.emaEnvelopsValues?[i].period) {
         drawLine(
           lastPoint.emaEnvelopsValues?[i].dn,
@@ -573,10 +564,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
   ) {
     for (int i = 0; i < (curPoint.smaEnvelopsValues?.length ?? 0); i++) {
-      if (i == 4) {
-        break;
-      }
-      if (lastPoint.smaEnvelopsValues?[i].up != 0 &&
+      if ((lastPoint.smaEnvelopsValues?.length ?? 0) - 1 >= i &&
+          lastPoint.smaEnvelopsValues?[i].up != 0 &&
           period == curPoint.smaEnvelopsValues?[i].period) {
         drawLine(
           lastPoint.smaEnvelopsValues?[i].up,
@@ -588,7 +577,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         );
       }
 
-      if (lastPoint.smaEnvelopsValues?[i].dn != 0 &&
+      if ((lastPoint.smaEnvelopsValues?.length ?? 0) - 1 >= i &&
+          lastPoint.smaEnvelopsValues?[i].dn != 0 &&
           period == curPoint.smaEnvelopsValues?[i].period) {
         drawLine(
           lastPoint.smaEnvelopsValues?[i].dn,
@@ -611,10 +601,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
   ) {
     for (int i = 0; i < (curPoint.smmaEnvelopsValues?.length ?? 0); i++) {
-      if (i == 4) {
-        break;
-      }
-      if (lastPoint.smmaEnvelopsValues?[i].up != 0 &&
+      if ((lastPoint.smmaEnvelopsValues?.length ?? 0) - 1 >= i &&
+          lastPoint.smmaEnvelopsValues?[i].up != 0 &&
           period == curPoint.smmaEnvelopsValues?[i].period) {
         drawLine(
           lastPoint.smmaEnvelopsValues?[i].up,
@@ -626,7 +614,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         );
       }
 
-      if (lastPoint.smmaEnvelopsValues?[i].dn != 0 &&
+      if ((lastPoint.smmaEnvelopsValues?.length ?? 0) - 1 >= i &&
+          lastPoint.smmaEnvelopsValues?[i].dn != 0 &&
           period == curPoint.smmaEnvelopsValues?[i].period) {
         drawLine(
           lastPoint.smmaEnvelopsValues?[i].dn,
@@ -649,10 +638,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
   ) {
     for (int i = 0; i < (curPoint.lwmaEnvelopsValues?.length ?? 0); i++) {
-      if (i == 4) {
-        break;
-      }
-      if (lastPoint.lwmaEnvelopsValues?[i].up != 0 &&
+      if ((lastPoint.lwmaEnvelopsValues?.length ?? 0) - 1 >= i &&
+          lastPoint.lwmaEnvelopsValues?[i].up != 0 &&
           period == curPoint.lwmaEnvelopsValues?[i].period) {
         drawLine(
           lastPoint.lwmaEnvelopsValues?[i].up,
@@ -664,7 +651,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         );
       }
 
-      if (lastPoint.lwmaEnvelopsValues?[i].dn != 0 &&
+      if ((lastPoint.lwmaEnvelopsValues?.length ?? 0) - 1 >= i &&
+          lastPoint.lwmaEnvelopsValues?[i].dn != 0 &&
           period == curPoint.lwmaEnvelopsValues?[i].period) {
         drawLine(
           lastPoint.lwmaEnvelopsValues?[i].dn,
@@ -687,10 +675,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
   ) {
     for (int i = 0; i < (curPoint.bollValues?.length ?? 0); i++) {
-      if (i == 4) {
-        break;
-      }
-      if (lastPoint.bollValues?[i].up != 0) {
+      if ((lastPoint.bollValues?.length ?? 0) - 1 >= i &&
+          lastPoint.bollValues?[i].up != 0) {
         drawLine(
           lastPoint.bollValues?[i].up,
           curPoint.bollValues?[i].up,
@@ -700,7 +686,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           this.chartColors.ma10Color,
         );
       }
-      if (lastPoint.bollValues?[i].value != 0) {
+      if ((lastPoint.bollValues?.length ?? 0) - 1 >= i &&
+          lastPoint.bollValues?[i].value != 0) {
         drawLine(
           lastPoint.bollValues?[i].value,
           curPoint.bollValues?[i].value,
@@ -710,7 +697,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           curPoint.bollValues![i].color,
         );
       }
-      if (lastPoint.bollValues?[i].dn != 0) {
+      if ((lastPoint.bollValues?.length ?? 0) - 1 >= i &&
+          lastPoint.bollValues?[i].dn != 0) {
         drawLine(
           lastPoint.bollValues?[i].dn,
           curPoint.bollValues?[i].dn,

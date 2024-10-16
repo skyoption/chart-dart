@@ -19,6 +19,9 @@ class IndicatorUtils {
         ICHIMOKU = [],
         PARABOLIC = [];
 
+    /// reset candles
+    _resetCandles(data);
+
     /// Group the indicators by type
     for (var indicator in chartProperties.indicators) {
       if (indicator.type == IndicatorType.SMA_MA) {
@@ -69,24 +72,53 @@ class IndicatorUtils {
     calcCCI(data);
   }
 
+  static void _resetCandles(List<KLineEntity> data) {
+    for (int k = 0; k < data.length; k++) {
+      ///MA
+      data[k].emaMaValues = null;
+      data[k].smaMaValues = null;
+      data[k].lwmaMaValues = null;
+      data[k].smmaMaValues = null;
+
+      ///Envelops
+      data[k].emaEnvelopsValues = null;
+      data[k].smaEnvelopsValues = null;
+      data[k].lwmaEnvelopsValues = null;
+      data[k].smmaEnvelopsValues = null;
+
+      ///BOLL
+      data[k].bollValues = null;
+
+      ///Parabolic
+      data[k].parabolicValues = null;
+
+      /// Ichimoku
+      data[k].ichimokuValues = null;
+    }
+  }
+
   static void calc_SMA_MA(
     List<KLineEntity> dataList,
     List<IndicatorEntity> indicators,
   ) {
-    for (var indicator in indicators) {
-      for (int i = indicator.period; i < dataList.length; i++) {
+    for (int k = 0; k < indicators.length; k++) {
+      final indicator = indicators[k];
+      for (int i = indicator.period - 1; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
-        entity.smaMaValues = null;
+        entity.smaMaValues ??= List<IndicatorEntity>.filled(
+            indicators.length, indicator.copy(value: 0));
         if (i >= indicator.period - 1) {
           double sum = 0;
           for (int j = i; j > i - indicator.period; j--) {
             sum += _currentPriceValue(indicator, dataList[j]);
           }
           double smaValue = sum / indicator.period;
-          entity.smaMaValues ??= List<IndicatorEntity>.filled(
-              indicators.length, indicator.copy(value: 0));
-
-          entity.smaMaValues![indicators.indexOf(indicator)].value = smaValue;
+          entity.smaMaValues = _addNewIndicator(
+            entity.smaMaValues,
+            indicator,
+            k,
+          );
+          entity.smaMaValues![k] = indicator.copy(value: smaValue);
         } else {
           entity.smaMaValues ??= List<IndicatorEntity>.filled(
               indicators.length, indicator.copy(value: 0));
@@ -99,10 +131,12 @@ class IndicatorUtils {
     List<KLineEntity> dataList,
     List<IndicatorEntity> indicators,
   ) {
-    for (var indicator in indicators) {
+    for (int k = 0; k < indicators.length; k++) {
+      final indicator = indicators[k];
       for (int i = indicator.period - 1; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
-        entity.lwmaMaValues = null;
+        entity.lwmaMaValues ??= List<IndicatorEntity>.filled(
+            indicators.length, indicator.copy(value: 0));
         if (i >= indicator.period - 1) {
           double numerator = 0;
           double denominator = (indicator.period * (indicator.period + 1)) / 2;
@@ -111,10 +145,13 @@ class IndicatorUtils {
                 (indicator.period - j);
           }
           double lwmaValue = numerator / denominator;
-          entity.lwmaMaValues ??= List<IndicatorEntity>.filled(
-              indicators.length, indicator.copy(value: 0));
+          entity.lwmaMaValues = _addNewIndicator(
+            entity.lwmaMaValues,
+            indicator,
+            k,
+          );
 
-          entity.lwmaMaValues![indicators.indexOf(indicator)].value = lwmaValue;
+          entity.lwmaMaValues![k] = indicator.copy(value: lwmaValue);
         } else {
           entity.lwmaMaValues ??= List<IndicatorEntity>.filled(
               indicators.length, indicator.copy(value: 0));
@@ -129,11 +166,11 @@ class IndicatorUtils {
   ) {
     if (dataList.isEmpty) return;
 
-    for (var indicator in indicators) {
+    for (int k = 0; k < indicators.length; k++) {
+      final indicator = indicators[k];
       double? previousEma;
-      for (int i = indicator.period; i < dataList.length; i++) {
+      for (int i = indicator.period - 1; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
-        entity.emaMaValues = null;
         entity.emaMaValues ??= List<IndicatorEntity>.filled(
             indicators.length, indicator.copy(value: 0));
 
@@ -148,8 +185,12 @@ class IndicatorUtils {
                   previousEma)
               : _currentPriceValue(indicator, entity);
         }
-
-        entity.emaMaValues![indicators.indexOf(indicator)].value = previousEma;
+        entity.emaMaValues = _addNewIndicator(
+          entity.emaMaValues,
+          indicator,
+          k,
+        );
+        entity.emaMaValues![k] = indicator.copy(value: previousEma);
       }
     }
   }
@@ -158,14 +199,13 @@ class IndicatorUtils {
     List<KLineEntity> dataList,
     List<IndicatorEntity> indicators,
   ) {
-    for (var indicator in indicators) {
+    for (int k = 0; k < indicators.length; k++) {
+      final indicator = indicators[k];
       double? previousSmma;
 
       // Loop through data starting from the period - 1
       for (int i = indicator.period - 1; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
-        entity.smmaMaValues = null;
-        // Initialize smmaValues list if it's null
         entity.smmaMaValues ??= List<IndicatorEntity>.filled(
             indicators.length, indicator.copy(value: 0));
 
@@ -176,8 +216,12 @@ class IndicatorUtils {
             sum += _currentPriceValue(indicator, dataList[j]);
           }
           previousSmma = sum / indicator.period;
-          entity.smmaMaValues?[indicators.indexOf(indicator)].value =
-              previousSmma;
+          entity.smmaMaValues = _addNewIndicator(
+            entity.smmaMaValues,
+            indicator,
+            k,
+          );
+          entity.smmaMaValues![k] = indicator.copy(value: previousSmma);
         } else {
           // Subsequent SMMA values
           double currentClose = _currentPriceValue(indicator, entity);
@@ -185,9 +229,13 @@ class IndicatorUtils {
               ((previousSmma! * (indicator.period - 1)) + currentClose) /
                   indicator.period;
 
+          entity.smmaMaValues = _addNewIndicator(
+            entity.smmaMaValues,
+            indicator,
+            k,
+          );
           // Set the current SMMA value in the list
-          entity.smmaMaValues?[indicators.indexOf(indicator)].value =
-              previousSmma;
+          entity.smmaMaValues![k] = indicator.copy(value: previousSmma);
         }
       }
     }
@@ -197,15 +245,14 @@ class IndicatorUtils {
     List<KLineEntity> dataList,
     List<IndicatorEntity> indicators,
   ) {
-    for (var indicator in indicators) {
+    for (int k = 0; k < indicators.length; k++) {
+      final indicator = indicators[k];
       // Calculate the moving average (Middle Band)
       List<double> movingAverage = _calcBOLLMA(dataList, indicator);
 
       // Loop over data and calculate the Upper and Lower bands
       for (int i = 0; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
-        entity.bollValues = null;
-        // Initialize smmaValues list if it's null
         entity.bollValues ??= List<IndicatorEntity>.filled(
             indicators.length, indicator.copy(value: 0));
         if (i >= indicator.period - 1) {
@@ -220,19 +267,23 @@ class IndicatorUtils {
           double standardDeviation = sqrt(sumOfSquares / indicator.period);
 
           // Calculate Bollinger Bands
-          entity.bollValues![indicators.indexOf(indicator)].value =
-              movingAverage[i]; // Middle Band (SMA)
-          entity.bollValues![indicators.indexOf(indicator)].up =
-              entity.bollValues![indicators.indexOf(indicator)].value +
-                  (standardDeviation * indicator.deviations!); // Upper Band
-          entity.bollValues![indicators.indexOf(indicator)].dn =
-              entity.bollValues![indicators.indexOf(indicator)].value -
-                  (standardDeviation * indicator.deviations!); // Lower Band
+          final value = movingAverage[i];
+          final up =
+              value + (standardDeviation * indicator.deviations!); // Upper Band
+          final dn =
+              value - (standardDeviation * indicator.deviations!); // Lower Band
+
+          entity.bollValues![k] = indicator.copy(
+            value: value,
+            up: up,
+            dn: dn,
+          );
         } else {
-          // For the early data points, set bands to null (or zero if needed)
-          entity.bollValues?[indicators.indexOf(indicator)].value = 0;
-          entity.bollValues?[indicators.indexOf(indicator)].up = null;
-          entity.bollValues?[indicators.indexOf(indicator)].dn = null;
+          entity.bollValues?[k] = indicator.copy(
+            value: 0,
+            up: null,
+            dn: null,
+          );
         }
       }
     }
@@ -269,7 +320,8 @@ class IndicatorUtils {
     if (dataList.isEmpty) return;
 
     // Loop through each indicator
-    for (var indicator in indicators) {
+    for (int k = 0; k < indicators.length; k++) {
+      final indicator = indicators[k];
       // Initialize trend-related variables
       bool uptrend =
           true; // Start by assuming an uptrend (this could be made more dynamic)
@@ -335,8 +387,12 @@ class IndicatorUtils {
             }
           }
         }
-
-        entity.parabolicValues?[indicators.indexOf(indicator)].value = sar;
+        entity.parabolicValues = _addNewIndicator(
+          entity.parabolicValues,
+          indicator,
+          k,
+        );
+        entity.parabolicValues?[k] = indicator.copy(value: sar);
       }
     }
   }
@@ -345,10 +401,12 @@ class IndicatorUtils {
     List<KLineEntity> dataList,
     List<IndicatorEntity> indicators,
   ) {
-    for (var indicator in indicators) {
+    for (int k = 0; k < indicators.length; k++) {
+      final indicator = indicators[k];
       for (int i = indicator.period - 1; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
-        entity.smaEnvelopsValues = null;
+        entity.smaEnvelopsValues ??= List<IndicatorEntity>.filled(
+            indicators.length, indicator.copy(value: 0));
 
         if (i >= indicator.period - 1) {
           double sum = 0;
@@ -359,14 +417,17 @@ class IndicatorUtils {
           double upperEnvelope = smaValue * (1 + indicator.deviations! / 100);
           double lowerEnvelope = smaValue * (1 - indicator.deviations! / 100);
 
-          entity.smaEnvelopsValues ??= List<IndicatorEntity>.filled(
-              indicators.length, indicator.copy(value: 0));
-          entity.smaEnvelopsValues![indicators.indexOf(indicator)].value =
-              smaValue;
-          entity.smaEnvelopsValues![indicators.indexOf(indicator)].up =
-              upperEnvelope;
-          entity.smaEnvelopsValues![indicators.indexOf(indicator)].dn =
-              lowerEnvelope;
+          entity.smaEnvelopsValues = _addNewIndicator(
+            entity.smaEnvelopsValues,
+            indicator,
+            k,
+          );
+
+          entity.smaEnvelopsValues?[k] = indicator.copy(
+            value: smaValue,
+            up: upperEnvelope,
+            dn: lowerEnvelope,
+          );
         } else {
           entity.smaEnvelopsValues ??= List<IndicatorEntity>.filled(
               indicators.length, indicator.copy(value: 0));
@@ -381,11 +442,11 @@ class IndicatorUtils {
   ) {
     if (dataList.isEmpty) return;
 
-    for (var indicator in indicators) {
+    for (int k = 0; k < indicators.length; k++) {
+      final indicator = indicators[k];
       double? previousEma;
       for (int i = indicator.period; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
-        entity.emaEnvelopsValues = null;
         entity.emaEnvelopsValues ??= List<IndicatorEntity>.filled(
             indicators.length, indicator.copy(value: 0));
 
@@ -402,13 +463,17 @@ class IndicatorUtils {
 
         double upperEnvelope = previousEma * (1 + indicator.deviations! / 100);
         double lowerEnvelope = previousEma * (1 - indicator.deviations! / 100);
+        entity.emaEnvelopsValues = _addNewIndicator(
+          entity.emaEnvelopsValues,
+          indicator,
+          k,
+        );
 
-        entity.emaEnvelopsValues![indicators.indexOf(indicator)].value =
-            previousEma;
-        entity.emaEnvelopsValues![indicators.indexOf(indicator)].up =
-            upperEnvelope;
-        entity.emaEnvelopsValues![indicators.indexOf(indicator)].dn =
-            lowerEnvelope;
+        entity.emaEnvelopsValues?[k] = indicator.copy(
+          value: previousEma,
+          up: upperEnvelope,
+          dn: lowerEnvelope,
+        );
       }
     }
   }
@@ -417,10 +482,12 @@ class IndicatorUtils {
     List<KLineEntity> dataList,
     List<IndicatorEntity> indicators,
   ) {
-    for (var indicator in indicators) {
+    for (int k = 0; k < indicators.length; k++) {
+      final indicator = indicators[k];
       for (int i = indicator.period - 1; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
-        entity.lwmaEnvelopsValues = null;
+        entity.lwmaEnvelopsValues ??= List<IndicatorEntity>.filled(
+            indicators.length, indicator.copy(value: 0));
 
         if (i >= indicator.period - 1) {
           double numerator = 0;
@@ -433,14 +500,16 @@ class IndicatorUtils {
           double upperEnvelope = lwmaValue * (1 + indicator.deviations! / 100);
           double lowerEnvelope = lwmaValue * (1 - indicator.deviations! / 100);
 
-          entity.lwmaEnvelopsValues ??= List<IndicatorEntity>.filled(
-              indicators.length, indicator.copy(value: 0));
-          entity.lwmaEnvelopsValues![indicators.indexOf(indicator)].value =
-              lwmaValue;
-          entity.lwmaEnvelopsValues![indicators.indexOf(indicator)].up =
-              upperEnvelope;
-          entity.lwmaEnvelopsValues![indicators.indexOf(indicator)].dn =
-              lowerEnvelope;
+          entity.lwmaEnvelopsValues = _addNewIndicator(
+            entity.lwmaEnvelopsValues,
+            indicator,
+            k,
+          );
+          entity.lwmaEnvelopsValues?[k] = indicator.copy(
+            value: lwmaValue,
+            up: upperEnvelope,
+            dn: lowerEnvelope,
+          );
         } else {
           entity.lwmaEnvelopsValues ??= List<IndicatorEntity>.filled(
               indicators.length, indicator.copy(value: 0));
@@ -453,58 +522,63 @@ class IndicatorUtils {
     List<KLineEntity> dataList,
     List<IndicatorEntity> indicators,
   ) {
-    for (var indicator in indicators) {
+    for (int k = 0; k < indicators.length; k++) {
+      final indicator = indicators[k];
       double? previousSmma;
 
       for (int i = indicator.period - 1; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
-        entity.smmaEnvelopsValues = null;
         entity.smmaEnvelopsValues ??= List<IndicatorEntity>.filled(
             indicators.length, indicator.copy(value: 0));
 
+        entity.smmaEnvelopsValues = _addNewIndicator(
+          entity.smmaEnvelopsValues,
+          indicator,
+          k,
+        );
+        double value = 0;
         if (i == indicator.period - 1) {
           double sum = 0;
           for (int j = 0; j < indicator.period; j++) {
             sum += _currentPriceValue(indicator, dataList[j]);
           }
           previousSmma = sum / indicator.period;
-          entity.smmaEnvelopsValues?[indicators.indexOf(indicator)].value =
-              previousSmma;
+          value = previousSmma;
         } else {
           double currentClose = _currentPriceValue(indicator, entity);
           previousSmma =
               ((previousSmma! * (indicator.period - 1)) + currentClose) /
                   indicator.period;
 
-          entity.smmaEnvelopsValues?[indicators.indexOf(indicator)].value =
-              previousSmma;
+          value = previousSmma;
         }
 
         double upperEnvelope = previousSmma * (1 + indicator.deviations! / 100);
         double lowerEnvelope = previousSmma * (1 - indicator.deviations! / 100);
 
-        entity.smmaEnvelopsValues![indicators.indexOf(indicator)].up =
-            upperEnvelope;
-        entity.smmaEnvelopsValues![indicators.indexOf(indicator)].dn =
-            lowerEnvelope;
+        entity.smmaEnvelopsValues?[k] = indicator.copy(
+          value: value,
+          up: upperEnvelope,
+          dn: lowerEnvelope,
+        );
       }
     }
   }
 
   static void calc_Ichimoku(
-      List<KLineEntity> dataList, List<IndicatorEntity> indicators) {
-    for (var indicator in indicators) {
+    List<KLineEntity> dataList,
+    List<IndicatorEntity> indicators,
+  ) {
+    for (int k = 0; k < indicators.length; k++) {
+      final indicator = indicators[k];
       if (indicator.ichimoku != null) {
         Ichimoku ichimoku = indicator.ichimoku!;
 
         for (int i = ichimoku.kijuSen; i < dataList.length; i++) {
           KLineEntity entity = dataList[i];
-          entity.ichimokuValues =
-              null; // Create or clear existing ichimokuValues
 
-          // Initialize ichimokuValues list if it's null
           entity.ichimokuValues ??= List<IndicatorEntity>.filled(
-              indicators.length + 4, indicator.copy(value: 0));
+              indicators.length, indicator.copy(value: 0));
 
           // Calculate Tenkan-sen (Conversion Line)
           double tenkanSen = (dataList
@@ -542,17 +616,20 @@ class IndicatorUtils {
                       .reduce(min)) /
               2;
 
+          entity.ichimokuValues = _addNewIndicator(
+            entity.ichimokuValues,
+            indicator,
+            k,
+          );
+
           // Set values to ichimokuValues
-          entity.ichimokuValues![indicators.indexOf(indicator)].tenkanSen =
-              tenkanSen; // Tenkan-sen
-          entity.ichimokuValues![indicators.indexOf(indicator)].kijunSen =
-              kijunSen; // Kijun-sen
-          entity.ichimokuValues![indicators.indexOf(indicator)].senkouSpanA =
-              senkouSpanA; // Senkou Span A
-          entity.ichimokuValues![indicators.indexOf(indicator)].senkouSpanB =
-              senkouSpanB; // Senkou Span B
-          entity.ichimokuValues![indicators.indexOf(indicator)].chikouSpan =
-              dataList[i - ichimoku.kijuSen].close; // Chikou Span
+          entity.ichimokuValues?[k] = indicator.copy(
+            tenkanSen: tenkanSen,
+            kijunSen: kijunSen,
+            senkouSpanA: senkouSpanA,
+            senkouSpanB: senkouSpanB,
+            chikouSpan: dataList[i - ichimoku.kijuSen].close,
+          );
         }
       }
     }
@@ -727,6 +804,17 @@ class IndicatorUtils {
         kline.cci = 0.0;
       }
     }
+  }
+
+  static List<IndicatorEntity> _addNewIndicator(
+    List<IndicatorEntity>? indicators,
+    IndicatorEntity indicator,
+    int index,
+  ) {
+    if (indicators!.length - 1 < index) {
+      indicators = [...indicators, indicator.copy(value: 0)];
+    }
+    return indicators;
   }
 
   static double _currentPriceValue(
