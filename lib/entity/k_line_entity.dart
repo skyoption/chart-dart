@@ -1,3 +1,5 @@
+import 'package:candle_chart/components/kprint.dart';
+
 import '../entity/k_entity.dart';
 
 class KLineEntity extends KEntity {
