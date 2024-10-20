@@ -294,7 +294,8 @@ class ChartPainter extends BaseChartPainter
         int index = indexOfTranslateX(translateX);
 
         if (data?[index] == null) continue;
-        TextPainter tp = getTextPainter(getDate(data![index].time), null);
+        final date = getDate(data![index].time);
+        TextPainter tp = getTextPainter(date, null);
         y = size.height - (mBottomPadding - tp.height) / 2 - tp.height;
         x = columnSpace * i - tp.width / 2;
         // Prevent date text out of canvas

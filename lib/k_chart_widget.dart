@@ -8,6 +8,7 @@ import 'package:candle_chart/objects/widgets/svg.dart';
 import 'package:candle_chart/objects/objects_screen.dart';
 import 'package:candle_chart/indicators/indicators_screen.dart';
 import 'package:candle_chart/k_chart_plus.dart';
+import 'package:candle_chart/utils/date_util.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:candle_chart/utils/icons.dart';
 import 'package:flutter/gestures.dart';
@@ -47,7 +48,7 @@ class TimeFormat {
 }
 
 class KChartWidget extends StatefulWidget {
-  final List<KLineEntity>? data;
+  List<KLineEntity>? data;
   bool volHidden;
   Set<SecondaryState> secondaryStateLi;
   final bool isLine;
@@ -151,6 +152,17 @@ class _KChartWidgetState extends State<KChartWidget>
   late final height = MediaQuery.of(context).size.height;
   ChartPainter? _painter;
   late double mBaseHeight = height * 0.70;
+
+  // CandleAggregator aggregator = CandleAggregator();
+
+  // @override
+  // void initState() {
+  //   widget.data = aggregator.aggregateCandles(
+  //     widget.data!,
+  //     CandleTimeFormat.hour4,
+  //   );
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {

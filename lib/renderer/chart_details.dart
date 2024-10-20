@@ -1,5 +1,6 @@
 import 'dart:async' show StreamSink;
 
+import 'package:candle_chart/components/kprint.dart';
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/renderer/draw_object_lines.dart';
 import 'package:candle_chart/utils/number_util.dart';
@@ -57,11 +58,14 @@ mixin ChartDetails on ChartCalc {
     return tp;
   }
 
-  String getDate(int? date) => dateFormat(
-        DateTime.fromMillisecondsSinceEpoch(
-            date ?? DateTime.now().millisecondsSinceEpoch),
-        mFormats,
-      );
+  String getDate(int? date) {
+    final d = dateFormat(
+      DateTime.fromMillisecondsSinceEpoch(
+        date ?? DateTime.now().millisecondsSinceEpoch,
+      ), mFormats,
+    );
+    return d;
+  }
 
   /// define text style
   TextStyle getTextStyle(Color color) {

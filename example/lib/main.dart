@@ -45,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    getData('1day');
+    getData('4hour');
     rootBundle.loadString('assets/depth.json').then((result) {
       final parseJson = json.decode(result);
       final tick = parseJson['tick'] as Map<String, dynamic>;
@@ -136,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<String> getChatDataFromInternet(String? period) async {
     var url =
-        'https://api.huobi.br.com/market/history/kline?period=${period ?? '1day'}&size=300&symbol=btcusdt';
+        'https://api.huobi.br.com/market/history/kline?period=${period ?? '1day'}&size=400&symbol=btcusdt';
     late String result;
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
