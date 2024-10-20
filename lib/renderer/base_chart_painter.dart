@@ -259,7 +259,25 @@ abstract class BaseChartPainter extends CustomPainter
     double maxPrice = item.high, minPrice = item.low;
 
     for (var indicator in indicators) {
-      if (indicator.type == IndicatorType.LINEAR_MA) {
+      if (indicator.type == IndicatorType.ICHIMOKU) {
+        maxPrice = max(_findMaxIchimoku(item.ichimokuValues ?? []), item.high);
+        minPrice = min(_findMinIchimoku(item.ichimokuValues ?? []), item.low);
+      } else if (indicator.type == IndicatorType.SMA_ENVELOPS) {
+        maxPrice = max(item.high, _findMaxUP(item.smaEnvelopsValues ?? []));
+        minPrice = min(item.low, _findMinDN(item.smaEnvelopsValues ?? []));
+      } else if (indicator.type == IndicatorType.EMA_ENVELOPS) {
+        maxPrice = max(item.high, _findMaxUP(item.emaEnvelopsValues ?? []));
+        minPrice = min(item.low, _findMinMA(item.emaEnvelopsValues ?? []));
+      } else if (indicator.type == IndicatorType.LINEAR_ENVELOPS) {
+        maxPrice = max(item.high, _findMaxUP(item.lwmaEnvelopsValues ?? []));
+        minPrice = min(item.low, _findMinDN(item.lwmaEnvelopsValues ?? []));
+      } else if (indicator.type == IndicatorType.SMMA_ENVELOPS) {
+        maxPrice = max(item.high, _findMaxUP(item.smmaEnvelopsValues ?? []));
+        minPrice = min(item.low, _findMinDN(item.smmaEnvelopsValues ?? []));
+      } else if (indicator.type == IndicatorType.PARABOLIC) {
+        maxPrice = max(item.high, _findMaxMA(item.parabolicValues ?? []));
+        minPrice = min(item.low, _findMinMA(item.parabolicValues ?? []));
+      } else if (indicator.type == IndicatorType.LINEAR_MA) {
         maxPrice = max(item.high, _findMaxMA(item.lwmaMaValues ?? []));
         minPrice = min(item.low, _findMinMA(item.lwmaMaValues ?? []));
       } else if (indicator.type == IndicatorType.EMA_MA) {
@@ -268,27 +286,9 @@ abstract class BaseChartPainter extends CustomPainter
       } else if (indicator.type == IndicatorType.SMA_MA) {
         maxPrice = max(item.high, _findMaxMA(item.smaMaValues ?? []));
         minPrice = min(item.low, _findMinMA(item.smaMaValues ?? []));
-      } else if (indicator.type == IndicatorType.PARABOLIC) {
-        maxPrice = max(item.high, _findMaxMA(item.parabolicValues ?? []));
-        minPrice = min(item.low, _findMinMA(item.parabolicValues ?? []));
       } else if (indicator.type == IndicatorType.BOLL) {
         maxPrice = max(_findMaxUP(item.bollValues ?? []), item.high);
         minPrice = min(_findMinDN(item.bollValues ?? []), item.low);
-      } else if (indicator.type == IndicatorType.ICHIMOKU) {
-        maxPrice = max(_findMaxChikouSpan(item.ichimokuValues ?? []), item.high);
-        minPrice = min(_findMinChikouSpan(item.ichimokuValues ?? []), item.low);
-      }else if (indicator.type == IndicatorType.SMA_ENVELOPS) {
-        maxPrice = max(item.high, _findMaxUP(item.smaEnvelopsValues ?? []));
-        minPrice = min(item.low, _findMinDN(item.smaEnvelopsValues ?? []));
-      }else if (indicator.type == IndicatorType.EMA_ENVELOPS) {
-        maxPrice = max(item.high, _findMaxUP(item.emaEnvelopsValues ?? []));
-        minPrice = min(item.low, _findMinMA(item.emaEnvelopsValues ?? []));
-      }else if (indicator.type == IndicatorType.LINEAR_ENVELOPS) {
-        maxPrice = max(item.high, _findMaxUP(item.lwmaEnvelopsValues ?? []));
-        minPrice = min(item.low, _findMinDN(item.lwmaEnvelopsValues ?? []));
-      }else if (indicator.type == IndicatorType.SMMA_ENVELOPS) {
-        maxPrice = max(item.high, _findMaxUP(item.smmaEnvelopsValues ?? []));
-        minPrice = min(item.low, _findMinDN(item.smmaEnvelopsValues ?? []));
       }
     }
     mMainMaxValue = max(mMainMaxValue, maxPrice);
@@ -328,7 +328,7 @@ abstract class BaseChartPainter extends CustomPainter
   }
 
   // find minimum of the ChikouSpan
-  double _findMaxChikouSpan(List<IndicatorEntity> a) {
+  double _findMaxIchimoku(List<IndicatorEntity> a) {
     double result = double.minPositive;
     for (IndicatorEntity i in a) {
       result = max(result, i.chikouSpan ?? 0);
@@ -346,7 +346,7 @@ abstract class BaseChartPainter extends CustomPainter
   }
 
   // find minimum of the ChikouSpan
-  double _findMinChikouSpan(List<IndicatorEntity> a) {
+  double _findMinIchimoku(List<IndicatorEntity> a) {
     double result = double.maxFinite;
     for (IndicatorEntity i in a) {
       result = min(result,
