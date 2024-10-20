@@ -177,9 +177,9 @@ class ChartPosition {
 class ChartStyle {
   double topPadding = 30.0;
 
-  double leftPadding = 0.0;
+  double leftPadding = 5.0;
 
-  double rightPadding = 0.0;
+  double rightPadding = 5.0;
 
   double priceWidth = 60.0;
 

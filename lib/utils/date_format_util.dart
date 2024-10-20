@@ -229,7 +229,7 @@ String dateFormat(DateTime date, List<String> formats) {
       sb.write(_digits(date.year % 100, 2));
     } else if (format == mm) {
       sb.write(_digits(date.month, 2));
-    } else if (format == m) {
+    }  else if (format == m) {
       sb.write(date.month);
     } else if (format == MM) {
       sb.write(monthLong[date.month - 1]);

@@ -57,7 +57,7 @@ abstract class BaseChartPainter extends CustomPainter
   double mTopPadding = 30.0, mBottomPadding = 20.0, mChildPadding = 12.0;
 
   // grid: rows - columns
-  int mGridRows = 5, mGridColumns = 10;
+  int mGridRows = 18, mGridColumns = 4;
   int mStartIndex = 0, mStopIndex = 0;
   double mMainMaxValue = double.minPositive, mMainMinValue = double.maxFinite;
   double mVolMaxValue = double.minPositive, mVolMinValue = double.maxFinite;
@@ -124,13 +124,13 @@ abstract class BaseChartPainter extends CustomPainter
     time ~/= 1000;
     // monthly line
     if (time >= 24 * 60 * 60 * 28) {
-      mFormats = [yy, '-', mm];
+      mFormats = [yyyy, '-', mm];
     } else if (time >= 24 * 60 * 60) {
       // daily line
-      mFormats = [yy, '-', mm, '-', dd];
+      mFormats = [yyyy, '-', mm, '-', dd];
     } else {
       // hour line
-      mFormats = [mm, '-', dd, ' ', HH, ':', nn];
+      mFormats = [M, '-', dd, ' ', HH, ':', nn];
     }
   }
 
@@ -277,6 +277,18 @@ abstract class BaseChartPainter extends CustomPainter
       } else if (indicator.type == IndicatorType.ICHIMOKU) {
         maxPrice = max(_findMaxChikouSpan(item.ichimokuValues ?? []), item.high);
         minPrice = min(_findMinChikouSpan(item.ichimokuValues ?? []), item.low);
+      }else if (indicator.type == IndicatorType.SMA_ENVELOPS) {
+        maxPrice = max(item.high, _findMaxUP(item.smaEnvelopsValues ?? []));
+        minPrice = min(item.low, _findMinDN(item.smaEnvelopsValues ?? []));
+      }else if (indicator.type == IndicatorType.EMA_ENVELOPS) {
+        maxPrice = max(item.high, _findMaxUP(item.emaEnvelopsValues ?? []));
+        minPrice = min(item.low, _findMinMA(item.emaEnvelopsValues ?? []));
+      }else if (indicator.type == IndicatorType.LINEAR_ENVELOPS) {
+        maxPrice = max(item.high, _findMaxUP(item.lwmaEnvelopsValues ?? []));
+        minPrice = min(item.low, _findMinDN(item.lwmaEnvelopsValues ?? []));
+      }else if (indicator.type == IndicatorType.SMMA_ENVELOPS) {
+        maxPrice = max(item.high, _findMaxUP(item.smmaEnvelopsValues ?? []));
+        minPrice = min(item.low, _findMinDN(item.smmaEnvelopsValues ?? []));
       }
     }
     mMainMaxValue = max(mMainMaxValue, maxPrice);

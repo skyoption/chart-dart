@@ -1,5 +1,6 @@
 import 'dart:async' show StreamSink;
 
+import 'package:candle_chart/components/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
@@ -287,9 +288,9 @@ class ChartPainter extends BaseChartPainter
     double stopX = getX(mStopIndex) + mPointWidth / 2;
     double x = 0.0;
     double y = 0.0;
-    for (var i = 0; i <= mGridColumns; ++i) {
-      double translateX = xToTranslateX(columnSpace * i);
-
+    const candleSpace = 10.0;
+    for (var i = 0; i < mGridColumns; ++i) {
+      double translateX = xToTranslateX(columnSpace * i - candleSpace * i);
       if (translateX >= startX && translateX <= stopX) {
         int index = indexOfTranslateX(translateX);
 
@@ -297,7 +298,14 @@ class ChartPainter extends BaseChartPainter
         final date = getDate(data![index].time);
         TextPainter tp = getTextPainter(date, null);
         y = size.height - (mBottomPadding - tp.height) / 2 - tp.height;
-        x = columnSpace * i - tp.width / 2;
+
+        final tpSpaceCenter = tp.width / 4;
+        x = (columnSpace * i) -
+            (tpSpaceCenter * i) +
+            (tpSpaceCenter / (mGridColumns - i));
+        if (mGridColumns - 1 == i) {
+          x -= tpSpaceCenter / mGridColumns;
+        }
         // Prevent date text out of canvas
         if (x < 0) x = 0;
         if (x > size.rWidth - tp.width) x = size.rWidth - tp.width;

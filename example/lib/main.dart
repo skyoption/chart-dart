@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:candle_chart/components/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
+import 'package:candle_chart/utils/date_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -45,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    getData('4hour');
+    getData('1min');
     rootBundle.loadString('assets/depth.json').then((result) {
       final parseJson = json.decode(result);
       final tick = parseJson['tick'] as Map<String, dynamic>;
@@ -98,6 +100,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   KChartWidget(
                     datas,
                     chartStyle,
+                    onSelectTimeFrame: (frame) async {
+                      await getData(_period(frame));
+                    },
                     chartColors,
                     isTrendLine: false,
                     // mainState: _mainState,
@@ -122,16 +127,43 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void getData(String period) {
-    final Future<String> future = getChatDataFromInternet(period);
-    //final Future<String> future = getChatDataFromJson();
-    future.then((String result) {
-      solveChatData(result);
-    }).catchError((_) {
-      showLoading = false;
+  String _period(CandleTimeFormat format) {
+    switch (format) {
+      case CandleTimeFormat.M1:
+        return '1min';
+      case CandleTimeFormat.M5:
+        return '5min';
+      case CandleTimeFormat.M15:
+        return '15min';
+      case CandleTimeFormat.M30:
+        return '30min';
+      case CandleTimeFormat.H1:
+        return '60min';
+      case CandleTimeFormat.H4:
+        return '4hour';
+      case CandleTimeFormat.D1:
+        return '1day';
+      case CandleTimeFormat.W1:
+        return '1week';
+      case CandleTimeFormat.MN:
+        return '1mon';
+      default:
+        return '4hour';
+    }
+  }
+
+  Future<void> getData(String period) async {
+    try {
+      showLoading = true;
       setState(() {});
-      debugPrint('### datas error $_');
-    });
+      final String value = await getChatDataFromInternet(period);
+      //final Future<String> future = getChatDataFromJson();
+      solveChatData(value);
+    } catch (e) {
+      debugPrint('### datas error $e');
+    }
+    showLoading = false;
+    setState(() {});
   }
 
   Future<String> getChatDataFromInternet(String? period) async {

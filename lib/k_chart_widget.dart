@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:candle_chart/chart_translations.dart';
 import 'package:candle_chart/components/kprint.dart';
 import 'package:candle_chart/components/popup_info_view.dart';
+import 'package:candle_chart/components/time_frame_widget.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/objects/widgets/svg.dart';
 import 'package:candle_chart/objects/objects_screen.dart';
@@ -45,6 +46,15 @@ class TimeFormat {
     ':',
     nn
   ];
+  static const List<String> MONTH_DAY_WITH_HOUR = [
+    M,
+    '-',
+    dd,
+    ' ',
+    HH,
+    ':',
+    nn
+  ];
 }
 
 class KChartWidget extends StatefulWidget {
@@ -74,11 +84,13 @@ class KChartWidget extends StatefulWidget {
   final bool isTrendLine;
   final double xFrontPadding;
   final int isLongFocusDurationTime;
+  final Future Function(CandleTimeFormat frame) onSelectTimeFrame;
 
   KChartWidget(
     this.data,
     this.chartStyle,
     this.chartColors, {
+    required this.onSelectTimeFrame,
     required this.isTrendLine,
     this.xFrontPadding = 100,
     this.secondaryStateLi = const <SecondaryState>{},
@@ -110,6 +122,7 @@ bool longPressTriggered = false;
 
 class _KChartWidgetState extends State<KChartWidget>
     with TickerProviderStateMixin {
+  CandleTimeFormat frame = CandleTimeFormat.H4;
   final StreamController<InfoWindowEntity?> mInfoWindowStream =
       StreamController<InfoWindowEntity?>.broadcast();
   double mScaleX = 1.0, mScrollX = 0.0, mSelectX = 0.0;
@@ -123,6 +136,7 @@ class _KChartWidgetState extends State<KChartWidget>
   bool waitingForOtherPairOfCords = false;
   bool enableCordRecord = false;
   bool objectEditable = false;
+  bool openTimeframe = false;
 
   double getMinScrollX() {
     return mScaleX;
@@ -217,15 +231,30 @@ class _KChartWidgetState extends State<KChartWidget>
             ),
             child: Stack(
               children: [
-                // Align(
-                //   alignment: AlignmentDirectional.centerStart,
-                //   child: Text(
-                //     '${currentLineName.split(' ').first} ${currentLineName.split(' ').last}',
-                //     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                //           fontWeight: FontWeight.w500,
-                //         ),
-                //   ),
-                // ),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: InkWell(
+                    onTap: () {
+                      openTimeframe = !openTimeframe;
+                      setState(() {});
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '${frame.name}',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                        ),
+                        Icon(Icons.arrow_drop_down,
+                            color: Colors.black,
+                            size: widget.chartStyle.iconSize)
+                      ],
+                    ),
+                  ),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -323,7 +352,24 @@ class _KChartWidgetState extends State<KChartWidget>
                       if (widget.showInfoDialog &&
                           (widget.isLongFocusDurationTime == 0 ||
                               longPressTriggered))
-                        _buildInfoDialog()
+                        _buildInfoDialog(),
+                      if (openTimeframe)
+                        TimeFrameWidget(
+                          frame: frame,
+                          onSelectTimeFrame: (value) async {
+                            if (value != frame) {
+                              frame = value;
+                              openTimeframe = !openTimeframe;
+                              notifyChanged();
+                              await widget.onSelectTimeFrame(frame);
+                              Future.delayed(Duration(milliseconds: 200), () {
+                                IndicatorUtils.calculate(widget.data!);
+                                notifyChanged();
+                                kPrint('calculate');
+                              });
+                            }
+                          },
+                        ),
                     ],
                   ),
                 ),

@@ -816,7 +816,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       double offsetX;
       switch (verticalTextAlignment) {
         case VerticalTextAlignment.left:
-          offsetX = 0;
+          offsetX =
+              this.chartStyle.leftPadding;
           break;
         case VerticalTextAlignment.right:
           offsetX = chartRect.width -
@@ -827,11 +828,11 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       }
 
       if (i == 0 && this.chartStyle.isShowLeftTopicPoint) {
-        tp.paint(canvas, Offset(offsetX, topPadding));
+        tp.paint(canvas, Offset(offsetX, 23.0));
       } else {
         if (this.chartStyle.isShowLeftTopicPoint || i > 0)
-          tp.paint(
-              canvas, Offset(offsetX, rowSpace * i - tp.height + topPadding));
+          tp.paint(canvas,
+              Offset(offsetX, rowSpace * i - (tp.height * 0.7) + topPadding));
       }
     }
   }
@@ -845,7 +846,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     }
     double columnSpace = chartRect.rWidth / gridColumns;
     for (int i = 0; i <= columnSpace; i++) {
-      canvas.drawLine(Offset(columnSpace * i, topPadding / 3),
+      canvas.drawLine(Offset(columnSpace * i, topPadding ),
           Offset(columnSpace * i, chartRect.bottom), gridPaint);
     }
   }
