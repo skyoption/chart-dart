@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:candle_chart/components/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/renderer/draw_object_lines.dart';
 import 'package:candle_chart/utils/date_format_util.dart';
 import 'package:flutter/material.dart'
@@ -19,6 +20,7 @@ import 'package:flutter/material.dart'
 
 import '../chart_style.dart' show ChartStyle;
 import '../entity/k_line_entity.dart';
+import '../entity/secondary_indicator_entity.dart';
 import '../k_chart_widget.dart';
 import 'base_dimension.dart';
 
@@ -34,7 +36,7 @@ abstract class BaseChartPainter extends CustomPainter
 
   final List<IndicatorEntity> indicators;
 
-  Set<SecondaryState> secondaryStateLi;
+  final List<SecondaryIndicatorEntity> secondaryIndicators;
 
   bool volHidden;
   bool isTapShowInfoDialog;
@@ -92,7 +94,7 @@ abstract class BaseChartPainter extends CustomPainter
     this.indicators = const [],
     this.volHidden = false,
     this.isTapShowInfoDialog = false,
-    this.secondaryStateLi = const <SecondaryState>{},
+    this.secondaryIndicators = const [],
     this.isLine = false,
   }) {
     mItemCount = data?.length ?? 0;
@@ -212,7 +214,7 @@ abstract class BaseChartPainter extends CustomPainter
 
     double mainHeight = mDisplayHeight;
     mainHeight -= volHeight;
-    mainHeight -= (secondaryHeight * secondaryStateLi.length);
+    mainHeight -= (secondaryHeight * secondaryIndicators.length);
 
     mMainRect = Rect.fromLTRB(0, mTopPadding, mWidth, mTopPadding + mainHeight);
 
@@ -222,7 +224,7 @@ abstract class BaseChartPainter extends CustomPainter
     }
 
     mSecondaryRectList.clear();
-    for (int i = 0; i < secondaryStateLi.length; ++i) {
+    for (int i = 0; i < secondaryIndicators.length; ++i) {
       mSecondaryRectList.add(RenderRect(
         Rect.fromLTRB(
             0,
@@ -374,10 +376,9 @@ abstract class BaseChartPainter extends CustomPainter
 
   // compute maximum and minimum of secondary value
   getSecondaryMaxMinValue(int index, KLineEntity item) {
-    SecondaryState secondaryState = secondaryStateLi.elementAt(index);
-    switch (secondaryState) {
-      // MACD
-      case SecondaryState.MACD:
+    final indicator = secondaryIndicators.elementAt(index);
+    switch (indicator.type) {
+      case IndicatorType.MACD:
         if (item.macd != null) {
           mSecondaryRectList[index].mMaxValue = max(
               mSecondaryRectList[index].mMaxValue,
@@ -387,8 +388,7 @@ abstract class BaseChartPainter extends CustomPainter
               min(item.macd!, min(item.dif!, item.dea!)));
         }
         break;
-      // KDJ
-      case SecondaryState.KDJ:
+      case IndicatorType.KDJ:
         if (item.d != null) {
           mSecondaryRectList[index].mMaxValue = max(
               mSecondaryRectList[index].mMaxValue,
@@ -398,8 +398,7 @@ abstract class BaseChartPainter extends CustomPainter
               min(item.k!, min(item.d!, item.j!)));
         }
         break;
-      // RSI
-      case SecondaryState.RSI:
+      case IndicatorType.RSI:
         if (item.rsi != null) {
           mSecondaryRectList[index].mMaxValue =
               max(mSecondaryRectList[index].mMaxValue, item.rsi!);
@@ -407,13 +406,11 @@ abstract class BaseChartPainter extends CustomPainter
               min(mSecondaryRectList[index].mMinValue, item.rsi!);
         }
         break;
-      // WR
-      case SecondaryState.WR:
+      case IndicatorType.WR:
         mSecondaryRectList[index].mMaxValue = 0;
         mSecondaryRectList[index].mMinValue = -100;
         break;
-      // CCI
-      case SecondaryState.CCI:
+      case IndicatorType.CCI:
         if (item.cci != null) {
           mSecondaryRectList[index].mMaxValue =
               max(mSecondaryRectList[index].mMaxValue, item.cci!);

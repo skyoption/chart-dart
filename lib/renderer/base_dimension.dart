@@ -1,15 +1,21 @@
+import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/entity/secondary_indicator_entity.dart';
+
 import '../k_chart_widget.dart';
 
 /// Base Dimension
 class BaseDimension {
   // the height of base chart
   double _mBaseHeight = 380;
+
   // default: 0
   // the height of volume chart
   double _mVolumeHeight = 0;
+
   // default: 0
   // the height of a secondary chart
   double _mSecondaryHeight = 0;
+
   // total height of chart: _mBaseHeight + _mVolumeHeight + (_mSecondaryHeight * n)
   // n : number of secondary charts
   //
@@ -17,8 +23,10 @@ class BaseDimension {
 
   // getter the vol height
   double get mVolumeHeight => _mVolumeHeight;
+
   // getter the secondary height
   double get mSecondaryHeight => _mSecondaryHeight;
+
   // getter the total height
   double get mDisplayHeight => _mDisplayHeight;
 
@@ -30,13 +38,12 @@ class BaseDimension {
   BaseDimension({
     required double mBaseHeight,
     required bool volHidden,
-    required Set<SecondaryState> secondaryStateLi,
+    required List<SecondaryIndicatorEntity> indicators,
   }) {
     _mBaseHeight = mBaseHeight;
     _mVolumeHeight = volHidden != true ? _mBaseHeight * 0.2 : 0;
     _mSecondaryHeight = _mBaseHeight * 0.2;
-    _mDisplayHeight = _mBaseHeight +
-        _mVolumeHeight +
-        (_mSecondaryHeight * secondaryStateLi.length);
+    _mDisplayHeight =
+        _mBaseHeight + _mVolumeHeight + (_mSecondaryHeight * indicators.length);
   }
 }

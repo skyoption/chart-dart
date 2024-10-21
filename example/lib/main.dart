@@ -8,7 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
-void main() => runApp(const MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  KChart.openDB();
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -183,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return rootBundle.loadString('assets/chatData.json');
   }
 
-  void solveChatData(String result) {
+  void solveChatData(String result) async {
     final Map parseJson = json.decode(result) as Map<dynamic, dynamic>;
     final list = parseJson['data'] as List<dynamic>;
     datas = list
@@ -192,7 +196,7 @@ class _MyHomePageState extends State<MyHomePage> {
         .reversed
         .toList()
         .cast<KLineEntity>();
-
+    if (datas != null) await IndicatorUtils.calculate(datas!);
     showLoading = false;
     setState(() {});
   }

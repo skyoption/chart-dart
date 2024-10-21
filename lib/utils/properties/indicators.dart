@@ -1,27 +1,84 @@
+import 'package:candle_chart/components/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
+import 'package:candle_chart/entity/secondary_indicator_entity.dart';
+import 'package:candle_chart/utils/isar.dart';
+import 'package:isar/isar.dart';
 
 mixin Indicators {
   late String symbol;
 
   //For indicators
-  List<IndicatorEntity> get indicators {
-    return properties['${symbol}_indicators'] ?? [];
+  List<IndicatorEntity> indicators = [];
+
+  //For secondaryIndicators
+  List<SecondaryIndicatorEntity> secondaryIndicators = [];
+
+  Future<void> load() async {
+    await _getIndicators();
+    await _getSecondaryIndicators();
   }
 
-  //For properties
-  late Map<String, dynamic> properties ;
+  Future<void> _getIndicators() async {
+    try {
+      final res = await KChart.query.indicatorEntitys.where().findAll();
+      indicators = res;
+    } catch (e) {
+      return kPrint(e.toString());
+    }
+  }
+
+  Future<void> _getSecondaryIndicators() async {
+    try {
+      final res =
+          await KChart.query.secondaryIndicatorEntitys.where().findAll();
+      secondaryIndicators = res;
+    } catch (e) {
+      return kPrint(e.toString());
+    }
+  }
 
   void addIndicator(IndicatorEntity value) {
-    properties['${symbol}_indicators'] = indicators..add(value);
+    indicators.add(value);
+    KChart.write(query: (db) async {
+      await db.indicatorEntitys.put(value);
+    });
   }
 
   void removeIndicator(int index) {
-    properties['${symbol}_indicators'] = indicators..removeAt(index);
+    final id = indicators[index].id;
+    indicators.removeAt(index);
+    KChart.write(query: (db) async {
+      await db.indicatorEntitys.delete(id);
+    });
   }
 
   void updateIndicator(int index, IndicatorEntity value) {
     indicators[index] = value;
-    properties['${symbol}_indicators'] = indicators;
+    KChart.write(query: (db) async {
+      await db.indicatorEntitys.put(value);
+    });
+  }
+
+  void addSecondaryIndicators(SecondaryIndicatorEntity value) {
+    secondaryIndicators.add(value);
+    KChart.write(query: (db) async {
+      await db.secondaryIndicatorEntitys.put(value);
+    });
+  }
+
+  void removeSecondaryIndicators(int index) {
+    final id = secondaryIndicators[index].id;
+    secondaryIndicators.removeAt(index);
+    KChart.write(query: (db) async {
+      await db.secondaryIndicatorEntitys.delete(id);
+    });
+  }
+
+  void updateSecondaryIndicators(int index, SecondaryIndicatorEntity value) {
+    secondaryIndicators[index] = value;
+    KChart.write(query: (db) async {
+      await db.secondaryIndicatorEntitys.put(value);
+    });
   }
 }

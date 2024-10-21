@@ -2,6 +2,7 @@ import 'package:candle_chart/components/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 import '../entity/candle_entity.dart';
 import '../k_chart_widget.dart' show IndicatorType;
@@ -71,56 +72,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       minValue /= 2;
     }
     scaleY = _contentRect.height / (maxValue - minValue);
-  }
-
-  @override
-  void drawText(Canvas canvas, CandleEntity data, double x) {
-    return;
-    // if (isLine == true) return;
-    // TextSpan? span;
-    // if (state == MainState.MA) {
-    //   // span = TextSpan(
-    //   //   children: _createMATextSpan(data),
-    //   // );
-    //   String value = '${format((data.maValues ?? [0])[0])}';
-    //   span = TextSpan(
-    //     children: [
-    //       TextSpan(
-    //         children: _createMATextSpan(data),
-    //       ),
-    //       if (this.chartStyle.isShowEma && value.length <= 13)
-    //         //EMA
-    //         TextSpan(text: '\n'),
-    //       if (this.chartStyle.isShowEma)
-    //         TextSpan(
-    //           children: _createEMATextSpan(data),
-    //         ),
-    //     ],
-    //   );
-    // } else if (state == MainState.BOLL) {
-    //   span = TextSpan(
-    //     children: [
-    //       if (data.up != 0)
-    //         TextSpan(
-    //             text: "BOLL:${format(data.mb)}    ",
-    //             style: getTextStyle(this.chartColors.ma5Color)),
-    //       if (data.mb != 0)
-    //         TextSpan(
-    //             text: "UB:${format(data.up)}    ",
-    //             style: getTextStyle(this.chartColors.ma10Color)),
-    //       if (data.dn != 0)
-    //         TextSpan(
-    //             text: "LB:${format(data.dn)}    ",
-    //             style: getTextStyle(this.chartColors.ma30Color)),
-    //     ],
-    //   );
-    // }
-    // if (span == null) return;
-    // TextPainter tp = TextPainter(text: span, textDirection: TextDirection.ltr);
-    // tp.layout();
-    // if (this.chartStyle.isShowStrategyTypeTop) {
-    //   tp.paint(canvas, Offset(x, chartRect.top - topPadding));
-    // }
   }
 
   @override
@@ -296,7 +247,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas,
           lastX,
           curX,
-          curPoint.emaMaValues![i].color,
+          colorFromHex(curPoint.emaMaValues![i].color!)!,
           lineStyle: curPoint.emaMaValues![i].style,
           strokeWidth: curPoint.emaMaValues![i].strokeWidth,
         );
@@ -322,7 +273,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas,
           lastX,
           curX,
-          curPoint.lwmaMaValues![i].color,
+          colorFromHex(curPoint.lwmaMaValues![i].color!)!,
           lineStyle: curPoint.lwmaMaValues![i].style,
           strokeWidth: curPoint.lwmaMaValues![i].strokeWidth,
         );
@@ -348,7 +299,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas,
           lastX,
           curX,
-          curPoint.smaMaValues![i].color,
+          colorFromHex(curPoint.smaMaValues![i].color!)!,
           lineStyle: curPoint.smaMaValues![i].style,
           strokeWidth: curPoint.smaMaValues![i].strokeWidth,
         );
@@ -374,7 +325,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas,
           lastX,
           curX,
-          curPoint.smmaMaValues![i].color,
+          colorFromHex(curPoint.smmaMaValues![i].color!)!,
           lineStyle: curPoint.smmaMaValues![i].style,
           strokeWidth: curPoint.smmaMaValues![i].strokeWidth,
         );
@@ -397,7 +348,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         canvas,
         lastX,
         curX,
-        curPoint.parabolicValues![i].color,
+        colorFromHex(curPoint.parabolicValues![i].color!)!,
         lineStyle: curPoint.parabolicValues![i].style,
         strokeWidth: 4.0,
         isDot: true,
@@ -447,7 +398,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         canvas,
         lastX,
         curX,
-        curPoint.ichimokuValues![i].ichimoku!.tenkanSenColor,
+        colorFromHex(curPoint.ichimokuValues![i].ichimoku!.tenkanSenColor!)!,
         lineStyle: curPoint.ichimokuValues![i].style,
         strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
       );
@@ -457,7 +408,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         canvas,
         lastX,
         curX,
-        curPoint.ichimokuValues![i].ichimoku!.chikouSpanColor,
+        colorFromHex(curPoint.ichimokuValues![i].ichimoku!.chikouSpanColor!)!,
         lineStyle: curPoint.ichimokuValues![i].style,
         strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
       );
@@ -467,7 +418,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         canvas,
         lastX,
         curX,
-        curPoint.ichimokuValues![i].ichimoku!.kijuSenColor,
+        colorFromHex(curPoint.ichimokuValues![i].ichimoku!.kijuSenColor!)!,
         lineStyle: curPoint.ichimokuValues![i].style,
         strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
       );
@@ -479,8 +430,9 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         final senkouSpanA = lastPoint.ichimokuValues![i].senkouSpanA!;
         final senkouSpanB = lastPoint.ichimokuValues![i].senkouSpanB!;
         final color = senkouSpanA < senkouSpanB
-            ? curPoint.ichimokuValues![i].ichimoku!.downKumoColor
-            : curPoint.ichimokuValues![i].ichimoku!.upKumoColor;
+            ? colorFromHex(
+                curPoint.ichimokuValues![i].ichimoku!.downKumoColor!)!
+            : colorFromHex(curPoint.ichimokuValues![i].ichimoku!.upKumoColor!)!;
 
         /// ----
         drawDashLine(
@@ -500,7 +452,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         canvas,
         lastX,
         curX,
-        curPoint.ichimokuValues![i].ichimoku!.upKumoColor,
+        colorFromHex(curPoint.ichimokuValues![i].ichimoku!.upKumoColor!)!,
         lineStyle: curPoint.ichimokuValues![i].style,
         strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
       );
@@ -511,7 +463,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         canvas,
         lastX,
         curX,
-        curPoint.ichimokuValues![i].ichimoku!.downKumoColor,
+        colorFromHex(curPoint.ichimokuValues![i].ichimoku!.downKumoColor!)!,
         lineStyle: curPoint.ichimokuValues![i].style,
         strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
       );
@@ -536,7 +488,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas,
           lastX,
           curX,
-          curPoint.emaEnvelopsValues![i].color,
+          colorFromHex(curPoint.emaEnvelopsValues![i].color!)!,
           strokeWidth: curPoint.emaEnvelopsValues![i].strokeWidth,
         );
       }
@@ -550,7 +502,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas,
           lastX,
           curX,
-          curPoint.emaEnvelopsValues![i].secondColor,
+          colorFromHex(curPoint.emaEnvelopsValues![i].secondColor!)!,
           strokeWidth: curPoint.emaEnvelopsValues![i].strokeWidth,
         );
       }
@@ -575,7 +527,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas,
           lastX,
           curX,
-          curPoint.smaEnvelopsValues![i].color,
+          colorFromHex(curPoint.smaEnvelopsValues![i].color!)!,
           strokeWidth: curPoint.smaEnvelopsValues![i].strokeWidth,
         );
       }
@@ -590,7 +542,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           strokeWidth: curPoint.smaEnvelopsValues![i].strokeWidth,
-          curPoint.smaEnvelopsValues![i].secondColor,
+          colorFromHex(curPoint.smaEnvelopsValues![i].secondColor!)!,
         );
       }
     }
@@ -614,7 +566,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas,
           lastX,
           curX,
-          curPoint.smmaEnvelopsValues![i].color,
+          colorFromHex(curPoint.smmaEnvelopsValues![i].color!)!,
           strokeWidth: curPoint.smmaEnvelopsValues![i].strokeWidth,
         );
       }
@@ -628,7 +580,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas,
           lastX,
           curX,
-          curPoint.smmaEnvelopsValues![i].secondColor,
+          colorFromHex(curPoint.smmaEnvelopsValues![i].secondColor!)!,
           strokeWidth: curPoint.smmaEnvelopsValues![i].strokeWidth,
         );
       }
@@ -654,7 +606,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           strokeWidth: curPoint.lwmaEnvelopsValues![i].strokeWidth,
-          curPoint.lwmaEnvelopsValues![i].color,
+          colorFromHex(curPoint.lwmaEnvelopsValues![i].color!)!,
         );
       }
 
@@ -667,7 +619,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas,
           lastX,
           curX,
-          curPoint.lwmaEnvelopsValues![i].secondColor,
+          colorFromHex(curPoint.lwmaEnvelopsValues![i].secondColor!)!,
           strokeWidth: curPoint.lwmaEnvelopsValues![i].strokeWidth,
         );
       }
@@ -703,7 +655,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas,
           lastX,
           curX,
-          curPoint.bollValues![i].color,
+          colorFromHex(curPoint.bollValues![i].color!)!,
           strokeWidth: curPoint.bollValues![i].strokeWidth,
         );
       }
@@ -816,8 +768,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       double offsetX;
       switch (verticalTextAlignment) {
         case VerticalTextAlignment.left:
-          offsetX =
-              this.chartStyle.leftPadding;
+          offsetX = this.chartStyle.leftPadding;
           break;
         case VerticalTextAlignment.right:
           offsetX = chartRect.width -
@@ -846,7 +797,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     }
     double columnSpace = chartRect.rWidth / gridColumns;
     for (int i = 0; i <= columnSpace; i++) {
-      canvas.drawLine(Offset(columnSpace * i, topPadding ),
+      canvas.drawLine(Offset(columnSpace * i, topPadding),
           Offset(columnSpace * i, chartRect.bottom), gridPaint);
     }
   }
@@ -863,6 +814,55 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     trendLineContentRec = _contentRect.top;
   }
 
+  @override
+  void drawText(Canvas canvas, CandleEntity data, double x) {
+    return;
+    // if (isLine == true) return;
+    // TextSpan? span;
+    // if (state == MainState.MA) {
+    //   // span = TextSpan(
+    //   //   children: _createMATextSpan(data),
+    //   // );
+    //   String value = '${format((data.maValues ?? [0])[0])}';
+    //   span = TextSpan(
+    //     children: [
+    //       TextSpan(
+    //         children: _createMATextSpan(data),
+    //       ),
+    //       if (this.chartStyle.isShowEma && value.length <= 13)
+    //         //EMA
+    //         TextSpan(text: '\n'),
+    //       if (this.chartStyle.isShowEma)
+    //         TextSpan(
+    //           children: _createEMATextSpan(data),
+    //         ),
+    //     ],
+    //   );
+    // } else if (state == MainState.BOLL) {
+    //   span = TextSpan(
+    //     children: [
+    //       if (data.up != 0)
+    //         TextSpan(
+    //             text: "BOLL:${format(data.mb)}    ",
+    //             style: getTextStyle(this.chartColors.ma5Color)),
+    //       if (data.mb != 0)
+    //         TextSpan(
+    //             text: "UB:${format(data.up)}    ",
+    //             style: getTextStyle(this.chartColors.ma10Color)),
+    //       if (data.dn != 0)
+    //         TextSpan(
+    //             text: "LB:${format(data.dn)}    ",
+    //             style: getTextStyle(this.chartColors.ma30Color)),
+    //     ],
+    //   );
+    // }
+    // if (span == null) return;
+    // TextPainter tp = TextPainter(text: span, textDirection: TextDirection.ltr);
+    // tp.layout();
+    // if (this.chartStyle.isShowStrategyTypeTop) {
+    //   tp.paint(canvas, Offset(x, chartRect.top - topPadding));
+    // }
+  }
 // void drawMaLine(CandleEntity lastPoint, CandleEntity curPoint, Canvas canvas,
 //     double lastX, double curX) {
 //   for (int i = 0; i < (curPoint.maValues?.length ?? 0); i++) {

@@ -8,6 +8,7 @@ import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 @immutable
 class ParabolicPropertiesScreen extends StatefulWidget {
@@ -190,11 +191,11 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
             PropertiesTitleWidget(title: 'style'),
             IndicatorColorWidget(
               title: 'Style :',
-              color: widget.indicator?.color,
+              color: colorFromHex(widget.indicator!.color!),
               hideDrawAsBackground: false,
               drawAsBackground: widget.indicator!.drawAsBackground,
               onChange: (color, drawAsBackground) {
-                widget.indicator?.color = color;
+                widget.indicator?.color = color.toHexString();
                 widget.indicator?.drawAsBackground = drawAsBackground;
               },
             ),

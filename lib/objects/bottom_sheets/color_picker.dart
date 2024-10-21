@@ -18,12 +18,14 @@ class PickerColorWidget extends StatefulWidget {
 class _PickerColorWidgetState extends State<PickerColorWidget> {
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final pickerAreaHeightPercent = (size.width * 0.7) / (size.height * 0.52);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: 320.0,
-          height: 410.0,
+          width: size.width * 0.9,
+          height: size.height * 0.52,
           child: Material(
             borderRadius: BorderRadius.circular(20.0),
             child: Column(
@@ -39,8 +41,8 @@ class _PickerColorWidgetState extends State<PickerColorWidget> {
                     widget.pickerColor = value;
                     // setState(() {});
                   },
-                  colorPickerWidth: 320.0,
-                  pickerAreaHeightPercent: 0.6,
+                  colorPickerWidth: size.width * 0.9,
+                  pickerAreaHeightPercent: pickerAreaHeightPercent,
                 ),
                 InkWell(
                   onTap: () {

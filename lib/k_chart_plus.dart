@@ -9,3 +9,4 @@ export 'extension/num_ext.dart';
 export 'k_chart_widget.dart'; //布局
 export 'renderer/index.dart';
 export 'utils/index.dart'; //数据加工
+export 'utils/isar.dart'; //数据加工

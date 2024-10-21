@@ -7,6 +7,7 @@ import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 @immutable
 class IchimokuPropertiesScreen extends StatefulWidget {
@@ -228,33 +229,33 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
             PropertiesTitleWidget(title: 'style'),
             IndicatorColorWidget(
               title: 'Tenkan-sen:',
-              color: widget.indicator!.ichimoku!.tenkanSenColor,
+              color: colorFromHex(widget.indicator!.ichimoku!.tenkanSenColor!),
               onChange: (color, drawAsBackground) {
-                widget.indicator!.ichimoku!.tenkanSenColor = color;
+                widget.indicator!.ichimoku!.tenkanSenColor = color.toHexString();
               },
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
               title: 'Kiju-sen:',
-              color: widget.indicator!.ichimoku!.kijuSenColor,
+              color: colorFromHex(widget.indicator!.ichimoku!.kijuSenColor!),
               onChange: (color, drawAsBackground) {
-                widget.indicator!.ichimoku!.kijuSenColor = color;
+                widget.indicator!.ichimoku!.kijuSenColor = color.toHexString();
               },
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
               title: 'Chikou Span:',
-              color: widget.indicator!.ichimoku!.chikouSpanColor,
+              color: colorFromHex(widget.indicator!.ichimoku!.chikouSpanColor!),
               onChange: (color, drawAsBackground) {
-                widget.indicator!.ichimoku!.chikouSpanColor = color;
+                widget.indicator!.ichimoku!.chikouSpanColor = color.toHexString();
               },
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
               title: 'Up Kumo:',
-              color: widget.indicator!.ichimoku!.upKumoColor,
+              color:colorFromHex( widget.indicator!.ichimoku!.upKumoColor!),
               onChange: (color, drawAsBackground) {
-                widget.indicator!.ichimoku!.upKumoColor = color;
+                widget.indicator!.ichimoku!.upKumoColor = color.toHexString();
               },
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
@@ -262,9 +263,9 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
               drawAsBackground: widget.indicator!.drawAsBackground,
               hideDrawAsBackground: false,
               title: 'Down Kumo:',
-              color: widget.indicator!.ichimoku!.downKumoColor,
+              color: colorFromHex(widget.indicator!.ichimoku!.downKumoColor!),
               onChange: (color, drawAsBackground) {
-                widget.indicator!.ichimoku!.downKumoColor = color;
+                widget.indicator!.ichimoku!.downKumoColor = color.toHexString();
                 widget.indicator?.drawAsBackground = drawAsBackground;
               },
             ),

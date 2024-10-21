@@ -7,6 +7,7 @@ import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/utils/icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class ObjectPropertiesScreen extends StatefulWidget {
   static const id = 'ObjectPropertiesScreen';
@@ -144,7 +145,7 @@ class _ObjectPropertiesScreenState extends State<ObjectPropertiesScreen> {
             ),
             ObjectStyleWidget(
               onChange: (color, drawAsBackground, lineHeight, style) {
-                line.color = color;
+                line.color = color.toHexString();
                 line.drawAsBackground = drawAsBackground;
                 line.height = lineHeight;
                 line.style = style;

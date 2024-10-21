@@ -9,6 +9,7 @@ import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 @immutable
 class IndicatorPropertiesScreen extends StatefulWidget {
@@ -273,7 +274,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
               title: 'Apply To',
               subTitle: (widget.indicator?.applyTo.name ?? 'Close')
                   .replaceAll('_', ' ')
-                  .replaceAll('\$', '/'),
+                  .replaceAll('__', '/'),
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {
@@ -333,11 +334,11 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
               Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
               title: widget.haveTwoBands ? 'Upper Band ' : 'Style ',
-              color: widget.indicator?.color,
+              color: colorFromHex(widget.indicator?.color ?? ''),
               hideDrawAsBackground: widget.haveTwoBands,
-              drawAsBackground: widget.indicator!.drawAsBackground,
+              drawAsBackground: widget.indicator?.drawAsBackground,
               onChange: (color, drawAsBackground) {
-                widget.indicator?.color = color;
+                widget.indicator?.color = color.toHexString();
                 if (!widget.haveTwoBands) {
                   widget.indicator?.drawAsBackground = drawAsBackground;
                 }
@@ -357,10 +358,10 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
               IndicatorColorWidget(
                 title: 'Lower Band ',
                 hideDrawAsBackground: false,
-                drawAsBackground: widget.indicator!.drawAsBackground,
-                color: widget.indicator?.secondColor,
+                drawAsBackground: widget.indicator?.drawAsBackground,
+                color: colorFromHex(widget.indicator?.secondColor ?? ''),
                 onChange: (color, drawAsBackground) {
-                  widget.indicator?.secondColor = color;
+                  widget.indicator?.secondColor = color.toHexString();
                   widget.indicator?.drawAsBackground = drawAsBackground;
                 },
               )

@@ -87,9 +87,9 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
             ),
             ...chartProperties.indicators.asMap().entries.map(
               (e) {
-                final name = '${e.value.name} (${e.value.type?.name})';
+                final name = '${e.value.name} (${e.value.type.name})';
                 return Dismissible(
-                  key: Key('$name ${e.key} ${e.value.period}'),
+                  key: Key('${e.value.id}'),
                   onUpdate: (details) {
                     direction = details.direction;
                     setState(() {});
@@ -158,8 +158,8 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
         ),
       );
     } else {
-      final isENVELOPS = e.value.type?.name.contains('ENVELOPS') ?? false;
-      final isMA = e.value.type?.name.contains('MA') ?? false;
+      final isENVELOPS = e.value.type.name.contains('ENVELOPS') ?? false;
+      final isMA = e.value.type.name.contains('MA') ?? false;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => IndicatorPropertiesScreen(

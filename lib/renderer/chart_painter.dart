@@ -3,6 +3,7 @@ import 'dart:async' show StreamSink;
 import 'package:candle_chart/components/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
+import 'package:candle_chart/entity/secondary_indicator_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
 import 'package:candle_chart/renderer/draw_object_lines.dart';
 import 'package:candle_chart/renderer/update_point_position.dart';
@@ -61,6 +62,7 @@ class ChartPainter extends BaseChartPainter
   final BaseDimension baseDimension;
   final List<LineEntity> linesPrice;
   final List<IndicatorEntity> indicators;
+  final List<SecondaryIndicatorEntity> secondaryIndicators;
   late final ChartPosition chartPosition;
   final double screenHeight;
   double mMainHighMaxValue = double.minPositive,
@@ -85,31 +87,33 @@ class ChartPainter extends BaseChartPainter
     required xFrontPadding,
     required this.baseDimension,
     required this.indicators,
+    required this.secondaryIndicators,
     this.linesPrice = const [],
     isOnTap,
     isTapShowInfoDialog,
     required this.verticalTextAlignment,
     volHidden,
-    secondaryStateLi,
     bool isLine = false,
     this.hideGrid = false,
     this.showNowPrice = true,
     this.fixedLength = 2,
-  }) : super(chartStyle,
-            data: datas,
-            scaleX: scaleX,
-            scrollX: scrollX,
-            isLongPress: isLongPass,
-            baseDimension: baseDimension,
-            isOnTap: isOnTap,
-            isTapShowInfoDialog: isTapShowInfoDialog,
-            selectX: selectX,
-            linesPrice: linesPrice,
-            indicators: indicators,
-            volHidden: volHidden,
-            secondaryStateLi: secondaryStateLi,
-            xFrontPadding: xFrontPadding,
-            isLine: isLine) {
+  }) : super(
+          chartStyle,
+          data: datas,
+          scaleX: scaleX,
+          scrollX: scrollX,
+          isLongPress: isLongPass,
+          baseDimension: baseDimension,
+          isOnTap: isOnTap,
+          isTapShowInfoDialog: isTapShowInfoDialog,
+          selectX: selectX,
+          linesPrice: linesPrice,
+          indicators: indicators,
+          volHidden: volHidden,
+          secondaryIndicators: secondaryIndicators,
+          xFrontPadding: xFrontPadding,
+          isLine: isLine,
+        ) {
     chartPosition = ChartPosition();
     selectPointPaint = Paint()
       ..isAntiAlias = true
@@ -156,21 +160,30 @@ class ChartPainter extends BaseChartPainter
     );
 
     if (mVolRect != null) {
-      mVolRenderer = VolRenderer(mVolRect!, mVolMaxValue, mVolMinValue,
-          mChildPadding, fixedLength, this.chartStyle, this.chartColors);
+      mVolRenderer = VolRenderer(
+        mVolRect!,
+        mVolMaxValue,
+        mVolMinValue,
+        mChildPadding,
+        fixedLength,
+        this.chartStyle,
+        this.chartColors,
+      );
     }
     mSecondaryRendererList.clear();
     for (int i = 0; i < mSecondaryRectList.length; ++i) {
-      mSecondaryRendererList.add(SecondaryRenderer(
-        mSecondaryRectList[i].mRect,
-        mSecondaryRectList[i].mMaxValue,
-        mSecondaryRectList[i].mMinValue,
-        mChildPadding,
-        secondaryStateLi.elementAt(i),
-        fixedLength,
-        chartStyle,
-        chartColors,
-      ));
+      mSecondaryRendererList.add(
+        SecondaryRenderer(
+          mSecondaryRectList[i].mRect,
+          mSecondaryRectList[i].mMaxValue,
+          mSecondaryRectList[i].mMinValue,
+          mChildPadding,
+          secondaryIndicators[i],
+          fixedLength,
+          chartStyle,
+          chartColors,
+        ),
+      );
     }
     updatePointPosition = UpdatePointPosition(
       chartPosition: chartPosition,
@@ -183,24 +196,40 @@ class ChartPainter extends BaseChartPainter
   @override
   void drawBg(Canvas canvas, Size size) {
     Paint mBgPaint = Paint()..color = chartColors.bgColor;
-    Rect mainRect =
-        Rect.fromLTRB(0, 0, mMainRect.rWidth, mMainRect.height + mTopPadding);
+    Rect mainRect = Rect.fromLTRB(
+      0,
+      0,
+      mMainRect.rWidth,
+      mMainRect.height + mTopPadding,
+    );
     canvas.drawRect(mainRect, mBgPaint);
 
     if (mVolRect != null) {
       Rect volRect = Rect.fromLTRB(
-          0, mVolRect!.top - mChildPadding, mVolRect!.rWidth, mVolRect!.bottom);
+        0,
+        mVolRect!.top - mChildPadding,
+        mVolRect!.rWidth,
+        mVolRect!.bottom,
+      );
       canvas.drawRect(volRect, mBgPaint);
     }
 
     for (int i = 0; i < mSecondaryRectList.length; ++i) {
       Rect? mSecondaryRect = mSecondaryRectList[i].mRect;
-      Rect secondaryRect = Rect.fromLTRB(0, mSecondaryRect.top - mChildPadding,
-          mSecondaryRect.rWidth, mSecondaryRect.bottom);
+      Rect secondaryRect = Rect.fromLTRB(
+        0,
+        mSecondaryRect.top - mChildPadding,
+        mSecondaryRect.rWidth,
+        mSecondaryRect.bottom,
+      );
       canvas.drawRect(secondaryRect, mBgPaint);
     }
     Rect dateRect = Rect.fromLTRB(
-        0, size.height - mBottomPadding, size.rWidth, size.height);
+      0,
+      size.height - mBottomPadding,
+      size.rWidth,
+      size.height,
+    );
     canvas.drawRect(dateRect, mBgPaint);
   }
 

@@ -1,6 +1,7 @@
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 import 'base_chart_renderer.dart';
 
@@ -49,7 +50,7 @@ mixin DrawObjectLines on ChartDetails {
         }
 
         pricePaint
-          ..color = linesPrice[i].color
+          ..color = colorFromHex(linesPrice[i].color!)!
           ..strokeWidth = linesPrice[i].height;
         //first draw the horizontal line
         double startX = 0;

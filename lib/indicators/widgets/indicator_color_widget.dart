@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class IndicatorColorWidget extends StatefulWidget {
   final Function(Color color, bool drawAsBackground) onChange;
   final String title;
-  final bool drawAsBackground, hideDrawAsBackground;
+  final bool? drawAsBackground, hideDrawAsBackground;
   final Color? color;
 
   const IndicatorColorWidget({
@@ -23,8 +23,7 @@ class IndicatorColorWidget extends StatefulWidget {
 }
 
 class _IndicatorColorWidgetState extends State<IndicatorColorWidget> {
-
-  late bool drawAsBackground = widget.drawAsBackground;
+  late bool drawAsBackground = widget.drawAsBackground ?? false;
   late Color color = widget.color ?? Colors.blueAccent;
   int index = 0;
 
@@ -81,9 +80,9 @@ class _IndicatorColorWidgetState extends State<IndicatorColorWidget> {
             ],
           ),
         ),
-        if (!widget.hideDrawAsBackground)
+        if (widget.hideDrawAsBackground == false)
           Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-        if (!widget.hideDrawAsBackground)
+        if (widget.hideDrawAsBackground == false)
           PropertiesItemWidget(
             height: 55.0,
             title: 'Draw as background',

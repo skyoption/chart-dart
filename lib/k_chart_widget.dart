@@ -29,9 +29,12 @@ enum IndicatorType {
   BOLL,
   PARABOLIC,
   ICHIMOKU,
+  MACD,
+  KDJ,
+  RSI,
+  WR,
+  CCI,
 }
-
-enum SecondaryState { MACD, KDJ, RSI, WR, CCI }
 
 class TimeFormat {
   static const List<String> YEAR_MONTH_DAY = [yyyy, '-', mm, '-', dd];
@@ -60,7 +63,6 @@ class TimeFormat {
 class KChartWidget extends StatefulWidget {
   List<KLineEntity>? data;
   bool volHidden;
-  Set<SecondaryState> secondaryStateLi;
   final bool isLine;
   final bool isTapShowInfoDialog;
   final bool hideGrid;
@@ -93,7 +95,6 @@ class KChartWidget extends StatefulWidget {
     required this.onSelectTimeFrame,
     required this.isTrendLine,
     this.xFrontPadding = 100,
-    this.secondaryStateLi = const <SecondaryState>{},
     this.volHidden = true,
     this.isLine = false,
     this.isTapShowInfoDialog = false,
@@ -187,7 +188,7 @@ class _KChartWidgetState extends State<KChartWidget>
     final BaseDimension baseDimension = BaseDimension(
       mBaseHeight: mBaseHeight,
       volHidden: widget.volHidden,
-      secondaryStateLi: widget.secondaryStateLi,
+      indicators: chartProperties.secondaryIndicators,
     );
     _painter = ChartPainter(
       widget.chartStyle,
@@ -212,9 +213,9 @@ class _KChartWidgetState extends State<KChartWidget>
       isOnTap: isOnTap,
       isTapShowInfoDialog: widget.isTapShowInfoDialog,
       volHidden: widget.volHidden,
-      secondaryStateLi: widget.secondaryStateLi,
       isLine: widget.isLine,
       hideGrid: widget.hideGrid,
+      secondaryIndicators: chartProperties.secondaryIndicators,
       showNowPrice: widget.showNowPrice,
       fixedLength: widget.fixedLength,
       verticalTextAlignment: widget.verticalTextAlignment,
@@ -248,9 +249,11 @@ class _KChartWidgetState extends State<KChartWidget>
                                     fontWeight: FontWeight.w500,
                                   ),
                         ),
-                        Icon(Icons.arrow_drop_down,
-                            color: Colors.black,
-                            size: widget.chartStyle.iconSize)
+                        Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.black,
+                          size: widget.chartStyle.iconSize,
+                        )
                       ],
                     ),
                   ),
@@ -263,9 +266,8 @@ class _KChartWidgetState extends State<KChartWidget>
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => IndicatorsScreen(
-                              onDone: () {
-                                IndicatorUtils.calculate(widget.data!);
-                                notifyChanged();
+                              onDone: () async {
+                                _reload();
                               },
                             ),
                           ),
@@ -348,11 +350,11 @@ class _KChartWidgetState extends State<KChartWidget>
                             Size(double.infinity, baseDimension.mDisplayHeight),
                         painter: _painter,
                       ),
-                      //#十字光标长按0.5秒后才触发 -----------------------------------------------》》》》》 !! 关键 ！！ （isLongFocusDurationTime: 500/0 和 isLongFocus：true/false 切换）
-                      if (widget.showInfoDialog &&
-                          (widget.isLongFocusDurationTime == 0 ||
-                              longPressTriggered))
-                        _buildInfoDialog(),
+                      // //#十字光标长按0.5秒后才触发 -----------------------------------------------》》》》》 !! 关键 ！！ （isLongFocusDurationTime: 500/0 和 isLongFocus：true/false 切换）
+                      // if (widget.showInfoDialog &&
+                      //     (widget.isLongFocusDurationTime == 0 ||
+                      //         longPressTriggered))
+                      //   _buildInfoDialog(),
                       if (openTimeframe)
                         TimeFrameWidget(
                           frame: frame,
@@ -362,11 +364,7 @@ class _KChartWidgetState extends State<KChartWidget>
                               openTimeframe = !openTimeframe;
                               notifyChanged();
                               await widget.onSelectTimeFrame(frame);
-                              Future.delayed(Duration(milliseconds: 200), () {
-                                IndicatorUtils.calculate(widget.data!);
-                                notifyChanged();
-                                kPrint('calculate');
-                              });
+                              _reload();
                             }
                           },
                         ),
@@ -379,6 +377,13 @@ class _KChartWidgetState extends State<KChartWidget>
         ],
       ),
     );
+  }
+
+  void _reload() {
+    Future.delayed(Duration(milliseconds: 200), () async {
+      await IndicatorUtils.calculate(widget.data!);
+      notifyChanged();
+    });
   }
 
   void _updateObjectPosition(Offset offset) {

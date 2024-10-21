@@ -6,7 +6,7 @@ import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 
 class IndicatorUtils {
-  static calculate(List<KLineEntity> data) {
+  static calculate(List<KLineEntity> data) async {
     List<IndicatorEntity> SMA_MA = [],
         EMA_MA = [],
         Linear_MA = [],
@@ -18,6 +18,8 @@ class IndicatorUtils {
         BOLL = [],
         ICHIMOKU = [],
         PARABOLIC = [];
+
+    await chartProperties.load();
 
     /// reset candles
     _resetCandles(data);
@@ -827,13 +829,13 @@ class IndicatorUtils {
       return point.low;
     } else if (indicator.applyTo == ApplyTo.High) {
       return point.high;
-    } else if (indicator.applyTo == ApplyTo.Median_Price_HL$2) {
+    } else if (indicator.applyTo == ApplyTo.Median_Price_HL__2) {
       return (point.high + point.low) / 2;
-    } else if (indicator.applyTo == ApplyTo.Middle_Price_OC$2) {
+    } else if (indicator.applyTo == ApplyTo.Middle_Price_OC__2) {
       return (point.open + point.close) / 2;
-    } else if (indicator.applyTo == ApplyTo.Typical_Price_HLC$3) {
+    } else if (indicator.applyTo == ApplyTo.Typical_Price_HLC__3) {
       return (point.high + point.low + point.close) / 3;
-    } else if (indicator.applyTo == ApplyTo.Weighted_Close_HLCC$4) {
+    } else if (indicator.applyTo == ApplyTo.Weighted_Close_HLCC__4) {
       return (point.high + point.low + (point.close * 2)) / 4;
     } else {
       return point.close;

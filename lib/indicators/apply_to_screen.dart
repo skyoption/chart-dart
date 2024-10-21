@@ -67,7 +67,7 @@ class _ApplyToScreenState extends State<ApplyToScreen> {
                 PropertiesItemWidget(
                   title: item.value.name
                       .replaceAll('_', ' ')
-                      .replaceAll('\$', '/'),
+                      .replaceAll('__', '/'),
                   margin: EdgeInsets.zero,
                   child: item.value == applyTo
                       ? Icon(Icons.check, color: Colors.blueAccent)

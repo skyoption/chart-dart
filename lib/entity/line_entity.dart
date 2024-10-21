@@ -1,16 +1,24 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:isar/isar.dart';
+
+part 'line_entity.g.dart';
 
 enum LineStyle { dash, normal, longDash }
 
 enum LineType { vertical, horizontal, trend }
 
+@collection
 class LineEntity {
-  double dy,newDy;
+  Id id = Isar.autoIncrement;
+  double dy, newDy;
   double value;
-  Color color;
+  String? color = Colors.black.toHexString();
+  @enumerated
   LineStyle style;
+  @enumerated
   LineType type;
   double height;
   String name;
@@ -23,12 +31,14 @@ class LineEntity {
     this.dy = 0,
     this.newDy = 0,
     this.editable = false,
-    this.color = Colors.black,
+    this.color,
     this.name = '',
     this.symbol = '',
     this.height = 1.2,
     this.style = LineStyle.normal,
     this.type = LineType.horizontal,
     this.drawAsBackground = false,
-  });
+  }) {
+    color = Colors.black.toHexString();
+  }
 }
