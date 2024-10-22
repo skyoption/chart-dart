@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:candle_chart/components/kprint.dart';
+import 'package:candle_chart/entity/candle_indicator_entity.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
@@ -20,7 +21,6 @@ import 'package:flutter/material.dart'
 
 import '../chart_style.dart' show ChartStyle;
 import '../entity/k_line_entity.dart';
-import '../entity/secondary_indicator_entity.dart';
 import '../k_chart_widget.dart';
 import 'base_dimension.dart';
 
@@ -36,7 +36,7 @@ abstract class BaseChartPainter extends CustomPainter
 
   final List<IndicatorEntity> indicators;
 
-  final List<SecondaryIndicatorEntity> secondaryIndicators;
+  final List<IndicatorEntity> secondaryIndicators;
 
   bool volHidden;
   bool isTapShowInfoDialog;
@@ -312,45 +312,45 @@ abstract class BaseChartPainter extends CustomPainter
   }
 
   // find maximum of the MA
-  double _findMaxMA(List<IndicatorEntity> a) {
+  double _findMaxMA(List<CandleIndicatorEntity> a) {
     double result = double.minPositive;
-    for (IndicatorEntity i in a) {
+    for (CandleIndicatorEntity i in a) {
       result = max(result, i.value);
     }
     return result;
   }
 
   // find minimum of the UP
-  double _findMaxUP(List<IndicatorEntity> a) {
+  double _findMaxUP(List<CandleIndicatorEntity> a) {
     double result = double.minPositive;
-    for (IndicatorEntity i in a) {
+    for (CandleIndicatorEntity i in a) {
       result = max(result, i.up ?? 0);
     }
     return result;
   }
 
   // find minimum of the ChikouSpan
-  double _findMaxIchimoku(List<IndicatorEntity> a) {
+  double _findMaxIchimoku(List<CandleIndicatorEntity> a) {
     double result = double.minPositive;
-    for (IndicatorEntity i in a) {
+    for (CandleIndicatorEntity i in a) {
       result = max(result, i.chikouSpan ?? 0);
     }
     return result;
   }
 
   // find minimum of the MA
-  double _findMinMA(List<IndicatorEntity> a) {
+  double _findMinMA(List<CandleIndicatorEntity> a) {
     double result = double.maxFinite;
-    for (IndicatorEntity i in a) {
+    for (CandleIndicatorEntity i in a) {
       result = min(result, i.value == 0 ? double.maxFinite : i.value);
     }
     return result;
   }
 
   // find minimum of the ChikouSpan
-  double _findMinIchimoku(List<IndicatorEntity> a) {
+  double _findMinIchimoku(List<CandleIndicatorEntity> a) {
     double result = double.maxFinite;
-    for (IndicatorEntity i in a) {
+    for (CandleIndicatorEntity i in a) {
       result = min(result,
           i.chikouSpan == 0 ? double.maxFinite : i.chikouSpan ?? result);
     }
@@ -358,9 +358,9 @@ abstract class BaseChartPainter extends CustomPainter
   }
 
   // find minimum of the DN
-  double _findMinDN(List<IndicatorEntity> a) {
+  double _findMinDN(List<CandleIndicatorEntity> a) {
     double result = double.maxFinite;
-    for (IndicatorEntity i in a) {
+    for (CandleIndicatorEntity i in a) {
       result = min(result, i.dn == 0 ? double.maxFinite : i.dn ?? result);
     }
     return result;

@@ -1,3 +1,4 @@
+import 'package:candle_chart/entity/candle_indicator_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -36,7 +37,7 @@ class IndicatorEntity {
   @enumerated
   Timeframes timeframe = Timeframes.All_Timeframes;
   double strokeWidth;
-  bool drawAsBackground;
+  bool drawAsBackground, isMain, isSecondary;
   @enumerated
   LineStyle style = LineStyle.normal;
 
@@ -70,6 +71,8 @@ class IndicatorEntity {
     this.steps,
     this.ichimoku,
     this.drawAsBackground = false,
+    this.isMain = false,
+    this.isSecondary = false,
     this.applyTo = ApplyTo.Close,
     this.strokeWidth = 1.0,
     this.style = LineStyle.normal,
@@ -82,7 +85,7 @@ class IndicatorEntity {
     secondColor = Colors.deepOrange.toHexString();
   }
 
-  IndicatorEntity copy({
+  CandleIndicatorEntity copyToCandle({
     name,
     shift,
     period,
@@ -110,7 +113,7 @@ class IndicatorEntity {
     tenkanSen,
     secondColor,
   }) {
-    return IndicatorEntity(
+    return CandleIndicatorEntity(
       period: period ?? this.period,
       value: value ?? this.value,
       type: method ?? this.type,

@@ -1,5 +1,4 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/entity/secondary_indicator_entity.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -8,7 +7,7 @@ import 'base_chart_renderer.dart';
 
 class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
   late double mMACDWidth;
-  final SecondaryIndicatorEntity indicator;
+  final IndicatorEntity indicator;
   final ChartStyle chartStyle;
   final ChartColors chartColors;
 

@@ -54,92 +54,102 @@ const IndicatorEntitySchema = CollectionSchema(
       type: IsarType.object,
       target: r'Ichimoku',
     ),
-    r'kijunSen': PropertySchema(
+    r'isMain': PropertySchema(
       id: 7,
+      name: r'isMain',
+      type: IsarType.bool,
+    ),
+    r'isSecondary': PropertySchema(
+      id: 8,
+      name: r'isSecondary',
+      type: IsarType.bool,
+    ),
+    r'kijunSen': PropertySchema(
+      id: 9,
       name: r'kijunSen',
       type: IsarType.double,
     ),
     r'level': PropertySchema(
-      id: 8,
+      id: 10,
       name: r'level',
       type: IsarType.byte,
       enumMap: _IndicatorEntitylevelEnumValueMap,
     ),
     r'maximum': PropertySchema(
-      id: 9,
+      id: 11,
       name: r'maximum',
       type: IsarType.double,
     ),
     r'name': PropertySchema(
-      id: 10,
+      id: 12,
       name: r'name',
       type: IsarType.string,
     ),
     r'period': PropertySchema(
-      id: 11,
+      id: 13,
       name: r'period',
       type: IsarType.long,
     ),
     r'secondColor': PropertySchema(
-      id: 12,
+      id: 14,
       name: r'secondColor',
       type: IsarType.string,
     ),
     r'senkouSpanA': PropertySchema(
-      id: 13,
+      id: 15,
       name: r'senkouSpanA',
       type: IsarType.double,
     ),
     r'senkouSpanB': PropertySchema(
-      id: 14,
+      id: 16,
       name: r'senkouSpanB',
       type: IsarType.double,
     ),
     r'shift': PropertySchema(
-      id: 15,
+      id: 17,
       name: r'shift',
       type: IsarType.long,
     ),
     r'steps': PropertySchema(
-      id: 16,
+      id: 18,
       name: r'steps',
       type: IsarType.double,
     ),
     r'strokeWidth': PropertySchema(
-      id: 17,
+      id: 19,
       name: r'strokeWidth',
       type: IsarType.double,
     ),
     r'style': PropertySchema(
-      id: 18,
+      id: 20,
       name: r'style',
       type: IsarType.byte,
       enumMap: _IndicatorEntitystyleEnumValueMap,
     ),
     r'tenkanSen': PropertySchema(
-      id: 19,
+      id: 21,
       name: r'tenkanSen',
       type: IsarType.double,
     ),
     r'timeframe': PropertySchema(
-      id: 20,
+      id: 22,
       name: r'timeframe',
       type: IsarType.byte,
       enumMap: _IndicatorEntitytimeframeEnumValueMap,
     ),
     r'type': PropertySchema(
-      id: 21,
+      id: 23,
       name: r'type',
       type: IsarType.byte,
       enumMap: _IndicatorEntitytypeEnumValueMap,
     ),
     r'up': PropertySchema(
-      id: 22,
+      id: 24,
       name: r'up',
       type: IsarType.double,
     ),
     r'value': PropertySchema(
-      id: 23,
+      id: 25,
       name: r'value',
       type: IsarType.double,
     )
@@ -205,23 +215,25 @@ void _indicatorEntitySerialize(
     IchimokuSchema.serialize,
     object.ichimoku,
   );
-  writer.writeDouble(offsets[7], object.kijunSen);
-  writer.writeByte(offsets[8], object.level.index);
-  writer.writeDouble(offsets[9], object.maximum);
-  writer.writeString(offsets[10], object.name);
-  writer.writeLong(offsets[11], object.period);
-  writer.writeString(offsets[12], object.secondColor);
-  writer.writeDouble(offsets[13], object.senkouSpanA);
-  writer.writeDouble(offsets[14], object.senkouSpanB);
-  writer.writeLong(offsets[15], object.shift);
-  writer.writeDouble(offsets[16], object.steps);
-  writer.writeDouble(offsets[17], object.strokeWidth);
-  writer.writeByte(offsets[18], object.style.index);
-  writer.writeDouble(offsets[19], object.tenkanSen);
-  writer.writeByte(offsets[20], object.timeframe.index);
-  writer.writeByte(offsets[21], object.type.index);
-  writer.writeDouble(offsets[22], object.up);
-  writer.writeDouble(offsets[23], object.value);
+  writer.writeBool(offsets[7], object.isMain);
+  writer.writeBool(offsets[8], object.isSecondary);
+  writer.writeDouble(offsets[9], object.kijunSen);
+  writer.writeByte(offsets[10], object.level.index);
+  writer.writeDouble(offsets[11], object.maximum);
+  writer.writeString(offsets[12], object.name);
+  writer.writeLong(offsets[13], object.period);
+  writer.writeString(offsets[14], object.secondColor);
+  writer.writeDouble(offsets[15], object.senkouSpanA);
+  writer.writeDouble(offsets[16], object.senkouSpanB);
+  writer.writeLong(offsets[17], object.shift);
+  writer.writeDouble(offsets[18], object.steps);
+  writer.writeDouble(offsets[19], object.strokeWidth);
+  writer.writeByte(offsets[20], object.style.index);
+  writer.writeDouble(offsets[21], object.tenkanSen);
+  writer.writeByte(offsets[22], object.timeframe.index);
+  writer.writeByte(offsets[23], object.type.index);
+  writer.writeDouble(offsets[24], object.up);
+  writer.writeDouble(offsets[25], object.value);
 }
 
 IndicatorEntity _indicatorEntityDeserialize(
@@ -244,31 +256,33 @@ IndicatorEntity _indicatorEntityDeserialize(
       IchimokuSchema.deserialize,
       allOffsets,
     ),
-    kijunSen: reader.readDoubleOrNull(offsets[7]),
+    isMain: reader.readBoolOrNull(offsets[7]) ?? false,
+    isSecondary: reader.readBoolOrNull(offsets[8]) ?? false,
+    kijunSen: reader.readDoubleOrNull(offsets[9]),
     level:
-        _IndicatorEntitylevelValueEnumMap[reader.readByteOrNull(offsets[8])] ??
+        _IndicatorEntitylevelValueEnumMap[reader.readByteOrNull(offsets[10])] ??
             Levels.None,
-    maximum: reader.readDoubleOrNull(offsets[9]),
-    name: reader.readStringOrNull(offsets[10]) ?? '',
-    period: reader.readLongOrNull(offsets[11]) ?? 5,
-    secondColor: reader.readStringOrNull(offsets[12]),
-    senkouSpanA: reader.readDoubleOrNull(offsets[13]),
-    senkouSpanB: reader.readDoubleOrNull(offsets[14]),
-    shift: reader.readLongOrNull(offsets[15]) ?? 0,
-    steps: reader.readDoubleOrNull(offsets[16]),
-    strokeWidth: reader.readDoubleOrNull(offsets[17]) ?? 1.0,
+    maximum: reader.readDoubleOrNull(offsets[11]),
+    name: reader.readStringOrNull(offsets[12]) ?? '',
+    period: reader.readLongOrNull(offsets[13]) ?? 5,
+    secondColor: reader.readStringOrNull(offsets[14]),
+    senkouSpanA: reader.readDoubleOrNull(offsets[15]),
+    senkouSpanB: reader.readDoubleOrNull(offsets[16]),
+    shift: reader.readLongOrNull(offsets[17]) ?? 0,
+    steps: reader.readDoubleOrNull(offsets[18]),
+    strokeWidth: reader.readDoubleOrNull(offsets[19]) ?? 1.0,
     style:
-        _IndicatorEntitystyleValueEnumMap[reader.readByteOrNull(offsets[18])] ??
+        _IndicatorEntitystyleValueEnumMap[reader.readByteOrNull(offsets[20])] ??
             LineStyle.normal,
-    tenkanSen: reader.readDoubleOrNull(offsets[19]),
+    tenkanSen: reader.readDoubleOrNull(offsets[21]),
     timeframe: _IndicatorEntitytimeframeValueEnumMap[
-            reader.readByteOrNull(offsets[20])] ??
+            reader.readByteOrNull(offsets[22])] ??
         Timeframes.All_Timeframes,
     type:
-        _IndicatorEntitytypeValueEnumMap[reader.readByteOrNull(offsets[21])] ??
+        _IndicatorEntitytypeValueEnumMap[reader.readByteOrNull(offsets[23])] ??
             IndicatorType.SMA_MA,
-    up: reader.readDoubleOrNull(offsets[22]),
-    value: reader.readDoubleOrNull(offsets[23]) ?? 0,
+    up: reader.readDoubleOrNull(offsets[24]),
+    value: reader.readDoubleOrNull(offsets[25]) ?? 0,
   );
   object.id = id;
   return object;
@@ -302,45 +316,49 @@ P _indicatorEntityDeserializeProp<P>(
         allOffsets,
       )) as P;
     case 7:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset) ?? false) as P;
     case 8:
-      return (_IndicatorEntitylevelValueEnumMap[
-              reader.readByteOrNull(offset)] ??
-          Levels.None) as P;
+      return (reader.readBoolOrNull(offset) ?? false) as P;
     case 9:
       return (reader.readDoubleOrNull(offset)) as P;
     case 10:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return (_IndicatorEntitylevelValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          Levels.None) as P;
     case 11:
-      return (reader.readLongOrNull(offset) ?? 5) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 12:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 13:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset) ?? 5) as P;
     case 14:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 15:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 16:
       return (reader.readDoubleOrNull(offset)) as P;
     case 17:
-      return (reader.readDoubleOrNull(offset) ?? 1.0) as P;
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 18:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 19:
+      return (reader.readDoubleOrNull(offset) ?? 1.0) as P;
+    case 20:
       return (_IndicatorEntitystyleValueEnumMap[
               reader.readByteOrNull(offset)] ??
           LineStyle.normal) as P;
-    case 19:
+    case 21:
       return (reader.readDoubleOrNull(offset)) as P;
-    case 20:
+    case 22:
       return (_IndicatorEntitytimeframeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           Timeframes.All_Timeframes) as P;
-    case 21:
+    case 23:
       return (_IndicatorEntitytypeValueEnumMap[reader.readByteOrNull(offset)] ??
           IndicatorType.SMA_MA) as P;
-    case 22:
+    case 24:
       return (reader.readDoubleOrNull(offset)) as P;
-    case 23:
+    case 25:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1065,6 +1083,26 @@ extension IndicatorEntityQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      isMainEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isMain',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      isSecondaryEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isSecondary',
+        value: value,
       ));
     });
   }
@@ -2511,6 +2549,33 @@ extension IndicatorEntityQuerySortBy
     });
   }
 
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy> sortByIsMain() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMain', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      sortByIsMainDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMain', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      sortByIsSecondary() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSecondary', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      sortByIsSecondaryDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSecondary', Sort.desc);
+    });
+  }
+
   QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
       sortByKijunSen() {
     return QueryBuilder.apply(this, (query) {
@@ -2833,6 +2898,33 @@ extension IndicatorEntityQuerySortThenBy
     });
   }
 
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy> thenByIsMain() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMain', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      thenByIsMainDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMain', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      thenByIsSecondary() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSecondary', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      thenByIsSecondaryDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSecondary', Sort.desc);
+    });
+  }
+
   QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
       thenByKijunSen() {
     return QueryBuilder.apply(this, (query) {
@@ -3104,6 +3196,19 @@ extension IndicatorEntityQueryWhereDistinct
     });
   }
 
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QDistinct> distinctByIsMain() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isMain');
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QDistinct>
+      distinctByIsSecondary() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isSecondary');
+    });
+  }
+
   QueryBuilder<IndicatorEntity, IndicatorEntity, QDistinct>
       distinctByKijunSen() {
     return QueryBuilder.apply(this, (query) {
@@ -3267,6 +3372,18 @@ extension IndicatorEntityQueryProperty
       ichimokuProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'ichimoku');
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, bool, QQueryOperations> isMainProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isMain');
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, bool, QQueryOperations> isSecondaryProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isSecondary');
     });
   }
 

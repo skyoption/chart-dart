@@ -1,5 +1,4 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/entity/secondary_indicator_entity.dart';
 
 import '../k_chart_widget.dart';
 
@@ -38,7 +37,7 @@ class BaseDimension {
   BaseDimension({
     required double mBaseHeight,
     required bool volHidden,
-    required List<SecondaryIndicatorEntity> indicators,
+    required List<IndicatorEntity> indicators,
   }) {
     _mBaseHeight = mBaseHeight;
     _mVolumeHeight = volHidden != true ? _mBaseHeight * 0.2 : 0;

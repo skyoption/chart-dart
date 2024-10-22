@@ -1,17 +1,42 @@
 import 'package:candle_chart/components/kprint.dart';
+import 'package:candle_chart/entity/candle_indicator_entity.dart';
+import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/utils/date_util.dart';
+import 'package:isar/isar.dart';
 
 import '../entity/k_entity.dart';
 
+part 'k_line_entity.g.dart';
+
+@collection
 class KLineEntity extends KEntity {
-  late double open;
-  late double high;
-  late double low;
-  late double close;
-  late double vol;
-  late double? amount;
+  Id id = Isar.autoIncrement;
+  double open = 0;
+  double high = 0;
+  double low = 0;
+  double close = 0;
+  double vol = 0;
+  double? amount;
   double? change;
   double? ratio;
   int? time;
+  String? symbol;
+  @enumerated
+  CandleTimeFormat frame = CandleTimeFormat.H4;
+
+  KLineEntity({
+    required this.open,
+    required this.high,
+    required this.low,
+    required this.close,
+    required this.vol,
+    this.amount,
+    this.change,
+    this.ratio,
+    this.time,
+    this.symbol,
+    this.frame = CandleTimeFormat.H4,
+  });
 
   KLineEntity.fromCustom({
     this.amount,

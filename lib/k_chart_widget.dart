@@ -5,6 +5,7 @@ import 'package:candle_chart/components/kprint.dart';
 import 'package:candle_chart/components/popup_info_view.dart';
 import 'package:candle_chart/components/time_frame_widget.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/objects/widgets/svg.dart';
 import 'package:candle_chart/objects/objects_screen.dart';
 import 'package:candle_chart/indicators/indicators_screen.dart';
@@ -73,7 +74,8 @@ class KChartWidget extends StatefulWidget {
   final List<String> timeFormat;
 
   final Function(bool)? onLoadMore;
-
+  final Function(CandleTimeFormat frame, List<KLineEntity> candles,
+      KLineEntity? firstCandle, KLineEntity? lastCandle) onLoaded;
   final int fixedLength;
   final List<int> maDayList;
   final int flingTime;
@@ -86,14 +88,13 @@ class KChartWidget extends StatefulWidget {
   final bool isTrendLine;
   final double xFrontPadding;
   final int isLongFocusDurationTime;
-  final Future Function(CandleTimeFormat frame) onSelectTimeFrame;
 
   KChartWidget(
     this.data,
     this.chartStyle,
     this.chartColors, {
-    required this.onSelectTimeFrame,
     required this.isTrendLine,
+    required this.onLoaded,
     this.xFrontPadding = 100,
     this.volHidden = true,
     this.isLine = false,
@@ -123,7 +124,6 @@ bool longPressTriggered = false;
 
 class _KChartWidgetState extends State<KChartWidget>
     with TickerProviderStateMixin {
-  CandleTimeFormat frame = CandleTimeFormat.H4;
   final StreamController<InfoWindowEntity?> mInfoWindowStream =
       StreamController<InfoWindowEntity?>.broadcast();
   double mScaleX = 1.0, mScrollX = 0.0, mSelectX = 0.0;
@@ -149,6 +149,47 @@ class _KChartWidgetState extends State<KChartWidget>
   int pointerCount = 0;
   String currentLineName = '';
   int currentLineIndex = -1;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _loadCandles();
+    });
+    super.initState();
+  }
+
+  Future<void> _loadCandles({CandleTimeFormat? frame}) async {
+    if (KChart.isar == null) await Future.delayed(Duration(seconds: 1));
+    if (frame != null) {
+      await chartProperties.setTimeframe(frame);
+      openTimeframe = !openTimeframe;
+      notifyChanged();
+    }
+    chartProperties.loadCandles(
+      onLoaded: (timeframe, symbol, candles, firstCandle, lastCandle) async {
+        List<KLineEntity>? data;
+        data = await widget.onLoaded(
+          frame != null ? frame : timeframe,
+          candles,
+          firstCandle,
+          lastCandle,
+        );
+        if (data != null) {
+          chartProperties.setCandles(data);
+        } else {
+          widget.data = candles;
+        }
+        _reload();
+      },
+    );
+  }
+
+  void _reload() {
+    Future.delayed(Duration(milliseconds: 200), () async {
+      await IndicatorUtils.calculate(widget.data!);
+      notifyChanged();
+    });
+  }
 
   @override
   void dispose() {
@@ -243,7 +284,7 @@ class _KChartWidgetState extends State<KChartWidget>
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          '${frame.name}',
+                          '${chartProperties.frame.name}',
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     fontWeight: FontWeight.w500,
@@ -350,21 +391,12 @@ class _KChartWidgetState extends State<KChartWidget>
                             Size(double.infinity, baseDimension.mDisplayHeight),
                         painter: _painter,
                       ),
-                      // //#十字光标长按0.5秒后才触发 -----------------------------------------------》》》》》 !! 关键 ！！ （isLongFocusDurationTime: 500/0 和 isLongFocus：true/false 切换）
-                      // if (widget.showInfoDialog &&
-                      //     (widget.isLongFocusDurationTime == 0 ||
-                      //         longPressTriggered))
-                      //   _buildInfoDialog(),
                       if (openTimeframe)
                         TimeFrameWidget(
-                          frame: frame,
+                          frame: chartProperties.frame,
                           onSelectTimeFrame: (value) async {
-                            if (value != frame) {
-                              frame = value;
-                              openTimeframe = !openTimeframe;
-                              notifyChanged();
-                              await widget.onSelectTimeFrame(frame);
-                              _reload();
+                            if (value != chartProperties.frame) {
+                              _loadCandles(frame: value);
                             }
                           },
                         ),
@@ -377,13 +409,6 @@ class _KChartWidgetState extends State<KChartWidget>
         ],
       ),
     );
-  }
-
-  void _reload() {
-    Future.delayed(Duration(milliseconds: 200), () async {
-      await IndicatorUtils.calculate(widget.data!);
-      notifyChanged();
-    });
   }
 
   void _updateObjectPosition(Offset offset) {
@@ -702,3 +727,9 @@ class _KChartWidgetState extends State<KChartWidget>
     );
   }
 }
+
+// //#十字光标长按0.5秒后才触发 -----------------------------------------------》》》》》 !! 关键 ！！ （isLongFocusDurationTime: 500/0 和 isLongFocus：true/false 切换）
+// if (widget.showInfoDialog &&
+//     (widget.isLongFocusDurationTime == 0 ||
+//         longPressTriggered))
+//   _buildInfoDialog(),

@@ -3,7 +3,6 @@ import 'dart:async' show StreamSink;
 import 'package:candle_chart/components/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
-import 'package:candle_chart/entity/secondary_indicator_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
 import 'package:candle_chart/renderer/draw_object_lines.dart';
 import 'package:candle_chart/renderer/update_point_position.dart';
@@ -62,7 +61,7 @@ class ChartPainter extends BaseChartPainter
   final BaseDimension baseDimension;
   final List<LineEntity> linesPrice;
   final List<IndicatorEntity> indicators;
-  final List<SecondaryIndicatorEntity> secondaryIndicators;
+  final List<IndicatorEntity> secondaryIndicators;
   late final ChartPosition chartPosition;
   final double screenHeight;
   double mMainHighMaxValue = double.minPositive,

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:candle_chart/components/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/utils/date_util.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<KLineEntity>? datas;
-  bool showLoading = true;
+  bool showLoading = false;
 
   List<DepthEntity>? _bids, _asks;
 
@@ -51,20 +52,19 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    getData('1min');
-    rootBundle.loadString('assets/depth.json').then((result) {
-      final parseJson = json.decode(result);
-      final tick = parseJson['tick'] as Map<String, dynamic>;
-      final List<DepthEntity> bids = (tick['bids'] as List<dynamic>)
-          .map<DepthEntity>(
-              (item) => DepthEntity(item[0] as double, item[1] as double))
-          .toList();
-      final List<DepthEntity> asks = (tick['asks'] as List<dynamic>)
-          .map<DepthEntity>(
-              (item) => DepthEntity(item[0] as double, item[1] as double))
-          .toList();
-      initDepth(bids, asks);
-    });
+    // rootBundle.loadString('assets/depth.json').then((result) {
+    //   final parseJson = json.decode(result);
+    //   final tick = parseJson['tick'] as Map<String, dynamic>;
+    //   final List<DepthEntity> bids = (tick['bids'] as List<dynamic>)
+    //       .map<DepthEntity>(
+    //           (item) => DepthEntity(item[0] as double, item[1] as double))
+    //       .toList();
+    //   final List<DepthEntity> asks = (tick['asks'] as List<dynamic>)
+    //       .map<DepthEntity>(
+    //           (item) => DepthEntity(item[0] as double, item[1] as double))
+    //       .toList();
+    //   initDepth(bids, asks);
+    // });
   }
 
   void initDepth(List<DepthEntity>? bids, List<DepthEntity>? asks) {
@@ -91,7 +91,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -104,14 +103,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   KChartWidget(
                     datas,
                     chartStyle,
-                    onSelectTimeFrame: (frame) async {
-                      await getData(_period(frame));
+                    onLoaded: (frame, candles, first, last) async {
+                      if (candles.isEmpty) {
+                        await getData(_period(frame));
+                        return datas;
+                      } else {
+                        datas = candles;
+                      }
+                      // kPrint(firstCandle?.time);
+                      // kPrint(lastCandle?.time);
                     },
                     chartColors,
                     isTrendLine: false,
-                    // mainState: _mainState,
-                    // volHidden: _volHidden,
-                    // secondaryStateLi: _secondaryStateLi.toSet(),
                     fixedLength: 2,
                     timeFormat: TimeFormat.YEAR_MONTH_DAY,
                   ),
@@ -157,8 +160,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> getData(String period) async {
+    showLoading = true;
     try {
-      showLoading = true;
       setState(() {});
       final String value = await getChatDataFromInternet(period);
       //final Future<String> future = getChatDataFromJson();
@@ -172,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<String> getChatDataFromInternet(String? period) async {
     var url =
-        'https://api.huobi.br.com/market/history/kline?period=${period ?? '1day'}&size=400&symbol=btcusdt';
+        'https://api.huobi.br.com/market/history/kline?period=${period ?? '4hour'}&size=400&symbol=btcusdt';
     late String result;
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {

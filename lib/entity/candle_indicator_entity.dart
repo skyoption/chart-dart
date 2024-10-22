@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:isar/isar.dart';
 
-part 'secondary_indicator_entity.g.dart';
+part 'candle_indicator_entity.g.dart';
 
-@collection
-class SecondaryIndicatorEntity {
-  Id id = Isar.autoIncrement;
+@embedded
+class CandleIndicatorEntity {
   String name;
   int shift, period;
   double? deviations, maximum, steps;
@@ -22,27 +21,42 @@ class SecondaryIndicatorEntity {
   @enumerated
   Timeframes timeframe = Timeframes.All_Timeframes;
   double strokeWidth;
-  bool drawAsBackground;
+  bool drawAsBackground, isMain, isSecondary;
   @enumerated
   LineStyle style = LineStyle.normal;
+
   String? color = Colors.green.toHexString(),
       secondColor = Colors.deepOrange.toHexString();
+
   double value = 0;
   double? up;
   double? dn;
+  double? tenkanSen;
+  double? kijunSen;
+  double? senkouSpanA;
+  double? senkouSpanB;
+  double? chikouSpan;
 
-  SecondaryIndicatorEntity({
+  CandleIndicatorEntity({
     this.name = '',
     this.shift = 0,
     this.period = 5,
-    this.type = IndicatorType.MACD,
+    this.type = IndicatorType.SMA_MA,
     this.dn,
     this.up,
+    this.chikouSpan,
+    this.senkouSpanB,
+    this.senkouSpanA,
+    this.kijunSen,
+    this.tenkanSen,
     this.value = 0,
     this.deviations,
     this.maximum,
     this.steps,
+    this.ichimoku,
     this.drawAsBackground = false,
+    this.isMain = false,
+    this.isSecondary = false,
     this.applyTo = ApplyTo.Close,
     this.strokeWidth = 1.0,
     this.style = LineStyle.normal,
@@ -55,7 +69,7 @@ class SecondaryIndicatorEntity {
     secondColor = Colors.deepOrange.toHexString();
   }
 
-  SecondaryIndicatorEntity copy({
+  CandleIndicatorEntity copy({
     name,
     shift,
     period,
@@ -83,7 +97,7 @@ class SecondaryIndicatorEntity {
     tenkanSen,
     secondColor,
   }) {
-    return SecondaryIndicatorEntity(
+    return CandleIndicatorEntity(
       period: period ?? this.period,
       value: value ?? this.value,
       type: method ?? this.type,
@@ -95,12 +109,18 @@ class SecondaryIndicatorEntity {
       color: color ?? this.color,
       level: level ?? this.level,
       steps: level ?? this.steps,
+      ichimoku: ichimoku ?? this.ichimoku,
       deviations: deviations ?? this.deviations,
       shift: shift ?? this.shift,
       style: style ?? this.style,
       maximum: maximum ?? this.maximum,
       timeframe: timeframe ?? this.timeframe,
       secondColor: secondColor ?? this.secondColor,
+      tenkanSen: tenkanSen ?? this.tenkanSen,
+      chikouSpan: chikouSpan ?? this.chikouSpan,
+      kijunSen: kijunSen ?? this.kijunSen,
+      senkouSpanA: senkouSpanA ?? this.senkouSpanA,
+      senkouSpanB: senkouSpanB ?? this.senkouSpanB,
       drawAsBackground: drawAsBackground ?? this.drawAsBackground,
     );
   }

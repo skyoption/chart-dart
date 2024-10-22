@@ -6,6 +6,7 @@ import 'rw_entity.dart';
 import 'volume_entity.dart';
 import 'cci_entity.dart';
 
+
 class KEntity
     with
         CandleEntity,

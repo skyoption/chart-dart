@@ -2,8 +2,9 @@ import 'dart:io';
 
 import 'package:candle_chart/components/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
-import 'package:candle_chart/entity/secondary_indicator_entity.dart';
+import 'package:candle_chart/entity/symbol_enity.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -16,7 +17,8 @@ class KChart {
       [
         LineEntitySchema,
         IndicatorEntitySchema,
-        SecondaryIndicatorEntitySchema,
+        KLineEntitySchema,
+        SymbolSchema,
       ],
       name: 'candle-chart-v1',
       directory: baseUrl,

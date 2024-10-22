@@ -1,4 +1,5 @@
 // ignore_for_file: non_constant_identifier_names,library_prefixes,unused_import,camel_case_types
+import 'package:candle_chart/entity/candle_indicator_entity.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 
 mixin CandleEntity {
@@ -8,22 +9,22 @@ mixin CandleEntity {
   late double close;
 
   ///MA
-  List<IndicatorEntity>? emaMaValues;
-  List<IndicatorEntity>? smaMaValues;
-  List<IndicatorEntity>? lwmaMaValues;
-  List<IndicatorEntity>? smmaMaValues;
+  List<CandleIndicatorEntity>? emaMaValues;
+  List<CandleIndicatorEntity>? smaMaValues;
+  List<CandleIndicatorEntity>? lwmaMaValues;
+  List<CandleIndicatorEntity>? smmaMaValues;
 
   ///Envelops
-  List<IndicatorEntity>? emaEnvelopsValues;
-  List<IndicatorEntity>? smaEnvelopsValues;
-  List<IndicatorEntity>? lwmaEnvelopsValues;
-  List<IndicatorEntity>? smmaEnvelopsValues;
+  List<CandleIndicatorEntity>? emaEnvelopsValues;
+  List<CandleIndicatorEntity>? smaEnvelopsValues;
+  List<CandleIndicatorEntity>? lwmaEnvelopsValues;
+  List<CandleIndicatorEntity>? smmaEnvelopsValues;
 
   ///BOLL
-  List<IndicatorEntity>? bollValues;
+  List<CandleIndicatorEntity>? bollValues;
 
   ///Parabolic
-  List<IndicatorEntity>? parabolicValues;
+  List<CandleIndicatorEntity>? parabolicValues;
   /// Ichimoku
-  List<IndicatorEntity>? ichimokuValues;
+  List<CandleIndicatorEntity>? ichimokuValues;
 }
