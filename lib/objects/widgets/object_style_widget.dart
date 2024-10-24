@@ -1,4 +1,4 @@
-import 'package:candle_chart/components/kprint.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/objects/bottom_sheets/color_picker.dart';
 import 'package:candle_chart/objects/object_properties_screen.dart';

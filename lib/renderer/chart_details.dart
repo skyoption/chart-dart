@@ -1,6 +1,6 @@
 import 'dart:async' show StreamSink;
 
-import 'package:candle_chart/components/kprint.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/renderer/draw_object_lines.dart';
 import 'package:candle_chart/utils/number_util.dart';

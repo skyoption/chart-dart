@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:candle_chart/components/kprint.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';

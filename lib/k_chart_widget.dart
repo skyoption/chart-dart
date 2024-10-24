@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:candle_chart/chart_translations.dart';
-import 'package:candle_chart/components/kprint.dart';
-import 'package:candle_chart/components/popup_info_view.dart';
-import 'package:candle_chart/components/time_frame_widget.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/objects/widgets/svg.dart';
@@ -13,6 +11,9 @@ import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/utils/date_util.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:candle_chart/utils/icons.dart';
+import 'package:candle_chart/widgets/chart_loader.dart';
+import 'package:candle_chart/widgets/popup_info_view.dart';
+import 'package:candle_chart/widgets/time_frame_widget.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -74,8 +75,12 @@ class KChartWidget extends StatefulWidget {
   final List<String> timeFormat;
 
   final Function(bool)? onLoadMore;
-  final Function(CandleTimeFormat frame, List<KLineEntity> candles,
-      KLineEntity? firstCandle, KLineEntity? lastCandle) onLoaded;
+  final Function(
+    CandleTimeFormat frame,
+    List<KLineEntity> candles,
+    KLineEntity? firstCandle,
+    KLineEntity? lastCandle,
+  ) onLoaded;
   final int fixedLength;
   final List<int> maDayList;
   final int flingTime;
@@ -130,6 +135,7 @@ class _KChartWidgetState extends State<KChartWidget>
   double mHeight = 0, mWidth = 0;
   AnimationController? _controller;
   Animation<double>? aniX;
+  bool loading = true;
 
   double? changeInXposition;
   double? changeInYposition;
@@ -159,6 +165,9 @@ class _KChartWidgetState extends State<KChartWidget>
   }
 
   Future<void> _loadCandles({CandleTimeFormat? frame}) async {
+    loading = true;
+    widget.data = null;
+    notifyChanged();
     if (KChart.isar == null) await Future.delayed(Duration(seconds: 1));
     if (frame != null) {
       await chartProperties.setTimeframe(frame);
@@ -187,6 +196,7 @@ class _KChartWidgetState extends State<KChartWidget>
   void _reload() {
     Future.delayed(Duration(milliseconds: 200), () async {
       await IndicatorUtils.calculate(widget.data!);
+      loading = false;
       notifyChanged();
     });
   }
@@ -387,8 +397,10 @@ class _KChartWidgetState extends State<KChartWidget>
                   child: Stack(
                     children: <Widget>[
                       CustomPaint(
-                        size:
-                            Size(double.infinity, baseDimension.mDisplayHeight),
+                        size: Size(
+                          double.infinity,
+                          baseDimension.mDisplayHeight,
+                        ),
                         painter: _painter,
                       ),
                       if (openTimeframe)
@@ -400,6 +412,13 @@ class _KChartWidgetState extends State<KChartWidget>
                             }
                           },
                         ),
+                      if (loading)
+                        Positioned(
+                          bottom: 0.0,
+                          right: 0.0,
+                          left: 0.0,
+                          child: ChartLoader(),
+                        )
                     ],
                   ),
                 ),
