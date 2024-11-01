@@ -435,7 +435,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
             : colorFromHex(curPoint.ichimokuValues![i].ichimoku!.upKumoColor!)!;
 
         /// ----
-        drawDashLine(
+        drawVerticalDashLine(
           senkouSpanA,
           senkouSpanB,
           canvas,
@@ -790,7 +790,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 
   @override
   void drawGrid(Canvas canvas, int gridRows, int gridColumns) {
-    double rowSpace = chartRect.height / gridRows;
+    double rowSpace = (chartRect.height / gridRows);
     for (int i = 0; i <= gridRows; i++) {
       canvas.drawLine(Offset(0, rowSpace * i + topPadding),
           Offset(chartRect.rWidth, rowSpace * i + topPadding), gridPaint);

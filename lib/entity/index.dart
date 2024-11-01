@@ -5,6 +5,5 @@ export 'info_window_entity.dart';
 export 'kdj_entity.dart';
 export 'k_entity.dart';
 export 'macd_entity.dart';
-export 'rsi_entity.dart';
 export 'rw_entity.dart';
 export 'volume_entity.dart';

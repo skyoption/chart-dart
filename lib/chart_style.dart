@@ -64,6 +64,7 @@ class ChartColors {
 
   ///color of grid
   Color gridColor;
+  Color black;
 
   ///color of annotation content
   Color infoWindowNormalColor;
@@ -147,6 +148,7 @@ class ChartColors {
 
     ///color of grid
     this.gridColor = const Color(0xFFD1D3DB),
+    this.black = const Color(0xFf00000),
 
     ///color of annotation content
     this.infoWindowNormalColor = const Color(0xFF222223),

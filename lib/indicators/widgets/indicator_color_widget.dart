@@ -29,7 +29,9 @@ class _IndicatorColorWidgetState extends State<IndicatorColorWidget> {
 
   @override
   void initState() {
-    widget.onChange(color, drawAsBackground);
+    Future.delayed(Duration.zero, () {
+      widget.onChange(color, drawAsBackground);
+    });
     super.initState();
   }
 
@@ -62,7 +64,9 @@ class _IndicatorColorWidgetState extends State<IndicatorColorWidget> {
                         onColorChanged: (value) {
                           color = value;
                           setState(() {});
-                          widget.onChange(color, drawAsBackground);
+                          Future.delayed(Duration.zero, () {
+                            widget.onChange(color, drawAsBackground);
+                          });
                         },
                       );
                     },
@@ -96,10 +100,9 @@ class _IndicatorColorWidgetState extends State<IndicatorColorWidget> {
                   onChanged: (value) {
                     drawAsBackground = !drawAsBackground;
                     setState(() {});
-                    widget.onChange(
-                      color,
-                      drawAsBackground,
-                    );
+                    Future.delayed(Duration.zero, () {
+                      widget.onChange(color, drawAsBackground);
+                    });
                   },
                 ),
               ),

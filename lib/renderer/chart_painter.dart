@@ -295,7 +295,7 @@ class ChartPainter extends BaseChartPainter
 
   @override
   void drawVerticalText(canvas) {
-    var textStyle = getTextStyle(this.chartColors.defaultTextColor);
+    var textStyle = getTextStyle(this.chartColors.black);
     //EMA
     // if (!hideGrid || this.chartStyle.isNotPoint) {
     if (!hideGrid) {

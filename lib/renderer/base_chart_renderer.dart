@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/material.dart';
 
 export '../chart_style.dart';
@@ -27,6 +28,10 @@ abstract class BaseChartRenderer<T> {
     ..color = Colors.red;
   Paint gridPaint = Paint()
     ..isAntiAlias = true
+    ..filterQuality = FilterQuality.high;
+  Paint darkPaint = Paint()
+    ..isAntiAlias = true
+    ..color = Colors.black
     ..filterQuality = FilterQuality.high
     //EMA
     ..strokeWidth = 0.21
@@ -44,9 +49,11 @@ abstract class BaseChartRenderer<T> {
       maxValue *= 1.5;
       minValue /= 2;
     }
-    scaleY = chartRect.height / (maxValue - minValue);
+    /// * -1 for negative minValue values
+    scaleY =
+        chartRect.height / (maxValue - (minValue < 0 ? minValue : -minValue));
+
     gridPaint.color = gridColor;
-    // print("maxValue=====" + maxValue.toString() + "====minValue===" + minValue.toString() + "==scaleY==" + scaleY.toString());
   }
 
   double getY(double y) => (maxValue - y) * scaleY + chartRect.top;
@@ -61,12 +68,11 @@ abstract class BaseChartRenderer<T> {
         return n.toStringAsFixed(2);
       }
       //EMA
-      return formatValue(n);
-      // if (fixedLength > 21) {
-      //   return n.toStringAsFixed(fixedLength ~/ 2);
-      // } else {
-      //   return n.toStringAsFixed(fixedLength);
-      // }
+      if (fixedLength >= 3) {
+        return n.toStringAsFixed(fixedLength ~/ 2);
+      } else {
+        return n.toStringAsFixed(fixedLength);
+      }
     }
   }
 
@@ -100,7 +106,7 @@ abstract class BaseChartRenderer<T> {
 
   void drawText(Canvas canvas, T data, double x);
 
-  void drawVerticalText(canvas, textStyle, int gridRows);
+  void drawVerticalText(canvas, TextStyle textStyle, int gridRows);
 
   void drawChart(
     T lastPoint,
@@ -168,7 +174,7 @@ abstract class BaseChartRenderer<T> {
     );
   }
 
-  void drawDashLine(
+  void drawHorizontalDashLine(
     double? lastPrice,
     double? curPrice,
     Canvas canvas,
@@ -180,7 +186,30 @@ abstract class BaseChartRenderer<T> {
     if (lastPrice == null || curPrice == null) {
       return;
     }
-    _drawDashLine(
+    _drawHorizontalDashLine(
+      lastPrice,
+      curPrice,
+      canvas,
+      lastX,
+      curX,
+      color,
+      strokeWidth,
+    );
+  }
+
+  void drawVerticalDashLine(
+    double? lastPrice,
+    double? curPrice,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    Color color, {
+    double strokeWidth = 1.0,
+  }) {
+    if (lastPrice == null || curPrice == null) {
+      return;
+    }
+    _drawVerticalDashLine(
       lastPrice,
       curPrice,
       canvas,
@@ -213,7 +242,7 @@ abstract class BaseChartRenderer<T> {
         [Offset(curX, curY)],
         chartPaint
           ..color = color
-          ..strokeWidth = 3.0,
+          ..strokeWidth = strokeWidth,
       );
     } else if (isDot) {
       canvas.drawCircle(
@@ -234,7 +263,7 @@ abstract class BaseChartRenderer<T> {
     }
   }
 
-  void _drawDashLine(
+  void _drawVerticalDashLine(
     double? lastPrice,
     double? curPrice,
     Canvas canvas,
@@ -274,6 +303,31 @@ abstract class BaseChartRenderer<T> {
       );
       curY += 2.0;
     }
+  }
+
+  void _drawHorizontalDashLine(
+    double? lastPrice,
+    double? curPrice,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    Color color,
+    double strokeWidth,
+  ) {
+    if (lastPrice == null || curPrice == null) {
+      return;
+    }
+    double curY = getY(curPrice);
+    canvas.drawPoints(
+      PointMode.lines,
+      [
+        Offset(lastX + 8, curY),
+        Offset(curX, curY),
+      ],
+      chartPaint
+        ..color = color
+        ..strokeWidth = strokeWidth,
+    );
   }
 
   TextStyle getTextStyle(Color color) {

@@ -14,6 +14,7 @@ class CandleIndicatorEntity {
   @enumerated
   IndicatorType type = IndicatorType.SMA_MA;
   Ichimoku? ichimoku;
+  MACD? macd;
   @enumerated
   ApplyTo applyTo = ApplyTo.Close;
   @enumerated
@@ -26,7 +27,8 @@ class CandleIndicatorEntity {
   LineStyle style = LineStyle.normal;
 
   String? color = Colors.green.toHexString(),
-      secondColor = Colors.deepOrange.toHexString();
+      secondColor = Colors.deepOrange.toHexString(),levelsColor;
+  List<int> levels = [];
 
   double value = 0;
   double? up;
@@ -36,6 +38,8 @@ class CandleIndicatorEntity {
   double? senkouSpanA;
   double? senkouSpanB;
   double? chikouSpan;
+  double? shortEMA;
+  double? longEMA;
 
   CandleIndicatorEntity({
     this.name = '',
@@ -46,7 +50,10 @@ class CandleIndicatorEntity {
     this.up,
     this.chikouSpan,
     this.senkouSpanB,
+    this.longEMA,
+    this.shortEMA,
     this.senkouSpanA,
+    this.levels = const [],
     this.kijunSen,
     this.tenkanSen,
     this.value = 0,
@@ -64,18 +71,23 @@ class CandleIndicatorEntity {
     this.timeframe = Timeframes.All_Timeframes,
     this.color,
     this.secondColor,
+    this.levelsColor,
+    this.macd,
   }) {
     color = Colors.green.toHexString();
     secondColor = Colors.deepOrange.toHexString();
+    levelsColor = Colors.black.toHexString();
   }
 
   CandleIndicatorEntity copy({
     name,
     shift,
     period,
+    shortEMA,
     method,
     double? value,
     applyTo,
+    rsi,
     lineHeight,
     style,
     level,
@@ -90,20 +102,28 @@ class CandleIndicatorEntity {
     sar,
     mb,
     up,
+    levelsColor,
     chikouSpan,
+    longEMA,
     senkouSpanB,
     senkouSpanA,
     kijunSen,
     tenkanSen,
+    levels,
     secondColor,
   }) {
     return CandleIndicatorEntity(
       period: period ?? this.period,
+      shortEMA: shortEMA ?? this.shortEMA,
       value: value ?? this.value,
       type: method ?? this.type,
       name: name ?? this.name,
       dn: dn ?? this.dn,
+      macd: macd ?? this.macd,
+      levels: levels ?? this.levels,
+      levelsColor: levelsColor ?? this.levelsColor,
       up: up ?? this.up,
+      longEMA: longEMA ?? this.longEMA,
       strokeWidth: lineHeight ?? this.strokeWidth,
       applyTo: applyTo ?? this.applyTo,
       color: color ?? this.color,

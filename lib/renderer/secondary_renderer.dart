@@ -1,11 +1,15 @@
+import 'package:candle_chart/entity/candle_entity.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/k_chart_widget.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 import '../entity/macd_entity.dart';
 import 'base_chart_renderer.dart';
 
-class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
+class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
   late double mMACDWidth;
   final IndicatorEntity indicator;
   final ChartStyle chartStyle;
@@ -33,73 +37,81 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
 
   @override
   void drawChart(
-    MACDEntity lastPoint,
-    MACDEntity curPoint,
+    CandleEntity lastPoint,
+    CandleEntity curPoint,
     double lastX,
     double curX,
     Size size,
     Canvas canvas,
-  ) {}
-
-  void drawMACD(
-    MACDEntity curPoint,
-    Canvas canvas,
-    double curX,
-    MACDEntity lastPoint,
-    double lastX,
   ) {
-    final macd = curPoint.macd ?? 0;
-    double macdY = getY(macd);
-    double r = mMACDWidth / 2;
-    double zeroy = getY(0);
-    if (macd > 0) {
-      canvas.drawRect(Rect.fromLTRB(curX - r, macdY, curX + r, zeroy),
-          chartPaint..color = this.chartColors.upColor);
-    } else {
-      canvas.drawRect(Rect.fromLTRB(curX - r, zeroy, curX + r, macdY),
-          chartPaint..color = this.chartColors.dnColor);
-    }
-    if (lastPoint.dif != 0) {
-      drawLine(lastPoint.dif, curPoint.dif, canvas, lastX, curX,
-          this.chartColors.difColor);
-    }
-    if (lastPoint.dea != 0) {
-      drawLine(lastPoint.dea, curPoint.dea, canvas, lastX, curX,
-          this.chartColors.deaColor);
-    }
+    drawIndicators(
+      lastPoint,
+      curPoint,
+      lastX,
+      curX,
+      size,
+      canvas,
+      false,
+    );
   }
 
   @override
   void drawVerticalText(
     canvas,
-    textStyle,
+    TextStyle textStyle,
     int gridRows,
   ) {
     TextPainter maxTp = TextPainter(
-      text: TextSpan(text: "${format(maxValue)}", style: textStyle),
+      text: TextSpan(
+          text: "${format(maxValue)}",
+          style: textStyle.copyWith(color: Colors.black)),
       textDirection: TextDirection.ltr,
     );
     maxTp.layout();
     TextPainter minTp = TextPainter(
-      text: TextSpan(text: "${format(minValue)}", style: textStyle),
+      text: TextSpan(
+          text: "${format(minValue)}",
+          style: textStyle.copyWith(color: Colors.black)),
       textDirection: TextDirection.ltr,
     );
     minTp.layout();
-
+    TextPainter zeroTp = TextPainter(
+      text: TextSpan(text: "0", style: textStyle.copyWith(color: Colors.black)),
+      textDirection: TextDirection.ltr,
+    );
+    zeroTp.layout();
+    double space1 = 45, space2 = 45;
+    if (minValue < 0) {
+      space2 = 50;
+    } else {
+      space2 = 45;
+    }
+    if (maxValue < 0) {
+      space1 = 50;
+    } else {
+      space1 = 45;
+    }
     maxTp.paint(
       canvas,
       Offset(
-        chartRect.rWidth - maxTp.width,
-        chartRect.top - topPadding,
+        chartRect.rWidth + space1 + -maxTp.width,
+        chartRect.top - topPadding - (maxTp.height / 2),
       ),
     );
     minTp.paint(
       canvas,
       Offset(
-        chartRect.rWidth - minTp.width,
-        chartRect.bottom - minTp.height,
+        chartRect.rWidth + space2 - minTp.width,
+        chartRect.bottom - (minTp.height / 2),
       ),
     );
+    // zeroTp.paint(
+    //   canvas,
+    //   Offset(
+    //     chartRect.rWidth + space2 - zeroTp.width,
+    //     chartRect.centerLeft.dy,
+    //   ),
+    // );
   }
 
   @override
@@ -108,27 +120,30 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
     int gridRows,
     int gridColumns,
   ) {
-    // canvas.drawLine(Offset(0, chartRect.top), Offset(chartRect.rWidth, chartRect.top), gridPaint); //hidden line
+    canvas.drawLine(
+        Offset(0, chartRect.top - topPadding),
+        Offset(chartRect.rWidth, chartRect.top - topPadding),
+        darkPaint); //hidden line
     canvas.drawLine(
       Offset(0, chartRect.bottom),
       Offset(chartRect.rWidth, chartRect.bottom),
-      gridPaint,
+      darkPaint,
     );
     double columnSpace = chartRect.rWidth / gridColumns;
     for (int i = 0; i <= columnSpace; i++) {
       //mSecondaryRect
       canvas.drawLine(
-        Offset(columnSpace * i, chartRect.top - topPadding),
+        Offset(columnSpace * i, chartRect.top - topPadding - 60),
         Offset(columnSpace * i, chartRect.bottom),
-        gridPaint,
+        (i == 0 || i == columnSpace) ? darkPaint : gridPaint,
       );
     }
   }
 
   @override
   void drawIndicators(
-    MACDEntity lastPoint,
-    MACDEntity curPoint,
+    CandleEntity lastPoint,
+    CandleEntity curPoint,
     double lastX,
     double curX,
     Size size,
@@ -145,49 +160,48 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
         lastX,
       );
     } else if (indicator.type == IndicatorType.KDJ) {
-      drawLine(
-        lastPoint.k,
-        curPoint.k,
-        canvas,
-        lastX,
-        curX,
-        this.chartColors.kColor,
-      );
-      drawLine(
-        lastPoint.j,
-        curPoint.j,
-        canvas,
-        lastX,
-        curX,
-        this.chartColors.jColor,
-      );
+      // drawLine(
+      //   lastPoint.k,
+      //   curPoint.k,
+      //   canvas,
+      //   lastX,
+      //   curX,
+      //   this.chartColors.kColor,
+      // );
+      // drawLine(
+      //   lastPoint.j,
+      //   curPoint.j,
+      //   canvas,
+      //   lastX,
+      //   curX,
+      //   this.chartColors.jColor,
+      // );
     } else if (indicator.type == IndicatorType.RSI) {
-      drawLine(
-        lastPoint.rsi,
-        curPoint.rsi,
+      drawRSI(
+        curPoint,
         canvas,
-        lastX,
         curX,
-        this.chartColors.rsiColor,
+        lastPoint,
+        lastX,
       );
     } else if (indicator.type == IndicatorType.WR) {
-      drawLine(
-        lastPoint.r,
-        curPoint.r,
-        canvas,
-        lastX,
-        curX,
-        this.chartColors.rsiColor,
-      );
+      // drawLine(
+      //   lastPoint.r,
+      //   curPoint.r,
+      //   canvas,
+      //   lastX,
+      //   curX,
+      //   this.chartColors.rsiColor,
+      // );
     } else if (indicator.type == IndicatorType.CCI) {
-      drawLine(
-        lastPoint.cci,
-        curPoint.cci,
-        canvas,
-        lastX,
-        curX,
-        this.chartColors.rsiColor,
-      );
+      // drawLine(
+      //   lastPoint.cci,
+      //   curPoint.cci,
+      //   canvas,
+      //   lastX,
+      //   curX,
+      //   this.chartColors.rsiColor,
+      // );
     }
     // }
   }
@@ -195,87 +209,179 @@ class SecondaryRenderer extends BaseChartRenderer<MACDEntity> {
   @override
   void drawText(
     Canvas canvas,
-    MACDEntity data,
+    CandleEntity data,
     double x,
   ) {
-    List<TextSpan>? children;
-    switch (indicator.type) {
-      case IndicatorType.MACD:
-        children = [
-          TextSpan(
-              text: "MACD(12,26,9)    ",
-              style: getTextStyle(this.chartColors.defaultTextColor)),
-          if (data.macd != 0)
-            TextSpan(
-                text: "MACD:${format(data.macd)}    ",
-                style: getTextStyle(this.chartColors.macdColor)),
-          if (data.dif != 0)
-            TextSpan(
-              text: "DIF:${format(data.dif)}    ",
-              style: getTextStyle(this.chartColors.difColor),
-            ),
-          if (data.dea != 0)
-            TextSpan(
-              text: "DEA:${format(data.dea)}    ",
-              style: getTextStyle(this.chartColors.deaColor),
-            ),
-        ];
-        break;
-      case IndicatorType.KDJ:
-        children = [
-          TextSpan(
-            text: "KDJ(9,1,3)    ",
-            style: getTextStyle(this.chartColors.defaultTextColor),
-          ),
-          if (data.macd != 0)
-            TextSpan(
-              text: "K:${format(data.k)}    ",
-              style: getTextStyle(this.chartColors.kColor),
-            ),
-          if (data.dif != 0)
-            TextSpan(
-              text: "D:${format(data.d)}    ",
-              style: getTextStyle(this.chartColors.dColor),
-            ),
-          if (data.dea != 0)
-            TextSpan(
-              text: "J:${format(data.j)}    ",
-              style: getTextStyle(this.chartColors.jColor),
-            ),
-        ];
-        break;
-      case IndicatorType.RSI:
-        children = [
-          TextSpan(
-            text: "RSI(14):${format(data.rsi)}    ",
-            style: getTextStyle(this.chartColors.rsiColor),
-          ),
-        ];
-        break;
-      case IndicatorType.WR:
-        children = [
-          TextSpan(
-            text: "WR(14):${format(data.r)}    ",
-            style: getTextStyle(this.chartColors.rsiColor),
-          ),
-        ];
-        break;
-      case IndicatorType.CCI:
-        children = [
-          TextSpan(
-            text: "CCI(14):${format(data.cci)}    ",
-            style: getTextStyle(this.chartColors.rsiColor),
-          ),
-        ];
-        break;
-      default:
-        break;
+    return;
+    // List<TextSpan>? children;
+    // switch (indicator.type) {
+    //   case IndicatorType.MACD:
+    //     children = [
+    //       TextSpan(
+    //           text: "MACD(12,26,9)    ",
+    //           style: getTextStyle(this.chartColors.defaultTextColor)),
+    //       if (data.macd != 0)
+    //         TextSpan(
+    //             text: "MACD:${format(data.macd)}    ",
+    //             style: getTextStyle(this.chartColors.macdColor)),
+    //       if (data.dif != 0)
+    //         TextSpan(
+    //           text: "DIF:${format(data.dif)}    ",
+    //           style: getTextStyle(this.chartColors.difColor),
+    //         ),
+    //       if (data.dea != 0)
+    //         TextSpan(
+    //           text: "DEA:${format(data.dea)}    ",
+    //           style: getTextStyle(this.chartColors.deaColor),
+    //         ),
+    //     ];
+    //     break;
+    //   case IndicatorType.KDJ:
+    //     children = [
+    //       TextSpan(
+    //         text: "KDJ(9,1,3)    ",
+    //         style: getTextStyle(this.chartColors.defaultTextColor),
+    //       ),
+    //       if (data.macd != 0)
+    //         TextSpan(
+    //           text: "K:${format(data.k)}    ",
+    //           style: getTextStyle(this.chartColors.kColor),
+    //         ),
+    //       if (data.dif != 0)
+    //         TextSpan(
+    //           text: "D:${format(data.d)}    ",
+    //           style: getTextStyle(this.chartColors.dColor),
+    //         ),
+    //       if (data.dea != 0)
+    //         TextSpan(
+    //           text: "J:${format(data.j)}    ",
+    //           style: getTextStyle(this.chartColors.jColor),
+    //         ),
+    //     ];
+    //     break;
+    //   case IndicatorType.RSI:
+    //     children = [
+    //       TextSpan(
+    //         text: "RSI(14):${format(data.rsi)}    ",
+    //         style: getTextStyle(this.chartColors.rsiColor),
+    //       ),
+    //     ];
+    //     break;
+    //   case IndicatorType.WR:
+    //     children = [
+    //       TextSpan(
+    //         text: "WR(14):${format(data.r)}    ",
+    //         style: getTextStyle(this.chartColors.rsiColor),
+    //       ),
+    //     ];
+    //     break;
+    //   case IndicatorType.CCI:
+    //     children = [
+    //       TextSpan(
+    //         text: "CCI(14):${format(data.cci)}    ",
+    //         style: getTextStyle(this.chartColors.rsiColor),
+    //       ),
+    //     ];
+    //     break;
+    //   default:
+    //     break;
+    // }
+    // TextPainter tp = TextPainter(
+    //   text: TextSpan(children: children ?? []),
+    //   textDirection: TextDirection.ltr,
+    // );
+    // tp.layout();
+    // tp.paint(canvas, Offset(x, chartRect.top - topPadding));
+  }
+
+  void drawMACD(
+    CandleEntity curPoint,
+    Canvas canvas,
+    double curX,
+    CandleEntity lastPoint,
+    double lastX,
+  ) {
+    if (lastPoint.macdValues == null) return;
+    for (int i = 0; i < (curPoint.macdValues?.length ?? 0); i++) {
+      final macd = curPoint.macdValues?[i].value ?? 0;
+      double macdY = getY(macd);
+      double r = mMACDWidth / 2;
+      double zeroy = getY(0);
+
+      if (macd > 0) {
+        canvas.drawRect(
+          Rect.fromLTRB(curX - r, macdY, curX + r, zeroy),
+          chartPaint..color = this.chartColors.upColor,
+        );
+      } else {
+        canvas.drawRect(
+          Rect.fromLTRB(curX - r, zeroy, curX + r, macdY),
+          chartPaint..color = this.chartColors.dnColor,
+        );
+      }
     }
-    TextPainter tp = TextPainter(
-      text: TextSpan(children: children ?? []),
-      textDirection: TextDirection.ltr,
+    for (int i = 0; i < (curPoint.macdSignalValues?.length ?? 0); i++) {
+      if (lastPoint.macdSignalValues?[i].value != 0) {
+        drawLine(
+          lastPoint.macdSignalValues?[i].value,
+          curPoint.macdSignalValues?[i].value,
+          canvas,
+          lastX,
+          curX,
+          colorFromHex(curPoint.macdValues![i].color!)!,
+        );
+      }
+    }
+  }
+
+  void drawRSI(
+    CandleEntity curPoint,
+    Canvas canvas,
+    double curX,
+    CandleEntity lastPoint,
+    double lastX,
+  ) {
+    if (curPoint.rsiValues == null) return;
+    drawHorizontalDashLine(
+      100,
+      100,
+      canvas,
+      lastX,
+      curX,
+      colorFromHex(curPoint.rsiValues![0].levelsColor!)!,
+      strokeWidth: 1.0,
     );
-    tp.layout();
-    tp.paint(canvas, Offset(x, chartRect.top - topPadding));
+    drawHorizontalDashLine(
+      0,
+      0,
+      canvas,
+      lastX,
+      curX,
+      colorFromHex(curPoint.rsiValues![0].levelsColor!)!,
+      strokeWidth: 1.0,
+    );
+    for (var level in curPoint.rsiValues![0].levels) {
+      drawHorizontalDashLine(
+        level.toDouble(),
+        level.toDouble(),
+        canvas,
+        lastX,
+        curX,
+        colorFromHex(curPoint.rsiValues![0].levelsColor!)!,
+        strokeWidth: 1.0,
+      );
+    }
+    for (int i = 0; i < (curPoint.rsiValues?.length ?? 0); i++) {
+      if (lastPoint.rsiValues?[i].value != 0) {
+        drawLine(
+          lastPoint.rsiValues?[i].value,
+          curPoint.rsiValues?[i].value,
+          canvas,
+          lastX,
+          curX,
+          colorFromHex(curPoint.rsiValues![i].color!)!,
+        );
+      }
+    }
   }
 }

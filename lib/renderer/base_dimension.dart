@@ -1,4 +1,5 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/utils/kprint.dart';
 
 import '../k_chart_widget.dart';
 
@@ -41,8 +42,28 @@ class BaseDimension {
   }) {
     _mBaseHeight = mBaseHeight;
     _mVolumeHeight = volHidden != true ? _mBaseHeight * 0.2 : 0;
-    _mSecondaryHeight = _mBaseHeight * 0.2;
-    _mDisplayHeight =
-        _mBaseHeight + _mVolumeHeight + (_mSecondaryHeight * indicators.length);
+    _mSecondaryHeight =
+        _setSecondaryHeight(indicators, mBaseHeight * 0.7) + _mVolumeHeight;
+    _mDisplayHeight = _mBaseHeight+mBaseHeight * 0.25;
+  }
+
+  double _setSecondaryHeight(
+    List<IndicatorEntity> indicators,
+    double _mBaseHeight,
+  ) {
+    double _mSecondaryHeight = 0;
+    for (var item in indicators) {
+      _mSecondaryHeight += getSecondaryHeight(item);
+    }
+    return _mSecondaryHeight;
+  }
+
+  double getSecondaryHeight(IndicatorEntity item) {
+    if (item.type == IndicatorType.MACD) {
+      return _mBaseHeight * 0.272;
+    } else if (item.type == IndicatorType.RSI) {
+      return _mBaseHeight * 0.3;
+    }
+    return 0.0;
   }
 }

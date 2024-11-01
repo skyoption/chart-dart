@@ -75,81 +75,97 @@ const IndicatorEntitySchema = CollectionSchema(
       type: IsarType.byte,
       enumMap: _IndicatorEntitylevelEnumValueMap,
     ),
-    r'maximum': PropertySchema(
+    r'levels': PropertySchema(
       id: 11,
+      name: r'levels',
+      type: IsarType.longList,
+    ),
+    r'levelsColor': PropertySchema(
+      id: 12,
+      name: r'levelsColor',
+      type: IsarType.string,
+    ),
+    r'macd': PropertySchema(
+      id: 13,
+      name: r'macd',
+      type: IsarType.object,
+      target: r'MACD',
+    ),
+    r'maximum': PropertySchema(
+      id: 14,
       name: r'maximum',
       type: IsarType.double,
     ),
     r'name': PropertySchema(
-      id: 12,
+      id: 15,
       name: r'name',
       type: IsarType.string,
     ),
     r'period': PropertySchema(
-      id: 13,
+      id: 16,
       name: r'period',
       type: IsarType.long,
     ),
     r'secondColor': PropertySchema(
-      id: 14,
+      id: 17,
       name: r'secondColor',
       type: IsarType.string,
     ),
     r'senkouSpanA': PropertySchema(
-      id: 15,
+      id: 18,
       name: r'senkouSpanA',
       type: IsarType.double,
     ),
     r'senkouSpanB': PropertySchema(
-      id: 16,
+      id: 19,
       name: r'senkouSpanB',
       type: IsarType.double,
     ),
     r'shift': PropertySchema(
-      id: 17,
+      id: 20,
       name: r'shift',
       type: IsarType.long,
     ),
     r'steps': PropertySchema(
-      id: 18,
+      id: 21,
       name: r'steps',
       type: IsarType.double,
     ),
     r'strokeWidth': PropertySchema(
-      id: 19,
+      id: 22,
       name: r'strokeWidth',
       type: IsarType.double,
     ),
     r'style': PropertySchema(
-      id: 20,
+      id: 23,
       name: r'style',
       type: IsarType.byte,
       enumMap: _IndicatorEntitystyleEnumValueMap,
     ),
     r'tenkanSen': PropertySchema(
-      id: 21,
+      id: 24,
       name: r'tenkanSen',
       type: IsarType.double,
     ),
     r'timeframe': PropertySchema(
-      id: 22,
+      id: 25,
       name: r'timeframe',
       type: IsarType.byte,
       enumMap: _IndicatorEntitytimeframeEnumValueMap,
     ),
     r'type': PropertySchema(
-      id: 23,
+      id: 26,
       name: r'type',
       type: IsarType.byte,
       enumMap: _IndicatorEntitytypeEnumValueMap,
     ),
     r'up': PropertySchema(
-      id: 24,
+      id: 27,
       name: r'up',
       type: IsarType.double,
     ),
     r'value': PropertySchema(
-      id: 25,
+      id: 28,
       name: r'value',
       type: IsarType.double,
     )
@@ -161,7 +177,7 @@ const IndicatorEntitySchema = CollectionSchema(
   idName: r'id',
   indexes: {},
   links: {},
-  embeddedSchemas: {r'Ichimoku': IchimokuSchema},
+  embeddedSchemas: {r'Ichimoku': IchimokuSchema, r'MACD': MACDSchema},
   getId: _indicatorEntityGetId,
   getLinks: _indicatorEntityGetLinks,
   attach: _indicatorEntityAttach,
@@ -185,6 +201,20 @@ int _indicatorEntityEstimateSize(
     if (value != null) {
       bytesCount += 3 +
           IchimokuSchema.estimateSize(value, allOffsets[Ichimoku]!, allOffsets);
+    }
+  }
+  bytesCount += 3 + object.levels.length * 8;
+  {
+    final value = object.levelsColor;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.macd;
+    if (value != null) {
+      bytesCount +=
+          3 + MACDSchema.estimateSize(value, allOffsets[MACD]!, allOffsets);
     }
   }
   bytesCount += 3 + object.name.length * 3;
@@ -219,21 +249,29 @@ void _indicatorEntitySerialize(
   writer.writeBool(offsets[8], object.isSecondary);
   writer.writeDouble(offsets[9], object.kijunSen);
   writer.writeByte(offsets[10], object.level.index);
-  writer.writeDouble(offsets[11], object.maximum);
-  writer.writeString(offsets[12], object.name);
-  writer.writeLong(offsets[13], object.period);
-  writer.writeString(offsets[14], object.secondColor);
-  writer.writeDouble(offsets[15], object.senkouSpanA);
-  writer.writeDouble(offsets[16], object.senkouSpanB);
-  writer.writeLong(offsets[17], object.shift);
-  writer.writeDouble(offsets[18], object.steps);
-  writer.writeDouble(offsets[19], object.strokeWidth);
-  writer.writeByte(offsets[20], object.style.index);
-  writer.writeDouble(offsets[21], object.tenkanSen);
-  writer.writeByte(offsets[22], object.timeframe.index);
-  writer.writeByte(offsets[23], object.type.index);
-  writer.writeDouble(offsets[24], object.up);
-  writer.writeDouble(offsets[25], object.value);
+  writer.writeLongList(offsets[11], object.levels);
+  writer.writeString(offsets[12], object.levelsColor);
+  writer.writeObject<MACD>(
+    offsets[13],
+    allOffsets,
+    MACDSchema.serialize,
+    object.macd,
+  );
+  writer.writeDouble(offsets[14], object.maximum);
+  writer.writeString(offsets[15], object.name);
+  writer.writeLong(offsets[16], object.period);
+  writer.writeString(offsets[17], object.secondColor);
+  writer.writeDouble(offsets[18], object.senkouSpanA);
+  writer.writeDouble(offsets[19], object.senkouSpanB);
+  writer.writeLong(offsets[20], object.shift);
+  writer.writeDouble(offsets[21], object.steps);
+  writer.writeDouble(offsets[22], object.strokeWidth);
+  writer.writeByte(offsets[23], object.style.index);
+  writer.writeDouble(offsets[24], object.tenkanSen);
+  writer.writeByte(offsets[25], object.timeframe.index);
+  writer.writeByte(offsets[26], object.type.index);
+  writer.writeDouble(offsets[27], object.up);
+  writer.writeDouble(offsets[28], object.value);
 }
 
 IndicatorEntity _indicatorEntityDeserialize(
@@ -262,27 +300,34 @@ IndicatorEntity _indicatorEntityDeserialize(
     level:
         _IndicatorEntitylevelValueEnumMap[reader.readByteOrNull(offsets[10])] ??
             Levels.None,
-    maximum: reader.readDoubleOrNull(offsets[11]),
-    name: reader.readStringOrNull(offsets[12]) ?? '',
-    period: reader.readLongOrNull(offsets[13]) ?? 5,
-    secondColor: reader.readStringOrNull(offsets[14]),
-    senkouSpanA: reader.readDoubleOrNull(offsets[15]),
-    senkouSpanB: reader.readDoubleOrNull(offsets[16]),
-    shift: reader.readLongOrNull(offsets[17]) ?? 0,
-    steps: reader.readDoubleOrNull(offsets[18]),
-    strokeWidth: reader.readDoubleOrNull(offsets[19]) ?? 1.0,
+    levels: reader.readLongList(offsets[11]) ?? const [],
+    levelsColor: reader.readStringOrNull(offsets[12]),
+    macd: reader.readObjectOrNull<MACD>(
+      offsets[13],
+      MACDSchema.deserialize,
+      allOffsets,
+    ),
+    maximum: reader.readDoubleOrNull(offsets[14]),
+    name: reader.readStringOrNull(offsets[15]) ?? '',
+    period: reader.readLongOrNull(offsets[16]) ?? 5,
+    secondColor: reader.readStringOrNull(offsets[17]),
+    senkouSpanA: reader.readDoubleOrNull(offsets[18]),
+    senkouSpanB: reader.readDoubleOrNull(offsets[19]),
+    shift: reader.readLongOrNull(offsets[20]) ?? 0,
+    steps: reader.readDoubleOrNull(offsets[21]),
+    strokeWidth: reader.readDoubleOrNull(offsets[22]) ?? 1.0,
     style:
-        _IndicatorEntitystyleValueEnumMap[reader.readByteOrNull(offsets[20])] ??
+        _IndicatorEntitystyleValueEnumMap[reader.readByteOrNull(offsets[23])] ??
             LineStyle.normal,
-    tenkanSen: reader.readDoubleOrNull(offsets[21]),
+    tenkanSen: reader.readDoubleOrNull(offsets[24]),
     timeframe: _IndicatorEntitytimeframeValueEnumMap[
-            reader.readByteOrNull(offsets[22])] ??
+            reader.readByteOrNull(offsets[25])] ??
         Timeframes.All_Timeframes,
     type:
-        _IndicatorEntitytypeValueEnumMap[reader.readByteOrNull(offsets[23])] ??
+        _IndicatorEntitytypeValueEnumMap[reader.readByteOrNull(offsets[26])] ??
             IndicatorType.SMA_MA,
-    up: reader.readDoubleOrNull(offsets[24]),
-    value: reader.readDoubleOrNull(offsets[25]) ?? 0,
+    up: reader.readDoubleOrNull(offsets[27]),
+    value: reader.readDoubleOrNull(offsets[28]) ?? 0,
   );
   object.id = id;
   return object;
@@ -326,39 +371,49 @@ P _indicatorEntityDeserializeProp<P>(
               reader.readByteOrNull(offset)] ??
           Levels.None) as P;
     case 11:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readLongList(offset) ?? const []) as P;
     case 12:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 13:
-      return (reader.readLongOrNull(offset) ?? 5) as P;
-    case 14:
       return (reader.readStringOrNull(offset)) as P;
+    case 13:
+      return (reader.readObjectOrNull<MACD>(
+        offset,
+        MACDSchema.deserialize,
+        allOffsets,
+      )) as P;
+    case 14:
+      return (reader.readDoubleOrNull(offset)) as P;
     case 15:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 16:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset) ?? 5) as P;
     case 17:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 18:
       return (reader.readDoubleOrNull(offset)) as P;
     case 19:
-      return (reader.readDoubleOrNull(offset) ?? 1.0) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 20:
-      return (_IndicatorEntitystyleValueEnumMap[
-              reader.readByteOrNull(offset)] ??
-          LineStyle.normal) as P;
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 21:
       return (reader.readDoubleOrNull(offset)) as P;
     case 22:
-      return (_IndicatorEntitytimeframeValueEnumMap[
-              reader.readByteOrNull(offset)] ??
-          Timeframes.All_Timeframes) as P;
+      return (reader.readDoubleOrNull(offset) ?? 1.0) as P;
     case 23:
-      return (_IndicatorEntitytypeValueEnumMap[reader.readByteOrNull(offset)] ??
-          IndicatorType.SMA_MA) as P;
+      return (_IndicatorEntitystyleValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          LineStyle.normal) as P;
     case 24:
       return (reader.readDoubleOrNull(offset)) as P;
     case 25:
+      return (_IndicatorEntitytimeframeValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          Timeframes.All_Timeframes) as P;
+    case 26:
+      return (_IndicatorEntitytypeValueEnumMap[reader.readByteOrNull(offset)] ??
+          IndicatorType.SMA_MA) as P;
+    case 27:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 28:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1243,6 +1298,323 @@ extension IndicatorEntityQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsElementEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'levels',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsElementGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'levels',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsElementLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'levels',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsElementBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'levels',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'levels',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'levels',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'levels',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'levels',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'levels',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'levels',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsColorIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'levelsColor',
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsColorIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'levelsColor',
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsColorEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'levelsColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsColorGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'levelsColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsColorLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'levelsColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsColorBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'levelsColor',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsColorStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'levelsColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsColorEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'levelsColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsColorContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'levelsColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsColorMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'levelsColor',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsColorIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'levelsColor',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      levelsColorIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'levelsColor',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      macdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'macd',
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      macdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'macd',
       ));
     });
   }
@@ -2462,6 +2834,13 @@ extension IndicatorEntityQueryObject
       return query.object(q, r'ichimoku');
     });
   }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition> macd(
+      FilterQuery<MACD> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'macd');
+    });
+  }
 }
 
 extension IndicatorEntityQueryLinks
@@ -2600,6 +2979,20 @@ extension IndicatorEntityQuerySortBy
       sortByLevelDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'level', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      sortByLevelsColor() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'levelsColor', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      sortByLevelsColorDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'levelsColor', Sort.desc);
     });
   }
 
@@ -2952,6 +3345,20 @@ extension IndicatorEntityQuerySortThenBy
     });
   }
 
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      thenByLevelsColor() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'levelsColor', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      thenByLevelsColorDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'levelsColor', Sort.desc);
+    });
+  }
+
   QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy> thenByMaximum() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'maximum', Sort.asc);
@@ -3222,6 +3629,19 @@ extension IndicatorEntityQueryWhereDistinct
     });
   }
 
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QDistinct> distinctByLevels() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'levels');
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QDistinct>
+      distinctByLevelsColor({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'levelsColor', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<IndicatorEntity, IndicatorEntity, QDistinct>
       distinctByMaximum() {
     return QueryBuilder.apply(this, (query) {
@@ -3396,6 +3816,25 @@ extension IndicatorEntityQueryProperty
   QueryBuilder<IndicatorEntity, Levels, QQueryOperations> levelProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'level');
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, List<int>, QQueryOperations> levelsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'levels');
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, String?, QQueryOperations>
+      levelsColorProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'levelsColor');
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, MACD?, QQueryOperations> macdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'macd');
     });
   }
 
@@ -4579,3 +5018,566 @@ extension IchimokuQueryFilter
 
 extension IchimokuQueryObject
     on QueryBuilder<Ichimoku, Ichimoku, QFilterCondition> {}
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+const MACDSchema = Schema(
+  name: r'MACD',
+  id: 4271815911900684776,
+  properties: {
+    r'fastEma': PropertySchema(
+      id: 0,
+      name: r'fastEma',
+      type: IsarType.long,
+    ),
+    r'macdSma': PropertySchema(
+      id: 1,
+      name: r'macdSma',
+      type: IsarType.long,
+    ),
+    r'mainColor': PropertySchema(
+      id: 2,
+      name: r'mainColor',
+      type: IsarType.string,
+    ),
+    r'signalColor': PropertySchema(
+      id: 3,
+      name: r'signalColor',
+      type: IsarType.string,
+    ),
+    r'slowEma': PropertySchema(
+      id: 4,
+      name: r'slowEma',
+      type: IsarType.long,
+    )
+  },
+  estimateSize: _mACDEstimateSize,
+  serialize: _mACDSerialize,
+  deserialize: _mACDDeserialize,
+  deserializeProp: _mACDDeserializeProp,
+);
+
+int _mACDEstimateSize(
+  MACD object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  {
+    final value = object.mainColor;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.signalColor;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  return bytesCount;
+}
+
+void _mACDSerialize(
+  MACD object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeLong(offsets[0], object.fastEma);
+  writer.writeLong(offsets[1], object.macdSma);
+  writer.writeString(offsets[2], object.mainColor);
+  writer.writeString(offsets[3], object.signalColor);
+  writer.writeLong(offsets[4], object.slowEma);
+}
+
+MACD _mACDDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = MACD(
+    fastEma: reader.readLongOrNull(offsets[0]) ?? 12,
+    macdSma: reader.readLongOrNull(offsets[1]) ?? 9,
+    mainColor: reader.readStringOrNull(offsets[2]),
+    signalColor: reader.readStringOrNull(offsets[3]),
+    slowEma: reader.readLongOrNull(offsets[4]) ?? 26,
+  );
+  return object;
+}
+
+P _mACDDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readLongOrNull(offset) ?? 12) as P;
+    case 1:
+      return (reader.readLongOrNull(offset) ?? 9) as P;
+    case 2:
+      return (reader.readStringOrNull(offset)) as P;
+    case 3:
+      return (reader.readStringOrNull(offset)) as P;
+    case 4:
+      return (reader.readLongOrNull(offset) ?? 26) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+extension MACDQueryFilter on QueryBuilder<MACD, MACD, QFilterCondition> {
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> fastEmaEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'fastEma',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> fastEmaGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'fastEma',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> fastEmaLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'fastEma',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> fastEmaBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'fastEma',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> macdSmaEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'macdSma',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> macdSmaGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'macdSma',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> macdSmaLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'macdSma',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> macdSmaBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'macdSma',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> mainColorIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'mainColor',
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> mainColorIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'mainColor',
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> mainColorEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mainColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> mainColorGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'mainColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> mainColorLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'mainColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> mainColorBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'mainColor',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> mainColorStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'mainColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> mainColorEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'mainColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> mainColorContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'mainColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> mainColorMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'mainColor',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> mainColorIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mainColor',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> mainColorIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'mainColor',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> signalColorIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'signalColor',
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> signalColorIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'signalColor',
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> signalColorEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'signalColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> signalColorGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'signalColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> signalColorLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'signalColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> signalColorBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'signalColor',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> signalColorStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'signalColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> signalColorEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'signalColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> signalColorContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'signalColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> signalColorMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'signalColor',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> signalColorIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'signalColor',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> signalColorIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'signalColor',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> slowEmaEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'slowEma',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> slowEmaGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'slowEma',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> slowEmaLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'slowEma',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MACD, MACD, QAfterFilterCondition> slowEmaBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'slowEma',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+}
+
+extension MACDQueryObject on QueryBuilder<MACD, MACD, QFilterCondition> {}

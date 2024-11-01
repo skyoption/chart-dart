@@ -68,6 +68,14 @@ mixin Indicators {
     });
   }
 
+  void removeSecondaryIndicator(int index) {
+    final id = secondaryIndicators[index].id;
+    secondaryIndicators.removeAt(index);
+    KChart.write(query: (db) async {
+      await db.indicatorEntitys.delete(id);
+    });
+  }
+
   void updateIndicator(int index, IndicatorEntity value) {
     indicators[index] = value;
     KChart.write(query: (db) async {

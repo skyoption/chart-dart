@@ -72,9 +72,9 @@ Symbol _symbolDeserialize(
   final object = Symbol(
     frame: _SymbolframeValueEnumMap[reader.readByteOrNull(offsets[0])] ??
         CandleTimeFormat.H4,
+    id: id,
     symbol: reader.readStringOrNull(offsets[1]) ?? 'USD',
   );
-  object.id = id;
   return object;
 }
 

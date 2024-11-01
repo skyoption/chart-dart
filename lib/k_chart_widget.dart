@@ -1,13 +1,12 @@
 import 'dart:async';
 
 import 'package:candle_chart/chart_translations.dart';
-import 'package:candle_chart/utils/kprint.dart';
-import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/objects/widgets/svg.dart';
 import 'package:candle_chart/objects/objects_screen.dart';
 import 'package:candle_chart/indicators/indicators_screen.dart';
 import 'package:candle_chart/k_chart_plus.dart';
+import 'package:candle_chart/renderer/base_dimension.dart';
 import 'package:candle_chart/utils/date_util.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:candle_chart/utils/icons.dart';
@@ -16,8 +15,6 @@ import 'package:candle_chart/widgets/popup_info_view.dart';
 import 'package:candle_chart/widgets/time_frame_widget.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
-import 'renderer/base_dimension.dart';
 
 enum IndicatorType {
   LINEAR_MA,
@@ -688,63 +685,63 @@ class _KChartWidgetState extends State<KChartWidget>
 
   late List<String> infos;
 
-  Widget _buildInfoDialog() {
-    return StreamBuilder<InfoWindowEntity?>(
-      stream: mInfoWindowStream.stream,
-      builder: (context, snapshot) {
-        if (widget.isLongFocusDurationTime == 0 &&
-            ((!isLongPress && !isOnTap) ||
-                widget.isLine == true ||
-                !snapshot.hasData ||
-                snapshot.data?.kLineEntity == null)) {
-          return SizedBox();
-        }
-        if (widget.isLongFocusDurationTime != 0 &&
-            (!longPressTriggered || widget.isLine == true
-            // ||
-            // !snapshot.hasData ||
-            // snapshot.data?.kLineEntity == null
-            )) return SizedBox();
-        if (widget.isLongFocusDurationTime != 0 &&
-            !longPressTriggered &&
-            snapshot.data == null) {
-          return SizedBox.shrink();
-        }
-        if (snapshot.data == null) return SizedBox.shrink();
-
-        KLineEntity entity = snapshot.data!.kLineEntity;
-        final dialogWidth = mWidth / 3;
-        if (snapshot.data!.isLeft) {
-          return Positioned(
-            top: 25,
-            left: 10.0,
-            child: PopupInfoView(
-              entity: entity,
-              width: dialogWidth,
-              chartColors: widget.chartColors,
-              chartTranslations: widget.chartTranslations,
-              materialInfoDialog: widget.materialInfoDialog,
-              timeFormat: widget.timeFormat,
-              fixedLength: widget.fixedLength,
-            ),
-          );
-        }
-        return Positioned(
-          top: 25,
-          right: 10.0,
-          child: PopupInfoView(
-            entity: entity,
-            width: dialogWidth,
-            chartColors: widget.chartColors,
-            chartTranslations: widget.chartTranslations,
-            materialInfoDialog: widget.materialInfoDialog,
-            timeFormat: widget.timeFormat,
-            fixedLength: widget.fixedLength,
-          ),
-        );
-      },
-    );
-  }
+  // Widget _buildInfoDialog() {
+  //   return StreamBuilder<InfoWindowEntity?>(
+  //     stream: mInfoWindowStream.stream,
+  //     builder: (context, snapshot) {
+  //       if (widget.isLongFocusDurationTime == 0 &&
+  //           ((!isLongPress && !isOnTap) ||
+  //               widget.isLine == true ||
+  //               !snapshot.hasData ||
+  //               snapshot.data?.kLineEntity == null)) {
+  //         return SizedBox();
+  //       }
+  //       if (widget.isLongFocusDurationTime != 0 &&
+  //           (!longPressTriggered || widget.isLine == true
+  //           // ||
+  //           // !snapshot.hasData ||
+  //           // snapshot.data?.kLineEntity == null
+  //           )) return SizedBox();
+  //       if (widget.isLongFocusDurationTime != 0 &&
+  //           !longPressTriggered &&
+  //           snapshot.data == null) {
+  //         return SizedBox.shrink();
+  //       }
+  //       if (snapshot.data == null) return SizedBox.shrink();
+  //
+  //       KLineEntity entity = snapshot.data!.kLineEntity;
+  //       final dialogWidth = mWidth / 3;
+  //       if (snapshot.data!.isLeft) {
+  //         return Positioned(
+  //           top: 25,
+  //           left: 10.0,
+  //           child: PopupInfoView(
+  //             entity: entity,
+  //             width: dialogWidth,
+  //             chartColors: widget.chartColors,
+  //             chartTranslations: widget.chartTranslations,
+  //             materialInfoDialog: widget.materialInfoDialog,
+  //             timeFormat: widget.timeFormat,
+  //             fixedLength: widget.fixedLength,
+  //           ),
+  //         );
+  //       }
+  //       return Positioned(
+  //         top: 25,
+  //         right: 10.0,
+  //         child: PopupInfoView(
+  //           entity: entity,
+  //           width: dialogWidth,
+  //           chartColors: widget.chartColors,
+  //           chartTranslations: widget.chartTranslations,
+  //           materialInfoDialog: widget.materialInfoDialog,
+  //           timeFormat: widget.timeFormat,
+  //           fixedLength: widget.fixedLength,
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 }
 
 // //#十字光标长按0.5秒后才触发 -----------------------------------------------》》》》》 !! 关键 ！！ （isLongFocusDurationTime: 500/0 和 isLongFocus：true/false 切换）

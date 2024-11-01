@@ -27,4 +27,9 @@ mixin CandleEntity {
   List<CandleIndicatorEntity>? parabolicValues;
   /// Ichimoku
   List<CandleIndicatorEntity>? ichimokuValues;
+  /// RSI
+  List<CandleIndicatorEntity>? rsiValues;
+  /// MACD
+  List<CandleIndicatorEntity>? macdValues;
+  List<CandleIndicatorEntity>? macdSignalValues;
 }

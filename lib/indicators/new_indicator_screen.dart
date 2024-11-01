@@ -1,5 +1,7 @@
 import 'package:candle_chart/indicators/properties/ichimoku_properties_screen.dart';
+import 'package:candle_chart/indicators/properties/macd_properties_screen.dart';
 import 'package:candle_chart/indicators/properties/parabolic_properties_screen.dart';
+import 'package:candle_chart/indicators/properties/rsi_properties_screen.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/indicators/properties/indicator_properties_screen.dart';
@@ -173,17 +175,35 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
               ),
             ),
             PropertiesItemWidget(
-              title: 'Force Index',
+              title: 'RSI',
               margin: EdgeInsets.zero,
               child: const SizedBox(),
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => RSIPropertiesScreen(
+                      onDone: widget.onDone,
+                      name: 'RSI',
+                    ),
+                  ),
+                );
+              },
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
               title: 'MACD',
               margin: EdgeInsets.zero,
               child: const SizedBox(),
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => MACDPropertiesScreen(
+                      onDone: widget.onDone,
+                      name: 'MACD',
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),

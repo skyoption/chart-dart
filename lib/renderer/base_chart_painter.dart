@@ -56,7 +56,10 @@ abstract class BaseChartPainter extends CustomPainter
   late double mDisplayHeight, mWidth;
 
   // padding
-  double mTopPadding = 30.0, mBottomPadding = 20.0, mChildPadding = 12.0;
+  double mTopPadding = 30.0,
+      mBottomPadding = 20.0,
+      mChildPadding = 12.0,
+      mSecondaryTopPadding = 28.0;
 
   // grid: rows - columns
   int mGridRows = 18, mGridColumns = 4;
@@ -136,6 +139,8 @@ abstract class BaseChartPainter extends CustomPainter
     }
   }
 
+  bool isInitial = false;
+
   /// paint chart
   @override
   void paint(Canvas canvas, Size size) {
@@ -214,27 +219,36 @@ abstract class BaseChartPainter extends CustomPainter
 
     double mainHeight = mDisplayHeight;
     mainHeight -= volHeight;
-    mainHeight -= (secondaryHeight * secondaryIndicators.length);
+    mainHeight -= secondaryHeight;
 
     mMainRect = Rect.fromLTRB(0, mTopPadding, mWidth, mTopPadding + mainHeight);
 
     if (volHidden != true) {
-      mVolRect = Rect.fromLTRB(0, mMainRect.bottom + mChildPadding, mWidth,
-          mMainRect.bottom + volHeight);
+      mVolRect = Rect.fromLTRB(
+        0,
+        mMainRect.bottom + mChildPadding,
+        mWidth,
+        mMainRect.bottom + volHeight,
+      );
     }
 
     mSecondaryRectList.clear();
+    double rowSpace = ((mDisplayHeight * 0.85) / mGridRows);
+    double _secondaryHeight = 0;
     for (int i = 0; i < secondaryIndicators.length; ++i) {
-      mSecondaryRectList.add(RenderRect(
-        Rect.fromLTRB(
+      final secondary =
+          baseDimension.getSecondaryHeight(secondaryIndicators[i]);
+      mSecondaryRectList.add(
+        RenderRect(
+          Rect.fromLTRB(
             0,
-            mMainRect.bottom + volHeight + i * secondaryHeight + mChildPadding,
+            mMainRect.bottom + volHeight + _secondaryHeight + rowSpace,
             mWidth,
-            mMainRect.bottom +
-                volHeight +
-                i * secondaryHeight +
-                secondaryHeight),
-      ));
+            mMainRect.bottom + volHeight + _secondaryHeight + secondary,
+          ),
+        ),
+      );
+      _secondaryHeight += secondary;
     }
   }
 
@@ -379,13 +393,16 @@ abstract class BaseChartPainter extends CustomPainter
     final indicator = secondaryIndicators.elementAt(index);
     switch (indicator.type) {
       case IndicatorType.MACD:
-        if (item.macd != null) {
+        if (item.macdValues != null) {
           mSecondaryRectList[index].mMaxValue = max(
-              mSecondaryRectList[index].mMaxValue,
-              max(item.macd!, max(item.dif!, item.dea!)));
+            max(_findMaxMA(item.macdValues!),
+                _findMaxMA(item.macdSignalValues!)),
+            mSecondaryRectList[index].mMaxValue,
+          );
           mSecondaryRectList[index].mMinValue = min(
               mSecondaryRectList[index].mMinValue,
-              min(item.macd!, min(item.dif!, item.dea!)));
+              min(_findMinMA(item.macdValues!),
+                  _findMinMA(item.macdSignalValues!)));
         }
         break;
       case IndicatorType.KDJ:
@@ -399,12 +416,10 @@ abstract class BaseChartPainter extends CustomPainter
         }
         break;
       case IndicatorType.RSI:
-        if (item.rsi != null) {
-          mSecondaryRectList[index].mMaxValue =
-              max(mSecondaryRectList[index].mMaxValue, item.rsi!);
-          mSecondaryRectList[index].mMinValue =
-              min(mSecondaryRectList[index].mMinValue, item.rsi!);
-        }
+        // if (item.rsi != null) {
+        mSecondaryRectList[index].mMaxValue = 100;
+        mSecondaryRectList[index].mMinValue = 0.0;
+        // }
         break;
       case IndicatorType.WR:
         mSecondaryRectList[index].mMaxValue = 0;

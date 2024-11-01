@@ -9,6 +9,7 @@ class PropertiesItemWidget extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final Widget? child;
   final double? height;
+  final bool showArrow;
 
   const PropertiesItemWidget({
     super.key,
@@ -20,6 +21,7 @@ class PropertiesItemWidget extends StatelessWidget {
     this.height,
     this.subTitleColor = Colors.blueAccent,
     this.titleColor = Colors.black,
+    this.showArrow = true,
   });
 
   @override
@@ -64,7 +66,7 @@ class PropertiesItemWidget extends StatelessWidget {
                             ),
                       ),
                     ),
-                  if (onTap != null)
+                  if (onTap != null&& showArrow)
                     Icon(
                       Icons.arrow_forward_ios_sharp,
                       size: 16.0,

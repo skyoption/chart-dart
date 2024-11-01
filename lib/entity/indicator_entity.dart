@@ -30,6 +30,7 @@ class IndicatorEntity {
   @enumerated
   IndicatorType type = IndicatorType.SMA_MA;
   Ichimoku? ichimoku;
+  MACD? macd;
   @enumerated
   ApplyTo applyTo = ApplyTo.Close;
   @enumerated
@@ -42,8 +43,9 @@ class IndicatorEntity {
   LineStyle style = LineStyle.normal;
 
   String? color = Colors.green.toHexString(),
-      secondColor = Colors.deepOrange.toHexString();
-
+      secondColor = Colors.deepOrange.toHexString(),
+      levelsColor = Colors.black.toHexString();
+  List<int> levels = [];
   double value = 0;
   double? up;
   double? dn;
@@ -52,6 +54,8 @@ class IndicatorEntity {
   double? senkouSpanA;
   double? senkouSpanB;
   double? chikouSpan;
+  double? shortEMA;
+  double? longEMA;
 
   IndicatorEntity({
     this.name = '',
@@ -60,13 +64,17 @@ class IndicatorEntity {
     this.type = IndicatorType.SMA_MA,
     this.dn,
     this.up,
+    this.levels = const [],
     this.chikouSpan,
     this.senkouSpanB,
     this.senkouSpanA,
     this.kijunSen,
     this.tenkanSen,
+    this.longEMA,
+    this.shortEMA,
     this.value = 0,
     this.deviations,
+    this.macd,
     this.maximum,
     this.steps,
     this.ichimoku,
@@ -80,9 +88,11 @@ class IndicatorEntity {
     this.timeframe = Timeframes.All_Timeframes,
     this.color,
     this.secondColor,
+    this.levelsColor,
   }) {
     color = Colors.green.toHexString();
     secondColor = Colors.deepOrange.toHexString();
+    levelsColor = Colors.black.toHexString();
   }
 
   CandleIndicatorEntity copyToCandle({
@@ -92,13 +102,17 @@ class IndicatorEntity {
     method,
     double? value,
     applyTo,
+    shortEMA,
     lineHeight,
     style,
     level,
     timeframe,
+    levelsColor,
     deviations,
     ichimoku,
+    macd,
     steps,
+    longEMA,
     color,
     drawAsBackground,
     maximum,
@@ -111,6 +125,7 @@ class IndicatorEntity {
     senkouSpanA,
     kijunSen,
     tenkanSen,
+    levels,
     secondColor,
   }) {
     return CandleIndicatorEntity(
@@ -118,8 +133,13 @@ class IndicatorEntity {
       value: value ?? this.value,
       type: method ?? this.type,
       name: name ?? this.name,
+      longEMA: longEMA ?? this.longEMA,
+      shortEMA: shortEMA ?? this.shortEMA,
       dn: dn ?? this.dn,
+      macd: macd ?? this.macd,
       up: up ?? this.up,
+      levels: levels ?? this.levels,
+      levelsColor: levelsColor ?? this.levelsColor,
       strokeWidth: lineHeight ?? this.strokeWidth,
       applyTo: applyTo ?? this.applyTo,
       color: color ?? this.color,
@@ -167,5 +187,24 @@ class Ichimoku {
     chikouSpanColor = Colors.green.toHexString();
     upKumoColor = Colors.orange.toHexString();
     downKumoColor = Colors.brown.toHexString();
+  }
+}
+
+@embedded
+class MACD {
+  String? mainColor = Colors.red.toHexString(),
+      signalColor = Colors.blue.toHexString();
+
+  int fastEma = 12, slowEma = 26, macdSma = 9;
+
+  MACD({
+    this.fastEma = 12,
+    this.slowEma = 26,
+    this.macdSma = 9,
+    this.mainColor,
+    this.signalColor,
+  }) {
+    mainColor = Colors.red.toHexString();
+    signalColor = Colors.blue.toHexString();
   }
 }

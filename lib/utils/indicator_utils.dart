@@ -4,6 +4,7 @@ import 'package:candle_chart/entity/candle_indicator_entity.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/k_chart_widget.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 
 class IndicatorUtils {
@@ -18,7 +19,9 @@ class IndicatorUtils {
         SMMA_ENVELOPS = [],
         BOLL = [],
         ICHIMOKU = [],
-        PARABOLIC = [];
+        PARABOLIC = [],
+        RSI = [],
+        MACD = [];
 
     await chartProperties.loadIndicators();
 
@@ -52,6 +55,14 @@ class IndicatorUtils {
       }
     }
 
+    for (var indicator in chartProperties.secondaryIndicators) {
+      if (indicator.type == IndicatorType.RSI) {
+        RSI.add(indicator);
+      } else if (indicator.type == IndicatorType.MACD) {
+        MACD.add(indicator);
+      }
+    }
+
     if (SMA_MA.isNotEmpty) calc_SMA_MA(data, SMA_MA);
     if (EMA_MA.isNotEmpty) calc_EMA_MA(data, EMA_MA);
     if (Linear_MA.isNotEmpty) calc_Linear_MA(data, Linear_MA);
@@ -63,16 +74,11 @@ class IndicatorUtils {
     if (BOLL.isNotEmpty) calc_BOLL(data, BOLL);
     if (PARABOLIC.isNotEmpty) calc_Parabolic_SAR(data, PARABOLIC);
     if (ICHIMOKU.isNotEmpty) calc_Ichimoku(data, ICHIMOKU);
+    if (RSI.isNotEmpty) calcRSI(data, RSI);
+    if (MACD.isNotEmpty) calcMACD(data, MACD);
 
     /// calc the volume indicator
     calcVolumeMA(data);
-
-    /// Other indicators
-    calcKDJ(data);
-    calcMACD(data);
-    calcRSI(data);
-    calcWR(data);
-    calcCCI(data);
   }
 
   static void _resetCandles(List<KLineEntity> data) {
@@ -97,6 +103,13 @@ class IndicatorUtils {
 
       /// Ichimoku
       data[k].ichimokuValues = null;
+
+      /// RSI
+      data[k].rsiValues = null;
+
+      /// MACD
+      data[k].macdValues = null;
+      data[k].macdSignalValues = null;
     }
   }
 
@@ -638,32 +651,6 @@ class IndicatorUtils {
     }
   }
 
-  static void calcMACD(List<KLineEntity> dataList) {
-    double ema12 = 0;
-    double ema26 = 0;
-    double dif = 0;
-    double dea = 0;
-    double macd = 0;
-
-    for (int i = 0; i < dataList.length; i++) {
-      KLineEntity entity = dataList[i];
-      final closePrice = entity.close;
-      if (i == 0) {
-        ema12 = closePrice;
-        ema26 = closePrice;
-      } else {
-        ema12 = ema12 * 11 / 13 + closePrice * 2 / 13;
-        ema26 = ema26 * 25 / 27 + closePrice * 2 / 27;
-      }
-      dif = ema12 - ema26;
-      dea = dea * 8 / 10 + dif * 2 / 10;
-      macd = (dif - dea) * 2;
-      entity.dif = dif;
-      entity.dea = dea;
-      entity.macd = macd;
-    }
-  }
-
   static void calcVolumeMA(List<KLineEntity> dataList) {
     double volumeMa5 = 0;
     double volumeMa10 = 0;
@@ -694,120 +681,133 @@ class IndicatorUtils {
     }
   }
 
-  static void calcRSI(List<KLineEntity> dataList) {
-    double? rsi;
-    double rsiABSEma = 0;
-    double rsiMaxEma = 0;
-    for (int i = 0; i < dataList.length; i++) {
-      KLineEntity entity = dataList[i];
-      final double closePrice = entity.close;
-      if (i == 0) {
-        rsi = 0;
-        rsiABSEma = 0;
-        rsiMaxEma = 0;
-      } else {
-        double rMax = max(0, closePrice - dataList[i - 1].close.toDouble());
-        double rAbs = (closePrice - dataList[i - 1].close.toDouble()).abs();
+  /// RSI calculation
+  static void calcRSI(
+    List<KLineEntity> dataList,
+    List<IndicatorEntity> indicators,
+  ) {
+    for (final indicator in indicators) {
+      final int period = indicator.period;
+      double gainSum = 0.0;
+      double lossSum = 0.0;
 
-        rsiMaxEma = (rMax + (14 - 1) * rsiMaxEma) / 14;
-        rsiABSEma = (rAbs + (14 - 1) * rsiABSEma) / 14;
-        rsi = (rsiMaxEma / rsiABSEma) * 100;
-      }
-      if (i < 13) rsi = null;
-      if (rsi != null && rsi.isNaN) rsi = null;
-      entity.rsi = rsi;
-    }
-  }
-
-  static void calcKDJ(List<KLineEntity> dataList) {
-    var preK = 50.0;
-    var preD = 50.0;
-    final tmp = dataList.first;
-    tmp.k = preK;
-    tmp.d = preD;
-    tmp.j = 50.0;
-    for (int i = 1; i < dataList.length; i++) {
-      final entity = dataList[i];
-      final n = max(0, i - 8);
-      var low = entity.low;
-      var high = entity.high;
-      for (int j = n; j < i; j++) {
-        final t = dataList[j];
-        if (t.low < low) {
-          low = t.low;
-        }
-        if (t.high > high) {
-          high = t.high;
-        }
-      }
-      final cur = entity.close;
-      var rsv = (cur - low) * 100.0 / (high - low);
-      rsv = rsv.isNaN ? 0 : rsv;
-      final k = (2 * preK + rsv) / 3.0;
-      final d = (2 * preD + k) / 3.0;
-      final j = 3 * k - 2 * d;
-      preK = k;
-      preD = d;
-      entity.k = k;
-      entity.d = d;
-      entity.j = j;
-    }
-  }
-
-  static void calcWR(List<KLineEntity> dataList) {
-    double r;
-    for (int i = 0; i < dataList.length; i++) {
-      KLineEntity entity = dataList[i];
-      int startIndex = i - 14;
-      if (startIndex < 0) {
-        startIndex = 0;
-      }
-      double max14 = double.minPositive;
-      double min14 = double.maxFinite;
-      for (int index = startIndex; index <= i; index++) {
-        max14 = max(max14, dataList[index].high);
-        min14 = min(min14, dataList[index].low);
-      }
-      if (i < 13) {
-        entity.r = -10;
-      } else {
-        r = -100 * (max14 - dataList[i].close) / (max14 - min14);
-        if (r.isNaN) {
-          entity.r = null;
+      for (int i = 1; i < dataList.length; i++) {
+        double change = _currentPriceValue(indicator, dataList[i]) -
+            _currentPriceValue(indicator, dataList[i - 1]);
+        if (i < period) {
+          gainSum += max(0, change);
+          lossSum += max(0, -change);
+        } else if (i == period) {
+          gainSum /= period;
+          lossSum /= period;
+          dataList[i].rsiValues = _calculateRSI(gainSum, lossSum, indicator);
         } else {
-          entity.r = r;
+          gainSum = (gainSum * (period - 1) + max(0, change)) / period;
+          lossSum = (lossSum * (period - 1) + max(0, -change)) / period;
+          dataList[i].rsiValues = _calculateRSI(gainSum, lossSum, indicator);
         }
       }
     }
   }
 
-  static void calcCCI(List<KLineEntity> dataList) {
-    final size = dataList.length;
-    final count = 14;
-    for (int i = 0; i < size; i++) {
-      final kline = dataList[i];
-      final tp = (kline.high + kline.low + kline.close) / 3;
-      final start = max(0, i - count + 1);
-      var amount = 0.0;
-      var len = 0;
-      for (int n = start; n <= i; n++) {
-        amount += (dataList[n].high + dataList[n].low + dataList[n].close) / 3;
-        len++;
-      }
-      final ma = amount / len;
-      amount = 0.0;
-      for (int n = start; n <= i; n++) {
-        amount +=
-            (ma - (dataList[n].high + dataList[n].low + dataList[n].close) / 3)
-                .abs();
-      }
-      final md = amount / len;
-      kline.cci = ((tp - ma) / 0.015 / md);
-      if (kline.cci!.isNaN) {
-        kline.cci = 0.0;
+  static List<CandleIndicatorEntity> _calculateRSI(
+    double avgGain,
+    double avgLoss,
+    IndicatorEntity indicator,
+  ) {
+    double rs = avgLoss == 0 ? 100 : avgGain / avgLoss;
+    double rsi = 100 - (100 / (1 + rs));
+    return [indicator.copyToCandle(value: rsi)];
+  }
+
+  /// MACD calculation
+  static void calcMACD(
+    List<KLineEntity> dataList,
+    List<IndicatorEntity> indicators,
+  ) {
+    for (final indicator in indicators) {
+      final int shortPeriod = indicator.macd?.fastEma ?? 12;
+      final int longPeriod = indicator.macd?.slowEma ?? 26;
+      final int signalPeriod = indicator.macd?.macdSma ?? 9;
+
+      List<double> macdLine = [];
+      List<double> signalLine = [];
+
+      double? shortEMA;
+      double? longEMA;
+
+      for (int i = 0; i < dataList.length; i++) {
+        if (i < longPeriod - 1) {
+          macdLine.add(0);
+          signalLine.add(0);
+          continue;
+        }
+
+        shortEMA = _calculateEMA(
+            dataList.map((e) => _currentPriceValue(indicator, e)).toList(),
+            i,
+            shortPeriod,
+            shortEMA);
+        longEMA = _calculateEMA(
+            dataList.map((e) => _currentPriceValue(indicator, e)).toList(),
+            i,
+            longPeriod,
+            longEMA);
+
+        double macdValue = (shortEMA - longEMA);
+        macdLine.add(macdValue);
+        if (i >= longPeriod + signalPeriod - 2) {
+          double signalValue = signalLine.length < signalPeriod
+              ? macdLine
+                      .sublist(i - signalPeriod + 1, i + 1)
+                      .reduce((a, b) => a + b) /
+                  signalPeriod
+              : _calculateEMA(macdLine, i, signalPeriod, signalLine.last);
+          signalLine.add(signalValue);
+
+          dataList[i].macdValues = [
+            indicator.copyToCandle(
+              value: macdValue,
+              shortEMA: shortEMA,
+              longEMA: longEMA,
+            )
+          ];
+          dataList[i].macdSignalValues = [
+            indicator.copyToCandle(value: signalValue)
+          ];
+        } else {
+          signalLine.add(0);
+        }
       }
     }
   }
+
+  static double _calculateEMA(
+      List<double> dataList, int index, int period, double? previousEMA) {
+    double multiplier = 2 / (period + 1);
+    return previousEMA == null
+        ? dataList
+                .sublist(index - period + 1, index + 1)
+                .map((e) => e)
+                .reduce((a, b) => a + b) /
+            period
+        : ((dataList[index] - previousEMA) * multiplier + previousEMA);
+  }
+
+  // /// Set RSI levels
+  // static List<CandleIndicatorEntity> _setRSILevels(double rsiValue) {
+  //   // Create a list for the RSI value and levels
+  //   List<CandleIndicatorEntity> rsiLevels = [];
+  //
+  //   // Store the RSI value
+  //   rsiLevels.add(CandleIndicatorEntity(value: rsiValue));
+  //
+  //   // Add the upper and lower levels
+  //   rsiLevels.add(CandleIndicatorEntity(value: 70, isLevel: true));  // Overbought level
+  //   rsiLevels.add(CandleIndicatorEntity(value: 30, isLevel: true));  // Oversold level
+  //
+  //   return rsiLevels;
+  // }
 
   static List<CandleIndicatorEntity> _addNewIndicator(
     List<CandleIndicatorEntity>? indicators,
