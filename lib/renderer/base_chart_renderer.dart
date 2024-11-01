@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:candle_chart/chart_style.dart';
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/utils/kprint.dart';
@@ -21,6 +22,7 @@ abstract class BaseChartRenderer<T> {
   double topPadding;
   Rect chartRect;
   int fixedLength;
+  final ChartStyle chartStyle;
   Paint chartPaint = Paint()
     ..isAntiAlias = true
     ..filterQuality = FilterQuality.high
@@ -28,14 +30,14 @@ abstract class BaseChartRenderer<T> {
     ..color = Colors.red;
   Paint gridPaint = Paint()
     ..isAntiAlias = true
-    ..filterQuality = FilterQuality.high;
+    ..filterQuality = FilterQuality.high
+    ..strokeWidth = 0.21
+    ..color = Color(0xff4c5c74);
   Paint darkPaint = Paint()
     ..isAntiAlias = true
     ..color = Colors.black
-    ..filterQuality = FilterQuality.high
-    //EMA
-    ..strokeWidth = 0.21
-    ..color = Color(0xff4c5c74);
+    ..strokeWidth = 0.3
+    ..filterQuality = FilterQuality.high;
 
   BaseChartRenderer({
     required this.chartRect,
@@ -43,12 +45,14 @@ abstract class BaseChartRenderer<T> {
     required this.minValue,
     required this.topPadding,
     required this.fixedLength,
+    required this.chartStyle,
     required Color gridColor,
   }) {
     if (maxValue == minValue) {
       maxValue *= 1.5;
       minValue /= 2;
     }
+
     /// * -1 for negative minValue values
     scaleY =
         chartRect.height / (maxValue - (minValue < 0 ? minValue : -minValue));
@@ -195,6 +199,27 @@ abstract class BaseChartRenderer<T> {
       color,
       strokeWidth,
     );
+  } void drawHDashLine(
+    double? lastPrice,
+    double? curPrice,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    Color color, {
+    double strokeWidth = 1.0,
+  }) {
+    if (lastPrice == null || curPrice == null) {
+      return;
+    }
+    _drawHDashLine(
+      lastPrice,
+      curPrice,
+      canvas,
+      lastX,
+      curX,
+      color,
+      strokeWidth,
+    );
   }
 
   void drawVerticalDashLine(
@@ -330,8 +355,37 @@ abstract class BaseChartRenderer<T> {
     );
   }
 
+  void _drawHDashLine(
+      double? lastPrice,
+      double? curPrice,
+      Canvas canvas,
+      double lastX,
+      double curX,
+      Color color,
+      double strokeWidth,
+      ) {
+    if (lastPrice == null || curPrice == null) {
+      return;
+    }
+    double curY = getY(curPrice);
+    double dx = lastX;
+    while (dx < curX) {
+      canvas.drawPoints(
+        PointMode.lines,
+        [
+          Offset(dx, curY),
+          Offset(dx + 2, curY),
+        ],
+        chartPaint
+          ..color = color
+          ..strokeWidth = strokeWidth,
+      );
+      dx += 4;
+    }
+  }
+
   TextStyle getTextStyle(Color color) {
-    return TextStyle(fontSize: 10.0, color: color);
+    return TextStyle(fontSize: chartStyle.sizeText, color: color);
   }
 }
 

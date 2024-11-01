@@ -21,7 +21,6 @@ import 'package:flutter/material.dart'
 
 import '../chart_style.dart' show ChartStyle;
 import '../entity/k_line_entity.dart';
-import '../k_chart_widget.dart';
 import 'base_dimension.dart';
 
 export 'package:flutter/material.dart'
@@ -62,7 +61,7 @@ abstract class BaseChartPainter extends CustomPainter
       mSecondaryTopPadding = 28.0;
 
   // grid: rows - columns
-  int mGridRows = 18, mGridColumns = 4;
+  int mGridRows = 12, mGridColumns = 4;
   int mStartIndex = 0, mStopIndex = 0;
   double mMainMaxValue = double.minPositive, mMainMinValue = double.maxFinite;
   double mVolMaxValue = double.minPositive, mVolMinValue = double.maxFinite;
@@ -149,7 +148,7 @@ abstract class BaseChartPainter extends CustomPainter
     mWidth = size.width - this.chartStyle.priceWidth;
     initRect(size);
     calculateValue();
-    initChartRenderer();
+    initChartRenderer(size.height);
 
     canvas.save();
     canvas.scale(1, 1);
@@ -177,7 +176,7 @@ abstract class BaseChartPainter extends CustomPainter
   }
 
   /// init chart renderer
-  void initChartRenderer();
+  void initChartRenderer(double height);
 
   /// draw the background of chart
   void drawBg(Canvas canvas, Size size);
@@ -242,7 +241,7 @@ abstract class BaseChartPainter extends CustomPainter
         RenderRect(
           Rect.fromLTRB(
             0,
-            mMainRect.bottom + volHeight + _secondaryHeight + rowSpace,
+            mMainRect.bottom + volHeight + _secondaryHeight,
             mWidth,
             mMainRect.bottom + volHeight + _secondaryHeight + secondary,
           ),
@@ -393,17 +392,8 @@ abstract class BaseChartPainter extends CustomPainter
     final indicator = secondaryIndicators.elementAt(index);
     switch (indicator.type) {
       case IndicatorType.MACD:
-        if (item.macdValues != null) {
-          mSecondaryRectList[index].mMaxValue = max(
-            max(_findMaxMA(item.macdValues!),
-                _findMaxMA(item.macdSignalValues!)),
-            mSecondaryRectList[index].mMaxValue,
-          );
-          mSecondaryRectList[index].mMinValue = min(
-              mSecondaryRectList[index].mMinValue,
-              min(_findMinMA(item.macdValues!),
-                  _findMinMA(item.macdSignalValues!)));
-        }
+        mSecondaryRectList[index].mMaxValue = _findMaxUP(item.macdValues ?? []);
+        mSecondaryRectList[index].mMinValue = _findMinDN(item.macdValues ?? []);
         break;
       case IndicatorType.KDJ:
         if (item.d != null) {

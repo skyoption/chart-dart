@@ -12,6 +12,7 @@ class VolRenderer extends BaseChartRenderer<VolumeEntity> {
           chartRect: mainRect,
           maxValue: maxValue,
           minValue: minValue,
+          chartStyle: chartStyle,
           topPadding: topPadding,
           fixedLength: fixedLength,
           gridColor: chartColors.gridColor,
@@ -149,6 +150,6 @@ class VolRenderer extends BaseChartRenderer<VolumeEntity> {
     double curX,
     Size size,
     Canvas canvas,
-      bool drawAsBackground,
+    bool drawAsBackground,
   ) {}
 }

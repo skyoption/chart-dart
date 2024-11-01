@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
@@ -32,7 +34,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   double scaleX;
   late Paint mLinePaint;
   final VerticalTextAlignment verticalTextAlignment;
-
   final List<IndicatorEntity> indicators;
 
   MainRenderer(
@@ -51,6 +52,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   ) : super(
             chartRect: mainRect,
             maxValue: maxValue,
+            chartStyle: chartStyle,
             minValue: minValue,
             topPadding: topPadding,
             fixedLength: fixedLength,
@@ -797,8 +799,11 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     }
     double columnSpace = chartRect.rWidth / gridColumns;
     for (int i = 0; i <= columnSpace; i++) {
-      canvas.drawLine(Offset(columnSpace * i, topPadding),
-          Offset(columnSpace * i, chartRect.bottom), gridPaint);
+      canvas.drawLine(
+        Offset(columnSpace * i, topPadding),
+        Offset(columnSpace * i, chartRect.bottom),
+        gridPaint,
+      );
     }
   }
 
@@ -863,6 +868,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     //   tp.paint(canvas, Offset(x, chartRect.top - topPadding));
     // }
   }
+
 // void drawMaLine(CandleEntity lastPoint, CandleEntity curPoint, Canvas canvas,
 //     double lastX, double curX) {
 //   for (int i = 0; i < (curPoint.maValues?.length ?? 0); i++) {

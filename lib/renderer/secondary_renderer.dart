@@ -14,12 +14,14 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
   final IndicatorEntity indicator;
   final ChartStyle chartStyle;
   final ChartColors chartColors;
+  final int index;
 
   SecondaryRenderer(
     Rect mainRect,
     double maxValue,
     double minValue,
     double topPadding,
+    this.index,
     this.indicator,
     int fixedLength,
     this.chartStyle,
@@ -28,6 +30,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
           chartRect: mainRect,
           maxValue: maxValue,
           minValue: minValue,
+          chartStyle: chartStyle,
           topPadding: topPadding,
           fixedLength: fixedLength,
           gridColor: chartColors.gridColor,
@@ -75,43 +78,28 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
       textDirection: TextDirection.ltr,
     );
     minTp.layout();
-    TextPainter zeroTp = TextPainter(
-      text: TextSpan(text: "0", style: textStyle.copyWith(color: Colors.black)),
-      textDirection: TextDirection.ltr,
-    );
-    zeroTp.layout();
-    double space1 = 45, space2 = 45;
-    if (minValue < 0) {
-      space2 = 50;
-    } else {
-      space2 = 45;
-    }
-    if (maxValue < 0) {
-      space1 = 50;
-    } else {
-      space1 = 45;
-    }
+
+    double space = 17.0;
+
     maxTp.paint(
       canvas,
       Offset(
-        chartRect.rWidth + space1 + -maxTp.width,
-        chartRect.top - topPadding - (maxTp.height / 2),
+        chartRect.rWidth + space,
+        chartRect.top + topPadding - (maxTp.height / 2),
       ),
     );
     minTp.paint(
       canvas,
       Offset(
-        chartRect.rWidth + space2 - minTp.width,
-        chartRect.bottom - (minTp.height / 2),
+        chartRect.rWidth + space,
+        chartRect.bottom - minTp.height,
       ),
     );
-    // zeroTp.paint(
-    //   canvas,
-    //   Offset(
-    //     chartRect.rWidth + space2 - zeroTp.width,
-    //     chartRect.centerLeft.dy,
-    //   ),
-    // );
+    if (indicator.type == IndicatorType.MACD) {
+      _setMACDLevels(canvas, textStyle, space);
+    } else if (indicator.type == IndicatorType.RSI) {
+      _setRSILevels(canvas, textStyle, space);
+    }
   }
 
   @override
@@ -121,9 +109,10 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     int gridColumns,
   ) {
     canvas.drawLine(
-        Offset(0, chartRect.top - topPadding),
-        Offset(chartRect.rWidth, chartRect.top - topPadding),
-        darkPaint); //hidden line
+      Offset(0, chartRect.top),
+      Offset(chartRect.rWidth, chartRect.top),
+      darkPaint,
+    ); //hidden line
     canvas.drawLine(
       Offset(0, chartRect.bottom),
       Offset(chartRect.rWidth, chartRect.bottom),
@@ -135,7 +124,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
       canvas.drawLine(
         Offset(columnSpace * i, chartRect.top - topPadding - 60),
         Offset(columnSpace * i, chartRect.bottom),
-        (i == 0 || i == columnSpace) ? darkPaint : gridPaint,
+        gridPaint,
       );
     }
   }
@@ -212,86 +201,88 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     CandleEntity data,
     double x,
   ) {
-    return;
-    // List<TextSpan>? children;
-    // switch (indicator.type) {
-    //   case IndicatorType.MACD:
-    //     children = [
-    //       TextSpan(
-    //           text: "MACD(12,26,9)    ",
-    //           style: getTextStyle(this.chartColors.defaultTextColor)),
-    //       if (data.macd != 0)
-    //         TextSpan(
-    //             text: "MACD:${format(data.macd)}    ",
-    //             style: getTextStyle(this.chartColors.macdColor)),
-    //       if (data.dif != 0)
-    //         TextSpan(
-    //           text: "DIF:${format(data.dif)}    ",
-    //           style: getTextStyle(this.chartColors.difColor),
-    //         ),
-    //       if (data.dea != 0)
-    //         TextSpan(
-    //           text: "DEA:${format(data.dea)}    ",
-    //           style: getTextStyle(this.chartColors.deaColor),
-    //         ),
-    //     ];
-    //     break;
-    //   case IndicatorType.KDJ:
-    //     children = [
-    //       TextSpan(
-    //         text: "KDJ(9,1,3)    ",
-    //         style: getTextStyle(this.chartColors.defaultTextColor),
-    //       ),
-    //       if (data.macd != 0)
-    //         TextSpan(
-    //           text: "K:${format(data.k)}    ",
-    //           style: getTextStyle(this.chartColors.kColor),
-    //         ),
-    //       if (data.dif != 0)
-    //         TextSpan(
-    //           text: "D:${format(data.d)}    ",
-    //           style: getTextStyle(this.chartColors.dColor),
-    //         ),
-    //       if (data.dea != 0)
-    //         TextSpan(
-    //           text: "J:${format(data.j)}    ",
-    //           style: getTextStyle(this.chartColors.jColor),
-    //         ),
-    //     ];
-    //     break;
-    //   case IndicatorType.RSI:
-    //     children = [
-    //       TextSpan(
-    //         text: "RSI(14):${format(data.rsi)}    ",
-    //         style: getTextStyle(this.chartColors.rsiColor),
-    //       ),
-    //     ];
-    //     break;
-    //   case IndicatorType.WR:
-    //     children = [
-    //       TextSpan(
-    //         text: "WR(14):${format(data.r)}    ",
-    //         style: getTextStyle(this.chartColors.rsiColor),
-    //       ),
-    //     ];
-    //     break;
-    //   case IndicatorType.CCI:
-    //     children = [
-    //       TextSpan(
-    //         text: "CCI(14):${format(data.cci)}    ",
-    //         style: getTextStyle(this.chartColors.rsiColor),
-    //       ),
-    //     ];
-    //     break;
-    //   default:
-    //     break;
-    // }
-    // TextPainter tp = TextPainter(
-    //   text: TextSpan(children: children ?? []),
-    //   textDirection: TextDirection.ltr,
-    // );
-    // tp.layout();
-    // tp.paint(canvas, Offset(x, chartRect.top - topPadding));
+    List<TextSpan>? children;
+    switch (indicator.type) {
+      case IndicatorType.MACD:
+        children = [
+          TextSpan(
+            text:
+                "MACD(${indicator.macd!.fastEma},${indicator.macd!.slowEma},${indicator.macd!.macdSma})",
+            style:
+                getTextStyle(colorFromHex(this.indicator.macd!.signalColor!)!),
+          ),
+          // if (data.macd != 0)
+          //   TextSpan(
+          //       text: "MACD:${format(data.macd)}    ",
+          //       style: getTextStyle(this.chartColors.macdColor)),
+          // if (data.dif != 0)
+          //   TextSpan(
+          //     text: "DIF:${format(data.dif)}    ",
+          //     style: getTextStyle(this.chartColors.difColor),
+          //   ),
+          // if (data.dea != 0)
+          //   TextSpan(
+          //     text: "DEA:${format(data.dea)}    ",
+          //     style: getTextStyle(this.chartColors.deaColor),
+          //   ),
+        ];
+        break;
+      case IndicatorType.KDJ:
+        children = [
+          // TextSpan(
+          //   text: "KDJ(9,1,3)    ",
+          //   style: getTextStyle(this.chartColors.defaultTextColor),
+          // ),
+          // if (data.macd != 0)
+          //   TextSpan(
+          //     text: "K:${format(data.k)}    ",
+          //     style: getTextStyle(this.chartColors.kColor),
+          //   ),
+          // if (data.dif != 0)
+          //   TextSpan(
+          //     text: "D:${format(data.d)}    ",
+          //     style: getTextStyle(this.chartColors.dColor),
+          //   ),
+          // if (data.dea != 0)
+          //   TextSpan(
+          //     text: "J:${format(data.j)}    ",
+          //     style: getTextStyle(this.chartColors.jColor),
+          //   ),
+        ];
+        break;
+      case IndicatorType.RSI:
+        children = [
+          TextSpan(
+            text: "RSI(${indicator.period})",
+            style: getTextStyle(colorFromHex(this.indicator.color!)!),
+          ),
+        ];
+        break;
+      case IndicatorType.WR:
+        children = [
+          // TextSpan(
+          //   text: "WR(14):${format(data.r)}    ",
+          //   style: getTextStyle(this.chartColors.rsiColor),
+          // ),
+        ];
+        break;
+      case IndicatorType.CCI:
+        children = [
+          // TextSpan(
+          //   text: "CCI(14):${format(data.cci)}    ",
+          //   style: getTextStyle(this.chartColors.rsiColor),
+          // ),
+        ];
+        break;
+      default:
+        break;
+    }
+    TextPainter tp = TextPainter(
+      text: TextSpan(children: children ?? []),
+      textDirection: TextDirection.ltr,
+    );
+    tp.layout();
+    tp.paint(canvas, Offset(x, chartRect.top - topPadding));
   }
 
   void drawMACD(
@@ -302,36 +293,66 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     double lastX,
   ) {
     if (lastPoint.macdValues == null) return;
-    for (int i = 0; i < (curPoint.macdValues?.length ?? 0); i++) {
-      final macd = curPoint.macdValues?[i].value ?? 0;
-      double macdY = getY(macd);
-      double r = mMACDWidth / 2;
-      double zeroy = getY(0);
+    // for (int i = 0; i < (curPoint.macdValues?.length ?? 0); i++) {
+    final macd = curPoint.macdValues?[index].value ?? 0;
+    double macdY = getY(macd);
+    double r = mMACDWidth / 2;
+    double zeroy = getY(0);
+    if (macd > 0) {
+      canvas.drawRect(
+        Rect.fromLTRB(curX - r, macdY, curX + r, zeroy),
+        chartPaint..color = this.chartColors.upColor,
+      );
+    } else {
+      canvas.drawRect(
+        Rect.fromLTRB(curX - r, zeroy, curX + r, macdY),
+        chartPaint..color = this.chartColors.dnColor,
+      );
+    }
 
-      if (macd > 0) {
-        canvas.drawRect(
-          Rect.fromLTRB(curX - r, macdY, curX + r, zeroy),
-          chartPaint..color = this.chartColors.upColor,
-        );
-      } else {
-        canvas.drawRect(
-          Rect.fromLTRB(curX - r, zeroy, curX + r, macdY),
-          chartPaint..color = this.chartColors.dnColor,
-        );
-      }
+    // for (int i = 0; i < (curPoint.macdSignalValues?.length ?? 0); i++) {
+    if (lastPoint.macdSignalValues?[index].value != 0) {
+      drawLine(
+        lastPoint.macdSignalValues?[index].value,
+        curPoint.macdSignalValues?[index].value,
+        canvas,
+        lastX,
+        curX,
+        colorFromHex(curPoint.macdValues![index].color!)!,
+      );
     }
-    for (int i = 0; i < (curPoint.macdSignalValues?.length ?? 0); i++) {
-      if (lastPoint.macdSignalValues?[i].value != 0) {
-        drawLine(
-          lastPoint.macdSignalValues?[i].value,
-          curPoint.macdSignalValues?[i].value,
-          canvas,
-          lastX,
-          curX,
-          colorFromHex(curPoint.macdValues![i].color!)!,
-        );
-      }
+    // }
+    // }
+  }
+
+  void _setMACDLevels(canvas, TextStyle textStyle, double space) {
+    TextPainter tp = TextPainter(
+      text: TextSpan(
+        text: "${format(0)}",
+        style: textStyle.copyWith(color: Colors.black),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    tp.layout();
+    final dy = getY(0);
+    if (!minValue.toString().contains('e-')) {
+      tp.paint(
+        canvas,
+        Offset(
+          chartRect.rWidth + space,
+          dy - (tp.height / 2),
+        ),
+      );
     }
+    drawHDashLine(
+      0,
+      0,
+      canvas,
+      0,
+      chartRect.rWidth,
+      Colors.black,
+      strokeWidth: 0.4,
+    );
   }
 
   void drawRSI(
@@ -342,46 +363,47 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     double lastX,
   ) {
     if (curPoint.rsiValues == null) return;
-    drawHorizontalDashLine(
-      100,
-      100,
-      canvas,
-      lastX,
-      curX,
-      colorFromHex(curPoint.rsiValues![0].levelsColor!)!,
-      strokeWidth: 1.0,
-    );
-    drawHorizontalDashLine(
-      0,
-      0,
-      canvas,
-      lastX,
-      curX,
-      colorFromHex(curPoint.rsiValues![0].levelsColor!)!,
-      strokeWidth: 1.0,
-    );
-    for (var level in curPoint.rsiValues![0].levels) {
-      drawHorizontalDashLine(
-        level.toDouble(),
-        level.toDouble(),
+    // for (int i = 0; i < (curPoint.rsiValues?.length ?? 0); i++) {
+    if (lastPoint.rsiValues?[index].value != 0) {
+      drawLine(
+        lastPoint.rsiValues?[index].value,
+        curPoint.rsiValues?[index].value,
         canvas,
         lastX,
         curX,
-        colorFromHex(curPoint.rsiValues![0].levelsColor!)!,
-        strokeWidth: 1.0,
+        colorFromHex(curPoint.rsiValues![index].color!)!,
       );
     }
-    for (int i = 0; i < (curPoint.rsiValues?.length ?? 0); i++) {
-      if (lastPoint.rsiValues?[i].value != 0) {
-        drawLine(
-          lastPoint.rsiValues?[i].value,
-          curPoint.rsiValues?[i].value,
-          canvas,
-          lastX,
-          curX,
-          colorFromHex(curPoint.rsiValues![i].color!)!,
-        );
-      }
+    // }
+  }
+
+  void _setRSILevels(canvas, TextStyle textStyle, double space) {
+    for (var item in indicator.levels) {
+      TextPainter tp = TextPainter(
+        text: TextSpan(
+          text: "${format(item.toDouble())}",
+          style: textStyle.copyWith(color: Colors.black),
+        ),
+        textDirection: TextDirection.ltr,
+      );
+      tp.layout();
+      final dy = getY(item.toDouble());
+      tp.paint(
+        canvas,
+        Offset(
+          chartRect.rWidth + space,
+          dy - (tp.height / 2),
+        ),
+      );
+      drawHDashLine(
+        item.toDouble(),
+        item.toDouble(),
+        canvas,
+        0,
+        chartRect.rWidth,
+        Colors.black,
+        strokeWidth: 0.4,
+      );
     }
   }
 }

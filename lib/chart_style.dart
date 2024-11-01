@@ -248,7 +248,7 @@ class ChartStyle {
   int gridRows = 18;
   int gridColumns = 4;
 
-  double sizeText = 10.0;
+  double sizeText = 9.0;
   double iconSize = 21.0;
 
   bool isFocusCloseText = true;

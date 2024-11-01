@@ -36,6 +36,8 @@ double getTrendLineX() {
   return trendLineX ?? 0;
 }
 
+int lastLength = 0;
+
 class ChartPainter extends BaseChartPainter
     with ChartDetails, DrawObjectLines, ChartCalc {
   final List<TrendLine> lines; //For TrendLine
@@ -137,11 +139,16 @@ class ChartPainter extends BaseChartPainter
   }
 
   @override
-  void initChartRenderer() {
+  void initChartRenderer(double height) {
     if (data != null && data!.isNotEmpty) {
       var t = data![0];
       fixedLength =
           NumberUtil.getMaxDecimalLength(t.open, t.close, t.high, t.low);
+    }
+    if (mSecondaryRectList.isNotEmpty) {
+      this.chartStyle.gridRows = 24 ~/ mSecondaryRectList.length;
+    } else {
+      this.chartStyle.gridRows = 18;
     }
     mMainRenderer = MainRenderer(
       mMainRect,
@@ -177,6 +184,7 @@ class ChartPainter extends BaseChartPainter
           mSecondaryRectList[i].mMaxValue,
           mSecondaryRectList[i].mMinValue,
           mChildPadding,
+          i,
           secondaryIndicators[i],
           fixedLength,
           chartStyle,

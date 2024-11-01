@@ -30,6 +30,13 @@ class BaseDimension {
   // getter the total height
   double get mDisplayHeight => _mDisplayHeight;
 
+  set mDisplayHeight(double value) => _mDisplayHeight = value;
+
+  // getter the total height
+  double get mBaseHeight => _mBaseHeight;
+
+  set mBaseHeight(double value) => mBaseHeight = value;
+
   /// constructor
   ///
   /// BaseDimension
@@ -44,7 +51,7 @@ class BaseDimension {
     _mVolumeHeight = volHidden != true ? _mBaseHeight * 0.2 : 0;
     _mSecondaryHeight =
         _setSecondaryHeight(indicators, mBaseHeight * 0.7) + _mVolumeHeight;
-    _mDisplayHeight = _mBaseHeight+mBaseHeight * 0.25;
+    _mDisplayHeight = _mBaseHeight + mBaseHeight * 0.25;
   }
 
   double _setSecondaryHeight(
@@ -60,9 +67,9 @@ class BaseDimension {
 
   double getSecondaryHeight(IndicatorEntity item) {
     if (item.type == IndicatorType.MACD) {
-      return _mBaseHeight * 0.272;
+      return _mBaseHeight * 0.2;
     } else if (item.type == IndicatorType.RSI) {
-      return _mBaseHeight * 0.3;
+      return _mBaseHeight * 0.25;
     }
     return 0.0;
   }

@@ -96,7 +96,7 @@ class _RSIPropertiesScreenState extends State<RSIPropertiesScreen> {
                         chartProperties.addSecondaryIndicator(widget.indicator!);
                         widget.onDone();
                       } else {
-                        chartProperties.updateIndicator(
+                        chartProperties.updateSecondaryIndicator(
                           widget.index!,
                           widget.indicator!,
                         );

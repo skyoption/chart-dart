@@ -91,7 +91,7 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
                       if (widget.index == null) {
                         chartProperties.addSecondaryIndicator(widget.indicator!);
                       } else {
-                        chartProperties.updateIndicator(
+                        chartProperties.updateSecondaryIndicator(
                           widget.index!,
                           widget.indicator!,
                         );

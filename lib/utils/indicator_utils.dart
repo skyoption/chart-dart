@@ -686,7 +686,8 @@ class IndicatorUtils {
     List<KLineEntity> dataList,
     List<IndicatorEntity> indicators,
   ) {
-    for (final indicator in indicators) {
+    for (int k = 0; k < indicators.length; k++) {
+      final indicator = indicators[k];
       final int period = indicator.period;
       double gainSum = 0.0;
       double lossSum = 0.0;
@@ -694,30 +695,42 @@ class IndicatorUtils {
       for (int i = 1; i < dataList.length; i++) {
         double change = _currentPriceValue(indicator, dataList[i]) -
             _currentPriceValue(indicator, dataList[i - 1]);
+
+        dataList[i].rsiValues ??= List<CandleIndicatorEntity>.filled(
+            indicators.length, indicator.copyToCandle(value: 0));
+
+        dataList[i].rsiValues = _addNewIndicator(
+          dataList[i].rsiValues,
+          indicator,
+          k,
+        );
+
         if (i < period) {
           gainSum += max(0, change);
           lossSum += max(0, -change);
         } else if (i == period) {
           gainSum /= period;
           lossSum /= period;
-          dataList[i].rsiValues = _calculateRSI(gainSum, lossSum, indicator);
+          dataList[i].rsiValues![k] =
+              _calculateRSI(gainSum, lossSum, indicator);
         } else {
           gainSum = (gainSum * (period - 1) + max(0, change)) / period;
           lossSum = (lossSum * (period - 1) + max(0, -change)) / period;
-          dataList[i].rsiValues = _calculateRSI(gainSum, lossSum, indicator);
+          dataList[i].rsiValues![k] =
+              _calculateRSI(gainSum, lossSum, indicator);
         }
       }
     }
   }
 
-  static List<CandleIndicatorEntity> _calculateRSI(
+  static CandleIndicatorEntity _calculateRSI(
     double avgGain,
     double avgLoss,
     IndicatorEntity indicator,
   ) {
     double rs = avgLoss == 0 ? 100 : avgGain / avgLoss;
     double rsi = 100 - (100 / (1 + rs));
-    return [indicator.copyToCandle(value: rsi)];
+    return indicator.copyToCandle(value: rsi);
   }
 
   /// MACD calculation
@@ -725,7 +738,10 @@ class IndicatorUtils {
     List<KLineEntity> dataList,
     List<IndicatorEntity> indicators,
   ) {
-    for (final indicator in indicators) {
+    double low = double.minPositive;
+    double high = 0;
+    for (int k = 0; k < indicators.length; k++) {
+      final indicator = indicators[k];
       final int shortPeriod = indicator.macd?.fastEma ?? 12;
       final int longPeriod = indicator.macd?.slowEma ?? 26;
       final int signalPeriod = indicator.macd?.macdSma ?? 9;
@@ -737,11 +753,29 @@ class IndicatorUtils {
       double? longEMA;
 
       for (int i = 0; i < dataList.length; i++) {
+
         if (i < longPeriod - 1) {
           macdLine.add(0);
           signalLine.add(0);
           continue;
         }
+
+        dataList[i].macdValues ??= List<CandleIndicatorEntity>.filled(
+            indicators.length, indicator.copyToCandle(value: 0));
+
+        dataList[i].macdSignalValues ??= List<CandleIndicatorEntity>.filled(
+            indicators.length, indicator.copyToCandle(value: 0));
+
+        dataList[i].macdValues = _addNewIndicator(
+          dataList[i].macdValues,
+          indicator,
+          k,
+        );
+        dataList[i].macdSignalValues = _addNewIndicator(
+          dataList[i].macdSignalValues,
+          indicator,
+          k,
+        );
 
         shortEMA = _calculateEMA(
             dataList.map((e) => _currentPriceValue(indicator, e)).toList(),
@@ -756,6 +790,12 @@ class IndicatorUtils {
 
         double macdValue = (shortEMA - longEMA);
         macdLine.add(macdValue);
+        if (macdValue < low) {
+          low = macdValue;
+        }
+        if (macdValue > high) {
+          high = macdValue;
+        }
         if (i >= longPeriod + signalPeriod - 2) {
           double signalValue = signalLine.length < signalPeriod
               ? macdLine
@@ -763,18 +803,21 @@ class IndicatorUtils {
                       .reduce((a, b) => a + b) /
                   signalPeriod
               : _calculateEMA(macdLine, i, signalPeriod, signalLine.last);
+
           signalLine.add(signalValue);
 
-          dataList[i].macdValues = [
-            indicator.copyToCandle(
-              value: macdValue,
-              shortEMA: shortEMA,
-              longEMA: longEMA,
-            )
-          ];
-          dataList[i].macdSignalValues = [
-            indicator.copyToCandle(value: signalValue)
-          ];
+          dataList[i].macdValues![k] = indicator.copyToCandle(
+            value: macdValue,
+            shortEMA: shortEMA,
+            longEMA: longEMA,
+            up: high,
+            dn: low,
+          );
+          dataList[i].macdSignalValues![k] = indicator.copyToCandle(
+            value: signalValue,
+            up: high,
+            dn: low,
+          );
         } else {
           signalLine.add(0);
         }

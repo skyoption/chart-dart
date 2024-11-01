@@ -82,4 +82,11 @@ mixin Indicators {
       await db.indicatorEntitys.put(value);
     });
   }
+
+  void updateSecondaryIndicator(int index, IndicatorEntity value) {
+    secondaryIndicators[index] = value;
+    KChart.write(query: (db) async {
+      await db.indicatorEntitys.put(value);
+    });
+  }
 }
