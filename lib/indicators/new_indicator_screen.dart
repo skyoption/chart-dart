@@ -9,10 +9,12 @@ import 'package:flutter/material.dart';
 
 class NewIndicatorScreen extends StatefulWidget {
   final Function onDone;
+  final int? windowId;
 
   const NewIndicatorScreen({
     super.key,
     required this.onDone,
+    this.windowId,
   });
 
   @override
@@ -80,9 +82,10 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => IndicatorPropertiesScreen(
-                      onDone: widget.onDone,
                       name: 'Moving Average',
                       haveMethods: true,
+                      onDone: widget.onDone,
+                      windowId: widget.windowId,
                     ),
                   ),
                 );
@@ -97,11 +100,12 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => IndicatorPropertiesScreen(
-                      onDone: widget.onDone,
                       name: 'Bollinger Bands',
                       haveDeviations: true,
                       haveMethods: false,
+                      onDone: widget.onDone,
                       type: IndicatorType.BOLL,
+                      windowId: widget.windowId,
                     ),
                   ),
                 );
@@ -116,13 +120,14 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => IndicatorPropertiesScreen(
-                      onDone: widget.onDone,
                       name: 'Envelops',
                       haveDeviations: true,
                       haveMethods: true,
                       haveTwoBands: true,
                       isENVELOPS: true,
+                      onDone: widget.onDone,
                       type: IndicatorType.SMA_ENVELOPS,
+                      windowId: widget.windowId,
                     ),
                   ),
                 );
@@ -137,8 +142,9 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => ParabolicPropertiesScreen(
-                      onDone: widget.onDone,
                       name: 'Parabolic SAR',
+                      onDone: widget.onDone,
+                      windowId: widget.windowId,
                     ),
                   ),
                 );
@@ -153,8 +159,9 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => IchimokuPropertiesScreen(
-                      onDone: widget.onDone,
                       name: 'Ichimoku Kinko Hyo',
+                      onDone: widget.onDone,
+                      windowId: widget.windowId,
                     ),
                   ),
                 );
@@ -182,8 +189,9 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => RSIPropertiesScreen(
-                      onDone: widget.onDone,
                       name: 'RSI',
+                      onDone: widget.onDone,
+                      windowId: widget.windowId,
                     ),
                   ),
                 );
@@ -198,8 +206,9 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => MACDPropertiesScreen(
-                      onDone: widget.onDone,
                       name: 'MACD',
+                      onDone: widget.onDone,
+                      windowId: widget.windowId,
                     ),
                   ),
                 );

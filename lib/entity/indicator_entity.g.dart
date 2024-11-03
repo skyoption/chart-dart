@@ -85,89 +85,104 @@ const IndicatorEntitySchema = CollectionSchema(
       name: r'levelsColor',
       type: IsarType.string,
     ),
-    r'macd': PropertySchema(
+    r'longEMA': PropertySchema(
       id: 13,
+      name: r'longEMA',
+      type: IsarType.double,
+    ),
+    r'macd': PropertySchema(
+      id: 14,
       name: r'macd',
       type: IsarType.object,
       target: r'MACD',
     ),
     r'maximum': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'maximum',
       type: IsarType.double,
     ),
     r'name': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'name',
       type: IsarType.string,
     ),
     r'period': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'period',
       type: IsarType.long,
     ),
     r'secondColor': PropertySchema(
-      id: 17,
+      id: 18,
       name: r'secondColor',
       type: IsarType.string,
     ),
     r'senkouSpanA': PropertySchema(
-      id: 18,
+      id: 19,
       name: r'senkouSpanA',
       type: IsarType.double,
     ),
     r'senkouSpanB': PropertySchema(
-      id: 19,
+      id: 20,
       name: r'senkouSpanB',
       type: IsarType.double,
     ),
     r'shift': PropertySchema(
-      id: 20,
+      id: 21,
       name: r'shift',
       type: IsarType.long,
     ),
+    r'shortEMA': PropertySchema(
+      id: 22,
+      name: r'shortEMA',
+      type: IsarType.double,
+    ),
     r'steps': PropertySchema(
-      id: 21,
+      id: 23,
       name: r'steps',
       type: IsarType.double,
     ),
     r'strokeWidth': PropertySchema(
-      id: 22,
+      id: 24,
       name: r'strokeWidth',
       type: IsarType.double,
     ),
     r'style': PropertySchema(
-      id: 23,
+      id: 25,
       name: r'style',
       type: IsarType.byte,
       enumMap: _IndicatorEntitystyleEnumValueMap,
     ),
     r'tenkanSen': PropertySchema(
-      id: 24,
+      id: 26,
       name: r'tenkanSen',
       type: IsarType.double,
     ),
     r'timeframe': PropertySchema(
-      id: 25,
+      id: 27,
       name: r'timeframe',
       type: IsarType.byte,
       enumMap: _IndicatorEntitytimeframeEnumValueMap,
     ),
     r'type': PropertySchema(
-      id: 26,
+      id: 28,
       name: r'type',
       type: IsarType.byte,
       enumMap: _IndicatorEntitytypeEnumValueMap,
     ),
     r'up': PropertySchema(
-      id: 27,
+      id: 29,
       name: r'up',
       type: IsarType.double,
     ),
     r'value': PropertySchema(
-      id: 28,
+      id: 30,
       name: r'value',
       type: IsarType.double,
+    ),
+    r'windowId': PropertySchema(
+      id: 31,
+      name: r'windowId',
+      type: IsarType.long,
     )
   },
   estimateSize: _indicatorEntityEstimateSize,
@@ -251,27 +266,30 @@ void _indicatorEntitySerialize(
   writer.writeByte(offsets[10], object.level.index);
   writer.writeLongList(offsets[11], object.levels);
   writer.writeString(offsets[12], object.levelsColor);
+  writer.writeDouble(offsets[13], object.longEMA);
   writer.writeObject<MACD>(
-    offsets[13],
+    offsets[14],
     allOffsets,
     MACDSchema.serialize,
     object.macd,
   );
-  writer.writeDouble(offsets[14], object.maximum);
-  writer.writeString(offsets[15], object.name);
-  writer.writeLong(offsets[16], object.period);
-  writer.writeString(offsets[17], object.secondColor);
-  writer.writeDouble(offsets[18], object.senkouSpanA);
-  writer.writeDouble(offsets[19], object.senkouSpanB);
-  writer.writeLong(offsets[20], object.shift);
-  writer.writeDouble(offsets[21], object.steps);
-  writer.writeDouble(offsets[22], object.strokeWidth);
-  writer.writeByte(offsets[23], object.style.index);
-  writer.writeDouble(offsets[24], object.tenkanSen);
-  writer.writeByte(offsets[25], object.timeframe.index);
-  writer.writeByte(offsets[26], object.type.index);
-  writer.writeDouble(offsets[27], object.up);
-  writer.writeDouble(offsets[28], object.value);
+  writer.writeDouble(offsets[15], object.maximum);
+  writer.writeString(offsets[16], object.name);
+  writer.writeLong(offsets[17], object.period);
+  writer.writeString(offsets[18], object.secondColor);
+  writer.writeDouble(offsets[19], object.senkouSpanA);
+  writer.writeDouble(offsets[20], object.senkouSpanB);
+  writer.writeLong(offsets[21], object.shift);
+  writer.writeDouble(offsets[22], object.shortEMA);
+  writer.writeDouble(offsets[23], object.steps);
+  writer.writeDouble(offsets[24], object.strokeWidth);
+  writer.writeByte(offsets[25], object.style.index);
+  writer.writeDouble(offsets[26], object.tenkanSen);
+  writer.writeByte(offsets[27], object.timeframe.index);
+  writer.writeByte(offsets[28], object.type.index);
+  writer.writeDouble(offsets[29], object.up);
+  writer.writeDouble(offsets[30], object.value);
+  writer.writeLong(offsets[31], object.windowId);
 }
 
 IndicatorEntity _indicatorEntityDeserialize(
@@ -302,32 +320,35 @@ IndicatorEntity _indicatorEntityDeserialize(
             Levels.None,
     levels: reader.readLongList(offsets[11]) ?? const [],
     levelsColor: reader.readStringOrNull(offsets[12]),
+    longEMA: reader.readDoubleOrNull(offsets[13]),
     macd: reader.readObjectOrNull<MACD>(
-      offsets[13],
+      offsets[14],
       MACDSchema.deserialize,
       allOffsets,
     ),
-    maximum: reader.readDoubleOrNull(offsets[14]),
-    name: reader.readStringOrNull(offsets[15]) ?? '',
-    period: reader.readLongOrNull(offsets[16]) ?? 5,
-    secondColor: reader.readStringOrNull(offsets[17]),
-    senkouSpanA: reader.readDoubleOrNull(offsets[18]),
-    senkouSpanB: reader.readDoubleOrNull(offsets[19]),
-    shift: reader.readLongOrNull(offsets[20]) ?? 0,
-    steps: reader.readDoubleOrNull(offsets[21]),
-    strokeWidth: reader.readDoubleOrNull(offsets[22]) ?? 1.0,
+    maximum: reader.readDoubleOrNull(offsets[15]),
+    name: reader.readStringOrNull(offsets[16]) ?? '',
+    period: reader.readLongOrNull(offsets[17]) ?? 5,
+    secondColor: reader.readStringOrNull(offsets[18]),
+    senkouSpanA: reader.readDoubleOrNull(offsets[19]),
+    senkouSpanB: reader.readDoubleOrNull(offsets[20]),
+    shift: reader.readLongOrNull(offsets[21]) ?? 0,
+    shortEMA: reader.readDoubleOrNull(offsets[22]),
+    steps: reader.readDoubleOrNull(offsets[23]),
+    strokeWidth: reader.readDoubleOrNull(offsets[24]) ?? 1.0,
     style:
-        _IndicatorEntitystyleValueEnumMap[reader.readByteOrNull(offsets[23])] ??
+        _IndicatorEntitystyleValueEnumMap[reader.readByteOrNull(offsets[25])] ??
             LineStyle.normal,
-    tenkanSen: reader.readDoubleOrNull(offsets[24]),
+    tenkanSen: reader.readDoubleOrNull(offsets[26]),
     timeframe: _IndicatorEntitytimeframeValueEnumMap[
-            reader.readByteOrNull(offsets[25])] ??
+            reader.readByteOrNull(offsets[27])] ??
         Timeframes.All_Timeframes,
     type:
-        _IndicatorEntitytypeValueEnumMap[reader.readByteOrNull(offsets[26])] ??
+        _IndicatorEntitytypeValueEnumMap[reader.readByteOrNull(offsets[28])] ??
             IndicatorType.SMA_MA,
-    up: reader.readDoubleOrNull(offsets[27]),
-    value: reader.readDoubleOrNull(offsets[28]) ?? 0,
+    up: reader.readDoubleOrNull(offsets[29]),
+    value: reader.readDoubleOrNull(offsets[30]) ?? 0,
+    windowId: reader.readLongOrNull(offsets[31]) ?? 0,
   );
   object.id = id;
   return object;
@@ -375,46 +396,52 @@ P _indicatorEntityDeserializeProp<P>(
     case 12:
       return (reader.readStringOrNull(offset)) as P;
     case 13:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 14:
       return (reader.readObjectOrNull<MACD>(
         offset,
         MACDSchema.deserialize,
         allOffsets,
       )) as P;
-    case 14:
-      return (reader.readDoubleOrNull(offset)) as P;
     case 15:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 16:
-      return (reader.readLongOrNull(offset) ?? 5) as P;
-    case 17:
-      return (reader.readStringOrNull(offset)) as P;
-    case 18:
       return (reader.readDoubleOrNull(offset)) as P;
+    case 16:
+      return (reader.readStringOrNull(offset) ?? '') as P;
+    case 17:
+      return (reader.readLongOrNull(offset) ?? 5) as P;
+    case 18:
+      return (reader.readStringOrNull(offset)) as P;
     case 19:
       return (reader.readDoubleOrNull(offset)) as P;
     case 20:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    case 21:
       return (reader.readDoubleOrNull(offset)) as P;
+    case 21:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 22:
-      return (reader.readDoubleOrNull(offset) ?? 1.0) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 23:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 24:
+      return (reader.readDoubleOrNull(offset) ?? 1.0) as P;
+    case 25:
       return (_IndicatorEntitystyleValueEnumMap[
               reader.readByteOrNull(offset)] ??
           LineStyle.normal) as P;
-    case 24:
+    case 26:
       return (reader.readDoubleOrNull(offset)) as P;
-    case 25:
+    case 27:
       return (_IndicatorEntitytimeframeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           Timeframes.All_Timeframes) as P;
-    case 26:
+    case 28:
       return (_IndicatorEntitytypeValueEnumMap[reader.readByteOrNull(offset)] ??
           IndicatorType.SMA_MA) as P;
-    case 27:
+    case 29:
       return (reader.readDoubleOrNull(offset)) as P;
-    case 28:
+    case 30:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
+    case 31:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -1602,6 +1629,90 @@ extension IndicatorEntityQueryFilter
   }
 
   QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      longEMAIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'longEMA',
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      longEMAIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'longEMA',
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      longEMAEqualTo(
+    double? value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'longEMA',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      longEMAGreaterThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'longEMA',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      longEMALessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'longEMA',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      longEMABetween(
+    double? lower,
+    double? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'longEMA',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
       macdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -2274,6 +2385,90 @@ extension IndicatorEntityQueryFilter
   }
 
   QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      shortEMAIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'shortEMA',
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      shortEMAIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'shortEMA',
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      shortEMAEqualTo(
+    double? value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'shortEMA',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      shortEMAGreaterThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'shortEMA',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      shortEMALessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'shortEMA',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      shortEMABetween(
+    double? lower,
+    double? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'shortEMA',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
       stepsIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -2824,6 +3019,62 @@ extension IndicatorEntityQueryFilter
       ));
     });
   }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      windowIdEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'windowId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      windowIdGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'windowId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      windowIdLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'windowId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      windowIdBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'windowId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
 }
 
 extension IndicatorEntityQueryObject
@@ -2996,6 +3247,19 @@ extension IndicatorEntityQuerySortBy
     });
   }
 
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy> sortByLongEMA() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'longEMA', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      sortByLongEMADesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'longEMA', Sort.desc);
+    });
+  }
+
   QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy> sortByMaximum() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'maximum', Sort.asc);
@@ -3087,6 +3351,20 @@ extension IndicatorEntityQuerySortBy
       sortByShiftDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'shift', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      sortByShortEMA() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'shortEMA', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      sortByShortEMADesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'shortEMA', Sort.desc);
     });
   }
 
@@ -3193,6 +3471,20 @@ extension IndicatorEntityQuerySortBy
       sortByValueDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'value', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      sortByWindowId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'windowId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      sortByWindowIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'windowId', Sort.desc);
     });
   }
 }
@@ -3359,6 +3651,19 @@ extension IndicatorEntityQuerySortThenBy
     });
   }
 
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy> thenByLongEMA() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'longEMA', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      thenByLongEMADesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'longEMA', Sort.desc);
+    });
+  }
+
   QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy> thenByMaximum() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'maximum', Sort.asc);
@@ -3450,6 +3755,20 @@ extension IndicatorEntityQuerySortThenBy
       thenByShiftDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'shift', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      thenByShortEMA() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'shortEMA', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      thenByShortEMADesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'shortEMA', Sort.desc);
     });
   }
 
@@ -3558,6 +3877,20 @@ extension IndicatorEntityQuerySortThenBy
       return query.addSortBy(r'value', Sort.desc);
     });
   }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      thenByWindowId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'windowId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      thenByWindowIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'windowId', Sort.desc);
+    });
+  }
 }
 
 extension IndicatorEntityQueryWhereDistinct
@@ -3643,6 +3976,13 @@ extension IndicatorEntityQueryWhereDistinct
   }
 
   QueryBuilder<IndicatorEntity, IndicatorEntity, QDistinct>
+      distinctByLongEMA() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'longEMA');
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QDistinct>
       distinctByMaximum() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'maximum');
@@ -3686,6 +4026,13 @@ extension IndicatorEntityQueryWhereDistinct
   QueryBuilder<IndicatorEntity, IndicatorEntity, QDistinct> distinctByShift() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'shift');
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QDistinct>
+      distinctByShortEMA() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'shortEMA');
     });
   }
 
@@ -3737,6 +4084,13 @@ extension IndicatorEntityQueryWhereDistinct
   QueryBuilder<IndicatorEntity, IndicatorEntity, QDistinct> distinctByValue() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'value');
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QDistinct>
+      distinctByWindowId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'windowId');
     });
   }
 }
@@ -3832,6 +4186,12 @@ extension IndicatorEntityQueryProperty
     });
   }
 
+  QueryBuilder<IndicatorEntity, double?, QQueryOperations> longEMAProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'longEMA');
+    });
+  }
+
   QueryBuilder<IndicatorEntity, MACD?, QQueryOperations> macdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'macd');
@@ -3883,6 +4243,12 @@ extension IndicatorEntityQueryProperty
     });
   }
 
+  QueryBuilder<IndicatorEntity, double?, QQueryOperations> shortEMAProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'shortEMA');
+    });
+  }
+
   QueryBuilder<IndicatorEntity, double?, QQueryOperations> stepsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'steps');
@@ -3931,6 +4297,12 @@ extension IndicatorEntityQueryProperty
   QueryBuilder<IndicatorEntity, double, QQueryOperations> valueProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'value');
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, int, QQueryOperations> windowIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'windowId');
     });
   }
 }

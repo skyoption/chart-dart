@@ -7,6 +7,7 @@ import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/indicators/properties/indicator_properties_screen.dart';
 import 'package:candle_chart/indicators/new_indicator_screen.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
+import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/material.dart';
 
 import 'properties/ichimoku_properties_screen.dart';
@@ -125,115 +126,146 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                       PropertiesItemWidget(
                         title: name,
                         margin: EdgeInsets.zero,
-                        onTap: () => _onTap(e),
+                        onTap: () => _onTap(e.value, null),
                       ),
                     ],
                   ),
                 );
               },
             ),
-            ...chartProperties.secondaryIndicators.asMap().entries.map(
+            ...chartProperties.secondaries.entries.map(
               (e) {
-                final name = '${e.value.name} (${e.value.type.name})';
-                return Dismissible(
-                  key: Key('${e.value.id}'),
-                  onUpdate: (details) {
-                    direction = details.direction;
-                    setState(() {});
-                  },
-                  onDismissed: (value) {
-                    chartProperties.removeSecondaryIndicator(e.key);
-                    widget.onDone();
-                  },
-                  background: Container(
-                    color: Colors.red.withOpacity(0.1),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 21.0),
-                      child: Row(
-                        mainAxisAlignment:
-                            direction == DismissDirection.startToEnd
-                                ? MainAxisAlignment.start
-                                : MainAxisAlignment.end,
-                        children: [
-                          Icon(
-                            Icons.delete_outline_outlined,
-                            color: Colors.red,
-                            size: 28.0,
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    PropertiesItemWidget(
+                      title: 'Window ${e.key}',
+                      margin: EdgeInsets.zero,
+                      titleColor: Colors.blueAccent,
+                      child: Icon(
+                        Icons.add_circle_outline_rounded,
+                        color: Colors.blueAccent,
+                      ),
+                      onTap: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => NewIndicatorScreen(
+                              onDone: widget.onDone,
+                              windowId: e.key,
+                            ),
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  ),
-                  child: Column(
-                    children: [
-                      Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-                      PropertiesItemWidget(
-                        title: name,
-                        margin: EdgeInsets.zero,
-                        onTap: () => _onTap(e),
-                      ),
-                    ],
-                  ),
-                );
+                    ...e.value.asMap().entries.map((item) {
+                      final name =
+                          '${item.value.name} (${item.value.type.name})';
+                      return Dismissible(
+                        key: Key('${item.value.id}'),
+                        onUpdate: (details) {
+                          direction = details.direction;
+                          setState(() {});
+                        },
+                        onDismissed: (value) {
+                          chartProperties.removeSecondaryIndicator(item.value);
+                          widget.onDone();
+                          setState(() {});
+                        },
+                        background: Container(
+                          color: Colors.red.withOpacity(0.1),
+                          child: Padding(
+                            padding: MPadding.set(horizontal: 21.0),
+                            child: Row(
+                              mainAxisAlignment:
+                                  direction == DismissDirection.startToEnd
+                                      ? MainAxisAlignment.start
+                                      : MainAxisAlignment.end,
+                              children: [
+                                Icon(
+                                  Icons.delete_outline_outlined,
+                                  color: Colors.red,
+                                  size: 28.0,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Divider(
+                              height: 1.0,
+                              color: Colors.grey.withOpacity(0.4),
+                            ),
+                            PropertiesItemWidget(
+                              title: name,
+                              margin: EdgeInsets.zero,
+                              onTap: () => _onTap(item.value, e.key),
+                            ),
+                          ],
+                        ),
+                      );
+                    })
+                  ],
+                ).addPadding(top: 30.0);
               },
-            )
+            ),
           ],
         ),
       ),
     );
   }
 
-  void _onTap(MapEntry<int, IndicatorEntity> e) {
-    if (e.value.ichimoku != null) {
+  void _onTap(IndicatorEntity item, int? windowId) {
+    if (item.ichimoku != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => IchimokuPropertiesScreen(
-            index: e.key,
-            indicator: e.value,
+            indicator: item,
+            windowId: windowId,
             onDone: widget.onDone,
           ),
         ),
       );
-    } else if (e.value.macd != null) {
+    } else if (item.macd != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => MACDPropertiesScreen(
-            index: e.key,
-            indicator: e.value,
+            indicator: item,
+            windowId: windowId,
             onDone: widget.onDone,
           ),
         ),
       );
-    } else if (e.value.type == IndicatorType.RSI) {
+    } else if (item.type == IndicatorType.RSI) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => RSIPropertiesScreen(
-            index: e.key,
-            indicator: e.value,
+            indicator: item,
+            windowId: windowId,
             onDone: widget.onDone,
           ),
         ),
       );
-    } else if (e.value.steps != null) {
+    } else if (item.steps != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => ParabolicPropertiesScreen(
-            index: e.key,
-            indicator: e.value,
+            indicator: item,
+            windowId: windowId,
             onDone: widget.onDone,
           ),
         ),
       );
     } else {
-      final isENVELOPS = e.value.type.name.contains('ENVELOPS') ?? false;
-      final isMA = e.value.type.name.contains('MA') ?? false;
+      final isENVELOPS = item.type.name.contains('ENVELOPS') ?? false;
+      final isMA = item.type.name.contains('MA') ?? false;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => IndicatorPropertiesScreen(
-            index: e.key,
-            indicator: e.value,
+            indicator: item,
+            windowId: windowId,
             onDone: widget.onDone,
-            haveDeviations: isENVELOPS || e.value.type == IndicatorType.BOLL,
+            haveDeviations: isENVELOPS || item.type == IndicatorType.BOLL,
             haveMethods: isENVELOPS || isMA,
             haveTwoBands: isENVELOPS,
             isENVELOPS: isENVELOPS,

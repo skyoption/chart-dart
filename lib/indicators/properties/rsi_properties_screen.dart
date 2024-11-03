@@ -17,16 +17,16 @@ import 'indicator_properties_screen.dart';
 
 @immutable
 class RSIPropertiesScreen extends StatefulWidget {
-  String? name;
-  IndicatorEntity? indicator;
-  final int? index;
+  final String? name;
+  final IndicatorEntity? indicator;
+  final int? windowId;
   final Function onDone;
 
   RSIPropertiesScreen({
     super.key,
     required this.onDone,
     this.name,
-    this.index,
+    this.windowId,
     this.indicator,
   });
 
@@ -37,18 +37,22 @@ class RSIPropertiesScreen extends StatefulWidget {
 class _RSIPropertiesScreenState extends State<RSIPropertiesScreen> {
   late final periodController = TextEditingController(text: '5');
 
+  late String name = widget.name ?? widget.indicator!.name;
+  IndicatorEntity? indicator;
+
   @override
   void initState() {
     if (widget.indicator != null) {
-      widget.name = widget.indicator!.name;
-      periodController.text = widget.indicator!.period.toString();
+      indicator = widget.indicator;
+      periodController.text = indicator!.period.toString();
     } else {
-      widget.indicator = IndicatorEntity(
+      indicator = IndicatorEntity(
         period: 5,
         name: widget.name!,
         applyTo: ApplyTo.Close,
         type: IndicatorType.RSI,
         levels: [30, 70],
+        windowId: widget.windowId ?? 0,
         isSecondary: true,
       );
     }
@@ -92,17 +96,7 @@ class _RSIPropertiesScreenState extends State<RSIPropertiesScreen> {
                   alignment: AlignmentDirectional.centerEnd,
                   child: InkWell(
                     onTap: () {
-                      if (widget.index == null) {
-                        chartProperties.addSecondaryIndicator(widget.indicator!);
-                        widget.onDone();
-                      } else {
-                        chartProperties.updateSecondaryIndicator(
-                          widget.index!,
-                          widget.indicator!,
-                        );
-                        widget.onDone();
-                      }
-                      Navigator.of(context).pop();
+                      _onDone();
                     },
                     child: Text(
                       'Done',
@@ -124,7 +118,7 @@ class _RSIPropertiesScreenState extends State<RSIPropertiesScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PropertiesTitleWidget(
-              title: '${widget.indicator?.name.toUpperCase()}',
+              title: '${name.toUpperCase()}',
             ),
             PropertiesItemWidget(
               title: 'Period',
@@ -140,7 +134,7 @@ class _RSIPropertiesScreenState extends State<RSIPropertiesScreen> {
                       ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
-                    if (res != null) widget.indicator?.period = res;
+                    if (res != null) indicator!.period = res;
                   },
                   autofocus: false,
                   controller: periodController,
@@ -170,9 +164,9 @@ class _RSIPropertiesScreenState extends State<RSIPropertiesScreen> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => ApplyToScreen(
-                      apply: widget.indicator?.applyTo,
+                      apply: indicator!.applyTo,
                       onApply: (apply) {
-                        widget.indicator?.applyTo = apply;
+                        indicator!.applyTo = apply;
                         setState(() {});
                       },
                     ),
@@ -185,20 +179,20 @@ class _RSIPropertiesScreenState extends State<RSIPropertiesScreen> {
               title: 'Levels',
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
-              subTitle: widget.indicator?.levels.join(', '),
+              subTitle: indicator!.levels.join(', '),
               onTap: () {
                 kPrint(widget.indicator?.levelsColor);
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => IndicatorLevelsScreen(
-                      color: widget.indicator?.levelsColor ?? '',
+                      color: indicator!.levelsColor ?? '',
                       setLevels: (color, levels) {
-                        widget.indicator?.levels = levels;
-                        widget.indicator?.levelsColor = color;
+                        indicator!.levels = levels;
+                        indicator!.levelsColor = color;
                         setState(() {});
                         kPrint(widget.indicator?.levelsColor);
                       },
-                      levels: widget.indicator?.levels,
+                      levels: indicator!.levels,
                     ),
                   ),
                 );
@@ -222,9 +216,9 @@ class _RSIPropertiesScreenState extends State<RSIPropertiesScreen> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => IndicatorPixelsScreen(
-                      pixel: widget.indicator?.strokeWidth,
+                      pixel: indicator!.strokeWidth,
                       onConfirm: (pixel) {
-                        widget.indicator?.strokeWidth = pixel;
+                        indicator!.strokeWidth = pixel;
                         setState(() {});
                       },
                     ),
@@ -237,21 +231,31 @@ class _RSIPropertiesScreenState extends State<RSIPropertiesScreen> {
               title: 'Style ',
               color: colorFromHex(widget.indicator?.color ?? ''),
               onChange: (color, drawAsBackground) {
-                widget.indicator?.color = color.toHexString();
+                indicator!.color = color.toHexString();
               },
               // hideStyle: true,
-              // strokeWidth: widget.indicator?.strokeWidth,
-              // style: widget.indicator?.style,
+              // strokeWidth:indicator!.strokeWidth,
+              // style:indicator!.style,
               // onChange: (color, drawAsBackground, strokeWidth, style) {
-              //   widget.indicator?.style = style;
-              //   widget.indicator?.strokeWidth = strokeWidth;
-              //   widget.indicator?.color = color;
+              //  indicator!.style = style;
+              //  indicator!.strokeWidth = strokeWidth;
+              //  indicator!.color = color;
               // },
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _onDone() {
+    if (widget.indicator == null) {
+      chartProperties.addSecondaryIndicator(indicator!, widget.windowId);
+    } else {
+      chartProperties.updateSecondaryIndicator(indicator!);
+    }
+    widget.onDone();
+    Navigator.of(context).pop();
   }
 
   @override

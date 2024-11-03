@@ -12,16 +12,16 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 @immutable
 class ParabolicPropertiesScreen extends StatefulWidget {
-  String? name;
-  IndicatorEntity? indicator;
-  final int? index;
+  final String? name;
+  final IndicatorEntity? indicator;
   final Function onDone;
+  final int? windowId;
 
   ParabolicPropertiesScreen({
     super.key,
     required this.onDone,
     this.name,
-    this.index,
+    this.windowId,
     this.indicator,
   });
 
@@ -34,18 +34,23 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
   late final stepsController = TextEditingController(text: '0.006');
   late final maximumController = TextEditingController(text: '0.006');
 
+  late String name = widget.name ?? widget.indicator!.name;
+  IndicatorEntity? indicator;
+
   @override
   void initState() {
     if (widget.indicator != null) {
-      widget.name = widget.indicator!.name;
-      stepsController.text = widget.indicator!.steps.toString();
-      maximumController.text = widget.indicator!.maximum.toString();
+      indicator = widget.indicator;
+      stepsController.text = indicator!.steps.toString();
+      maximumController.text = indicator!.maximum.toString();
     } else {
-      widget.indicator = IndicatorEntity(
+      indicator = IndicatorEntity(
         maximum: 0.006,
         steps: 0.006,
         name: widget.name!,
         type: IndicatorType.PARABOLIC,
+        windowId: widget.windowId ?? 0,
+        isSecondary: (widget.windowId ?? 0) != 0,
       );
     }
     super.initState();
@@ -88,17 +93,7 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
                   alignment: AlignmentDirectional.centerEnd,
                   child: InkWell(
                     onTap: () {
-                      if (widget.index == null) {
-                        chartProperties.addIndicator(widget.indicator!);
-                        widget.onDone();
-                      } else {
-                        chartProperties.updateIndicator(
-                          widget.index!,
-                          widget.indicator!,
-                        );
-                        widget.onDone();
-                      }
-                      Navigator.of(context).pop();
+                      _onDone();
                     },
                     child: Text(
                       'Done',
@@ -120,7 +115,7 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PropertiesTitleWidget(
-              title: '${widget.indicator?.name.toUpperCase()}',
+              title: '${name.toUpperCase()}',
             ),
             PropertiesItemWidget(
               title: 'Steps',
@@ -136,7 +131,7 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
                       ),
                   onChanged: (value) {
                     final res = double.tryParse(value);
-                    if (res != null) widget.indicator?.steps = res;
+                    if (res != null) indicator?.steps = res;
                   },
                   autofocus: false,
                   controller: stepsController,
@@ -171,7 +166,7 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
                       ),
                   onChanged: (value) {
                     final res = double.tryParse(value);
-                    if (res != null) widget.indicator?.maximum = res;
+                    if (res != null) indicator?.maximum = res;
                   },
                   controller: maximumController,
                   textAlignVertical: TextAlignVertical.center,
@@ -191,12 +186,12 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
             PropertiesTitleWidget(title: 'style'),
             IndicatorColorWidget(
               title: 'Style :',
-              color: colorFromHex(widget.indicator!.color!),
+              color: colorFromHex(indicator!.color!),
               hideDrawAsBackground: false,
-              drawAsBackground: widget.indicator!.drawAsBackground,
+              drawAsBackground: indicator!.drawAsBackground,
               onChange: (color, drawAsBackground) {
-                widget.indicator?.color = color.toHexString();
-                widget.indicator?.drawAsBackground = drawAsBackground;
+                indicator?.color = color.toHexString();
+                indicator?.drawAsBackground = drawAsBackground;
               },
             ),
           ],
@@ -210,5 +205,23 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
     stepsController.dispose();
     maximumController.dispose();
     super.dispose();
+  }
+
+  void _onDone() {
+    if (indicator!.isSecondary) {
+      if (widget.indicator == null) {
+        chartProperties.addSecondaryIndicator(indicator!, widget.windowId);
+      } else {
+        chartProperties.updateSecondaryIndicator(indicator!);
+      }
+    } else {
+      if (widget.indicator == null) {
+        chartProperties.addIndicator(indicator!);
+      } else {
+        chartProperties.updateIndicator(indicator!);
+      }
+    }
+    widget.onDone();
+    Navigator.of(context).pop();
   }
 }

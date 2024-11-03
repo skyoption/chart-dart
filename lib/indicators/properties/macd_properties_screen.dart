@@ -9,18 +9,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-@immutable
 class MACDPropertiesScreen extends StatefulWidget {
-  String? name;
-  IndicatorEntity? indicator;
-  final int? index;
+  final String? name;
+  final IndicatorEntity? indicator;
+  final int? windowId;
   final Function onDone;
 
   MACDPropertiesScreen({
     super.key,
     required this.onDone,
     this.name,
-    this.index,
+    this.windowId,
     this.indicator,
   });
 
@@ -33,18 +32,22 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
   late final slowEMAController = TextEditingController(text: '26');
   late final MACDSMAController = TextEditingController(text: '9');
 
+  late String name = widget.name ?? widget.indicator!.name;
+  IndicatorEntity? indicator;
+
   @override
   void initState() {
     if (widget.indicator != null) {
-      widget.name = widget.indicator!.name;
-      FastEMAController.text = widget.indicator!.macd!.fastEma.toString();
-      slowEMAController.text = widget.indicator!.macd!.slowEma.toString();
-      MACDSMAController.text = widget.indicator!.macd!.macdSma.toString();
+      indicator = widget.indicator;
+      FastEMAController.text = indicator!.macd!.fastEma.toString();
+      slowEMAController.text = indicator!.macd!.slowEma.toString();
+      MACDSMAController.text = indicator!.macd!.macdSma.toString();
     } else {
-      widget.indicator = IndicatorEntity(
+      indicator = IndicatorEntity(
         name: widget.name!,
         macd: MACD(),
         type: IndicatorType.MACD,
+        windowId: widget.windowId ?? 0,
         isSecondary: true,
       );
     }
@@ -88,16 +91,7 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
                   alignment: AlignmentDirectional.centerEnd,
                   child: InkWell(
                     onTap: () {
-                      if (widget.index == null) {
-                        chartProperties.addSecondaryIndicator(widget.indicator!);
-                      } else {
-                        chartProperties.updateSecondaryIndicator(
-                          widget.index!,
-                          widget.indicator!,
-                        );
-                      }
-                      widget.onDone();
-                      Navigator.of(context).pop();
+                      _onDone();
                     },
                     child: Text(
                       'Done',
@@ -119,7 +113,7 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PropertiesTitleWidget(
-              title: '${widget.indicator?.name.toUpperCase()}',
+              title: '${name.toUpperCase()}',
             ),
             PropertiesItemWidget(
               title: 'Fast EMA',
@@ -135,7 +129,7 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
                       ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
-                    if (res != null) widget.indicator!.macd!.fastEma = res;
+                    if (res != null) indicator!.macd!.fastEma = res;
                   },
                   autofocus: false,
                   controller: FastEMAController,
@@ -170,7 +164,7 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
                       ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
-                    if (res != null) widget.indicator!.macd!.slowEma = res;
+                    if (res != null) indicator!.macd!.slowEma = res;
                   },
                   controller: slowEMAController,
                   textAlignVertical: TextAlignVertical.center,
@@ -204,7 +198,7 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
                       ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
-                    if (res != null) widget.indicator!.macd!.macdSma = res;
+                    if (res != null) indicator!.macd!.macdSma = res;
                   },
                   controller: MACDSMAController,
                   textAlignVertical: TextAlignVertical.center,
@@ -234,7 +228,7 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
               title: 'Main',
               color: colorFromHex(widget.indicator?.macd?.mainColor ?? ''),
               onChange: (color, drawAsBackground) {
-                widget.indicator!.macd!.mainColor = color.toHexString();
+                indicator!.macd!.mainColor = color.toHexString();
               },
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
@@ -242,13 +236,23 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
               title: 'Signal',
               color: colorFromHex(widget.indicator?.macd?.signalColor ?? ''),
               onChange: (color, drawAsBackground) {
-                widget.indicator!.macd!.signalColor = color.toHexString();
+                indicator!.macd!.signalColor = color.toHexString();
               },
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _onDone() {
+    if (widget.indicator == null) {
+      chartProperties.addSecondaryIndicator(indicator!, widget.windowId);
+    } else {
+      chartProperties.updateSecondaryIndicator(indicator!);
+    }
+    widget.onDone();
+    Navigator.of(context).pop();
   }
 
   @override

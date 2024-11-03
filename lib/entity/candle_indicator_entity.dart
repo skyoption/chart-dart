@@ -40,11 +40,13 @@ class CandleIndicatorEntity {
   double? chikouSpan;
   double? shortEMA;
   double? longEMA;
+  int windowId=0;
 
   CandleIndicatorEntity({
     this.name = '',
     this.shift = 0,
     this.period = 5,
+    this.windowId = 0,
     this.type = IndicatorType.SMA_MA,
     this.dn,
     this.up,
@@ -84,6 +86,7 @@ class CandleIndicatorEntity {
     shift,
     period,
     shortEMA,
+    windowId,
     method,
     double? value,
     applyTo,
@@ -120,6 +123,7 @@ class CandleIndicatorEntity {
       name: name ?? this.name,
       dn: dn ?? this.dn,
       macd: macd ?? this.macd,
+      windowId: windowId ?? this.windowId,
       levels: levels ?? this.levels,
       levelsColor: levelsColor ?? this.levelsColor,
       up: up ?? this.up,

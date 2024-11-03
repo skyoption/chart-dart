@@ -11,17 +11,17 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 @immutable
 class IchimokuPropertiesScreen extends StatefulWidget {
-  String? name;
-  IndicatorEntity? indicator;
-  final int? index;
+  final String? name;
+  final IndicatorEntity? indicator;
   final Function onDone;
+  final int? windowId;
 
   IchimokuPropertiesScreen({
     super.key,
     required this.onDone,
     this.name,
-    this.index,
     this.indicator,
+    this.windowId,
   });
 
   @override
@@ -33,21 +33,23 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
   late final tenkanSenController = TextEditingController(text: '9');
   late final kijuSenController = TextEditingController(text: '26');
   late final senkouSpanController = TextEditingController(text: '52');
+  late String name = widget.name ?? widget.indicator!.name;
+  IndicatorEntity? indicator;
 
   @override
   void initState() {
     if (widget.indicator != null) {
-      widget.name = widget.indicator!.name;
-      tenkanSenController.text =
-          widget.indicator!.ichimoku!.tenkanSen.toString();
-      kijuSenController.text = widget.indicator!.ichimoku!.kijuSen.toString();
-      senkouSpanController.text =
-          widget.indicator!.ichimoku!.senkouSpan.toString();
+      indicator = widget.indicator;
+      tenkanSenController.text = indicator!.ichimoku!.tenkanSen.toString();
+      kijuSenController.text = indicator!.ichimoku!.kijuSen.toString();
+      senkouSpanController.text = indicator!.ichimoku!.senkouSpan.toString();
     } else {
-      widget.indicator = IndicatorEntity(
+      indicator = IndicatorEntity(
         name: widget.name!,
         ichimoku: Ichimoku(),
         type: IndicatorType.ICHIMOKU,
+        windowId: widget.windowId ?? 0,
+        isSecondary: (widget.windowId ?? 0) != 0,
       );
     }
     super.initState();
@@ -90,17 +92,7 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
                   alignment: AlignmentDirectional.centerEnd,
                   child: InkWell(
                     onTap: () {
-                      if (widget.index == null) {
-                        chartProperties.addIndicator(widget.indicator!);
-                        widget.onDone();
-                      } else {
-                        chartProperties.updateIndicator(
-                          widget.index!,
-                          widget.indicator!,
-                        );
-                        widget.onDone();
-                      }
-                      Navigator.of(context).pop();
+                      _onDone();
                     },
                     child: Text(
                       'Done',
@@ -122,7 +114,7 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PropertiesTitleWidget(
-              title: '${widget.indicator?.name.toUpperCase()}',
+              title: '${name.toUpperCase()}',
             ),
             PropertiesItemWidget(
               title: 'Tenkan-sen:',
@@ -138,8 +130,7 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
                       ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
-                    if (res != null)
-                      widget.indicator!.ichimoku!.tenkanSen = res;
+                    if (res != null) indicator!.ichimoku!.tenkanSen = res;
                   },
                   autofocus: false,
                   controller: tenkanSenController,
@@ -174,7 +165,7 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
                       ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
-                    if (res != null) widget.indicator!.ichimoku!.kijuSen = res;
+                    if (res != null) indicator!.ichimoku!.kijuSen = res;
                   },
                   controller: kijuSenController,
                   textAlignVertical: TextAlignVertical.center,
@@ -208,8 +199,7 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
                       ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
-                    if (res != null)
-                      widget.indicator!.ichimoku!.senkouSpan = res;
+                    if (res != null) indicator!.ichimoku!.senkouSpan = res;
                   },
                   controller: senkouSpanController,
                   textAlignVertical: TextAlignVertical.center,
@@ -229,50 +219,68 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
             PropertiesTitleWidget(title: 'style'),
             IndicatorColorWidget(
               title: 'Tenkan-sen:',
-              color: colorFromHex(widget.indicator!.ichimoku!.tenkanSenColor!),
+              color: colorFromHex(indicator!.ichimoku!.tenkanSenColor!),
               onChange: (color, drawAsBackground) {
-                widget.indicator!.ichimoku!.tenkanSenColor = color.toHexString();
+                indicator!.ichimoku!.tenkanSenColor = color.toHexString();
               },
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
               title: 'Kiju-sen:',
-              color: colorFromHex(widget.indicator!.ichimoku!.kijuSenColor!),
+              color: colorFromHex(indicator!.ichimoku!.kijuSenColor!),
               onChange: (color, drawAsBackground) {
-                widget.indicator!.ichimoku!.kijuSenColor = color.toHexString();
+                indicator!.ichimoku!.kijuSenColor = color.toHexString();
               },
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
               title: 'Chikou Span:',
-              color: colorFromHex(widget.indicator!.ichimoku!.chikouSpanColor!),
+              color: colorFromHex(indicator!.ichimoku!.chikouSpanColor!),
               onChange: (color, drawAsBackground) {
-                widget.indicator!.ichimoku!.chikouSpanColor = color.toHexString();
+                indicator!.ichimoku!.chikouSpanColor = color.toHexString();
               },
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
               title: 'Up Kumo:',
-              color:colorFromHex( widget.indicator!.ichimoku!.upKumoColor!),
+              color: colorFromHex(indicator!.ichimoku!.upKumoColor!),
               onChange: (color, drawAsBackground) {
-                widget.indicator!.ichimoku!.upKumoColor = color.toHexString();
+                indicator!.ichimoku!.upKumoColor = color.toHexString();
               },
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
-              drawAsBackground: widget.indicator!.drawAsBackground,
+              drawAsBackground: indicator!.drawAsBackground,
               hideDrawAsBackground: false,
               title: 'Down Kumo:',
-              color: colorFromHex(widget.indicator!.ichimoku!.downKumoColor!),
+              color: colorFromHex(indicator!.ichimoku!.downKumoColor!),
               onChange: (color, drawAsBackground) {
-                widget.indicator!.ichimoku!.downKumoColor = color.toHexString();
-                widget.indicator?.drawAsBackground = drawAsBackground;
+                indicator!.ichimoku!.downKumoColor = color.toHexString();
+                indicator!.drawAsBackground = drawAsBackground;
               },
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _onDone() {
+    if (indicator!.isSecondary) {
+      if (widget.indicator == null) {
+        chartProperties.addSecondaryIndicator(indicator!, widget.windowId);
+      } else {
+        chartProperties.updateSecondaryIndicator(indicator!);
+      }
+    } else {
+      if (widget.indicator == null) {
+        chartProperties.addIndicator(indicator!);
+      } else {
+        chartProperties.updateIndicator(indicator!);
+      }
+    }
+    widget.onDone();
+    Navigator.of(context).pop();
   }
 
   @override

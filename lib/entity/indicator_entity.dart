@@ -23,6 +23,7 @@ enum Timeframes { All_Timeframes, None }
 
 @collection
 class IndicatorEntity {
+  int windowId=0;
   Id id = Isar.autoIncrement;
   String name;
   int shift, period;
@@ -60,6 +61,7 @@ class IndicatorEntity {
   IndicatorEntity({
     this.name = '',
     this.shift = 0,
+    this.windowId = 0,
     this.period = 5,
     this.type = IndicatorType.SMA_MA,
     this.dn,
@@ -110,6 +112,7 @@ class IndicatorEntity {
     levelsColor,
     deviations,
     ichimoku,
+    windowId,
     macd,
     steps,
     longEMA,
@@ -136,6 +139,7 @@ class IndicatorEntity {
       longEMA: longEMA ?? this.longEMA,
       shortEMA: shortEMA ?? this.shortEMA,
       dn: dn ?? this.dn,
+      windowId: windowId ?? this.windowId,
       macd: macd ?? this.macd,
       up: up ?? this.up,
       levels: levels ?? this.levels,

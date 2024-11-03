@@ -11,13 +11,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-@immutable
 class IndicatorPropertiesScreen extends StatefulWidget {
-  String? name;
-  IndicatorEntity? indicator;
-  final int? index;
+  final String? name;
+  final IndicatorEntity? indicator;
   final Function onDone;
   final IndicatorType type;
+  final int? windowId;
   final bool haveDeviations,
       haveMethods,
       haveTimeframe,
@@ -30,7 +29,7 @@ class IndicatorPropertiesScreen extends StatefulWidget {
     super.key,
     required this.onDone,
     this.name,
-    this.index,
+    this.windowId,
     this.indicator,
     this.haveDeviations = false,
     this.haveTimeframe = false,
@@ -51,22 +50,26 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
   late final periodController = TextEditingController(text: '5');
   late final shiftController = TextEditingController(text: '0');
   late final deviationsController = TextEditingController(text: '2.000');
+  late String name = widget.name ?? widget.indicator!.name;
+  IndicatorEntity? indicator;
 
   @override
   void initState() {
     if (widget.indicator != null) {
-      widget.name = widget.indicator!.name;
-      periodController.text = widget.indicator!.period.toString();
-      shiftController.text = widget.indicator!.shift.toString();
-      deviationsController.text = widget.indicator!.deviations.toString();
+      indicator = widget.indicator;
+      periodController.text = indicator!.period.toString();
+      shiftController.text = indicator!.shift.toString();
+      deviationsController.text = indicator!.deviations.toString();
     } else {
-      widget.indicator = IndicatorEntity(
+      indicator = IndicatorEntity(
         period: 5,
         shift: 0,
         name: widget.name!,
         applyTo: ApplyTo.Close,
         type: widget.type,
         deviations: widget.haveDeviations ? 2.000 : null,
+        windowId: widget.windowId ?? 0,
+        isSecondary: (widget.windowId ?? 0) != 0,
       );
     }
     super.initState();
@@ -109,17 +112,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                   alignment: AlignmentDirectional.centerEnd,
                   child: InkWell(
                     onTap: () {
-                      if (widget.index == null) {
-                        chartProperties.addIndicator(widget.indicator!);
-                        widget.onDone();
-                      } else {
-                        chartProperties.updateIndicator(
-                          widget.index!,
-                          widget.indicator!,
-                        );
-                        widget.onDone();
-                      }
-                      Navigator.of(context).pop();
+                      _onDone();
                     },
                     child: Text(
                       'Done',
@@ -141,7 +134,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PropertiesTitleWidget(
-              title: '${widget.indicator?.name.toUpperCase()}',
+              title: '${name.toUpperCase()}',
             ),
             PropertiesItemWidget(
               title: 'Period',
@@ -157,7 +150,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                       ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
-                    if (res != null) widget.indicator?.period = res;
+                    if (res != null) indicator?.period = res;
                   },
                   autofocus: false,
                   controller: periodController,
@@ -192,7 +185,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                       ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
-                    if (res != null) widget.indicator?.shift = res;
+                    if (res != null) indicator?.shift = res;
                   },
                   controller: shiftController,
                   textAlignVertical: TextAlignVertical.center,
@@ -228,7 +221,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                         ),
                     onChanged: (value) {
                       final res = double.tryParse(value);
-                      if (res != null) widget.indicator?.deviations = res;
+                      if (res != null) indicator?.deviations = res;
                     },
                     controller: deviationsController,
                     textAlignVertical: TextAlignVertical.center,
@@ -251,7 +244,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
             if (widget.haveMethods)
               PropertiesItemWidget(
                 title: 'Method',
-                subTitle: (_setMethod(widget.indicator?.type)?.name ?? 'Sample')
+                subTitle: (_setMethod(indicator?.type)?.name ?? 'Sample')
                     .replaceAll('_', ' '),
                 margin: EdgeInsets.zero,
                 subTitleColor: Colors.grey.withOpacity(0.8),
@@ -259,7 +252,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => IndicatorMethodsScreen(
-                        method: _setMethod(widget.indicator?.type),
+                        method: _setMethod(indicator?.type),
                         onMethod: (method) {
                           _setType(method);
                           setState(() {});
@@ -272,7 +265,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
               title: 'Apply To',
-              subTitle: (widget.indicator?.applyTo.name ?? 'Close')
+              subTitle: (indicator?.applyTo.name ?? 'Close')
                   .replaceAll('_', ' ')
                   .replaceAll('__', '/'),
               margin: EdgeInsets.zero,
@@ -281,9 +274,9 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => ApplyToScreen(
-                      apply: widget.indicator?.applyTo,
+                      apply: indicator?.applyTo,
                       onApply: (apply) {
-                        widget.indicator?.applyTo = apply;
+                        indicator?.applyTo = apply;
                         setState(() {});
                       },
                     ),
@@ -313,16 +306,16 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
             if (widget.havePixels)
               PropertiesItemWidget(
                 title: 'Pixel',
-                subTitle: '${widget.indicator?.strokeWidth ?? 1} Pixel',
+                subTitle: '${indicator?.strokeWidth ?? 1} Pixel',
                 margin: EdgeInsets.zero,
                 subTitleColor: Colors.grey.withOpacity(0.8),
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => IndicatorPixelsScreen(
-                        pixel: widget.indicator?.strokeWidth,
+                        pixel: indicator?.strokeWidth,
                         onConfirm: (pixel) {
-                          widget.indicator?.strokeWidth = pixel;
+                          indicator?.strokeWidth = pixel;
                           setState(() {});
                         },
                       ),
@@ -334,22 +327,22 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
               Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
               title: widget.haveTwoBands ? 'Upper Band ' : 'Style ',
-              color: colorFromHex(widget.indicator?.color ?? ''),
+              color: colorFromHex(indicator?.color ?? ''),
               hideDrawAsBackground: widget.haveTwoBands,
-              drawAsBackground: widget.indicator?.drawAsBackground,
+              drawAsBackground: indicator?.drawAsBackground,
               onChange: (color, drawAsBackground) {
-                widget.indicator?.color = color.toHexString();
+                indicator?.color = color.toHexString();
                 if (!widget.haveTwoBands) {
-                  widget.indicator?.drawAsBackground = drawAsBackground;
+                  indicator?.drawAsBackground = drawAsBackground;
                 }
               },
               // hideStyle: true,
-              // strokeWidth: widget.indicator?.strokeWidth,
-              // style: widget.indicator?.style,
+              // strokeWidth: indicator?.strokeWidth,
+              // style: indicator?.style,
               // onChange: (color, drawAsBackground, strokeWidth, style) {
-              //   widget.indicator?.style = style;
-              //   widget.indicator?.strokeWidth = strokeWidth;
-              //   widget.indicator?.color = color;
+              //   indicator?.style = style;
+              //   indicator?.strokeWidth = strokeWidth;
+              //   indicator?.color = color;
               // },
             ),
             if (widget.haveTwoBands)
@@ -358,11 +351,11 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
               IndicatorColorWidget(
                 title: 'Lower Band ',
                 hideDrawAsBackground: false,
-                drawAsBackground: widget.indicator?.drawAsBackground,
-                color: colorFromHex(widget.indicator?.secondColor ?? ''),
+                drawAsBackground: indicator?.drawAsBackground,
+                color: colorFromHex(indicator?.secondColor ?? ''),
                 onChange: (color, drawAsBackground) {
-                  widget.indicator?.secondColor = color.toHexString();
-                  widget.indicator?.drawAsBackground = drawAsBackground;
+                  indicator?.secondColor = color.toHexString();
+                  indicator?.drawAsBackground = drawAsBackground;
                 },
               )
           ],
@@ -373,7 +366,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
 
   void _setType(method) {
     if (widget.isENVELOPS) {
-      widget.indicator?.type = method == Methods.Exponential
+      indicator?.type = method == Methods.Exponential
           ? IndicatorType.EMA_ENVELOPS
           : method == Methods.Linear_Weighted
               ? IndicatorType.LINEAR_ENVELOPS
@@ -381,7 +374,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                   ? IndicatorType.SMA_ENVELOPS
                   : IndicatorType.SMMA_ENVELOPS;
     } else {
-      widget.indicator?.type = method == Methods.Exponential
+      indicator?.type = method == Methods.Exponential
           ? IndicatorType.EMA_MA
           : method == Methods.Linear_Weighted
               ? IndicatorType.LINEAR_MA
@@ -389,6 +382,24 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                   ? IndicatorType.SMA_MA
                   : IndicatorType.SMMA_MA;
     }
+  }
+
+  void _onDone() {
+    if (indicator!.isSecondary) {
+      if (widget.indicator == null) {
+        chartProperties.addSecondaryIndicator(indicator!, widget.windowId);
+      } else {
+        chartProperties.updateSecondaryIndicator(indicator!);
+      }
+    } else {
+      if (widget.indicator == null) {
+        chartProperties.addIndicator(indicator!);
+      } else {
+        chartProperties.updateIndicator(indicator!);
+      }
+    }
+    widget.onDone();
+    Navigator.of(context).pop();
   }
 
   Methods? _setMethod(IndicatorType? type) {
