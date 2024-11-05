@@ -63,7 +63,7 @@ class ChartPainter extends BaseChartPainter
   final BaseDimension baseDimension;
   final List<LineEntity> linesPrice;
   final List<IndicatorEntity> indicators;
-  final List<IndicatorEntity> secondaryIndicators;
+  final Map<int, List<IndicatorEntity>> secondaryIndicators;
   late final ChartPosition chartPosition;
   final double screenHeight;
   double mMainHighMaxValue = double.minPositive,
@@ -177,20 +177,32 @@ class ChartPainter extends BaseChartPainter
       );
     }
     mSecondaryRendererList.clear();
-    for (int i = 0; i < mSecondaryRectList.length; ++i) {
-      mSecondaryRendererList.add(
-        SecondaryRenderer(
-          mSecondaryRectList[i].mRect,
-          mSecondaryRectList[i].mMaxValue,
-          mSecondaryRectList[i].mMinValue,
-          mChildPadding,
+    int rectIndex = 0;
+    for (int i = 0; i < secondaryIndicators.length; ++i) {
+      final length = secondaryIndicators.entries.elementAt(i).value.length;
+      for (int index = 0; index < length; index++) {
+        final indicator = HighLevelIndicator.getIndicator(
+          secondaryIndicators,
           i,
-          secondaryIndicators[i],
-          fixedLength,
-          chartStyle,
-          chartColors,
-        ),
-      );
+          index,
+        );
+        mSecondaryRendererList.add(
+          SecondaryRenderer(
+            mSecondaryRectList.sublist(i, length),
+            mSecondaryRectList[rectIndex].mRect,
+            mSecondaryRectList[rectIndex].mMaxValue,
+            mSecondaryRectList[rectIndex].mMinValue,
+            mChildPadding,
+            indicator,
+            secondaryIndicators.entries.elementAt(i).value,
+            index == 0,
+            fixedLength,
+            chartStyle,
+            chartColors,
+          ),
+        );
+        rectIndex++;
+      }
     }
     updatePointPosition = UpdatePointPosition(
       chartPosition: chartPosition,

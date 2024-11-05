@@ -23,7 +23,7 @@ enum Timeframes { All_Timeframes, None }
 
 @collection
 class IndicatorEntity {
-  int windowId=0;
+  int windowId = 0;
   Id id = Isar.autoIncrement;
   String name;
   int shift, period;
@@ -43,9 +43,8 @@ class IndicatorEntity {
   @enumerated
   LineStyle style = LineStyle.normal;
 
-  String? color = Colors.green.toHexString(),
-      secondColor = Colors.deepOrange.toHexString(),
-      levelsColor = Colors.black.toHexString();
+  String? color, secondColor, levelsColor;
+
   List<int> levels = [];
   double value = 0;
   double? up;
@@ -92,9 +91,9 @@ class IndicatorEntity {
     this.secondColor,
     this.levelsColor,
   }) {
-    color = Colors.green.toHexString();
-    secondColor = Colors.deepOrange.toHexString();
-    levelsColor = Colors.black.toHexString();
+    color ??= Colors.green.toHexString();
+    secondColor ??= Colors.deepOrange.toHexString();
+    levelsColor ??= Colors.black.toHexString();
   }
 
   CandleIndicatorEntity copyToCandle({
@@ -168,11 +167,11 @@ class IndicatorEntity {
 
 @embedded
 class Ichimoku {
-  String? tenkanSenColor = Colors.red.toHexString(),
-      kijuSenColor = Colors.blue.toHexString(),
-      chikouSpanColor = Colors.green.toHexString(),
-      upKumoColor = Colors.orange.toHexString(),
-      downKumoColor = Colors.brown.toHexString();
+  String? tenkanSenColor,
+      kijuSenColor,
+      chikouSpanColor,
+      upKumoColor,
+      downKumoColor;
 
   int tenkanSen = 9, kijuSen = 26, senkouSpan = 52;
 
@@ -186,18 +185,17 @@ class Ichimoku {
     this.upKumoColor,
     this.downKumoColor,
   }) {
-    tenkanSenColor = Colors.red.toHexString();
-    kijuSenColor = Colors.blue.toHexString();
-    chikouSpanColor = Colors.green.toHexString();
-    upKumoColor = Colors.orange.toHexString();
-    downKumoColor = Colors.brown.toHexString();
+    tenkanSenColor ??= Colors.red.toHexString();
+    kijuSenColor ??= Colors.blue.toHexString();
+    chikouSpanColor ??= Colors.green.toHexString();
+    upKumoColor ??= Colors.orange.toHexString();
+    downKumoColor ??= Colors.brown.toHexString();
   }
 }
 
 @embedded
 class MACD {
-  String? mainColor = Colors.red.toHexString(),
-      signalColor = Colors.blue.toHexString();
+  String? mainColor, signalColor;
 
   int fastEma = 12, slowEma = 26, macdSma = 9;
 
@@ -208,7 +206,7 @@ class MACD {
     this.mainColor,
     this.signalColor,
   }) {
-    mainColor = Colors.red.toHexString();
-    signalColor = Colors.blue.toHexString();
+    mainColor ??= Colors.red.toHexString();
+    signalColor ??= Colors.blue.toHexString();
   }
 }

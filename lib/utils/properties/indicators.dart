@@ -11,7 +11,29 @@ mixin Indicators {
   List<IndicatorEntity> indicators = [];
 
   //For secondaryIndicators
-  List<IndicatorEntity> secondaryIndicators = [];
+  List<IndicatorEntity> _secondaryIndicators = [];
+
+  int get maxWindowId {
+    int id = 0;
+    for (var item in _secondaryIndicators) {
+      if (id < item.windowId) {
+        id = item.windowId;
+      }
+    }
+    return id;
+  }
+
+  int get newWindowId {
+    return maxWindowId + 1;
+  }
+
+  Map<int, List<IndicatorEntity>> get secondaries {
+    Map<int, List<IndicatorEntity>> items = {};
+    for (var item in _secondaryIndicators) {
+      items[item.windowId] = [...items[item.windowId] ?? [], item];
+    }
+    return items;
+  }
 
   Future<void> loadIndicators() async {
     await _getIndicators();
@@ -36,7 +58,7 @@ mixin Indicators {
           .filter()
           .isSecondaryEqualTo(true)
           .findAll();
-      secondaryIndicators = res;
+      _secondaryIndicators = res;
     } catch (e) {
       return kPrint(e.toString());
     }
@@ -51,7 +73,9 @@ mixin Indicators {
     });
   }
 
-  void addSecondaryIndicator(IndicatorEntity value) {
+  void addSecondaryIndicator(IndicatorEntity value, int? windowId) {
+    windowId ??= newWindowId;
+    value.windowId = windowId;
     value.isMain = false;
     value.isSecondary = true;
     indicators.add(value);
@@ -68,25 +92,30 @@ mixin Indicators {
     });
   }
 
-  void removeSecondaryIndicator(int index) {
-    final id = secondaryIndicators[index].id;
-    secondaryIndicators.removeAt(index);
+  void removeSecondaryIndicator(IndicatorEntity item) {
+    _secondaryIndicators.removeWhere((e) => e.id == item.id);
     KChart.write(query: (db) async {
-      await db.indicatorEntitys.delete(id);
+      await db.indicatorEntitys.delete(item.id);
     });
   }
 
-  void updateIndicator(int index, IndicatorEntity value) {
-    indicators[index] = value;
-    KChart.write(query: (db) async {
-      await db.indicatorEntitys.put(value);
-    });
+  void updateIndicator(IndicatorEntity value) {
+    final index = indicators.indexWhere((e) => e.id == value.id);
+    if (index != -1) {
+      indicators[index] = value;
+      KChart.write(query: (db) async {
+        await db.indicatorEntitys.put(value);
+      });
+    }
   }
 
-  void updateSecondaryIndicator(int index, IndicatorEntity value) {
-    secondaryIndicators[index] = value;
-    KChart.write(query: (db) async {
-      await db.indicatorEntitys.put(value);
-    });
+  void updateSecondaryIndicator(IndicatorEntity value) {
+    final index = _secondaryIndicators.indexWhere((e) => e.id == value.id);
+    if (index != -1) {
+      _secondaryIndicators[index] = value;
+      KChart.write(query: (db) async {
+        await db.indicatorEntitys.put(value);
+      });
+    }
   }
 }

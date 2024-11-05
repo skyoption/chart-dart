@@ -26,8 +26,7 @@ class CandleIndicatorEntity {
   @enumerated
   LineStyle style = LineStyle.normal;
 
-  String? color = Colors.green.toHexString(),
-      secondColor = Colors.deepOrange.toHexString(),levelsColor;
+  String? color, secondColor, levelsColor;
   List<int> levels = [];
 
   double value = 0;
@@ -40,7 +39,7 @@ class CandleIndicatorEntity {
   double? chikouSpan;
   double? shortEMA;
   double? longEMA;
-  int windowId=0;
+  int windowId = 0;
 
   CandleIndicatorEntity({
     this.name = '',
@@ -76,9 +75,9 @@ class CandleIndicatorEntity {
     this.levelsColor,
     this.macd,
   }) {
-    color = Colors.green.toHexString();
-    secondColor = Colors.deepOrange.toHexString();
-    levelsColor = Colors.black.toHexString();
+    color ??= Colors.green.toHexString();
+    secondColor ??= Colors.deepOrange.toHexString();
+    levelsColor ??= Colors.black.toHexString();
   }
 
   CandleIndicatorEntity copy({

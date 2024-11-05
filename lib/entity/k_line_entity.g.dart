@@ -147,53 +147,48 @@ const KLineEntitySchema = CollectionSchema(
       name: r'ratio',
       type: IsarType.double,
     ),
-    r'rsi': PropertySchema(
-      id: 24,
-      name: r'rsi',
-      type: IsarType.double,
-    ),
     r'rsiValues': PropertySchema(
-      id: 25,
+      id: 24,
       name: r'rsiValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
     r'smaEnvelopsValues': PropertySchema(
-      id: 26,
+      id: 25,
       name: r'smaEnvelopsValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
     r'smaMaValues': PropertySchema(
-      id: 27,
+      id: 26,
       name: r'smaMaValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
     r'smmaEnvelopsValues': PropertySchema(
-      id: 28,
+      id: 27,
       name: r'smmaEnvelopsValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
     r'smmaMaValues': PropertySchema(
-      id: 29,
+      id: 28,
       name: r'smmaMaValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
     r'symbol': PropertySchema(
-      id: 30,
+      id: 29,
       name: r'symbol',
       type: IsarType.string,
     ),
     r'time': PropertySchema(
-      id: 31,
+      id: 30,
       name: r'time',
       type: IsarType.long,
     ),
     r'vol': PropertySchema(
-      id: 32,
+      id: 31,
       name: r'vol',
       type: IsarType.double,
     )
@@ -503,38 +498,38 @@ void _kLineEntitySerialize(
   writer.writeDouble(offsets[22], object.r);
   writer.writeDouble(offsets[23], object.ratio);
   writer.writeObjectList<CandleIndicatorEntity>(
-    offsets[25],
+    offsets[24],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
     object.rsiValues,
   );
   writer.writeObjectList<CandleIndicatorEntity>(
-    offsets[26],
+    offsets[25],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
     object.smaEnvelopsValues,
   );
   writer.writeObjectList<CandleIndicatorEntity>(
-    offsets[27],
+    offsets[26],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
     object.smaMaValues,
   );
   writer.writeObjectList<CandleIndicatorEntity>(
-    offsets[28],
+    offsets[27],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
     object.smmaEnvelopsValues,
   );
   writer.writeObjectList<CandleIndicatorEntity>(
-    offsets[29],
+    offsets[28],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
     object.smmaMaValues,
   );
-  writer.writeString(offsets[30], object.symbol);
-  writer.writeLong(offsets[31], object.time);
-  writer.writeDouble(offsets[32], object.vol);
+  writer.writeString(offsets[29], object.symbol);
+  writer.writeLong(offsets[30], object.time);
+  writer.writeDouble(offsets[31], object.vol);
 }
 
 KLineEntity _kLineEntityDeserialize(
@@ -553,9 +548,9 @@ KLineEntity _kLineEntityDeserialize(
     low: reader.readDouble(offsets[15]),
     open: reader.readDouble(offsets[20]),
     ratio: reader.readDoubleOrNull(offsets[23]),
-    symbol: reader.readStringOrNull(offsets[30]),
-    time: reader.readLongOrNull(offsets[31]),
-    vol: reader.readDouble(offsets[32]),
+    symbol: reader.readStringOrNull(offsets[29]),
+    time: reader.readLongOrNull(offsets[30]),
+    vol: reader.readDouble(offsets[31]),
   );
   object.MA10Volume = reader.readDoubleOrNull(offsets[0]);
   object.MA5Volume = reader.readDoubleOrNull(offsets[1]);
@@ -620,31 +615,31 @@ KLineEntity _kLineEntityDeserialize(
   );
   object.r = reader.readDoubleOrNull(offsets[22]);
   object.rsiValues = reader.readObjectList<CandleIndicatorEntity>(
-    offsets[25],
+    offsets[24],
     CandleIndicatorEntitySchema.deserialize,
     allOffsets,
     CandleIndicatorEntity(),
   );
   object.smaEnvelopsValues = reader.readObjectList<CandleIndicatorEntity>(
-    offsets[26],
+    offsets[25],
     CandleIndicatorEntitySchema.deserialize,
     allOffsets,
     CandleIndicatorEntity(),
   );
   object.smaMaValues = reader.readObjectList<CandleIndicatorEntity>(
-    offsets[27],
+    offsets[26],
     CandleIndicatorEntitySchema.deserialize,
     allOffsets,
     CandleIndicatorEntity(),
   );
   object.smmaEnvelopsValues = reader.readObjectList<CandleIndicatorEntity>(
-    offsets[28],
+    offsets[27],
     CandleIndicatorEntitySchema.deserialize,
     allOffsets,
     CandleIndicatorEntity(),
   );
   object.smmaMaValues = reader.readObjectList<CandleIndicatorEntity>(
-    offsets[29],
+    offsets[28],
     CandleIndicatorEntitySchema.deserialize,
     allOffsets,
     CandleIndicatorEntity(),
@@ -754,7 +749,12 @@ P _kLineEntityDeserializeProp<P>(
     case 23:
       return (reader.readDoubleOrNull(offset)) as P;
     case 24:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readObjectList<CandleIndicatorEntity>(
+        offset,
+        CandleIndicatorEntitySchema.deserialize,
+        allOffsets,
+        CandleIndicatorEntity(),
+      )) as P;
     case 25:
       return (reader.readObjectList<CandleIndicatorEntity>(
         offset,
@@ -784,17 +784,10 @@ P _kLineEntityDeserializeProp<P>(
         CandleIndicatorEntity(),
       )) as P;
     case 29:
-      return (reader.readObjectList<CandleIndicatorEntity>(
-        offset,
-        CandleIndicatorEntitySchema.deserialize,
-        allOffsets,
-        CandleIndicatorEntity(),
-      )) as P;
-    case 30:
       return (reader.readStringOrNull(offset)) as P;
-    case 31:
+    case 30:
       return (reader.readLongOrNull(offset)) as P;
-    case 32:
+    case 31:
       return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -3034,84 +3027,6 @@ extension KLineEntityQueryFilter
     });
   }
 
-  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition> rsiIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'rsi',
-      ));
-    });
-  }
-
-  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition> rsiIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'rsi',
-      ));
-    });
-  }
-
-  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition> rsiEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rsi',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition> rsiGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rsi',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition> rsiLessThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rsi',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition> rsiBetween(
-    double? lower,
-    double? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rsi',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
   QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
       rsiValuesIsNull() {
     return QueryBuilder.apply(this, (query) {
@@ -4217,18 +4132,6 @@ extension KLineEntityQuerySortBy
     });
   }
 
-  QueryBuilder<KLineEntity, KLineEntity, QAfterSortBy> sortByRsi() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'rsi', Sort.asc);
-    });
-  }
-
-  QueryBuilder<KLineEntity, KLineEntity, QAfterSortBy> sortByRsiDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'rsi', Sort.desc);
-    });
-  }
-
   QueryBuilder<KLineEntity, KLineEntity, QAfterSortBy> sortBySymbol() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'symbol', Sort.asc);
@@ -4460,18 +4363,6 @@ extension KLineEntityQuerySortThenBy
     });
   }
 
-  QueryBuilder<KLineEntity, KLineEntity, QAfterSortBy> thenByRsi() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'rsi', Sort.asc);
-    });
-  }
-
-  QueryBuilder<KLineEntity, KLineEntity, QAfterSortBy> thenByRsiDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'rsi', Sort.desc);
-    });
-  }
-
   QueryBuilder<KLineEntity, KLineEntity, QAfterSortBy> thenBySymbol() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'symbol', Sort.asc);
@@ -4598,12 +4489,6 @@ extension KLineEntityQueryWhereDistinct
   QueryBuilder<KLineEntity, KLineEntity, QDistinct> distinctByRatio() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'ratio');
-    });
-  }
-
-  QueryBuilder<KLineEntity, KLineEntity, QDistinct> distinctByRsi() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'rsi');
     });
   }
 
@@ -4786,12 +4671,6 @@ extension KLineEntityQueryProperty
   QueryBuilder<KLineEntity, double?, QQueryOperations> ratioProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'ratio');
-    });
-  }
-
-  QueryBuilder<KLineEntity, double?, QQueryOperations> rsiProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'rsi');
     });
   }
 

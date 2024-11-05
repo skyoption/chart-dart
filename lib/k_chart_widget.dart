@@ -235,9 +235,9 @@ class _KChartWidgetState extends State<KChartWidget>
       mScaleX = 1.0;
     }
     final BaseDimension baseDimension = BaseDimension(
-      mBaseHeight: mBaseHeight,
+      height: height * 0.83,
       volHidden: widget.volHidden,
-      indicators: chartProperties.secondaryIndicators,
+      indicators: chartProperties.secondaries,
     );
     _painter = ChartPainter(
       widget.chartStyle,
@@ -264,7 +264,7 @@ class _KChartWidgetState extends State<KChartWidget>
       volHidden: widget.volHidden,
       isLine: widget.isLine,
       hideGrid: widget.hideGrid,
-      secondaryIndicators: chartProperties.secondaryIndicators,
+      secondaryIndicators: chartProperties.secondaries,
       showNowPrice: widget.showNowPrice,
       fixedLength: widget.fixedLength,
       verticalTextAlignment: widget.verticalTextAlignment,

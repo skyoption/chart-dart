@@ -226,7 +226,7 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
             PropertiesTitleWidget(title: 'style'),
             IndicatorColorWidget(
               title: 'Main',
-              color: colorFromHex(widget.indicator?.macd?.mainColor ?? ''),
+              color: colorFromHex(indicator?.macd?.mainColor ?? ''),
               onChange: (color, drawAsBackground) {
                 indicator!.macd!.mainColor = color.toHexString();
               },
@@ -234,7 +234,7 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
               title: 'Signal',
-              color: colorFromHex(widget.indicator?.macd?.signalColor ?? ''),
+              color: colorFromHex(indicator?.macd?.signalColor ?? ''),
               onChange: (color, drawAsBackground) {
                 indicator!.macd!.signalColor = color.toHexString();
               },

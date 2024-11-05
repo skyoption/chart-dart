@@ -1,4 +1,5 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/utils/kprint.dart';
 
 import '../k_chart_widget.dart';
@@ -43,15 +44,18 @@ class BaseDimension {
   /// set _mBaseHeight
   /// compute value of _mVolumeHeight, _mSecondaryHeight, _mDisplayHeight
   BaseDimension({
-    required double mBaseHeight,
+    required double height,
     required bool volHidden,
-    required List<IndicatorEntity> indicators,
+    required Map<int, List<IndicatorEntity>> indicators,
   }) {
-    _mBaseHeight = mBaseHeight;
+    List<IndicatorEntity> items = [];
+    for (var i = 0; i < indicators.length; i++) {
+      items.add(HighLevelIndicator.getHigh(indicators, i));
+    }
+
     _mVolumeHeight = volHidden != true ? _mBaseHeight * 0.2 : 0;
-    _mSecondaryHeight =
-        _setSecondaryHeight(indicators, mBaseHeight * 0.7) + _mVolumeHeight;
-    _mDisplayHeight = _mBaseHeight + mBaseHeight * 0.25;
+    _mSecondaryHeight = _setSecondaryHeight(items, height);
+    _mDisplayHeight = height;
   }
 
   double _setSecondaryHeight(
@@ -65,11 +69,11 @@ class BaseDimension {
     return _mSecondaryHeight;
   }
 
-  double getSecondaryHeight(IndicatorEntity item) {
-    if (item.type == IndicatorType.MACD) {
-      return _mBaseHeight * 0.2;
-    } else if (item.type == IndicatorType.RSI) {
-      return _mBaseHeight * 0.25;
+  double getSecondaryHeight(IndicatorEntity? item) {
+    if (item?.type == IndicatorType.MACD) {
+      return _mBaseHeight * 0.28;
+    } else if (item?.type == IndicatorType.RSI) {
+      return _mBaseHeight * 0.32;
     }
     return 0.0;
   }

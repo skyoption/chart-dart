@@ -55,11 +55,13 @@ class IndicatorUtils {
       }
     }
 
-    for (var indicator in chartProperties.secondaryIndicators) {
-      if (indicator.type == IndicatorType.RSI) {
-        RSI.add(indicator);
-      } else if (indicator.type == IndicatorType.MACD) {
-        MACD.add(indicator);
+    for (var item in chartProperties.secondaries.entries) {
+      for (var indicator in item.value) {
+        if (indicator.type == IndicatorType.RSI) {
+          RSI.add(indicator);
+        } else if (indicator.type == IndicatorType.MACD) {
+          MACD.add(indicator);
+        }
       }
     }
 
@@ -753,7 +755,6 @@ class IndicatorUtils {
       double? longEMA;
 
       for (int i = 0; i < dataList.length; i++) {
-
         if (i < longPeriod - 1) {
           macdLine.add(0);
           signalLine.add(0);

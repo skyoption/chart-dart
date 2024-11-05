@@ -229,18 +229,10 @@ class _RSIPropertiesScreenState extends State<RSIPropertiesScreen> {
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
               title: 'Style ',
-              color: colorFromHex(widget.indicator?.color ?? ''),
+              color: colorFromHex(indicator?.color ?? ''),
               onChange: (color, drawAsBackground) {
                 indicator!.color = color.toHexString();
               },
-              // hideStyle: true,
-              // strokeWidth:indicator!.strokeWidth,
-              // style:indicator!.style,
-              // onChange: (color, drawAsBackground, strokeWidth, style) {
-              //  indicator!.style = style;
-              //  indicator!.strokeWidth = strokeWidth;
-              //  indicator!.color = color;
-              // },
             ),
           ],
         ),

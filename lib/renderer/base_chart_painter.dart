@@ -35,7 +35,7 @@ abstract class BaseChartPainter extends CustomPainter
 
   final List<IndicatorEntity> indicators;
 
-  final List<IndicatorEntity> secondaryIndicators;
+  final Map<int, List<IndicatorEntity>> secondaryIndicators;
 
   bool volHidden;
   bool isTapShowInfoDialog;
@@ -96,7 +96,7 @@ abstract class BaseChartPainter extends CustomPainter
     this.indicators = const [],
     this.volHidden = false,
     this.isTapShowInfoDialog = false,
-    this.secondaryIndicators = const [],
+    this.secondaryIndicators = const {},
     this.isLine = false,
   }) {
     mItemCount = data?.length ?? 0;
@@ -235,18 +235,22 @@ abstract class BaseChartPainter extends CustomPainter
     double rowSpace = ((mDisplayHeight * 0.85) / mGridRows);
     double _secondaryHeight = 0;
     for (int i = 0; i < secondaryIndicators.length; ++i) {
-      final secondary =
-          baseDimension.getSecondaryHeight(secondaryIndicators[i]);
-      mSecondaryRectList.add(
-        RenderRect(
-          Rect.fromLTRB(
-            0,
-            mMainRect.bottom + volHeight + _secondaryHeight,
-            mWidth,
-            mMainRect.bottom + volHeight + _secondaryHeight + secondary,
+      final secondary = baseDimension.getSecondaryHeight(
+          HighLevelIndicator.getHigh(secondaryIndicators, i));
+      for (int index = 0;
+          index < secondaryIndicators.entries.elementAt(i).value.length;
+          index++) {
+        mSecondaryRectList.add(
+          RenderRect(
+            Rect.fromLTRB(
+              0,
+              mMainRect.bottom + volHeight + _secondaryHeight,
+              mWidth,
+              mMainRect.bottom + volHeight + _secondaryHeight + secondary,
+            ),
           ),
-        ),
-      );
+        );
+      }
       _secondaryHeight += secondary;
     }
   }
@@ -263,8 +267,13 @@ abstract class BaseChartPainter extends CustomPainter
       var item = data![i];
       getMainMaxMinValue(item, i);
       getVolMaxMinValue(item);
-      for (int idx = 0; idx < mSecondaryRectList.length; ++idx) {
-        getSecondaryMaxMinValue(idx, item);
+      int rectIndex = 0;
+      for (int i = 0; i < secondaryIndicators.length; ++i) {
+        final length = secondaryIndicators.entries.elementAt(i).value.length;
+        for (int index = 0; index < length; index++) {
+          getSecondaryMaxMinValue(i, index, rectIndex, item);
+          rectIndex++;
+        }
       }
     }
   }
@@ -388,44 +397,47 @@ abstract class BaseChartPainter extends CustomPainter
   }
 
   // compute maximum and minimum of secondary value
-  getSecondaryMaxMinValue(int index, KLineEntity item) {
-    final indicator = secondaryIndicators.elementAt(index);
+  getSecondaryMaxMinValue(int i, int index, int rectIndex, KLineEntity item) {
+    final indicator =
+        HighLevelIndicator.getIndicator(secondaryIndicators, i, index);
     switch (indicator.type) {
       case IndicatorType.MACD:
-        mSecondaryRectList[index].mMaxValue = _findMaxUP(item.macdValues ?? []);
-        mSecondaryRectList[index].mMinValue = _findMinDN(item.macdValues ?? []);
+        mSecondaryRectList[rectIndex].mMaxValue =
+            _findMaxUP(item.macdValues ?? []);
+        mSecondaryRectList[rectIndex].mMinValue =
+            _findMinDN(item.macdValues ?? []);
         break;
       case IndicatorType.KDJ:
         if (item.d != null) {
-          mSecondaryRectList[index].mMaxValue = max(
-              mSecondaryRectList[index].mMaxValue,
+          mSecondaryRectList[rectIndex].mMaxValue = max(
+              mSecondaryRectList[rectIndex].mMaxValue,
               max(item.k!, max(item.d!, item.j!)));
-          mSecondaryRectList[index].mMinValue = min(
-              mSecondaryRectList[index].mMinValue,
+          mSecondaryRectList[rectIndex].mMinValue = min(
+              mSecondaryRectList[rectIndex].mMinValue,
               min(item.k!, min(item.d!, item.j!)));
         }
         break;
       case IndicatorType.RSI:
         // if (item.rsi != null) {
-        mSecondaryRectList[index].mMaxValue = 100;
-        mSecondaryRectList[index].mMinValue = 0.0;
+        mSecondaryRectList[rectIndex].mMaxValue = 100;
+        mSecondaryRectList[rectIndex].mMinValue = 0.0;
         // }
         break;
       case IndicatorType.WR:
-        mSecondaryRectList[index].mMaxValue = 0;
-        mSecondaryRectList[index].mMinValue = -100;
+        mSecondaryRectList[rectIndex].mMaxValue = 0;
+        mSecondaryRectList[rectIndex].mMinValue = -100;
         break;
       case IndicatorType.CCI:
         if (item.cci != null) {
-          mSecondaryRectList[index].mMaxValue =
-              max(mSecondaryRectList[index].mMaxValue, item.cci!);
-          mSecondaryRectList[index].mMinValue =
-              min(mSecondaryRectList[index].mMinValue, item.cci!);
+          mSecondaryRectList[rectIndex].mMaxValue =
+              max(mSecondaryRectList[rectIndex].mMaxValue, item.cci!);
+          mSecondaryRectList[rectIndex].mMinValue =
+              min(mSecondaryRectList[rectIndex].mMinValue, item.cci!);
         }
         break;
       default:
-        mSecondaryRectList[index].mMaxValue = 0;
-        mSecondaryRectList[index].mMinValue = 0;
+        mSecondaryRectList[rectIndex].mMaxValue = 0;
+        mSecondaryRectList[rectIndex].mMinValue = 0;
         break;
     }
   }
@@ -600,4 +612,21 @@ TextSpan formatValueSpan(double? value, TextStyle style) {
     }
   }
   return TextSpan(text: realValueStr, style: style);
+}
+
+class HighLevelIndicator {
+  static IndicatorEntity getHigh(
+    Map<int, List<IndicatorEntity>> values,
+    int index,
+  ) {
+    return values.entries.elementAt(index).value.first;
+  }
+
+  static IndicatorEntity getIndicator(
+    Map<int, List<IndicatorEntity>> values,
+    int index,
+    int i,
+  ) {
+    return values.entries.elementAt(index).value[i];
+  }
 }
