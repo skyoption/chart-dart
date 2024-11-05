@@ -215,7 +215,7 @@ class _KChartWidgetState extends State<KChartWidget>
 
   late final height = MediaQuery.of(context).size.height;
   ChartPainter? _painter;
-  late double mBaseHeight = height * 0.70;
+  late double mBaseHeight = height * 0.83;
 
   // CandleAggregator aggregator = CandleAggregator();
 
@@ -235,7 +235,7 @@ class _KChartWidgetState extends State<KChartWidget>
       mScaleX = 1.0;
     }
     final BaseDimension baseDimension = BaseDimension(
-      height: height * 0.83,
+      height: mBaseHeight,
       volHidden: widget.volHidden,
       indicators: chartProperties.secondaries,
     );
