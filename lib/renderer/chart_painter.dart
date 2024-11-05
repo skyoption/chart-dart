@@ -188,7 +188,7 @@ class ChartPainter extends BaseChartPainter
         );
         mSecondaryRendererList.add(
           SecondaryRenderer(
-            mSecondaryRectList.sublist(i, length),
+            mSecondaryRectList.sublist(i, i + length),
             mSecondaryRectList[rectIndex].mRect,
             mSecondaryRectList[rectIndex].mMaxValue,
             mSecondaryRectList[rectIndex].mMinValue,
