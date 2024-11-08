@@ -1,16 +1,12 @@
 import 'dart:math';
 
-import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/entity/candle_indicator_entity.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/renderer/draw_object_lines.dart';
-import 'package:candle_chart/utils/date_format_util.dart';
 import 'package:flutter/material.dart'
     show
         Canvas,
-        Color,
         CustomPainter,
         FontFeature,
         FontWeight,
@@ -19,7 +15,6 @@ import 'package:flutter/material.dart'
         TextSpan,
         TextStyle;
 
-import '../chart_style.dart' show ChartStyle;
 import '../entity/k_line_entity.dart';
 import 'base_dimension.dart';
 
@@ -278,10 +273,12 @@ abstract class BaseChartPainter extends CustomPainter
     }
   }
 
-  /// compute maximum and minimum value
-  void getMainMaxMinValue(KLineEntity item, int i) {
+  void _setMaxAndMin(
+    KLineEntity item,
+    Function(double maxPrice, double minPrice) onSet,
+    List<IndicatorEntity> indicators,
+  ) {
     double maxPrice = item.high, minPrice = item.low;
-
     for (var indicator in indicators) {
       if (indicator.type == IndicatorType.ICHIMOKU) {
         maxPrice = max(_findMaxIchimoku(item.ichimokuValues ?? []), item.high);
@@ -291,7 +288,7 @@ abstract class BaseChartPainter extends CustomPainter
         minPrice = min(item.low, _findMinDN(item.smaEnvelopsValues ?? []));
       } else if (indicator.type == IndicatorType.EMA_ENVELOPS) {
         maxPrice = max(item.high, _findMaxUP(item.emaEnvelopsValues ?? []));
-        minPrice = min(item.low, _findMinMA(item.emaEnvelopsValues ?? []));
+        minPrice = min(item.low, _findMinDN(item.emaEnvelopsValues ?? []));
       } else if (indicator.type == IndicatorType.LINEAR_ENVELOPS) {
         maxPrice = max(item.high, _findMaxUP(item.lwmaEnvelopsValues ?? []));
         minPrice = min(item.low, _findMinDN(item.lwmaEnvelopsValues ?? []));
@@ -315,6 +312,20 @@ abstract class BaseChartPainter extends CustomPainter
         minPrice = min(_findMinDN(item.bollValues ?? []), item.low);
       }
     }
+    onSet(maxPrice, minPrice);
+  }
+
+  /// compute maximum and minimum value
+  void getMainMaxMinValue(KLineEntity item, int i) {
+    double maxPrice = item.high, minPrice = item.low;
+    _setMaxAndMin(
+      item,
+      (max, min) {
+        maxPrice = max;
+        minPrice = min;
+      },
+      indicators,
+    );
     mMainMaxValue = max(mMainMaxValue, maxPrice);
     mMainMinValue = min(mMainMinValue, minPrice);
 
@@ -436,8 +447,19 @@ abstract class BaseChartPainter extends CustomPainter
         }
         break;
       default:
-        mSecondaryRectList[rectIndex].mMaxValue = 0;
-        mSecondaryRectList[rectIndex].mMinValue = 0;
+        double maxPrice = 0, minPrice = 0;
+        _setMaxAndMin(
+          item,
+          (max, min) {
+            maxPrice = max;
+            minPrice = min;
+          },
+          [indicator],
+        );
+        mSecondaryRectList[rectIndex].mMaxValue =
+            max(mSecondaryRectList[rectIndex].mMaxValue, maxPrice);
+        mSecondaryRectList[rectIndex].mMinValue =
+            min(mSecondaryRectList[rectIndex].mMinValue, minPrice);
         break;
     }
   }

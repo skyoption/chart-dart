@@ -151,5 +151,6 @@ class VolRenderer extends BaseChartRenderer<VolumeEntity> {
     Size size,
     Canvas canvas,
     bool drawAsBackground,
+    bool isMain,
   ) {}
 }

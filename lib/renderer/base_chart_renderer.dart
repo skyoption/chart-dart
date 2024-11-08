@@ -54,9 +54,8 @@ abstract class BaseChartRenderer<T> {
     }
 
     /// * -1 for negative minValue values
-    scaleY =
-        chartRect.height / (maxValue - (minValue < 0 ? minValue : -minValue));
-
+    double div = maxValue - minValue;
+    scaleY = chartRect.height / div;
     gridPaint.color = gridColor;
   }
 
@@ -129,6 +128,7 @@ abstract class BaseChartRenderer<T> {
     Size size,
     Canvas canvas,
     bool drawAsBackground,
+    bool isMain,
   );
 
   void drawRect(
@@ -199,7 +199,9 @@ abstract class BaseChartRenderer<T> {
       color,
       strokeWidth,
     );
-  } void drawHDashLine(
+  }
+
+  void drawHDashLine(
     double? lastPrice,
     double? curPrice,
     Canvas canvas,
@@ -356,14 +358,14 @@ abstract class BaseChartRenderer<T> {
   }
 
   void _drawHDashLine(
-      double? lastPrice,
-      double? curPrice,
-      Canvas canvas,
-      double lastX,
-      double curX,
-      Color color,
-      double strokeWidth,
-      ) {
+    double? lastPrice,
+    double? curPrice,
+    Canvas canvas,
+    double lastX,
+    double curX,
+    Color color,
+    double strokeWidth,
+  ) {
     if (lastPrice == null || curPrice == null) {
       return;
     }

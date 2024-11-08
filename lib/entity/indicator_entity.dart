@@ -128,7 +128,9 @@ class IndicatorEntity {
     kijunSen,
     tenkanSen,
     levels,
+    isMain,
     secondColor,
+    isSecondary,
   }) {
     return CandleIndicatorEntity(
       period: period ?? this.period,
@@ -147,6 +149,8 @@ class IndicatorEntity {
       applyTo: applyTo ?? this.applyTo,
       color: color ?? this.color,
       level: level ?? this.level,
+      isMain: isMain ?? this.isMain,
+      isSecondary: isSecondary ?? this.isSecondary,
       steps: level ?? this.steps,
       ichimoku: ichimoku ?? this.ichimoku,
       deviations: deviations ?? this.deviations,

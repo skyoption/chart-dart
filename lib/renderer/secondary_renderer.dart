@@ -2,6 +2,7 @@ import 'package:candle_chart/entity/candle_entity.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/renderer/base_chart_painter.dart';
+import 'package:candle_chart/renderer/main_renderer.dart';
 import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -12,11 +13,16 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
   late double mMACDWidth;
   final IndicatorEntity indicator;
   final List<IndicatorEntity> subIndicators;
+  final List<IndicatorEntity> indicators;
   final ChartStyle chartStyle;
   final ChartColors chartColors;
   int index = -1;
   final bool isMain;
   final List<RenderRect> mSecondaryRectList;
+  late final MainRenderer mainRenderer;
+  double scaleX;
+  final VerticalTextAlignment verticalTextAlignment;
+  final ChartPosition chartPositions;
 
   SecondaryRenderer(
     this.mSecondaryRectList,
@@ -25,11 +31,15 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     double minValue,
     double topPadding,
     this.indicator,
+    this.indicators,
     this.subIndicators,
     this.isMain,
     int fixedLength,
     this.chartStyle,
     this.chartColors,
+    this.scaleX,
+    this.verticalTextAlignment,
+    this.chartPositions,
   ) : super(
           chartRect: mainRect,
           maxValue: maxValue,
@@ -39,13 +49,25 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
           fixedLength: fixedLength,
           gridColor: chartColors.gridColor,
         ) {
-    for (int i = 0; i < subIndicators.length; i++) {
-      if (indicator.type == subIndicators[i].type) {
-        index++;
-        if (indicator.id == subIndicators[i].id) break;
-      }
-    }
+    index = indicators
+        .where((element) => element.type == indicator.type)
+        .toList()
+        .indexWhere((element) => element.id == indicator.id);
     mMACDWidth = this.chartStyle.macdWidth;
+    mainRenderer = MainRenderer(
+      mainRect,
+      maxValue,
+      minValue,
+      topPadding,
+      chartPositions,
+      false,
+      fixedLength,
+      chartStyle,
+      chartColors,
+      scaleX,
+      verticalTextAlignment,
+      subIndicators,
+    );
   }
 
   @override
@@ -57,6 +79,16 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     Size size,
     Canvas canvas,
   ) {
+    mainRenderer.drawIndicators(
+      lastPoint,
+      curPoint,
+      lastX,
+      curX,
+      size,
+      canvas,
+      false,
+      false,
+    );
     drawIndicators(
       lastPoint,
       curPoint,
@@ -64,6 +96,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
       curX,
       size,
       canvas,
+      false,
       false,
     );
   }
@@ -149,6 +182,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     Size size,
     Canvas canvas,
     bool drawAsBackground,
+    bool isMain,
   ) {
     // for (var item in indicators) {
     if (indicator.type == IndicatorType.MACD) {

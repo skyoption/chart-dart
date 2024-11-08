@@ -113,6 +113,8 @@ class CandleIndicatorEntity {
     tenkanSen,
     levels,
     secondColor,
+    isMain,
+    isSecondary,
   }) {
     return CandleIndicatorEntity(
       period: period ?? this.period,
@@ -122,6 +124,8 @@ class CandleIndicatorEntity {
       name: name ?? this.name,
       dn: dn ?? this.dn,
       macd: macd ?? this.macd,
+      isMain: isMain ?? this.isMain,
+      isSecondary: isSecondary ?? this.isSecondary,
       windowId: windowId ?? this.windowId,
       levels: levels ?? this.levels,
       levelsColor: levelsColor ?? this.levelsColor,

@@ -145,8 +145,8 @@ class ChartPainter extends BaseChartPainter
       fixedLength =
           NumberUtil.getMaxDecimalLength(t.open, t.close, t.high, t.low);
     }
-    if (mSecondaryRectList.isNotEmpty) {
-      this.chartStyle.gridRows = 24 ~/ mSecondaryRectList.length;
+    if (secondaryIndicators.isNotEmpty) {
+      this.chartStyle.gridRows = 24 ~/ secondaryIndicators.length;
     } else {
       this.chartStyle.gridRows = 18;
     }
@@ -178,9 +178,11 @@ class ChartPainter extends BaseChartPainter
     }
     mSecondaryRendererList.clear();
     int rectIndex = 0;
+    List<IndicatorEntity> _indicators = [];
     for (int i = 0; i < secondaryIndicators.length; ++i) {
-      final length = secondaryIndicators.entries.elementAt(i).value.length;
-      for (int index = 0; index < length; index++) {
+      final items = secondaryIndicators.entries.elementAt(i).value;
+      _indicators.addAll(items);
+      for (int index = 0; index < items.length; index++) {
         final indicator = HighLevelIndicator.getIndicator(
           secondaryIndicators,
           i,
@@ -188,17 +190,21 @@ class ChartPainter extends BaseChartPainter
         );
         mSecondaryRendererList.add(
           SecondaryRenderer(
-            mSecondaryRectList.sublist(i, i + length),
+            mSecondaryRectList.sublist(i, i + items.length),
             mSecondaryRectList[rectIndex].mRect,
             mSecondaryRectList[rectIndex].mMaxValue,
             mSecondaryRectList[rectIndex].mMinValue,
             mChildPadding,
             indicator,
-            secondaryIndicators.entries.elementAt(i).value,
+            _indicators,
+            items,
             index == 0,
             fixedLength,
             chartStyle,
             chartColors,
+            this.scaleX,
+            verticalTextAlignment,
+            chartPosition,
           ),
         );
         rectIndex++;
@@ -282,6 +288,7 @@ class ChartPainter extends BaseChartPainter
         curX,
         size,
         canvas,
+        true,
         true,
       );
     }

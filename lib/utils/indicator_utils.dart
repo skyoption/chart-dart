@@ -61,6 +61,28 @@ class IndicatorUtils {
           RSI.add(indicator);
         } else if (indicator.type == IndicatorType.MACD) {
           MACD.add(indicator);
+        } if (indicator.type == IndicatorType.SMA_MA) {
+          SMA_MA.add(indicator);
+        } else if (indicator.type == IndicatorType.EMA_MA) {
+          EMA_MA.add(indicator);
+        } else if (indicator.type == IndicatorType.LINEAR_MA) {
+          Linear_MA.add(indicator);
+        } else if (indicator.type == IndicatorType.SMMA_MA) {
+          Smoothed_MA.add(indicator);
+        } else if (indicator.type == IndicatorType.SMA_ENVELOPS) {
+          SMA_ENVELOPS.add(indicator);
+        } else if (indicator.type == IndicatorType.EMA_ENVELOPS) {
+          EMA_ENVELOPS.add(indicator);
+        } else if (indicator.type == IndicatorType.LINEAR_ENVELOPS) {
+          LINEAR_ENVELOPS.add(indicator);
+        } else if (indicator.type == IndicatorType.SMMA_ENVELOPS) {
+          SMMA_ENVELOPS.add(indicator);
+        } else if (indicator.type == IndicatorType.BOLL) {
+          BOLL.add(indicator);
+        } else if (indicator.type == IndicatorType.PARABOLIC) {
+          PARABOLIC.add(indicator);
+        } else if (indicator.type == IndicatorType.ICHIMOKU) {
+          ICHIMOKU.add(indicator);
         }
       }
     }
