@@ -71,9 +71,9 @@ class BaseDimension {
 
   double getSecondaryHeight(IndicatorEntity? item) {
     if (item?.type == IndicatorType.MACD) {
-      return _mBaseHeight * 0.28;
+      return _mBaseHeight * 0.35;
     } else if (item?.type == IndicatorType.RSI) {
-      return _mBaseHeight * 0.32;
+      return _mBaseHeight * 0.4;
     }
     return 0.0;
   }
