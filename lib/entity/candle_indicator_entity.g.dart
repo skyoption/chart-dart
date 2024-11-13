@@ -444,6 +444,8 @@ const _CandleIndicatorEntityapplyToEnumValueMap = {
   'Middle_Price_OC__2': 5,
   'Typical_Price_HLC__3': 6,
   'Weighted_Close_HLCC__4': 7,
+  'First_Indicator': 8,
+  'Last_Indicator': 9,
 };
 const _CandleIndicatorEntityapplyToValueEnumMap = {
   0: ApplyTo.Close,
@@ -454,6 +456,8 @@ const _CandleIndicatorEntityapplyToValueEnumMap = {
   5: ApplyTo.Middle_Price_OC__2,
   6: ApplyTo.Typical_Price_HLC__3,
   7: ApplyTo.Weighted_Close_HLCC__4,
+  8: ApplyTo.First_Indicator,
+  9: ApplyTo.Last_Indicator,
 };
 const _CandleIndicatorEntitylevelEnumValueMap = {
   'None': 0,

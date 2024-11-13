@@ -1,23 +1,14 @@
 import 'dart:math';
 
-import 'package:candle_chart/entity/candle_indicator_entity.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/renderer/draw_object_lines.dart';
-import 'package:flutter/material.dart'
-    show
-        Canvas,
-        CustomPainter,
-        FontFeature,
-        FontWeight,
-        Rect,
-        Size,
-        TextSpan,
-        TextStyle;
+import 'package:candle_chart/renderer/rects/main_rect.dart';
+import 'package:candle_chart/renderer/rects/render_rect.dart';
+import 'package:candle_chart/renderer/rects/secondary_rect.dart';
 
 import '../entity/k_line_entity.dart';
 import 'base_dimension.dart';
-
 export 'package:flutter/material.dart'
     show Color, required, TextStyle, Rect, Canvas, Size, CustomPainter;
 
@@ -58,10 +49,8 @@ abstract class BaseChartPainter extends CustomPainter
   // grid: rows - columns
   int mGridRows = 12, mGridColumns = 4;
   int mStartIndex = 0, mStopIndex = 0;
-  double mMainMaxValue = double.minPositive, mMainMinValue = double.maxFinite;
   double mVolMaxValue = double.minPositive, mVolMinValue = double.maxFinite;
   double mTranslateX = double.minPositive;
-  int mMainMaxIndex = 0, mMainMinIndex = 0;
 
   int mItemCount = 0;
   double mDataLen = 0.0; // the data occupies the total length of the screen
@@ -74,6 +63,8 @@ abstract class BaseChartPainter extends CustomPainter
 
   /// base dimension
   final BaseDimension baseDimension;
+    MainRect? mainRect;
+    SecondaryRect? secondaryRect;
 
   /// constructor BaseChartPainter
   ///
@@ -227,7 +218,7 @@ abstract class BaseChartPainter extends CustomPainter
     }
 
     mSecondaryRectList.clear();
-    double rowSpace = ((mDisplayHeight * 0.85) / mGridRows);
+    // double rowSpace = ((mDisplayHeight * 0.85) / mGridRows);
     double _secondaryHeight = 0;
     for (int i = 0; i < secondaryIndicators.length; ++i) {
       final secondary = baseDimension.getSecondaryHeight(
@@ -248,6 +239,16 @@ abstract class BaseChartPainter extends CustomPainter
       }
       _secondaryHeight += secondary;
     }
+    mainRect = MainRect(
+      indicators: indicators,
+      isLine: isLine,
+      mMainHighMaxValue: mMainHighMaxValue,
+      mMainLowMinValue: mMainLowMinValue,
+    );
+    secondaryRect = SecondaryRect(
+      mSecondaryRectList: mSecondaryRectList,
+      secondaryIndicators: secondaryIndicators,
+    );
   }
 
   /// calculate values
@@ -260,215 +261,37 @@ abstract class BaseChartPainter extends CustomPainter
     mStopIndex = indexOfTranslateX(xToTranslateX(mWidth));
     for (int i = mStartIndex; i <= mStopIndex; i++) {
       var item = data![i];
-      getMainMaxMinValue(item, i);
+      mainRect?.getMainMaxMinValue(item, i);
       getVolMaxMinValue(item);
       int rectIndex = 0;
       for (int i = 0; i < secondaryIndicators.length; ++i) {
         final length = secondaryIndicators.entries.elementAt(i).value.length;
         for (int index = 0; index < length; index++) {
-          getSecondaryMaxMinValue(i, index, rectIndex, item);
+          secondaryRect?.getSecondaryMaxMinValue(i, index, rectIndex, item);
           rectIndex++;
         }
       }
     }
   }
 
-  void _setMaxAndMin(
-    KLineEntity item,
-    Function(double maxPrice, double minPrice) onSet,
-    List<IndicatorEntity> indicators,
-  ) {
-    double maxPrice = item.high, minPrice = item.low;
-    for (var indicator in indicators) {
-      if (indicator.type == IndicatorType.ICHIMOKU) {
-        maxPrice = max(_findMaxIchimoku(item.ichimokuValues ?? []), item.high);
-        minPrice = min(_findMinIchimoku(item.ichimokuValues ?? []), item.low);
-      } else if (indicator.type == IndicatorType.SMA_ENVELOPS) {
-        maxPrice = max(item.high, _findMaxUP(item.smaEnvelopsValues ?? []));
-        minPrice = min(item.low, _findMinDN(item.smaEnvelopsValues ?? []));
-      } else if (indicator.type == IndicatorType.EMA_ENVELOPS) {
-        maxPrice = max(item.high, _findMaxUP(item.emaEnvelopsValues ?? []));
-        minPrice = min(item.low, _findMinDN(item.emaEnvelopsValues ?? []));
-      } else if (indicator.type == IndicatorType.LINEAR_ENVELOPS) {
-        maxPrice = max(item.high, _findMaxUP(item.lwmaEnvelopsValues ?? []));
-        minPrice = min(item.low, _findMinDN(item.lwmaEnvelopsValues ?? []));
-      } else if (indicator.type == IndicatorType.SMMA_ENVELOPS) {
-        maxPrice = max(item.high, _findMaxUP(item.smmaEnvelopsValues ?? []));
-        minPrice = min(item.low, _findMinDN(item.smmaEnvelopsValues ?? []));
-      } else if (indicator.type == IndicatorType.PARABOLIC) {
-        maxPrice = max(item.high, _findMaxMA(item.parabolicValues ?? []));
-        minPrice = min(item.low, _findMinMA(item.parabolicValues ?? []));
-      } else if (indicator.type == IndicatorType.LINEAR_MA) {
-        maxPrice = max(item.high, _findMaxMA(item.lwmaMaValues ?? []));
-        minPrice = min(item.low, _findMinMA(item.lwmaMaValues ?? []));
-      } else if (indicator.type == IndicatorType.EMA_MA) {
-        maxPrice = max(item.high, _findMaxMA(item.emaMaValues ?? []));
-        minPrice = min(item.low, _findMinMA(item.emaMaValues ?? []));
-      } else if (indicator.type == IndicatorType.SMA_MA) {
-        maxPrice = max(item.high, _findMaxMA(item.smaMaValues ?? []));
-        minPrice = min(item.low, _findMinMA(item.smaMaValues ?? []));
-      } else if (indicator.type == IndicatorType.BOLL) {
-        maxPrice = max(_findMaxUP(item.bollValues ?? []), item.high);
-        minPrice = min(_findMinDN(item.bollValues ?? []), item.low);
-      }
-    }
-    onSet(maxPrice, minPrice);
-  }
-
-  /// compute maximum and minimum value
-  void getMainMaxMinValue(KLineEntity item, int i) {
-    double maxPrice = item.high, minPrice = item.low;
-    _setMaxAndMin(
-      item,
-      (max, min) {
-        maxPrice = max;
-        minPrice = min;
-      },
-      indicators,
-    );
-    mMainMaxValue = max(mMainMaxValue, maxPrice);
-    mMainMinValue = min(mMainMinValue, minPrice);
-
-    if (mMainHighMaxValue < item.high) {
-      mMainHighMaxValue = item.high;
-      mMainMaxIndex = i;
-    }
-    if (mMainLowMinValue > item.low) {
-      mMainLowMinValue = item.low;
-      mMainMinIndex = i;
-    }
-
-    if (isLine == true) {
-      mMainMaxValue = max(mMainMaxValue, item.close);
-      mMainMinValue = min(mMainMinValue, item.close);
-    }
-  }
-
-  // find maximum of the MA
-  double _findMaxMA(List<CandleIndicatorEntity> a) {
-    double result = double.minPositive;
-    for (CandleIndicatorEntity i in a) {
-      result = max(result, i.value);
-    }
-    return result;
-  }
-
-  // find minimum of the UP
-  double _findMaxUP(List<CandleIndicatorEntity> a) {
-    double result = double.minPositive;
-    for (CandleIndicatorEntity i in a) {
-      result = max(result, i.up ?? 0);
-    }
-    return result;
-  }
-
-  // find minimum of the ChikouSpan
-  double _findMaxIchimoku(List<CandleIndicatorEntity> a) {
-    double result = double.minPositive;
-    for (CandleIndicatorEntity i in a) {
-      result = max(result, i.chikouSpan ?? 0);
-    }
-    return result;
-  }
-
-  // find minimum of the MA
-  double _findMinMA(List<CandleIndicatorEntity> a) {
-    double result = double.maxFinite;
-    for (CandleIndicatorEntity i in a) {
-      result = min(result, i.value == 0 ? double.maxFinite : i.value);
-    }
-    return result;
-  }
-
-  // find minimum of the ChikouSpan
-  double _findMinIchimoku(List<CandleIndicatorEntity> a) {
-    double result = double.maxFinite;
-    for (CandleIndicatorEntity i in a) {
-      result = min(result,
-          i.chikouSpan == 0 ? double.maxFinite : i.chikouSpan ?? result);
-    }
-    return result;
-  }
-
-  // find minimum of the DN
-  double _findMinDN(List<CandleIndicatorEntity> a) {
-    double result = double.maxFinite;
-    for (CandleIndicatorEntity i in a) {
-      result = min(result, i.dn == 0 ? double.maxFinite : i.dn ?? result);
-    }
-    return result;
-  }
-
   // get the maximum and minimum of the Vol value
   void getVolMaxMinValue(KLineEntity item) {
-    mVolMaxValue = max(mVolMaxValue,
-        max(item.vol, max(item.MA5Volume ?? 0, item.MA10Volume ?? 0)));
-    mVolMinValue = min(mVolMinValue,
-        min(item.vol, min(item.MA5Volume ?? 0, item.MA10Volume ?? 0)));
-  }
-
-  // compute maximum and minimum of secondary value
-  getSecondaryMaxMinValue(int i, int index, int rectIndex, KLineEntity item) {
-    final indicator =
-        HighLevelIndicator.getIndicator(secondaryIndicators, i, index);
-    switch (indicator.type) {
-      case IndicatorType.MACD:
-        mSecondaryRectList[rectIndex].mMaxValue =
-            _findMaxUP(item.macdValues ?? []);
-        mSecondaryRectList[rectIndex].mMinValue =
-            _findMinDN(item.macdValues ?? []);
-        break;
-      case IndicatorType.KDJ:
-        if (item.d != null) {
-          mSecondaryRectList[rectIndex].mMaxValue = max(
-              mSecondaryRectList[rectIndex].mMaxValue,
-              max(item.k!, max(item.d!, item.j!)));
-          mSecondaryRectList[rectIndex].mMinValue = min(
-              mSecondaryRectList[rectIndex].mMinValue,
-              min(item.k!, min(item.d!, item.j!)));
-        }
-        break;
-      case IndicatorType.RSI:
-        // if (item.rsi != null) {
-        mSecondaryRectList[rectIndex].mMaxValue = 100;
-        mSecondaryRectList[rectIndex].mMinValue = 0.0;
-        // }
-        break;
-      case IndicatorType.WR:
-        mSecondaryRectList[rectIndex].mMaxValue = 0;
-        mSecondaryRectList[rectIndex].mMinValue = -100;
-        break;
-      case IndicatorType.CCI:
-        if (item.cci != null) {
-          mSecondaryRectList[rectIndex].mMaxValue =
-              max(mSecondaryRectList[rectIndex].mMaxValue, item.cci!);
-          mSecondaryRectList[rectIndex].mMinValue =
-              min(mSecondaryRectList[rectIndex].mMinValue, item.cci!);
-        }
-        break;
-      default:
-        double maxPrice = 0, minPrice = 0;
-        _setMaxAndMin(
-          item,
-          (max, min) {
-            maxPrice = max;
-            minPrice = min;
-          },
-          [indicator],
-        );
-        mSecondaryRectList[rectIndex].mMaxValue =
-            max(mSecondaryRectList[rectIndex].mMaxValue, maxPrice);
-        mSecondaryRectList[rectIndex].mMinValue =
-            min(mSecondaryRectList[rectIndex].mMinValue, minPrice);
-        break;
-    }
+    mVolMaxValue = max(
+      mVolMaxValue,
+      max(item.vol, max(item.MA5Volume ?? 0, item.MA10Volume ?? 0)),
+    );
+    mVolMinValue = min(
+      mVolMinValue,
+      min(item.vol, min(item.MA5Volume ?? 0, item.MA10Volume ?? 0)),
+    );
   }
 
   // translate x
   double xToTranslateX(double x) => -mTranslateX + x / scaleX;
 
-  int indexOfTranslateX(double translateX) =>
-      _indexOfTranslateX(translateX, 0, mItemCount - 1);
+  int indexOfTranslateX(double translateX) {
+    return _indexOfTranslateX(translateX, 0, mItemCount - 1);
+  }
 
   /// Using binary search for the index of the current value
   int _indexOfTranslateX(double translateX, int start, int end) {
@@ -508,8 +331,9 @@ abstract class BaseChartPainter extends CustomPainter
   }
 
   /// scrollX convert to TranslateX
-  void setTranslateXFromScrollX(double scrollX) =>
-      mTranslateX = scrollX + getMinTranslateX();
+  void setTranslateXFromScrollX(double scrollX) {
+    mTranslateX = scrollX + getMinTranslateX();
+  }
 
   /// get the minimum value of translation
   double getMinTranslateX() {
@@ -530,110 +354,14 @@ abstract class BaseChartPainter extends CustomPainter
   }
 
   /// translateX is converted to X in view
-  double translateXtoX(double translateX) =>
-      (translateX + mTranslateX) * scaleX;
+  double translateXtoX(double translateX) {
+    return (translateX + mTranslateX) * scaleX;
+  }
 
   @override
   bool shouldRepaint(BaseChartPainter oldDelegate) {
     return true;
   }
-}
-
-/// Render Rectangle
-class RenderRect {
-  Rect mRect;
-  double mMaxValue = double.minPositive, mMinValue = double.maxFinite;
-
-  RenderRect(this.mRect);
-}
-
-//# 科学下标
-TextSpan formatValueSpan(double? value, TextStyle style) {
-  if (value == 0.00) {
-    return TextSpan(text: ' 0.00', style: style);
-    // return TextSpan(text: '\$ 0.00', style: style);
-  }
-
-  String _dollarValue(double value, int decimals) {
-    return '' + value.toStringAsFixed(decimals);
-    // return '\$' + value.toStringAsFixed(decimals);
-  }
-
-  if (value != null && value < 0.01) {
-    final temp = value.toStringAsFixed(8).split('.');
-    if (temp.length != 2) {
-      return TextSpan(text: _dollarValue(value, 2), style: style);
-    }
-    var index = 0;
-    for (; index < temp[1].length; index++) {
-      if (temp[1][index] != '0') {
-        break;
-      }
-    }
-    final remain = temp[1].replaceRange(0, index, '');
-    return TextSpan(
-      text: '0.0',
-      // text: '\$0.0',
-      children: [
-        ///	•	FontFeature.alternativeFractions(): 使用替代分数样式。
-        // 	•	FontFeature.caseSensitiveForms(): 使用大小写敏感表单样式。
-        // 	•	FontFeature.characterVariant(int value): 使用字符变体。
-        // 	•	FontFeature.contextualAlternates(): 使用上下文替代样式。
-        // 	•	FontFeature.denominator(): 使用分母样式。
-        // 	•	FontFeature.fractions(): 使用分数样式。
-        // 	•	FontFeature.historicalForms(): 使用历史表单样式。
-        // 	•	FontFeature.liningFigures(): 使用等线数字。
-        // 	•	FontFeature.localeAware(value): 使用特定语言环境的字体特性。
-        // 	•	FontFeature.notationalForms(int value): 使用符号表单。
-        // 	•	FontFeature.numerators(): 使用分子样式。
-        // 	•	FontFeature.ordinalForms(): 使用序数样式。
-        // 	•	FontFeature.proportionalFigures(): 使用比例数字。
-        // 	•	FontFeature.scientificInferiors(): 使用科学下标样式。
-        // 	•	FontFeature.slashedZero(): 使用带斜线的零。
-        TextSpan(
-          text: '$index',
-          style: style.copyWith(
-              fontFeatures: [
-                FontFeature.oldstyleFigures(),
-                FontFeature.scientificInferiors(),
-              ],
-              fontSize: style.fontSize == null ? null : style.fontSize! - 3,
-              fontWeight: FontWeight.w900), // 调整行高以模拟偏移效果
-        ),
-        // WidgetSpan(
-        //   child: Transform.translate(
-        //     offset: Offset(0, 0),
-        //     child: Text(
-        //       '$index',
-        //       style: style.copyWith(
-        //           fontWeight: FontWeight.w900,
-        //           textBaseline: TextBaseline.ideographic,
-        //           fontSize:
-        //               style.fontSize == null ? null : style.fontSize! - 3,
-        //          ),
-        //     ),
-        //   ),
-        // ),
-        TextSpan(
-            text: remain.substring(0, min(remain.length, 4)), style: style),
-      ],
-      style: style,
-    );
-  }
-
-  String realValueStr = '-';
-  if (value != null) {
-    if (value >= 1000000000) {
-      realValueStr = '${_dollarValue(value / 1000000000, 2)}B';
-    } else if (value >= 1000000) {
-      realValueStr = '${_dollarValue(value / 1000000, 2)}M';
-    } else if (value >= 1000) {
-      realValueStr = value.toStringAsFixed(2);
-    } else {
-      realValueStr = _dollarValue(value, 2);
-    }
-  }
-  return TextSpan(text: realValueStr, style: style);
 }
 
 class HighLevelIndicator {

@@ -1,5 +1,6 @@
 import 'dart:async' show StreamSink;
 
+import 'package:candle_chart/renderer/rects/render_rect.dart';
 import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
@@ -152,8 +153,8 @@ class ChartPainter extends BaseChartPainter
     }
     mMainRenderer = MainRenderer(
       mMainRect,
-      mMainMaxValue,
-      mMainMinValue,
+      mainRect!.mMainMaxValue,
+      mainRect!.mMainMinValue,
       mTopPadding,
       chartPosition,
       isLine,
@@ -180,31 +181,24 @@ class ChartPainter extends BaseChartPainter
     int rectIndex = 0;
     List<IndicatorEntity> _indicators = [];
     for (int i = 0; i < secondaryIndicators.length; ++i) {
-      final items = secondaryIndicators.entries.elementAt(i).value;
-      _indicators.addAll(items);
-      for (int index = 0; index < items.length; index++) {
-        final indicator = HighLevelIndicator.getIndicator(
-          secondaryIndicators,
-          i,
-          index,
-        );
+      final values = secondaryIndicators.entries.elementAt(i).value;
+      _indicators.addAll(values);
+      for (int index = 0; index < values.length; index++) {
         mSecondaryRendererList.add(
           SecondaryRenderer(
-            mSecondaryRectList.sublist(i, i + items.length),
+            mSecondaryRectList.sublist(i, i + values.length),
             mSecondaryRectList[rectIndex].mRect,
             mSecondaryRectList[rectIndex].mMaxValue,
             mSecondaryRectList[rectIndex].mMinValue,
             mChildPadding,
-            indicator,
+            values[index],
             _indicators,
-            items,
-            index == 0,
+            values.sublist(index, values.length),
+            index,
             fixedLength,
             chartStyle,
             chartColors,
             this.scaleX,
-            verticalTextAlignment,
-            chartPosition,
           ),
         );
         rectIndex++;
@@ -480,7 +474,7 @@ class ChartPainter extends BaseChartPainter
     if (isLine == true) return;
     if (!this.chartStyle.isShowHighOrLowPoint) return;
     //plot maxima and minima
-    double x = translateXtoX(getX(mMainMinIndex));
+    double x = translateXtoX(getX(mainRect!.mMainMinIndex));
     double y = getMainY(mMainLowMinValue);
     if (x < mWidth / 2) {
       //draw right
@@ -517,7 +511,7 @@ class ChartPainter extends BaseChartPainter
           Offset(
               x + this.chartStyle.leftPadding - tp.width, y - tp.height / 2));
     }
-    x = translateXtoX(getX(mMainMaxIndex));
+    x = translateXtoX(getX(mainRect!.mMainMaxIndex));
     y = getMainY(mMainHighMaxValue);
     if (x < mWidth / 2) {
       //draw right

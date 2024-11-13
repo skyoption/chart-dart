@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 class ApplyToScreen extends StatefulWidget {
   final Function(ApplyTo apply) onApply;
   final ApplyTo? apply;
+  final bool showIndicatorsOption;
 
   const ApplyToScreen({
     super.key,
     required this.onApply,
     this.apply,
+    this.showIndicatorsOption = false,
   });
 
   @override
@@ -62,6 +64,10 @@ class _ApplyToScreenState extends State<ApplyToScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: ApplyTo.values.asMap().entries.map((item) {
+            if (item.value.name.contains('Indicator') &&
+                !widget.showIndicatorsOption) {
+              return const SizedBox();
+            }
             return Column(
               children: [
                 PropertiesItemWidget(

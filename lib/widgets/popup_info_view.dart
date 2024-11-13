@@ -3,7 +3,7 @@ import 'package:candle_chart/chart_translations.dart';
 import 'package:flutter/material.dart';
 
 import '../entity/k_line_entity.dart';
-import '../renderer/base_chart_painter.dart';
+import 'package:candle_chart/renderer/rects/render_rect.dart';
 import '../utils/date_format_util.dart';
 // import '../utils/number_util.dart';
 

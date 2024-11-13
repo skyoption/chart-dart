@@ -276,6 +276,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                   MaterialPageRoute(
                     builder: (context) => ApplyToScreen(
                       apply: indicator?.applyTo,
+                      showIndicatorsOption: indicator?.isSecondary == true,
                       onApply: (apply) {
                         indicator?.applyTo = apply;
                         setState(() {});

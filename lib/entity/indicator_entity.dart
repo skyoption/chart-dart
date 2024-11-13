@@ -15,6 +15,8 @@ enum ApplyTo {
   Middle_Price_OC__2,
   Typical_Price_HLC__3,
   Weighted_Close_HLCC__4,
+  First_Indicator,
+  Last_Indicator,
 }
 
 enum Levels { None }

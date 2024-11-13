@@ -4,6 +4,7 @@ import 'package:candle_chart/entity/candle_indicator_entity.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/k_chart_widget.dart';
+import 'package:candle_chart/renderer/rects/secondary_rect.dart';
 import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 
@@ -22,7 +23,6 @@ class IndicatorUtils {
         PARABOLIC = [],
         RSI = [],
         MACD = [];
-
     await chartProperties.loadIndicators();
 
     /// reset candles
@@ -61,7 +61,7 @@ class IndicatorUtils {
           RSI.add(indicator);
         } else if (indicator.type == IndicatorType.MACD) {
           MACD.add(indicator);
-        } if (indicator.type == IndicatorType.SMA_MA) {
+        } else if (indicator.type == IndicatorType.SMA_MA) {
           SMA_MA.add(indicator);
         } else if (indicator.type == IndicatorType.EMA_MA) {
           EMA_MA.add(indicator);
@@ -87,6 +87,9 @@ class IndicatorUtils {
       }
     }
 
+    if (RSI.isNotEmpty) calcRSI(data, RSI);
+    if (MACD.isNotEmpty) calcMACD(data, MACD);
+    await Future.delayed(Duration(milliseconds: 500));
     if (SMA_MA.isNotEmpty) calc_SMA_MA(data, SMA_MA);
     if (EMA_MA.isNotEmpty) calc_EMA_MA(data, EMA_MA);
     if (Linear_MA.isNotEmpty) calc_Linear_MA(data, Linear_MA);
@@ -98,8 +101,6 @@ class IndicatorUtils {
     if (BOLL.isNotEmpty) calc_BOLL(data, BOLL);
     if (PARABOLIC.isNotEmpty) calc_Parabolic_SAR(data, PARABOLIC);
     if (ICHIMOKU.isNotEmpty) calc_Ichimoku(data, ICHIMOKU);
-    if (RSI.isNotEmpty) calcRSI(data, RSI);
-    if (MACD.isNotEmpty) calcMACD(data, MACD);
 
     /// calc the volume indicator
     calcVolumeMA(data);
@@ -150,7 +151,9 @@ class IndicatorUtils {
         if (i >= indicator.period - 1) {
           double sum = 0;
           for (int j = i; j > i - indicator.period; j--) {
-            sum += _currentPriceValue(indicator, dataList[j]);
+            final value = _currentPriceValue(indicator, dataList[j]);
+
+            sum += value;
           }
           double smaValue = sum / indicator.period;
           entity.smaMaValues = _addNewIndicator(
@@ -890,7 +893,13 @@ class IndicatorUtils {
     IndicatorEntity indicator,
     KLineEntity point,
   ) {
-    if (indicator.applyTo == ApplyTo.Open) {
+    if (indicator.applyTo == ApplyTo.First_Indicator) {
+      final items = chartProperties.secondaries.atWindow(indicator.windowId);
+      return _indicatorValue(true, items.first, point);
+    } else if (indicator.applyTo == ApplyTo.Last_Indicator) {
+      final items = chartProperties.secondaries.atWindow(indicator.windowId);
+      return _indicatorValue(false, items.last, point);
+    } else if (indicator.applyTo == ApplyTo.Open) {
       return point.open;
     } else if (indicator.applyTo == ApplyTo.Low) {
       return point.low;
@@ -907,5 +916,34 @@ class IndicatorUtils {
     } else {
       return point.close;
     }
+  }
+
+  static double _indicatorValue(
+    bool isFirst,
+    IndicatorEntity indicator,
+    KLineEntity point,
+  ) {
+    if (indicator.type == IndicatorType.RSI) {
+      final items = (point.rsiValues ?? [])
+          .where((e) => e.windowId == indicator.windowId)
+          .toList();
+      if (items.isEmpty) return 0.0;
+      if (isFirst) {
+        return items.first.value;
+      } else {
+        return items.last.value;
+      }
+    } else if (indicator.type == IndicatorType.MACD) {
+      final items = (point.macdValues ?? [])
+          .where((e) => e.windowId == indicator.windowId)
+          .toList();
+      if (items.isEmpty) return 0.0;
+      if (isFirst) {
+        return items.first.value;
+      } else {
+        return items.last.value;
+      }
+    }
+    return 0.0;
   }
 }

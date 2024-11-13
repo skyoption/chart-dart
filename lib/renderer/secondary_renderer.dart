@@ -1,7 +1,7 @@
 import 'package:candle_chart/entity/candle_entity.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/k_chart_widget.dart';
-import 'package:candle_chart/renderer/base_chart_painter.dart';
+import 'package:candle_chart/renderer/rects/render_rect.dart';
 import 'package:candle_chart/renderer/main_renderer.dart';
 import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +17,10 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
   final ChartStyle chartStyle;
   final ChartColors chartColors;
   int index = -1;
-  final bool isMain;
+  late final bool isMain, isLast;
   final List<RenderRect> mSecondaryRectList;
-  late final MainRenderer mainRenderer;
   double scaleX;
-  final VerticalTextAlignment verticalTextAlignment;
-  final ChartPosition chartPositions;
+  late final SubMainRenderer subMainRenderer;
 
   SecondaryRenderer(
     this.mSecondaryRectList,
@@ -33,13 +31,11 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     this.indicator,
     this.indicators,
     this.subIndicators,
-    this.isMain,
+    int i,
     int fixedLength,
     this.chartStyle,
     this.chartColors,
     this.scaleX,
-    this.verticalTextAlignment,
-    this.chartPositions,
   ) : super(
           chartRect: mainRect,
           maxValue: maxValue,
@@ -49,24 +45,21 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
           fixedLength: fixedLength,
           gridColor: chartColors.gridColor,
         ) {
+    isMain = i == 0;
     index = indicators
         .where((element) => element.type == indicator.type)
         .toList()
         .indexWhere((element) => element.id == indicator.id);
     mMACDWidth = this.chartStyle.macdWidth;
-    mainRenderer = MainRenderer(
+    subMainRenderer = SubMainRenderer(
       mainRect,
       maxValue,
       minValue,
       topPadding,
-      chartPositions,
-      false,
       fixedLength,
       chartStyle,
       chartColors,
-      scaleX,
-      verticalTextAlignment,
-      subIndicators,
+      [indicator],
     );
   }
 
@@ -79,26 +72,30 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     Size size,
     Canvas canvas,
   ) {
-    mainRenderer.drawIndicators(
-      lastPoint,
-      curPoint,
-      lastX,
-      curX,
-      size,
-      canvas,
-      false,
-      false,
-    );
-    drawIndicators(
-      lastPoint,
-      curPoint,
-      lastX,
-      curX,
-      size,
-      canvas,
-      false,
-      false,
-    );
+    if (indicator.type == IndicatorType.RSI ||
+        indicator.type == IndicatorType.MACD) {
+      drawIndicators(
+        lastPoint,
+        curPoint,
+        lastX,
+        curX,
+        size,
+        canvas,
+        false,
+        false,
+      );
+    } else {
+      subMainRenderer.drawIndicators(
+        lastPoint,
+        curPoint,
+        lastX,
+        curX,
+        size,
+        canvas,
+        false,
+        false,
+      );
+    }
   }
 
   @override

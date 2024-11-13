@@ -53,7 +53,6 @@ abstract class BaseChartRenderer<T> {
       minValue /= 2;
     }
 
-    /// * -1 for negative minValue values
     double div = maxValue - minValue;
     scaleY = chartRect.height / div;
     gridPaint.color = gridColor;
