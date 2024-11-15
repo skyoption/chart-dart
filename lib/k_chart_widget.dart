@@ -219,7 +219,7 @@ class _KChartWidgetState extends State<KChartWidget>
 
   late final height = MediaQuery.of(context).size.height;
   ChartPainter? _painter;
-  late double mBaseHeight = height * 0.71;
+  late double mBaseHeight = height * 0.7;
 
   // CandleAggregator aggregator = CandleAggregator();
 
