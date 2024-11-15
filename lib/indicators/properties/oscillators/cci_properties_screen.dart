@@ -13,16 +13,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-import 'indicator_properties_screen.dart';
+import '../indicator_properties_screen.dart';
 
 @immutable
-class RSIPropertiesScreen extends StatefulWidget {
+class CCIPropertiesScreen extends StatefulWidget {
   final String? name;
   final IndicatorEntity? indicator;
   final int? windowId;
   final Function onDone;
 
-  RSIPropertiesScreen({
+  CCIPropertiesScreen({
     super.key,
     required this.onDone,
     this.name,
@@ -31,11 +31,11 @@ class RSIPropertiesScreen extends StatefulWidget {
   });
 
   @override
-  State<RSIPropertiesScreen> createState() => _RSIPropertiesScreenState();
+  State<CCIPropertiesScreen> createState() => _CCIPropertiesScreenState();
 }
 
-class _RSIPropertiesScreenState extends State<RSIPropertiesScreen> {
-  late final periodController = TextEditingController(text: '5');
+class _CCIPropertiesScreenState extends State<CCIPropertiesScreen> {
+  late final periodController = TextEditingController(text: '14');
 
   late String name = widget.name ?? widget.indicator!.name;
   IndicatorEntity? indicator;
@@ -47,11 +47,11 @@ class _RSIPropertiesScreenState extends State<RSIPropertiesScreen> {
       periodController.text = indicator!.period.toString();
     } else {
       indicator = IndicatorEntity(
-        period: 5,
+        period: 14,
         name: widget.name!,
-        applyTo: ApplyTo.Close,
-        type: IndicatorType.RSI,
-        levels: [30, 70],
+        applyTo: ApplyTo.Typical_Price_HLC__3,
+        type: IndicatorType.CCI,
+        levels: [-100, 100],
         windowId: widget.windowId ?? 0,
         isSecondary: true,
       );

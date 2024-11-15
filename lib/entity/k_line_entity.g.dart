@@ -32,165 +32,207 @@ const KLineEntitySchema = CollectionSchema(
       name: r'amount',
       type: IsarType.double,
     ),
-    r'bollValues': PropertySchema(
+    r'atrValues': PropertySchema(
       id: 3,
+      name: r'atrValues',
+      type: IsarType.objectList,
+      target: r'CandleIndicatorEntity',
+    ),
+    r'bollValues': PropertySchema(
+      id: 4,
       name: r'bollValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
     r'cci': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'cci',
       type: IsarType.double,
     ),
+    r'cciValues': PropertySchema(
+      id: 6,
+      name: r'cciValues',
+      type: IsarType.objectList,
+      target: r'CandleIndicatorEntity',
+    ),
     r'change': PropertySchema(
-      id: 5,
+      id: 7,
       name: r'change',
       type: IsarType.double,
     ),
     r'close': PropertySchema(
-      id: 6,
+      id: 8,
       name: r'close',
       type: IsarType.double,
     ),
     r'd': PropertySchema(
-      id: 7,
+      id: 9,
       name: r'd',
       type: IsarType.double,
     ),
+    r'deMarkerValues': PropertySchema(
+      id: 10,
+      name: r'deMarkerValues',
+      type: IsarType.objectList,
+      target: r'CandleIndicatorEntity',
+    ),
     r'emaEnvelopsValues': PropertySchema(
-      id: 8,
+      id: 11,
       name: r'emaEnvelopsValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
     r'emaMaValues': PropertySchema(
-      id: 9,
+      id: 12,
       name: r'emaMaValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
     r'frame': PropertySchema(
-      id: 10,
+      id: 13,
       name: r'frame',
       type: IsarType.byte,
       enumMap: _KLineEntityframeEnumValueMap,
     ),
     r'high': PropertySchema(
-      id: 11,
+      id: 14,
       name: r'high',
       type: IsarType.double,
     ),
     r'ichimokuValues': PropertySchema(
-      id: 12,
+      id: 15,
       name: r'ichimokuValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
     r'j': PropertySchema(
-      id: 13,
+      id: 16,
       name: r'j',
       type: IsarType.double,
     ),
     r'k': PropertySchema(
-      id: 14,
+      id: 17,
       name: r'k',
       type: IsarType.double,
     ),
     r'low': PropertySchema(
-      id: 15,
+      id: 18,
       name: r'low',
       type: IsarType.double,
     ),
     r'lwmaEnvelopsValues': PropertySchema(
-      id: 16,
+      id: 19,
       name: r'lwmaEnvelopsValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
     r'lwmaMaValues': PropertySchema(
-      id: 17,
+      id: 20,
       name: r'lwmaMaValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
     r'macdSignalValues': PropertySchema(
-      id: 18,
+      id: 21,
       name: r'macdSignalValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
     r'macdValues': PropertySchema(
-      id: 19,
+      id: 22,
       name: r'macdValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
+    r'mfiValues': PropertySchema(
+      id: 23,
+      name: r'mfiValues',
+      type: IsarType.objectList,
+      target: r'CandleIndicatorEntity',
+    ),
+    r'momentumValues': PropertySchema(
+      id: 24,
+      name: r'momentumValues',
+      type: IsarType.objectList,
+      target: r'CandleIndicatorEntity',
+    ),
     r'open': PropertySchema(
-      id: 20,
+      id: 25,
       name: r'open',
       type: IsarType.double,
     ),
     r'parabolicValues': PropertySchema(
-      id: 21,
+      id: 26,
       name: r'parabolicValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
     r'r': PropertySchema(
-      id: 22,
+      id: 27,
       name: r'r',
       type: IsarType.double,
     ),
     r'ratio': PropertySchema(
-      id: 23,
+      id: 28,
       name: r'ratio',
       type: IsarType.double,
     ),
     r'rsiValues': PropertySchema(
-      id: 24,
+      id: 29,
       name: r'rsiValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
     r'smaEnvelopsValues': PropertySchema(
-      id: 25,
+      id: 30,
       name: r'smaEnvelopsValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
     r'smaMaValues': PropertySchema(
-      id: 26,
+      id: 31,
       name: r'smaMaValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
     r'smmaEnvelopsValues': PropertySchema(
-      id: 27,
+      id: 32,
       name: r'smmaEnvelopsValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
     r'smmaMaValues': PropertySchema(
-      id: 28,
+      id: 33,
       name: r'smmaMaValues',
       type: IsarType.objectList,
       target: r'CandleIndicatorEntity',
     ),
+    r'stochasticValues': PropertySchema(
+      id: 34,
+      name: r'stochasticValues',
+      type: IsarType.objectList,
+      target: r'CandleIndicatorEntity',
+    ),
     r'symbol': PropertySchema(
-      id: 29,
+      id: 35,
       name: r'symbol',
       type: IsarType.string,
     ),
     r'time': PropertySchema(
-      id: 30,
+      id: 36,
       name: r'time',
       type: IsarType.long,
     ),
     r'vol': PropertySchema(
-      id: 31,
+      id: 37,
       name: r'vol',
       type: IsarType.double,
+    ),
+    r'wprValues': PropertySchema(
+      id: 38,
+      name: r'wprValues',
+      type: IsarType.objectList,
+      target: r'CandleIndicatorEntity',
     )
   },
   estimateSize: _kLineEntityEstimateSize,
@@ -218,7 +260,49 @@ int _kLineEntityEstimateSize(
 ) {
   var bytesCount = offsets.last;
   {
+    final list = object.atrValues;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        final offsets = allOffsets[CandleIndicatorEntity]!;
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += CandleIndicatorEntitySchema.estimateSize(
+              value, offsets, allOffsets);
+        }
+      }
+    }
+  }
+  {
     final list = object.bollValues;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        final offsets = allOffsets[CandleIndicatorEntity]!;
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += CandleIndicatorEntitySchema.estimateSize(
+              value, offsets, allOffsets);
+        }
+      }
+    }
+  }
+  {
+    final list = object.cciValues;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        final offsets = allOffsets[CandleIndicatorEntity]!;
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += CandleIndicatorEntitySchema.estimateSize(
+              value, offsets, allOffsets);
+        }
+      }
+    }
+  }
+  {
+    final list = object.deMarkerValues;
     if (list != null) {
       bytesCount += 3 + list.length * 3;
       {
@@ -330,6 +414,34 @@ int _kLineEntityEstimateSize(
     }
   }
   {
+    final list = object.mfiValues;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        final offsets = allOffsets[CandleIndicatorEntity]!;
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += CandleIndicatorEntitySchema.estimateSize(
+              value, offsets, allOffsets);
+        }
+      }
+    }
+  }
+  {
+    final list = object.momentumValues;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        final offsets = allOffsets[CandleIndicatorEntity]!;
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += CandleIndicatorEntitySchema.estimateSize(
+              value, offsets, allOffsets);
+        }
+      }
+    }
+  }
+  {
     final list = object.parabolicValues;
     if (list != null) {
       bytesCount += 3 + list.length * 3;
@@ -414,9 +526,37 @@ int _kLineEntityEstimateSize(
     }
   }
   {
+    final list = object.stochasticValues;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        final offsets = allOffsets[CandleIndicatorEntity]!;
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += CandleIndicatorEntitySchema.estimateSize(
+              value, offsets, allOffsets);
+        }
+      }
+    }
+  }
+  {
     final value = object.symbol;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final list = object.wprValues;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        final offsets = allOffsets[CandleIndicatorEntity]!;
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += CandleIndicatorEntitySchema.estimateSize(
+              value, offsets, allOffsets);
+        }
+      }
     }
   }
   return bytesCount;
@@ -435,101 +575,143 @@ void _kLineEntitySerialize(
     offsets[3],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
+    object.atrValues,
+  );
+  writer.writeObjectList<CandleIndicatorEntity>(
+    offsets[4],
+    allOffsets,
+    CandleIndicatorEntitySchema.serialize,
     object.bollValues,
   );
-  writer.writeDouble(offsets[4], object.cci);
-  writer.writeDouble(offsets[5], object.change);
-  writer.writeDouble(offsets[6], object.close);
-  writer.writeDouble(offsets[7], object.d);
+  writer.writeDouble(offsets[5], object.cci);
   writer.writeObjectList<CandleIndicatorEntity>(
-    offsets[8],
+    offsets[6],
+    allOffsets,
+    CandleIndicatorEntitySchema.serialize,
+    object.cciValues,
+  );
+  writer.writeDouble(offsets[7], object.change);
+  writer.writeDouble(offsets[8], object.close);
+  writer.writeDouble(offsets[9], object.d);
+  writer.writeObjectList<CandleIndicatorEntity>(
+    offsets[10],
+    allOffsets,
+    CandleIndicatorEntitySchema.serialize,
+    object.deMarkerValues,
+  );
+  writer.writeObjectList<CandleIndicatorEntity>(
+    offsets[11],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
     object.emaEnvelopsValues,
   );
   writer.writeObjectList<CandleIndicatorEntity>(
-    offsets[9],
+    offsets[12],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
     object.emaMaValues,
   );
-  writer.writeByte(offsets[10], object.frame.index);
-  writer.writeDouble(offsets[11], object.high);
+  writer.writeByte(offsets[13], object.frame.index);
+  writer.writeDouble(offsets[14], object.high);
   writer.writeObjectList<CandleIndicatorEntity>(
-    offsets[12],
+    offsets[15],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
     object.ichimokuValues,
   );
-  writer.writeDouble(offsets[13], object.j);
-  writer.writeDouble(offsets[14], object.k);
-  writer.writeDouble(offsets[15], object.low);
+  writer.writeDouble(offsets[16], object.j);
+  writer.writeDouble(offsets[17], object.k);
+  writer.writeDouble(offsets[18], object.low);
   writer.writeObjectList<CandleIndicatorEntity>(
-    offsets[16],
+    offsets[19],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
     object.lwmaEnvelopsValues,
   );
   writer.writeObjectList<CandleIndicatorEntity>(
-    offsets[17],
+    offsets[20],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
     object.lwmaMaValues,
   );
   writer.writeObjectList<CandleIndicatorEntity>(
-    offsets[18],
+    offsets[21],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
     object.macdSignalValues,
   );
   writer.writeObjectList<CandleIndicatorEntity>(
-    offsets[19],
+    offsets[22],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
     object.macdValues,
   );
-  writer.writeDouble(offsets[20], object.open);
   writer.writeObjectList<CandleIndicatorEntity>(
-    offsets[21],
+    offsets[23],
+    allOffsets,
+    CandleIndicatorEntitySchema.serialize,
+    object.mfiValues,
+  );
+  writer.writeObjectList<CandleIndicatorEntity>(
+    offsets[24],
+    allOffsets,
+    CandleIndicatorEntitySchema.serialize,
+    object.momentumValues,
+  );
+  writer.writeDouble(offsets[25], object.open);
+  writer.writeObjectList<CandleIndicatorEntity>(
+    offsets[26],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
     object.parabolicValues,
   );
-  writer.writeDouble(offsets[22], object.r);
-  writer.writeDouble(offsets[23], object.ratio);
+  writer.writeDouble(offsets[27], object.r);
+  writer.writeDouble(offsets[28], object.ratio);
   writer.writeObjectList<CandleIndicatorEntity>(
-    offsets[24],
+    offsets[29],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
     object.rsiValues,
   );
   writer.writeObjectList<CandleIndicatorEntity>(
-    offsets[25],
+    offsets[30],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
     object.smaEnvelopsValues,
   );
   writer.writeObjectList<CandleIndicatorEntity>(
-    offsets[26],
+    offsets[31],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
     object.smaMaValues,
   );
   writer.writeObjectList<CandleIndicatorEntity>(
-    offsets[27],
+    offsets[32],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
     object.smmaEnvelopsValues,
   );
   writer.writeObjectList<CandleIndicatorEntity>(
-    offsets[28],
+    offsets[33],
     allOffsets,
     CandleIndicatorEntitySchema.serialize,
     object.smmaMaValues,
   );
-  writer.writeString(offsets[29], object.symbol);
-  writer.writeLong(offsets[30], object.time);
-  writer.writeDouble(offsets[31], object.vol);
+  writer.writeObjectList<CandleIndicatorEntity>(
+    offsets[34],
+    allOffsets,
+    CandleIndicatorEntitySchema.serialize,
+    object.stochasticValues,
+  );
+  writer.writeString(offsets[35], object.symbol);
+  writer.writeLong(offsets[36], object.time);
+  writer.writeDouble(offsets[37], object.vol);
+  writer.writeObjectList<CandleIndicatorEntity>(
+    offsets[38],
+    allOffsets,
+    CandleIndicatorEntitySchema.serialize,
+    object.wprValues,
+  );
 }
 
 KLineEntity _kLineEntityDeserialize(
@@ -540,106 +722,148 @@ KLineEntity _kLineEntityDeserialize(
 ) {
   final object = KLineEntity(
     amount: reader.readDoubleOrNull(offsets[2]),
-    change: reader.readDoubleOrNull(offsets[5]),
-    close: reader.readDouble(offsets[6]),
-    frame: _KLineEntityframeValueEnumMap[reader.readByteOrNull(offsets[10])] ??
+    change: reader.readDoubleOrNull(offsets[7]),
+    close: reader.readDouble(offsets[8]),
+    frame: _KLineEntityframeValueEnumMap[reader.readByteOrNull(offsets[13])] ??
         CandleTimeFormat.H4,
-    high: reader.readDouble(offsets[11]),
-    low: reader.readDouble(offsets[15]),
-    open: reader.readDouble(offsets[20]),
-    ratio: reader.readDoubleOrNull(offsets[23]),
-    symbol: reader.readStringOrNull(offsets[29]),
-    time: reader.readLongOrNull(offsets[30]),
-    vol: reader.readDouble(offsets[31]),
+    high: reader.readDouble(offsets[14]),
+    low: reader.readDouble(offsets[18]),
+    open: reader.readDouble(offsets[25]),
+    ratio: reader.readDoubleOrNull(offsets[28]),
+    symbol: reader.readStringOrNull(offsets[35]),
+    time: reader.readLongOrNull(offsets[36]),
+    vol: reader.readDouble(offsets[37]),
   );
   object.MA10Volume = reader.readDoubleOrNull(offsets[0]);
   object.MA5Volume = reader.readDoubleOrNull(offsets[1]);
-  object.bollValues = reader.readObjectList<CandleIndicatorEntity>(
+  object.atrValues = reader.readObjectList<CandleIndicatorEntity>(
     offsets[3],
     CandleIndicatorEntitySchema.deserialize,
     allOffsets,
     CandleIndicatorEntity(),
   );
-  object.cci = reader.readDoubleOrNull(offsets[4]);
-  object.d = reader.readDoubleOrNull(offsets[7]);
+  object.bollValues = reader.readObjectList<CandleIndicatorEntity>(
+    offsets[4],
+    CandleIndicatorEntitySchema.deserialize,
+    allOffsets,
+    CandleIndicatorEntity(),
+  );
+  object.cci = reader.readDoubleOrNull(offsets[5]);
+  object.cciValues = reader.readObjectList<CandleIndicatorEntity>(
+    offsets[6],
+    CandleIndicatorEntitySchema.deserialize,
+    allOffsets,
+    CandleIndicatorEntity(),
+  );
+  object.d = reader.readDoubleOrNull(offsets[9]);
+  object.deMarkerValues = reader.readObjectList<CandleIndicatorEntity>(
+    offsets[10],
+    CandleIndicatorEntitySchema.deserialize,
+    allOffsets,
+    CandleIndicatorEntity(),
+  );
   object.emaEnvelopsValues = reader.readObjectList<CandleIndicatorEntity>(
-    offsets[8],
+    offsets[11],
     CandleIndicatorEntitySchema.deserialize,
     allOffsets,
     CandleIndicatorEntity(),
   );
   object.emaMaValues = reader.readObjectList<CandleIndicatorEntity>(
-    offsets[9],
-    CandleIndicatorEntitySchema.deserialize,
-    allOffsets,
-    CandleIndicatorEntity(),
-  );
-  object.ichimokuValues = reader.readObjectList<CandleIndicatorEntity>(
     offsets[12],
     CandleIndicatorEntitySchema.deserialize,
     allOffsets,
     CandleIndicatorEntity(),
   );
+  object.ichimokuValues = reader.readObjectList<CandleIndicatorEntity>(
+    offsets[15],
+    CandleIndicatorEntitySchema.deserialize,
+    allOffsets,
+    CandleIndicatorEntity(),
+  );
   object.id = id;
-  object.j = reader.readDoubleOrNull(offsets[13]);
-  object.k = reader.readDoubleOrNull(offsets[14]);
+  object.j = reader.readDoubleOrNull(offsets[16]);
+  object.k = reader.readDoubleOrNull(offsets[17]);
   object.lwmaEnvelopsValues = reader.readObjectList<CandleIndicatorEntity>(
-    offsets[16],
-    CandleIndicatorEntitySchema.deserialize,
-    allOffsets,
-    CandleIndicatorEntity(),
-  );
-  object.lwmaMaValues = reader.readObjectList<CandleIndicatorEntity>(
-    offsets[17],
-    CandleIndicatorEntitySchema.deserialize,
-    allOffsets,
-    CandleIndicatorEntity(),
-  );
-  object.macdSignalValues = reader.readObjectList<CandleIndicatorEntity>(
-    offsets[18],
-    CandleIndicatorEntitySchema.deserialize,
-    allOffsets,
-    CandleIndicatorEntity(),
-  );
-  object.macdValues = reader.readObjectList<CandleIndicatorEntity>(
     offsets[19],
     CandleIndicatorEntitySchema.deserialize,
     allOffsets,
     CandleIndicatorEntity(),
   );
-  object.parabolicValues = reader.readObjectList<CandleIndicatorEntity>(
+  object.lwmaMaValues = reader.readObjectList<CandleIndicatorEntity>(
+    offsets[20],
+    CandleIndicatorEntitySchema.deserialize,
+    allOffsets,
+    CandleIndicatorEntity(),
+  );
+  object.macdSignalValues = reader.readObjectList<CandleIndicatorEntity>(
     offsets[21],
     CandleIndicatorEntitySchema.deserialize,
     allOffsets,
     CandleIndicatorEntity(),
   );
-  object.r = reader.readDoubleOrNull(offsets[22]);
-  object.rsiValues = reader.readObjectList<CandleIndicatorEntity>(
+  object.macdValues = reader.readObjectList<CandleIndicatorEntity>(
+    offsets[22],
+    CandleIndicatorEntitySchema.deserialize,
+    allOffsets,
+    CandleIndicatorEntity(),
+  );
+  object.mfiValues = reader.readObjectList<CandleIndicatorEntity>(
+    offsets[23],
+    CandleIndicatorEntitySchema.deserialize,
+    allOffsets,
+    CandleIndicatorEntity(),
+  );
+  object.momentumValues = reader.readObjectList<CandleIndicatorEntity>(
     offsets[24],
     CandleIndicatorEntitySchema.deserialize,
     allOffsets,
     CandleIndicatorEntity(),
   );
-  object.smaEnvelopsValues = reader.readObjectList<CandleIndicatorEntity>(
-    offsets[25],
-    CandleIndicatorEntitySchema.deserialize,
-    allOffsets,
-    CandleIndicatorEntity(),
-  );
-  object.smaMaValues = reader.readObjectList<CandleIndicatorEntity>(
+  object.parabolicValues = reader.readObjectList<CandleIndicatorEntity>(
     offsets[26],
     CandleIndicatorEntitySchema.deserialize,
     allOffsets,
     CandleIndicatorEntity(),
   );
+  object.r = reader.readDoubleOrNull(offsets[27]);
+  object.rsiValues = reader.readObjectList<CandleIndicatorEntity>(
+    offsets[29],
+    CandleIndicatorEntitySchema.deserialize,
+    allOffsets,
+    CandleIndicatorEntity(),
+  );
+  object.smaEnvelopsValues = reader.readObjectList<CandleIndicatorEntity>(
+    offsets[30],
+    CandleIndicatorEntitySchema.deserialize,
+    allOffsets,
+    CandleIndicatorEntity(),
+  );
+  object.smaMaValues = reader.readObjectList<CandleIndicatorEntity>(
+    offsets[31],
+    CandleIndicatorEntitySchema.deserialize,
+    allOffsets,
+    CandleIndicatorEntity(),
+  );
   object.smmaEnvelopsValues = reader.readObjectList<CandleIndicatorEntity>(
-    offsets[27],
+    offsets[32],
     CandleIndicatorEntitySchema.deserialize,
     allOffsets,
     CandleIndicatorEntity(),
   );
   object.smmaMaValues = reader.readObjectList<CandleIndicatorEntity>(
-    offsets[28],
+    offsets[33],
+    CandleIndicatorEntitySchema.deserialize,
+    allOffsets,
+    CandleIndicatorEntity(),
+  );
+  object.stochasticValues = reader.readObjectList<CandleIndicatorEntity>(
+    offsets[34],
+    CandleIndicatorEntitySchema.deserialize,
+    allOffsets,
+    CandleIndicatorEntity(),
+  );
+  object.wprValues = reader.readObjectList<CandleIndicatorEntity>(
+    offsets[38],
     CandleIndicatorEntitySchema.deserialize,
     allOffsets,
     CandleIndicatorEntity(),
@@ -668,32 +892,41 @@ P _kLineEntityDeserializeProp<P>(
         CandleIndicatorEntity(),
       )) as P;
     case 4:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readObjectList<CandleIndicatorEntity>(
+        offset,
+        CandleIndicatorEntitySchema.deserialize,
+        allOffsets,
+        CandleIndicatorEntity(),
+      )) as P;
     case 5:
       return (reader.readDoubleOrNull(offset)) as P;
     case 6:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readObjectList<CandleIndicatorEntity>(
+        offset,
+        CandleIndicatorEntitySchema.deserialize,
+        allOffsets,
+        CandleIndicatorEntity(),
+      )) as P;
     case 7:
       return (reader.readDoubleOrNull(offset)) as P;
     case 8:
-      return (reader.readObjectList<CandleIndicatorEntity>(
-        offset,
-        CandleIndicatorEntitySchema.deserialize,
-        allOffsets,
-        CandleIndicatorEntity(),
-      )) as P;
-    case 9:
-      return (reader.readObjectList<CandleIndicatorEntity>(
-        offset,
-        CandleIndicatorEntitySchema.deserialize,
-        allOffsets,
-        CandleIndicatorEntity(),
-      )) as P;
-    case 10:
-      return (_KLineEntityframeValueEnumMap[reader.readByteOrNull(offset)] ??
-          CandleTimeFormat.H4) as P;
-    case 11:
       return (reader.readDouble(offset)) as P;
+    case 9:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 10:
+      return (reader.readObjectList<CandleIndicatorEntity>(
+        offset,
+        CandleIndicatorEntitySchema.deserialize,
+        allOffsets,
+        CandleIndicatorEntity(),
+      )) as P;
+    case 11:
+      return (reader.readObjectList<CandleIndicatorEntity>(
+        offset,
+        CandleIndicatorEntitySchema.deserialize,
+        allOffsets,
+        CandleIndicatorEntity(),
+      )) as P;
     case 12:
       return (reader.readObjectList<CandleIndicatorEntity>(
         offset,
@@ -702,32 +935,23 @@ P _kLineEntityDeserializeProp<P>(
         CandleIndicatorEntity(),
       )) as P;
     case 13:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (_KLineEntityframeValueEnumMap[reader.readByteOrNull(offset)] ??
+          CandleTimeFormat.H4) as P;
     case 14:
-      return (reader.readDoubleOrNull(offset)) as P;
-    case 15:
       return (reader.readDouble(offset)) as P;
+    case 15:
+      return (reader.readObjectList<CandleIndicatorEntity>(
+        offset,
+        CandleIndicatorEntitySchema.deserialize,
+        allOffsets,
+        CandleIndicatorEntity(),
+      )) as P;
     case 16:
-      return (reader.readObjectList<CandleIndicatorEntity>(
-        offset,
-        CandleIndicatorEntitySchema.deserialize,
-        allOffsets,
-        CandleIndicatorEntity(),
-      )) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 17:
-      return (reader.readObjectList<CandleIndicatorEntity>(
-        offset,
-        CandleIndicatorEntitySchema.deserialize,
-        allOffsets,
-        CandleIndicatorEntity(),
-      )) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 18:
-      return (reader.readObjectList<CandleIndicatorEntity>(
-        offset,
-        CandleIndicatorEntitySchema.deserialize,
-        allOffsets,
-        CandleIndicatorEntity(),
-      )) as P;
+      return (reader.readDouble(offset)) as P;
     case 19:
       return (reader.readObjectList<CandleIndicatorEntity>(
         offset,
@@ -736,7 +960,12 @@ P _kLineEntityDeserializeProp<P>(
         CandleIndicatorEntity(),
       )) as P;
     case 20:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readObjectList<CandleIndicatorEntity>(
+        offset,
+        CandleIndicatorEntitySchema.deserialize,
+        allOffsets,
+        CandleIndicatorEntity(),
+      )) as P;
     case 21:
       return (reader.readObjectList<CandleIndicatorEntity>(
         offset,
@@ -745,9 +974,19 @@ P _kLineEntityDeserializeProp<P>(
         CandleIndicatorEntity(),
       )) as P;
     case 22:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readObjectList<CandleIndicatorEntity>(
+        offset,
+        CandleIndicatorEntitySchema.deserialize,
+        allOffsets,
+        CandleIndicatorEntity(),
+      )) as P;
     case 23:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readObjectList<CandleIndicatorEntity>(
+        offset,
+        CandleIndicatorEntitySchema.deserialize,
+        allOffsets,
+        CandleIndicatorEntity(),
+      )) as P;
     case 24:
       return (reader.readObjectList<CandleIndicatorEntity>(
         offset,
@@ -756,12 +995,7 @@ P _kLineEntityDeserializeProp<P>(
         CandleIndicatorEntity(),
       )) as P;
     case 25:
-      return (reader.readObjectList<CandleIndicatorEntity>(
-        offset,
-        CandleIndicatorEntitySchema.deserialize,
-        allOffsets,
-        CandleIndicatorEntity(),
-      )) as P;
+      return (reader.readDouble(offset)) as P;
     case 26:
       return (reader.readObjectList<CandleIndicatorEntity>(
         offset,
@@ -770,25 +1004,64 @@ P _kLineEntityDeserializeProp<P>(
         CandleIndicatorEntity(),
       )) as P;
     case 27:
-      return (reader.readObjectList<CandleIndicatorEntity>(
-        offset,
-        CandleIndicatorEntitySchema.deserialize,
-        allOffsets,
-        CandleIndicatorEntity(),
-      )) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 28:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 29:
       return (reader.readObjectList<CandleIndicatorEntity>(
         offset,
         CandleIndicatorEntitySchema.deserialize,
         allOffsets,
         CandleIndicatorEntity(),
       )) as P;
-    case 29:
-      return (reader.readStringOrNull(offset)) as P;
     case 30:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readObjectList<CandleIndicatorEntity>(
+        offset,
+        CandleIndicatorEntitySchema.deserialize,
+        allOffsets,
+        CandleIndicatorEntity(),
+      )) as P;
     case 31:
+      return (reader.readObjectList<CandleIndicatorEntity>(
+        offset,
+        CandleIndicatorEntitySchema.deserialize,
+        allOffsets,
+        CandleIndicatorEntity(),
+      )) as P;
+    case 32:
+      return (reader.readObjectList<CandleIndicatorEntity>(
+        offset,
+        CandleIndicatorEntitySchema.deserialize,
+        allOffsets,
+        CandleIndicatorEntity(),
+      )) as P;
+    case 33:
+      return (reader.readObjectList<CandleIndicatorEntity>(
+        offset,
+        CandleIndicatorEntitySchema.deserialize,
+        allOffsets,
+        CandleIndicatorEntity(),
+      )) as P;
+    case 34:
+      return (reader.readObjectList<CandleIndicatorEntity>(
+        offset,
+        CandleIndicatorEntitySchema.deserialize,
+        allOffsets,
+        CandleIndicatorEntity(),
+      )) as P;
+    case 35:
+      return (reader.readStringOrNull(offset)) as P;
+    case 36:
+      return (reader.readLongOrNull(offset)) as P;
+    case 37:
       return (reader.readDouble(offset)) as P;
+    case 38:
+      return (reader.readObjectList<CandleIndicatorEntity>(
+        offset,
+        CandleIndicatorEntitySchema.deserialize,
+        allOffsets,
+        CandleIndicatorEntity(),
+      )) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -1159,6 +1432,113 @@ extension KLineEntityQueryFilter
   }
 
   QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      atrValuesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'atrValues',
+      ));
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      atrValuesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'atrValues',
+      ));
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      atrValuesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'atrValues',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      atrValuesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'atrValues',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      atrValuesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'atrValues',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      atrValuesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'atrValues',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      atrValuesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'atrValues',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      atrValuesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'atrValues',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
       bollValuesIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1340,6 +1720,113 @@ extension KLineEntityQueryFilter
         includeUpper: includeUpper,
         epsilon: epsilon,
       ));
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      cciValuesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'cciValues',
+      ));
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      cciValuesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'cciValues',
+      ));
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      cciValuesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'cciValues',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      cciValuesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'cciValues',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      cciValuesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'cciValues',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      cciValuesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'cciValues',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      cciValuesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'cciValues',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      cciValuesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'cciValues',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
     });
   }
 
@@ -1561,6 +2048,113 @@ extension KLineEntityQueryFilter
         includeUpper: includeUpper,
         epsilon: epsilon,
       ));
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      deMarkerValuesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'deMarkerValues',
+      ));
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      deMarkerValuesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'deMarkerValues',
+      ));
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      deMarkerValuesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'deMarkerValues',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      deMarkerValuesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'deMarkerValues',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      deMarkerValuesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'deMarkerValues',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      deMarkerValuesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'deMarkerValues',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      deMarkerValuesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'deMarkerValues',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      deMarkerValuesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'deMarkerValues',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
     });
   }
 
@@ -2700,6 +3294,220 @@ extension KLineEntityQueryFilter
     });
   }
 
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      mfiValuesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'mfiValues',
+      ));
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      mfiValuesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'mfiValues',
+      ));
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      mfiValuesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mfiValues',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      mfiValuesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mfiValues',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      mfiValuesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mfiValues',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      mfiValuesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mfiValues',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      mfiValuesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mfiValues',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      mfiValuesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'mfiValues',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      momentumValuesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'momentumValues',
+      ));
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      momentumValuesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'momentumValues',
+      ));
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      momentumValuesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'momentumValues',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      momentumValuesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'momentumValues',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      momentumValuesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'momentumValues',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      momentumValuesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'momentumValues',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      momentumValuesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'momentumValues',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      momentumValuesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'momentumValues',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
   QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition> openEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -3562,6 +4370,113 @@ extension KLineEntityQueryFilter
     });
   }
 
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      stochasticValuesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'stochasticValues',
+      ));
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      stochasticValuesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'stochasticValues',
+      ));
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      stochasticValuesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'stochasticValues',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      stochasticValuesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'stochasticValues',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      stochasticValuesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'stochasticValues',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      stochasticValuesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'stochasticValues',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      stochasticValuesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'stochasticValues',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      stochasticValuesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'stochasticValues',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
   QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition> symbolIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -3844,14 +4759,142 @@ extension KLineEntityQueryFilter
       ));
     });
   }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      wprValuesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'wprValues',
+      ));
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      wprValuesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'wprValues',
+      ));
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      wprValuesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'wprValues',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      wprValuesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'wprValues',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      wprValuesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'wprValues',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      wprValuesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'wprValues',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      wprValuesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'wprValues',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      wprValuesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'wprValues',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
 }
 
 extension KLineEntityQueryObject
     on QueryBuilder<KLineEntity, KLineEntity, QFilterCondition> {
   QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      atrValuesElement(FilterQuery<CandleIndicatorEntity> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'atrValues');
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
       bollValuesElement(FilterQuery<CandleIndicatorEntity> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'bollValues');
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      cciValuesElement(FilterQuery<CandleIndicatorEntity> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'cciValues');
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      deMarkerValuesElement(FilterQuery<CandleIndicatorEntity> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'deMarkerValues');
     });
   }
 
@@ -3905,6 +4948,20 @@ extension KLineEntityQueryObject
   }
 
   QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      mfiValuesElement(FilterQuery<CandleIndicatorEntity> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'mfiValues');
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      momentumValuesElement(FilterQuery<CandleIndicatorEntity> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'momentumValues');
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
       parabolicValuesElement(FilterQuery<CandleIndicatorEntity> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'parabolicValues');
@@ -3943,6 +5000,20 @@ extension KLineEntityQueryObject
       smmaMaValuesElement(FilterQuery<CandleIndicatorEntity> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'smmaMaValues');
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      stochasticValuesElement(FilterQuery<CandleIndicatorEntity> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'stochasticValues');
+    });
+  }
+
+  QueryBuilder<KLineEntity, KLineEntity, QAfterFilterCondition>
+      wprValuesElement(FilterQuery<CandleIndicatorEntity> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'wprValues');
     });
   }
 }
@@ -4539,6 +5610,13 @@ extension KLineEntityQueryProperty
   }
 
   QueryBuilder<KLineEntity, List<CandleIndicatorEntity>?, QQueryOperations>
+      atrValuesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'atrValues');
+    });
+  }
+
+  QueryBuilder<KLineEntity, List<CandleIndicatorEntity>?, QQueryOperations>
       bollValuesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'bollValues');
@@ -4548,6 +5626,13 @@ extension KLineEntityQueryProperty
   QueryBuilder<KLineEntity, double?, QQueryOperations> cciProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'cci');
+    });
+  }
+
+  QueryBuilder<KLineEntity, List<CandleIndicatorEntity>?, QQueryOperations>
+      cciValuesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'cciValues');
     });
   }
 
@@ -4566,6 +5651,13 @@ extension KLineEntityQueryProperty
   QueryBuilder<KLineEntity, double?, QQueryOperations> dProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'd');
+    });
+  }
+
+  QueryBuilder<KLineEntity, List<CandleIndicatorEntity>?, QQueryOperations>
+      deMarkerValuesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'deMarkerValues');
     });
   }
 
@@ -4649,6 +5741,20 @@ extension KLineEntityQueryProperty
     });
   }
 
+  QueryBuilder<KLineEntity, List<CandleIndicatorEntity>?, QQueryOperations>
+      mfiValuesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'mfiValues');
+    });
+  }
+
+  QueryBuilder<KLineEntity, List<CandleIndicatorEntity>?, QQueryOperations>
+      momentumValuesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'momentumValues');
+    });
+  }
+
   QueryBuilder<KLineEntity, double, QQueryOperations> openProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'open');
@@ -4709,6 +5815,13 @@ extension KLineEntityQueryProperty
     });
   }
 
+  QueryBuilder<KLineEntity, List<CandleIndicatorEntity>?, QQueryOperations>
+      stochasticValuesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'stochasticValues');
+    });
+  }
+
   QueryBuilder<KLineEntity, String?, QQueryOperations> symbolProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'symbol');
@@ -4724,6 +5837,13 @@ extension KLineEntityQueryProperty
   QueryBuilder<KLineEntity, double, QQueryOperations> volProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'vol');
+    });
+  }
+
+  QueryBuilder<KLineEntity, List<CandleIndicatorEntity>?, QQueryOperations>
+      wprValuesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'wprValues');
     });
   }
 }

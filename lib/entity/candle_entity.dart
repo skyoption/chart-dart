@@ -25,11 +25,33 @@ mixin CandleEntity {
 
   ///Parabolic
   List<CandleIndicatorEntity>? parabolicValues;
+
   /// Ichimoku
   List<CandleIndicatorEntity>? ichimokuValues;
+
   /// RSI
   List<CandleIndicatorEntity>? rsiValues;
+
   /// MACD
   List<CandleIndicatorEntity>? macdValues;
   List<CandleIndicatorEntity>? macdSignalValues;
+  /// ATR
+  List<CandleIndicatorEntity>? atrValues;
+  /// CCI
+  List<CandleIndicatorEntity>? cciValues;
+  /// DeM
+  List<CandleIndicatorEntity>? deMarkerValues;
+  /// MOM
+  List<CandleIndicatorEntity>? momentumValues;
+  /// WPR
+  List<CandleIndicatorEntity>? wprValues;
+  /// MFI
+  List<CandleIndicatorEntity>? mfiValues;
+  /// SO
+  List<CandleIndicatorEntity>? stochasticValues;
+
+
+
+
+
 }

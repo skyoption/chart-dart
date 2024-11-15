@@ -1,21 +1,28 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/indicators/properties/indicator_properties_screen.dart';
+import 'package:candle_chart/indicators/indicator_levels_screen.dart';
+import 'package:candle_chart/indicators/indicator_pixels_screen.dart';
 import 'package:candle_chart/indicators/widgets/indicator_color_widget.dart';
 import 'package:candle_chart/objects/object_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
+import 'package:candle_chart/indicators/apply_to_screen.dart';
+import 'package:candle_chart/indicators/indicators_methods_screen.dart';
 import 'package:candle_chart/k_chart_plus.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-class MACDPropertiesScreen extends StatefulWidget {
+import '../indicator_properties_screen.dart';
+
+@immutable
+class SOPropertiesScreen extends StatefulWidget {
   final String? name;
   final IndicatorEntity? indicator;
   final int? windowId;
   final Function onDone;
 
-  MACDPropertiesScreen({
+  SOPropertiesScreen({
     super.key,
     required this.onDone,
     this.name,
@@ -24,13 +31,11 @@ class MACDPropertiesScreen extends StatefulWidget {
   });
 
   @override
-  State<MACDPropertiesScreen> createState() => _MACDPropertiesScreenState();
+  State<SOPropertiesScreen> createState() => _SOPropertiesScreenState();
 }
 
-class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
-  late final FastEMAController = TextEditingController(text: '12');
-  late final slowEMAController = TextEditingController(text: '26');
-  late final MACDSMAController = TextEditingController(text: '9');
+class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
+  late final periodController = TextEditingController(text: '14');
 
   late String name = widget.name ?? widget.indicator!.name;
   IndicatorEntity? indicator;
@@ -39,14 +44,13 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
   void initState() {
     if (widget.indicator != null) {
       indicator = widget.indicator;
-      FastEMAController.text = indicator!.macd!.fastEma.toString();
-      slowEMAController.text = indicator!.macd!.slowEma.toString();
-      MACDSMAController.text = indicator!.macd!.macdSma.toString();
+      periodController.text = indicator!.period.toString();
     } else {
       indicator = IndicatorEntity(
+        period: 14,
         name: widget.name!,
-        macd: MACD(),
-        type: IndicatorType.MACD,
+        type: IndicatorType.DeM,
+        levels: [0.3, 0.7],
         windowId: widget.windowId ?? 0,
         isSecondary: true,
       );
@@ -116,7 +120,7 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
               title: '${name.toUpperCase()}',
             ),
             PropertiesItemWidget(
-              title: 'Fast EMA',
+              title: 'Period',
               child: SizedBox(
                 width: 60.0,
                 height: 20.0,
@@ -129,10 +133,10 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
                       ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
-                    if (res != null) indicator!.macd!.fastEma = res;
+                    if (res != null) indicator!.period = res;
                   },
                   autofocus: false,
-                  controller: FastEMAController,
+                  controller: periodController,
                   textAlignVertical: TextAlignVertical.center,
                   keyboardType: TextInputType.numberWithOptions(signed: false),
                   decoration: InputDecoration(
@@ -149,71 +153,49 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'Slow EMA',
+              title: 'Apply To',
+              subTitle: (widget.indicator?.applyTo.name ?? 'Close')
+                  .replaceAll('_', ' ')
+                  .replaceAll('__', '/'),
               margin: EdgeInsets.zero,
-              child: SizedBox(
-                width: 60.0,
-                height: 20.0,
-                child: TextField(
-                  cursorHeight: 12.0,
-                  autofocus: false,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: Colors.blueAccent,
-                      ),
-                  onChanged: (value) {
-                    final res = int.tryParse(value);
-                    if (res != null) indicator!.macd!.slowEma = res;
-                  },
-                  controller: slowEMAController,
-                  textAlignVertical: TextAlignVertical.center,
-                  keyboardType: TextInputType.numberWithOptions(signed: false),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 11.0),
+              subTitleColor: Colors.grey.withOpacity(0.8),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ApplyToScreen(
+                      apply: indicator!.applyTo,
+                      onApply: (apply) {
+                        indicator!.applyTo = apply;
+                        setState(() {});
+                      },
+                    ),
                   ),
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(3),
-                    NumericalRangeFormatter(min: 1, max: 100),
-                  ],
-                ),
-              ),
-              onTap: () {},
+                );
+              },
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'MACD SMA',
+              title: 'Levels',
               margin: EdgeInsets.zero,
-              child: SizedBox(
-                width: 60.0,
-                height: 20.0,
-                child: TextField(
-                  cursorHeight: 12.0,
-                  autofocus: false,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: Colors.blueAccent,
-                      ),
-                  onChanged: (value) {
-                    final res = int.tryParse(value);
-                    if (res != null) indicator!.macd!.macdSma = res;
-                  },
-                  controller: MACDSMAController,
-                  textAlignVertical: TextAlignVertical.center,
-                  keyboardType: TextInputType.numberWithOptions(signed: false),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 11.0),
+              subTitleColor: Colors.grey.withOpacity(0.8),
+              subTitle: indicator!.levels.join(', '),
+              onTap: () {
+                kPrint(widget.indicator?.levelsColor);
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => IndicatorLevelsScreen(
+                      color: indicator!.levelsColor ?? '',
+                      setLevels: (color, levels) {
+                        indicator!.levels = levels;
+                        indicator!.levelsColor = color;
+                        setState(() {});
+                        kPrint(widget.indicator?.levelsColor);
+                      },
+                      levels: indicator!.levels,
+                    ),
                   ),
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(3),
-                    NumericalRangeFormatter(min: 1, max: 100),
-                  ],
-                ),
-              ),
-              onTap: () {},
+                );
+              },
             ),
             PropertiesTitleWidget(title: 'visualization'),
             PropertiesItemWidget(
@@ -224,19 +206,31 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
               onTap: () {},
             ),
             PropertiesTitleWidget(title: 'style'),
-            IndicatorColorWidget(
-              title: 'Main',
-              color: colorFromHex(indicator?.macd?.mainColor ?? ''),
-              onChange: (color, drawAsBackground) {
-                indicator!.macd!.mainColor = color.toHexString();
+            PropertiesItemWidget(
+              title: 'Pixel',
+              subTitle: '${widget.indicator?.strokeWidth ?? 1} Pixel',
+              margin: EdgeInsets.zero,
+              subTitleColor: Colors.grey.withOpacity(0.8),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => IndicatorPixelsScreen(
+                      pixel: indicator!.strokeWidth,
+                      onConfirm: (pixel) {
+                        indicator!.strokeWidth = pixel;
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                );
               },
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
-              title: 'Signal',
-              color: colorFromHex(indicator?.macd?.signalColor ?? ''),
+              title: 'Style ',
+              color: colorFromHex(indicator?.color ?? ''),
               onChange: (color, drawAsBackground) {
-                indicator!.macd!.signalColor = color.toHexString();
+                indicator!.color = color.toHexString();
               },
             ),
           ],
@@ -257,9 +251,7 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
 
   @override
   void dispose() {
-    slowEMAController.dispose();
-    MACDSMAController.dispose();
-    FastEMAController.dispose();
+    periodController.dispose();
     super.dispose();
   }
 }

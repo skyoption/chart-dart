@@ -1,7 +1,14 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/indicators/properties/macd_properties_screen.dart';
+import 'package:candle_chart/indicators/properties/oscillators/atr_properties_screen.dart';
+import 'package:candle_chart/indicators/properties/oscillators/cci_properties_screen.dart';
+import 'package:candle_chart/indicators/properties/oscillators/dem_properties_screen.dart';
+import 'package:candle_chart/indicators/properties/oscillators/macd_properties_screen.dart';
+import 'package:candle_chart/indicators/properties/oscillators/mom_properties_screen.dart';
+import 'package:candle_chart/indicators/properties/oscillators/so_properties_screen.dart';
+import 'package:candle_chart/indicators/properties/oscillators/wpr_properties_screen.dart';
 import 'package:candle_chart/indicators/properties/parabolic_properties_screen.dart';
-import 'package:candle_chart/indicators/properties/rsi_properties_screen.dart';
+import 'package:candle_chart/indicators/properties/oscillators/rsi_properties_screen.dart';
+import 'package:candle_chart/indicators/properties/volumes/mfi_properties_screen.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/indicators/properties/indicator_properties_screen.dart';
@@ -216,7 +223,7 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
   }
 
   void _onTap(IndicatorEntity item, int? windowId) {
-    if (item.ichimoku != null) {
+    if (item.type == IndicatorType.ICHIMOKU) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => IchimokuPropertiesScreen(
@@ -226,7 +233,77 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
           ),
         ),
       );
-    } else if (item.macd != null) {
+    } else if (item.type == IndicatorType.ATR) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => ATRPropertiesScreen(
+            indicator: item,
+            windowId: windowId,
+            onDone: widget.onDone,
+          ),
+        ),
+      );
+    } else if (item.type == IndicatorType.CCI) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => CCIPropertiesScreen(
+            indicator: item,
+            windowId: windowId,
+            onDone: widget.onDone,
+          ),
+        ),
+      );
+    } else if (item.type == IndicatorType.DeM) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => DeMarkerPropertiesScreen(
+            indicator: item,
+            windowId: windowId,
+            onDone: widget.onDone,
+          ),
+        ),
+      );
+    } else if (item.type == IndicatorType.MOM) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => MOMPropertiesScreen(
+            indicator: item,
+            windowId: windowId,
+            onDone: widget.onDone,
+          ),
+        ),
+      );
+    } else if (item.type == IndicatorType.SO) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => SOPropertiesScreen(
+            indicator: item,
+            windowId: windowId,
+            onDone: widget.onDone,
+          ),
+        ),
+      );
+    } else if (item.type == IndicatorType.WPR) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => WPRPropertiesScreen(
+            indicator: item,
+            windowId: windowId,
+            onDone: widget.onDone,
+          ),
+        ),
+      );
+    } else if (item.type == IndicatorType.MFI) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => MFIPropertiesScreen(
+            indicator: item,
+            windowId: windowId,
+            onDone: widget.onDone,
+          ),
+        ),
+      );
+    } else if (item.type == IndicatorType.MACD) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => MACDPropertiesScreen(
@@ -246,7 +323,7 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
           ),
         ),
       );
-    } else if (item.steps != null) {
+    } else if (item.type == IndicatorType.PARABOLIC) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => ParabolicPropertiesScreen(

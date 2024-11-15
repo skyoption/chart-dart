@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class IndicatorLevelsScreen extends StatefulWidget {
-  final Function(String color, List<int> levels) setLevels;
-  final List<int>? levels;
+  final Function(String color, List<double> levels) setLevels;
+  final List<double>? levels;
   final String color;
 
   const IndicatorLevelsScreen({
@@ -25,7 +25,7 @@ class IndicatorLevelsScreen extends StatefulWidget {
 }
 
 class _IndicatorLevelsScreenState extends State<IndicatorLevelsScreen> {
-  late List<int> levels = widget.levels ?? [];
+  late List<double> levels = widget.levels ?? [];
   late String color = widget.color;
 
   @override

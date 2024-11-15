@@ -78,7 +78,7 @@ const IndicatorEntitySchema = CollectionSchema(
     r'levels': PropertySchema(
       id: 11,
       name: r'levels',
-      type: IsarType.longList,
+      type: IsarType.doubleList,
     ),
     r'levelsColor': PropertySchema(
       id: 12,
@@ -264,7 +264,7 @@ void _indicatorEntitySerialize(
   writer.writeBool(offsets[8], object.isSecondary);
   writer.writeDouble(offsets[9], object.kijunSen);
   writer.writeByte(offsets[10], object.level.index);
-  writer.writeLongList(offsets[11], object.levels);
+  writer.writeDoubleList(offsets[11], object.levels);
   writer.writeString(offsets[12], object.levelsColor);
   writer.writeDouble(offsets[13], object.longEMA);
   writer.writeObject<MACD>(
@@ -318,7 +318,7 @@ IndicatorEntity _indicatorEntityDeserialize(
     level:
         _IndicatorEntitylevelValueEnumMap[reader.readByteOrNull(offsets[10])] ??
             Levels.None,
-    levels: reader.readLongList(offsets[11]) ?? const [],
+    levels: reader.readDoubleList(offsets[11]) ?? const [],
     levelsColor: reader.readStringOrNull(offsets[12]),
     longEMA: reader.readDoubleOrNull(offsets[13]),
     macd: reader.readObjectOrNull<MACD>(
@@ -392,7 +392,7 @@ P _indicatorEntityDeserializeProp<P>(
               reader.readByteOrNull(offset)] ??
           Levels.None) as P;
     case 11:
-      return (reader.readLongList(offset) ?? const []) as P;
+      return (reader.readDoubleList(offset) ?? const []) as P;
     case 12:
       return (reader.readStringOrNull(offset)) as P;
     case 13:
@@ -508,10 +508,14 @@ const _IndicatorEntitytypeEnumValueMap = {
   'PARABOLIC': 9,
   'ICHIMOKU': 10,
   'MACD': 11,
-  'KDJ': 12,
-  'RSI': 13,
-  'WR': 14,
+  'RSI': 12,
+  'ATR': 13,
+  'DeM': 14,
   'CCI': 15,
+  'MOM': 16,
+  'SO': 17,
+  'WPR': 18,
+  'MFI': 19,
 };
 const _IndicatorEntitytypeValueEnumMap = {
   0: IndicatorType.LINEAR_MA,
@@ -526,10 +530,14 @@ const _IndicatorEntitytypeValueEnumMap = {
   9: IndicatorType.PARABOLIC,
   10: IndicatorType.ICHIMOKU,
   11: IndicatorType.MACD,
-  12: IndicatorType.KDJ,
-  13: IndicatorType.RSI,
-  14: IndicatorType.WR,
+  12: IndicatorType.RSI,
+  13: IndicatorType.ATR,
+  14: IndicatorType.DeM,
   15: IndicatorType.CCI,
+  16: IndicatorType.MOM,
+  17: IndicatorType.SO,
+  18: IndicatorType.WPR,
+  19: IndicatorType.MFI,
 };
 
 Id _indicatorEntityGetId(IndicatorEntity object) {
@@ -1334,49 +1342,58 @@ extension IndicatorEntityQueryFilter
   }
 
   QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
-      levelsElementEqualTo(int value) {
+      levelsElementEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'levels',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
       levelsElementGreaterThan(
-    int value, {
+    double value, {
     bool include = false,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'levels',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
       levelsElementLessThan(
-    int value, {
+    double value, {
     bool include = false,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'levels',
         value: value,
+        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
       levelsElementBetween(
-    int lower,
-    int upper, {
+    double lower,
+    double upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -1385,6 +1402,7 @@ extension IndicatorEntityQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        epsilon: epsilon,
       ));
     });
   }
@@ -4177,7 +4195,8 @@ extension IndicatorEntityQueryProperty
     });
   }
 
-  QueryBuilder<IndicatorEntity, List<int>, QQueryOperations> levelsProperty() {
+  QueryBuilder<IndicatorEntity, List<double>, QQueryOperations>
+      levelsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'levels');
     });

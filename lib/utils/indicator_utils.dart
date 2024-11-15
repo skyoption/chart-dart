@@ -5,7 +5,6 @@ import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/renderer/rects/secondary_rect.dart';
-import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 
 class IndicatorUtils {
@@ -22,7 +21,15 @@ class IndicatorUtils {
         ICHIMOKU = [],
         PARABOLIC = [],
         RSI = [],
-        MACD = [];
+        MACD = [],
+        ATR = [],
+        CCI = [],
+        DEM = [],
+        MOM = [],
+        SO = [],
+        WPR = [],
+        MFI = [];
+
     await chartProperties.loadIndicators();
 
     /// reset candles
@@ -61,6 +68,20 @@ class IndicatorUtils {
           RSI.add(indicator);
         } else if (indicator.type == IndicatorType.MACD) {
           MACD.add(indicator);
+        } else if (indicator.type == IndicatorType.ATR) {
+          ATR.add(indicator);
+        } else if (indicator.type == IndicatorType.CCI) {
+          CCI.add(indicator);
+        } else if (indicator.type == IndicatorType.DeM) {
+          DEM.add(indicator);
+        } else if (indicator.type == IndicatorType.MOM) {
+          MOM.add(indicator);
+        } else if (indicator.type == IndicatorType.SO) {
+          SO.add(indicator);
+        } else if (indicator.type == IndicatorType.WPR) {
+          WPR.add(indicator);
+        } else if (indicator.type == IndicatorType.MFI) {
+          MFI.add(indicator);
         } else if (indicator.type == IndicatorType.SMA_MA) {
           SMA_MA.add(indicator);
         } else if (indicator.type == IndicatorType.EMA_MA) {
@@ -89,6 +110,13 @@ class IndicatorUtils {
 
     if (RSI.isNotEmpty) calcRSI(data, RSI);
     if (MACD.isNotEmpty) calcMACD(data, MACD);
+    if (ATR.isNotEmpty) calcATR(data, ATR);
+    if (CCI.isNotEmpty) calcCCI(data, CCI);
+    if (DEM.isNotEmpty) calcDeMarker(data, DEM);
+    if (MOM.isNotEmpty) calcMomentum(data, MOM);
+    if (SO.isNotEmpty) calcStochasticOscillator(data, SO);
+    if (WPR.isNotEmpty) calcWilliamsPercentRange(data, WPR);
+    if (MFI.isNotEmpty) calcMoneyFlowIndex(data, MFI);
     await Future.delayed(Duration(milliseconds: 500));
     if (SMA_MA.isNotEmpty) calc_SMA_MA(data, SMA_MA);
     if (EMA_MA.isNotEmpty) calc_EMA_MA(data, EMA_MA);
@@ -120,21 +148,19 @@ class IndicatorUtils {
       data[k].lwmaEnvelopsValues = null;
       data[k].smmaEnvelopsValues = null;
 
-      ///BOLL
       data[k].bollValues = null;
-
-      ///Parabolic
       data[k].parabolicValues = null;
-
-      /// Ichimoku
       data[k].ichimokuValues = null;
-
-      /// RSI
       data[k].rsiValues = null;
-
-      /// MACD
       data[k].macdValues = null;
       data[k].macdSignalValues = null;
+      data[k].cciValues = null;
+      data[k].atrValues = null;
+      data[k].deMarkerValues = null;
+      data[k].momentumValues = null;
+      data[k].wprValues = null;
+      data[k].mfiValues = null;
+      data[k].stochasticValues = null;
     }
   }
 
@@ -760,6 +786,269 @@ class IndicatorUtils {
     return indicator.copyToCandle(value: rsi);
   }
 
+  /// ATR calculation
+  static void calcATR(
+    List<KLineEntity> dataList,
+    List<IndicatorEntity> indicators,
+  ) {
+    for (int k = 0; k < indicators.length; k++) {
+      final indicator = indicators[k];
+      final int period = indicator.period;
+      double atr = 0.0;
+
+      for (int i = 1; i < dataList.length; i++) {
+        double trueRange = max(
+          dataList[i].high - dataList[i].low,
+          max(
+            (dataList[i].high - dataList[i - 1].close).abs(),
+            (dataList[i].low - dataList[i - 1].close).abs(),
+          ),
+        );
+
+        dataList[i].atrValues ??= List<CandleIndicatorEntity>.filled(
+            indicators.length, indicator.copyToCandle(value: 0));
+
+        dataList[i].atrValues = _addNewIndicator(
+          dataList[i].atrValues,
+          indicator,
+          k,
+        );
+
+        if (i < period) {
+          atr += trueRange;
+        } else if (i == period) {
+          atr /= period;
+          dataList[i].atrValues![k] = indicator.copyToCandle(value: atr);
+        } else {
+          atr = (atr * (period - 1) + trueRange) / period;
+          dataList[i].atrValues![k] = indicator.copyToCandle(value: atr);
+        }
+      }
+    }
+  }
+
+  /// CCI calculation
+  static void calcCCI(
+    List<KLineEntity> dataList,
+    List<IndicatorEntity> indicators,
+  ) {
+    for (int k = 0; k < indicators.length; k++) {
+      final indicator = indicators[k];
+      final int period = indicator.period;
+      List<double> typicalPrices = [];
+
+      for (int i = 0; i < dataList.length; i++) {
+        double price = _currentPriceValue(indicator, dataList[i]);
+        typicalPrices.add(price);
+
+        dataList[i].cciValues ??= List<CandleIndicatorEntity>.filled(
+            indicators.length, indicator.copyToCandle(value: 0));
+
+        dataList[i].cciValues = _addNewIndicator(
+          dataList[i].cciValues,
+          indicator,
+          k,
+        );
+
+        if (i >= period - 1) {
+          double sma = typicalPrices
+                  .sublist(i - period + 1, i + 1)
+                  .reduce((a, b) => a + b) /
+              period;
+          double meanDeviation = typicalPrices
+                  .sublist(i - period + 1, i + 1)
+                  .map((tp) => (tp - sma).abs())
+                  .reduce((a, b) => a + b) /
+              period;
+          double cci = (price - sma) / (0.015 * meanDeviation);
+
+          dataList[i].cciValues![k] = indicator.copyToCandle(value: cci);
+        }
+      }
+    }
+  }
+
+  /// DeMarker (DeM) calculation
+  static void calcDeMarker(
+    List<KLineEntity> dataList,
+    List<IndicatorEntity> indicators,
+  ) {
+    for (int k = 0; k < indicators.length; k++) {
+      final indicator = indicators[k];
+      final int period = indicator.period;
+      double demSumHigh = 0.0;
+      double demSumLow = 0.0;
+
+      for (int i = 1; i < dataList.length; i++) {
+        double deMax = dataList[i].high > dataList[i - 1].high
+            ? dataList[i].high - dataList[i - 1].high
+            : 0.0;
+
+        double deMin = dataList[i].low < dataList[i - 1].low
+            ? dataList[i - 1].low - dataList[i].low
+            : 0.0;
+
+        dataList[i].deMarkerValues ??= List<CandleIndicatorEntity>.filled(
+            indicators.length, indicator.copyToCandle(value: 0));
+
+        dataList[i].deMarkerValues = _addNewIndicator(
+          dataList[i].deMarkerValues,
+          indicator,
+          k,
+        );
+
+        if (i < period) {
+          demSumHigh += deMax;
+          demSumLow += deMin;
+        } else if (i == period) {
+          demSumHigh /= period;
+          demSumLow /= period;
+          double dem = demSumHigh / (demSumHigh + demSumLow);
+          dataList[i].deMarkerValues![k] = indicator.copyToCandle(value: dem);
+        } else {
+          demSumHigh = (demSumHigh * (period - 1) + deMax) / period;
+          demSumLow = (demSumLow * (period - 1) + deMin) / period;
+          double dem = demSumHigh / (demSumHigh + demSumLow);
+          dataList[i].deMarkerValues![k] = indicator.copyToCandle(value: dem);
+        }
+      }
+    }
+  }
+
+  static void calcMomentum(
+    List<KLineEntity> dataList,
+    List<IndicatorEntity> indicators,
+  ) {
+    for (var indicator in indicators) {
+      final int period = indicator.period;
+
+      for (int i = period; i < dataList.length; i++) {
+        double momentum = _currentPriceValue(indicator, dataList[i]) -
+            _currentPriceValue(indicator, dataList[i - period]);
+
+        dataList[i].momentumValues ??= List<CandleIndicatorEntity>.filled(
+            indicators.length, indicator.copyToCandle(value: 0));
+
+        dataList[i].momentumValues = _addNewIndicator(
+          dataList[i].momentumValues,
+          indicator,
+          indicators.indexOf(indicator),
+        );
+        dataList[i].momentumValues![indicators.indexOf(indicator)] =
+            indicator.copyToCandle(value: momentum);
+      }
+    }
+  }
+
+  static void calcStochasticOscillator(
+    List<KLineEntity> dataList,
+    List<IndicatorEntity> indicators,
+  ) {
+    for (var indicator in indicators) {
+      final int period = indicator.period;
+
+      for (int i = period; i < dataList.length; i++) {
+        double highestHigh = 0.0;
+        double lowestLow = double.maxFinite;
+
+        for (int j = i - period; j < i; j++) {
+          if (dataList[j].high > highestHigh) highestHigh = dataList[j].high;
+          if (dataList[j].low < lowestLow) lowestLow = dataList[j].low;
+        }
+
+        double percentK =
+            ((dataList[i].close - lowestLow) / (highestHigh - lowestLow)) * 100;
+
+        dataList[i].stochasticValues ??= List<CandleIndicatorEntity>.filled(
+            indicators.length, indicator.copyToCandle(value: 0));
+
+        dataList[i].stochasticValues = _addNewIndicator(
+          dataList[i].stochasticValues,
+          indicator,
+          indicators.indexOf(indicator),
+        );
+        dataList[i].stochasticValues![indicators.indexOf(indicator)] =
+            indicator.copyToCandle(value: percentK);
+      }
+    }
+  }
+
+  static void calcWilliamsPercentRange(
+      List<KLineEntity> dataList, List<IndicatorEntity> indicators) {
+    for (var indicator in indicators) {
+      final int period = indicator.period;
+
+      for (int i = period; i < dataList.length; i++) {
+        double highestHigh = 0.0;
+        double lowestLow = double.maxFinite;
+
+        for (int j = i - period; j < i; j++) {
+          if (dataList[j].high > highestHigh) highestHigh = dataList[j].high;
+          if (dataList[j].low < lowestLow) lowestLow = dataList[j].low;
+        }
+
+        double percentR =
+            ((highestHigh - dataList[i].close) / (highestHigh - lowestLow)) *
+                -100;
+
+        dataList[i].wprValues ??= List<CandleIndicatorEntity>.filled(
+            indicators.length, indicator.copyToCandle(value: 0));
+
+        dataList[i].wprValues = _addNewIndicator(
+          dataList[i].wprValues,
+          indicator,
+          indicators.indexOf(indicator),
+        );
+        dataList[i].wprValues![indicators.indexOf(indicator)] =
+            indicator.copyToCandle(value: percentR);
+      }
+    }
+  }
+
+  static void calcMoneyFlowIndex(
+      List<KLineEntity> dataList, List<IndicatorEntity> indicators) {
+    for (var indicator in indicators) {
+      final int period = indicator.period;
+
+      for (int i = period; i < dataList.length; i++) {
+        double positiveFlow = 0.0;
+        double negativeFlow = 0.0;
+
+        for (int j = i - period; j < i; j++) {
+          double typicalPrice =
+              (dataList[j].high + dataList[j].low + dataList[j].close) / 3;
+          double rawMoneyFlow = typicalPrice * dataList[j].vol;
+
+          if (j > 0 &&
+              typicalPrice >
+                  ((dataList[j - 1].high +
+                          dataList[j - 1].low +
+                          dataList[j - 1].close) /
+                      3)) {
+            positiveFlow += rawMoneyFlow;
+          } else {
+            negativeFlow += rawMoneyFlow;
+          }
+        }
+
+        double moneyFlowRatio =
+            positiveFlow / (negativeFlow == 0 ? 1 : negativeFlow);
+        double mfi = 100 - (100 / (1 + moneyFlowRatio));
+
+        dataList[i].mfiValues ??= List<CandleIndicatorEntity>.filled(
+            indicators.length, indicator.copyToCandle(value: 0));
+
+        dataList[i].mfiValues = _addNewIndicator(
+          dataList[i].mfiValues,
+          indicator,
+          indicators.indexOf(indicator),
+        );
+        dataList[i].mfiValues![indicators.indexOf(indicator)] =
+            indicator.copyToCandle(value: mfi);
+      }
+    }
+  }
+
   /// MACD calculation
   static void calcMACD(
     List<KLineEntity> dataList,
@@ -862,21 +1151,6 @@ class IndicatorUtils {
             period
         : ((dataList[index] - previousEMA) * multiplier + previousEMA);
   }
-
-  // /// Set RSI levels
-  // static List<CandleIndicatorEntity> _setRSILevels(double rsiValue) {
-  //   // Create a list for the RSI value and levels
-  //   List<CandleIndicatorEntity> rsiLevels = [];
-  //
-  //   // Store the RSI value
-  //   rsiLevels.add(CandleIndicatorEntity(value: rsiValue));
-  //
-  //   // Add the upper and lower levels
-  //   rsiLevels.add(CandleIndicatorEntity(value: 70, isLevel: true));  // Overbought level
-  //   rsiLevels.add(CandleIndicatorEntity(value: 30, isLevel: true));  // Oversold level
-  //
-  //   return rsiLevels;
-  // }
 
   static List<CandleIndicatorEntity> _addNewIndicator(
     List<CandleIndicatorEntity>? indicators,

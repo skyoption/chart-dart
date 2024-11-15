@@ -27,7 +27,7 @@ class CandleIndicatorEntity {
   LineStyle style = LineStyle.normal;
 
   String? color, secondColor, levelsColor;
-  List<int> levels = [];
+  List<double> levels = [];
 
   double value = 0;
   double? up;

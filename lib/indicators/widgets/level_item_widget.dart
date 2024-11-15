@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class LevelItemWidget extends StatefulWidget {
-  final int level;
-  final Function(int value) onChanged;
+  final double level;
+  final Function(double value) onChanged;
 
   const LevelItemWidget({
     super.key,
@@ -39,7 +39,7 @@ class _LevelItemWidgetState extends State<LevelItemWidget> {
                   ),
               onChanged: (value) {
                 Future.delayed(Duration.zero, () {
-                  final res = int.tryParse(value) ?? 0;
+                  final res = double.tryParse(value) ?? 0;
                   widget.onChanged(res);
                 });
               },
@@ -52,8 +52,8 @@ class _LevelItemWidgetState extends State<LevelItemWidget> {
                 contentPadding: EdgeInsets.symmetric(vertical: 11.0),
               ),
               inputFormatters: [
-                LengthLimitingTextInputFormatter(3),
-                NumericalRangeFormatter(min: 1, max: 100),
+                LengthLimitingTextInputFormatter(7),
+                NumericalRangeFormatter(min: 0.00001, max: 9999999),
               ],
             ),
           ),
