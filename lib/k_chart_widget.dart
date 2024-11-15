@@ -30,10 +30,14 @@ enum IndicatorType {
   PARABOLIC,
   ICHIMOKU,
   MACD,
-  KDJ,
   RSI,
-  WR,
+  ATR,
+  DeM,
   CCI,
+  MOM,
+  SO,
+  WPR,
+  MFI,
 }
 
 class TimeFormat {
