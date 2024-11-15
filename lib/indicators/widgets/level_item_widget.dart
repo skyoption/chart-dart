@@ -53,7 +53,6 @@ class _LevelItemWidgetState extends State<LevelItemWidget> {
               ),
               inputFormatters: [
                 LengthLimitingTextInputFormatter(7),
-                NumericalRangeFormatter(min: 0.00001, max: 9999999),
               ],
             ),
           ),

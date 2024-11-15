@@ -520,7 +520,7 @@ const _CandleIndicatorEntitytypeValueEnumMap = {
   11: IndicatorType.MACD,
   12: IndicatorType.RSI,
   13: IndicatorType.ATR,
-  14: IndicatorType.DeM,
+  14: IndicatorType.DEM,
   15: IndicatorType.CCI,
   16: IndicatorType.MOM,
   17: IndicatorType.SO,

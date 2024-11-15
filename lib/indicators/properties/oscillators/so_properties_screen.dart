@@ -49,7 +49,7 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
       indicator = IndicatorEntity(
         period: 14,
         name: widget.name!,
-        type: IndicatorType.DeM,
+        type: IndicatorType.DEM,
         levels: [0.3, 0.7],
         windowId: widget.windowId ?? 0,
         isSecondary: true,

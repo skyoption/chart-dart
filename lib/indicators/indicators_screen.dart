@@ -253,7 +253,7 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
           ),
         ),
       );
-    } else if (item.type == IndicatorType.DeM) {
+    } else if (item.type == IndicatorType.DEM) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => DeMarkerPropertiesScreen(

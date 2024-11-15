@@ -5,6 +5,7 @@ import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/renderer/rects/secondary_rect.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 
 class IndicatorUtils {
@@ -72,7 +73,7 @@ class IndicatorUtils {
           ATR.add(indicator);
         } else if (indicator.type == IndicatorType.CCI) {
           CCI.add(indicator);
-        } else if (indicator.type == IndicatorType.DeM) {
+        } else if (indicator.type == IndicatorType.DEM) {
           DEM.add(indicator);
         } else if (indicator.type == IndicatorType.MOM) {
           MOM.add(indicator);
@@ -1197,27 +1198,49 @@ class IndicatorUtils {
     IndicatorEntity indicator,
     KLineEntity point,
   ) {
+    List<CandleIndicatorEntity> items = [];
     if (indicator.type == IndicatorType.RSI) {
-      final items = (point.rsiValues ?? [])
+      items = (point.rsiValues ?? [])
           .where((e) => e.windowId == indicator.windowId)
           .toList();
-      if (items.isEmpty) return 0.0;
-      if (isFirst) {
-        return items.first.value;
-      } else {
-        return items.last.value;
-      }
     } else if (indicator.type == IndicatorType.MACD) {
-      final items = (point.macdValues ?? [])
+      items = (point.macdValues ?? [])
           .where((e) => e.windowId == indicator.windowId)
           .toList();
-      if (items.isEmpty) return 0.0;
-      if (isFirst) {
-        return items.first.value;
-      } else {
-        return items.last.value;
-      }
+    } else if (indicator.type == IndicatorType.ATR) {
+      items = (point.atrValues ?? [])
+          .where((e) => e.windowId == indicator.windowId)
+          .toList();
+    } else if (indicator.type == IndicatorType.CCI) {
+      items = (point.cciValues ?? [])
+          .where((e) => e.windowId == indicator.windowId)
+          .toList();
+    } else if (indicator.type == IndicatorType.MOM) {
+      items = (point.momentumValues ?? [])
+          .where((e) => e.windowId == indicator.windowId)
+          .toList();
+    } else if (indicator.type == IndicatorType.SO) {
+      items = (point.stochasticValues ?? [])
+          .where((e) => e.windowId == indicator.windowId)
+          .toList();
+    } else if (indicator.type == IndicatorType.WPR) {
+      items = (point.wprValues ?? [])
+          .where((e) => e.windowId == indicator.windowId)
+          .toList();
+    } else if (indicator.type == IndicatorType.MFI) {
+      items = (point.mfiValues ?? [])
+          .where((e) => e.windowId == indicator.windowId)
+          .toList();
+    } else if (indicator.type == IndicatorType.DEM) {
+      items = (point.deMarkerValues ?? [])
+          .where((e) => e.windowId == indicator.windowId)
+          .toList();
     }
-    return 0.0;
+    if (items.isEmpty) return 0.0;
+    if (isFirst) {
+      return items.first.value;
+    } else {
+      return items.last.value;
+    }
   }
 }

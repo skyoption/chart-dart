@@ -73,7 +73,13 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     Canvas canvas,
   ) {
     if (indicator.type == IndicatorType.RSI ||
-        indicator.type == IndicatorType.MACD) {
+        indicator.type == IndicatorType.MACD ||
+        indicator.type == IndicatorType.ATR ||
+        indicator.type == IndicatorType.WPR ||
+        indicator.type == IndicatorType.DEM ||
+        indicator.type == IndicatorType.CCI ||
+        indicator.type == IndicatorType.SO ||
+        indicator.type == IndicatorType.MOM) {
       drawIndicators(
         lastPoint,
         curPoint,
@@ -136,11 +142,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         ),
       );
     }
-    if (indicator.type == IndicatorType.MACD) {
-      _setMACDLevels(canvas, textStyle, space);
-    } else if (indicator.type == IndicatorType.RSI) {
-      _setRSILevels(canvas, textStyle, space);
-    }
+    _setLevels(canvas, textStyle, space);
   }
 
   @override
@@ -181,7 +183,6 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     bool drawAsBackground,
     bool isMain,
   ) {
-    // for (var item in indicators) {
     if (indicator.type == IndicatorType.MACD) {
       drawMACD(
         curPoint,
@@ -190,23 +191,6 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         lastPoint,
         lastX,
       );
-    } else if (indicator.type == IndicatorType.KDJ) {
-      // drawLine(
-      //   lastPoint.k,
-      //   curPoint.k,
-      //   canvas,
-      //   lastX,
-      //   curX,
-      //   this.chartColors.kColor,
-      // );
-      // drawLine(
-      //   lastPoint.j,
-      //   curPoint.j,
-      //   canvas,
-      //   lastX,
-      //   curX,
-      //   this.chartColors.jColor,
-      // );
     } else if (indicator.type == IndicatorType.RSI) {
       drawRSI(
         curPoint,
@@ -215,26 +199,47 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         lastPoint,
         lastX,
       );
-    } else if (indicator.type == IndicatorType.WR) {
-      // drawLine(
-      //   lastPoint.r,
-      //   curPoint.r,
-      //   canvas,
-      //   lastX,
-      //   curX,
-      //   this.chartColors.rsiColor,
-      // );
+    } else if (indicator.type == IndicatorType.ATR) {
+      drawATR(
+        curPoint,
+        canvas,
+        curX,
+        lastPoint,
+        lastX,
+      );
     } else if (indicator.type == IndicatorType.CCI) {
-      // drawLine(
-      //   lastPoint.cci,
-      //   curPoint.cci,
-      //   canvas,
-      //   lastX,
-      //   curX,
-      //   this.chartColors.rsiColor,
-      // );
+      drawCCI(
+        curPoint,
+        canvas,
+        curX,
+        lastPoint,
+        lastX,
+      );
+    } else if (indicator.type == IndicatorType.DEM) {
+      drawDEM(
+        curPoint,
+        canvas,
+        curX,
+        lastPoint,
+        lastX,
+      );
+    } else if (indicator.type == IndicatorType.MOM) {
+      drawMOM(
+        curPoint,
+        canvas,
+        curX,
+        lastPoint,
+        lastX,
+      );
+    } else if (indicator.type == IndicatorType.WPR) {
+      drawWPR(
+        curPoint,
+        canvas,
+        curX,
+        lastPoint,
+        lastX,
+      );
     }
-    // }
   }
 
   @override
@@ -268,29 +273,6 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
               ),
             );
             break;
-          case IndicatorType.KDJ:
-            children = [
-              // TextSpan(
-              //   text: "KDJ(9,1,3)    ",
-              //   style: getTextStyle(this.chartColors.defaultTextColor),
-              // ),
-              // if (data.macd != 0)
-              //   TextSpan(
-              //     text: "K:${format(data.k)}    ",
-              //     style: getTextStyle(this.chartColors.kColor),
-              //   ),
-              // if (data.dif != 0)
-              //   TextSpan(
-              //     text: "D:${format(data.d)}    ",
-              //     style: getTextStyle(this.chartColors.dColor),
-              //   ),
-              // if (data.dea != 0)
-              //   TextSpan(
-              //     text: "J:${format(data.j)}    ",
-              //     style: getTextStyle(this.chartColors.jColor),
-              //   ),
-            ];
-            break;
           case IndicatorType.RSI:
             children.add(
               TextSpan(
@@ -299,20 +281,36 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
               ),
             );
             break;
-          case IndicatorType.WR:
-            children = [
-              // TextSpan(
-              //   text: "WR(14):${format(data.r)}    ",
-              //   style: getTextStyle(this.chartColors.rsiColor),
-              // ),
-            ];
-            break;
           case IndicatorType.CCI:
             children = [
-              // TextSpan(
-              //   text: "CCI(14):${format(data.cci)}    ",
-              //   style: getTextStyle(this.chartColors.rsiColor),
-              // ),
+              TextSpan(
+                text: "CCI(${indicator.period}) $values",
+                style: getTextStyle(colorFromHex(indicator.color!)!),
+              ),
+            ];
+            break;
+          case IndicatorType.ATR:
+            children = [
+              TextSpan(
+                text: "ATR(${indicator.period}) $values",
+                style: getTextStyle(colorFromHex(indicator.color!)!),
+              ),
+            ];
+            break;
+          case IndicatorType.DEM:
+            children = [
+              TextSpan(
+                text: "DeM(${indicator.period}) $values",
+                style: getTextStyle(colorFromHex(indicator.color!)!),
+              ),
+            ];
+            break;
+          case IndicatorType.MOM:
+            children = [
+              TextSpan(
+                text: "Momentum(${indicator.period}) $values",
+                style: getTextStyle(colorFromHex(indicator.color!)!),
+              ),
             ];
             break;
           default:
@@ -336,7 +334,6 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     double lastX,
   ) {
     if (lastPoint.macdValues == null) return;
-    // for (int i = 0; i < (curPoint.macdValues?.length ?? 0); i++) {
     final macd = curPoint.macdValues?[index].value ?? 0;
     double macdY = getY(macd);
     double r = mMACDWidth / 2;
@@ -355,7 +352,6 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
       );
     }
 
-    // for (int i = 0; i < (curPoint.macdSignalValues?.length ?? 0); i++) {
     if (lastPoint.macdSignalValues?[index].value != 0) {
       drawLine(
         lastPoint.macdSignalValues?[index].value,
@@ -366,40 +362,66 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         colorFromHex(curPoint.macdValues![index].macd!.signalColor!)!,
       );
     }
-    // }
-    // }
   }
 
-  void _setMACDLevels(canvas, TextStyle textStyle, double space) {
-    if (isMain) {
-      TextPainter tp = TextPainter(
-        text: TextSpan(
-          text: "${format(0)}",
-          style: textStyle.copyWith(color: Colors.black),
-        ),
-        textDirection: TextDirection.ltr,
+  void drawDEM(
+    CandleEntity curPoint,
+    Canvas canvas,
+    double curX,
+    CandleEntity lastPoint,
+    double lastX,
+  ) {
+    if (curPoint.deMarkerValues == null) return;
+    if (lastPoint.deMarkerValues?[index].value != 0) {
+      drawLine(
+        lastPoint.deMarkerValues?[index].value,
+        curPoint.deMarkerValues?[index].value,
+        canvas,
+        lastX,
+        curX,
+        colorFromHex(this.indicator.color!)!,
       );
-      tp.layout();
-      final dy = getY(0);
-      if (!minValue.toString().contains('e-')) {
-        tp.paint(
-          canvas,
-          Offset(
-            chartRect.rWidth + space,
-            dy - (tp.height / 2),
-          ),
-        );
-      }
     }
-    drawHDashLine(
-      0,
-      0,
-      canvas,
-      0,
-      chartRect.rWidth,
-      Colors.black,
-      strokeWidth: 0.4,
-    );
+  }
+
+  void drawMOM(
+    CandleEntity curPoint,
+    Canvas canvas,
+    double curX,
+    CandleEntity lastPoint,
+    double lastX,
+  ) {
+    if (curPoint.momentumValues == null) return;
+    if (lastPoint.momentumValues?[index].value != 0) {
+      drawLine(
+        lastPoint.momentumValues?[index].value,
+        curPoint.momentumValues?[index].value,
+        canvas,
+        lastX,
+        curX,
+        colorFromHex(this.indicator.color!)!,
+      );
+    }
+  }
+
+  void drawWPR(
+    CandleEntity curPoint,
+    Canvas canvas,
+    double curX,
+    CandleEntity lastPoint,
+    double lastX,
+  ) {
+    if (curPoint.wprValues == null) return;
+    if (lastPoint.wprValues?[index].value != 0) {
+      drawLine(
+        lastPoint.wprValues?[index].value,
+        curPoint.wprValues?[index].value,
+        canvas,
+        lastX,
+        curX,
+        colorFromHex(this.indicator.color!)!,
+      );
+    }
   }
 
   void drawRSI(
@@ -410,7 +432,6 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     double lastX,
   ) {
     if (curPoint.rsiValues == null) return;
-    // for (int i = 0; i < (curPoint.rsiValues?.length ?? 0); i++) {
     if (lastPoint.rsiValues?[index].value != 0) {
       drawLine(
         lastPoint.rsiValues?[index].value,
@@ -421,38 +442,81 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         colorFromHex(this.indicator.color!)!,
       );
     }
-    // }
   }
 
-  void _setRSILevels(canvas, TextStyle textStyle, double space) {
+  void drawATR(
+    CandleEntity curPoint,
+    Canvas canvas,
+    double curX,
+    CandleEntity lastPoint,
+    double lastX,
+  ) {
+    if (curPoint.atrValues == null) return;
+    if (lastPoint.atrValues?[index].value != 0) {
+      drawLine(
+        lastPoint.atrValues?[index].value,
+        curPoint.atrValues?[index].value,
+        canvas,
+        lastX,
+        curX,
+        colorFromHex(this.indicator.color!)!,
+      );
+    }
+  }
+
+  void drawCCI(
+    CandleEntity curPoint,
+    Canvas canvas,
+    double curX,
+    CandleEntity lastPoint,
+    double lastX,
+  ) {
+    if (curPoint.cciValues == null) return;
+    if (lastPoint.cciValues != null &&
+        lastPoint.cciValues?[index].value != 0 &&
+        !lastPoint.cciValues![index].value.isNaN) {
+      drawLine(
+        lastPoint.cciValues?[index].value,
+        curPoint.cciValues?[index].value,
+        canvas,
+        lastX,
+        curX,
+        colorFromHex(this.indicator.color!)!,
+      );
+    }
+  }
+
+  void _setLevels(canvas, TextStyle textStyle, double space) {
     for (var item in indicator.levels) {
-      if (isMain) {
-        TextPainter tp = TextPainter(
-          text: TextSpan(
-            text: "${format(item.toDouble())}",
-            style: textStyle.copyWith(color: Colors.black),
-          ),
-          textDirection: TextDirection.ltr,
-        );
-        tp.layout();
-        final dy = getY(item.toDouble());
-        tp.paint(
+      if (item >= minValue && item <= maxValue) {
+        if (isMain) {
+          TextPainter tp = TextPainter(
+            text: TextSpan(
+              text: "${format(item.toDouble())}",
+              style: textStyle.copyWith(color: Colors.black),
+            ),
+            textDirection: TextDirection.ltr,
+          );
+          tp.layout();
+          final dy = getY(item.toDouble());
+          tp.paint(
+            canvas,
+            Offset(
+              chartRect.rWidth + space,
+              dy - (tp.height / 2),
+            ),
+          );
+        }
+        drawHDashLine(
+          item.toDouble(),
+          item.toDouble(),
           canvas,
-          Offset(
-            chartRect.rWidth + space,
-            dy - (tp.height / 2),
-          ),
+          0,
+          chartRect.rWidth,
+          colorFromHex(this.indicator.levelsColor!)!,
+          strokeWidth: 0.4,
         );
       }
-      drawHDashLine(
-        item.toDouble(),
-        item.toDouble(),
-        canvas,
-        0,
-        chartRect.rWidth,
-        colorFromHex(this.indicator.levelsColor!)!,
-        strokeWidth: 0.4,
-      );
     }
   }
 }

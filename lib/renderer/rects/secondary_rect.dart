@@ -26,38 +26,99 @@ class SecondaryRect {
   ) {
     double maxPrice = 0, minPrice = 0;
     if (indicator.type == IndicatorType.ICHIMOKU) {
-      maxPrice = _findMaxIchimoku(item.ichimokuValues ?? []);
-      minPrice = _findMinIchimoku(item.ichimokuValues ?? []);
+      maxPrice = _findMaxIchimoku(
+        item.ichimokuValues ?? [],
+        indicator.windowId,
+      );
+      minPrice = _findMinIchimoku(
+        item.ichimokuValues ?? [],
+        indicator.windowId,
+      );
     } else if (indicator.type == IndicatorType.SMA_ENVELOPS) {
-      maxPrice = _findMaxUP(item.smaEnvelopsValues ?? []);
-      minPrice = _findMinDN(item.smaEnvelopsValues ?? []);
+      maxPrice = _findMaxUP(item.smaEnvelopsValues ?? [], indicator.windowId);
+      minPrice = _findMinDN(item.smaEnvelopsValues ?? [], indicator.windowId);
     } else if (indicator.type == IndicatorType.EMA_ENVELOPS) {
-      maxPrice = _findMaxUP(item.emaEnvelopsValues ?? []);
-      minPrice = _findMinDN(item.emaEnvelopsValues ?? []);
+      maxPrice = _findMaxUP(item.emaEnvelopsValues ?? [], indicator.windowId);
+      minPrice = _findMinDN(item.emaEnvelopsValues ?? [], indicator.windowId);
     } else if (indicator.type == IndicatorType.LINEAR_ENVELOPS) {
-      maxPrice = _findMaxUP(item.lwmaEnvelopsValues ?? []);
-      minPrice = _findMinDN(item.lwmaEnvelopsValues ?? []);
+      maxPrice = _findMaxUP(item.lwmaEnvelopsValues ?? [], indicator.windowId);
+      minPrice = _findMinDN(item.lwmaEnvelopsValues ?? [], indicator.windowId);
     } else if (indicator.type == IndicatorType.SMMA_ENVELOPS) {
-      maxPrice = _findMaxUP(item.smmaEnvelopsValues ?? []);
-      minPrice = _findMinDN(item.smmaEnvelopsValues ?? []);
+      maxPrice = _findMaxUP(item.smmaEnvelopsValues ?? [], indicator.windowId);
+      minPrice = _findMinDN(item.smmaEnvelopsValues ?? [], indicator.windowId);
     } else if (indicator.type == IndicatorType.PARABOLIC) {
-      maxPrice = _findMaxMA(item.parabolicValues ?? []);
-      minPrice = _findMinMA(item.parabolicValues ?? []);
+      maxPrice = _findMaxMA(item.parabolicValues ?? [], indicator.windowId);
+      minPrice = _findMinMA(item.parabolicValues ?? [], indicator.windowId);
     } else if (indicator.type == IndicatorType.LINEAR_MA) {
-      maxPrice = _findMaxMA(item.lwmaMaValues ?? []);
-      minPrice = _findMinMA(item.lwmaMaValues ?? []);
+      maxPrice = _findMaxMA(item.lwmaMaValues ?? [], indicator.windowId);
+      minPrice = _findMinMA(item.lwmaMaValues ?? [], indicator.windowId);
     } else if (indicator.type == IndicatorType.EMA_MA) {
-      maxPrice = _findMaxMA(item.emaMaValues ?? []);
-      minPrice = _findMinMA(item.emaMaValues ?? []);
+      maxPrice = _findMaxMA(item.emaMaValues ?? [], indicator.windowId);
+      minPrice = _findMinMA(item.emaMaValues ?? [], indicator.windowId);
     } else if (indicator.type == IndicatorType.SMA_MA) {
-      maxPrice = _findMaxMA(item.smaMaValues ?? []);
-      minPrice = _findMinMA(item.smaMaValues ?? []);
+      maxPrice = _findMaxMA(item.smaMaValues ?? [], indicator.windowId);
+      minPrice = _findMinMA(item.smaMaValues ?? [], indicator.windowId);
     } else if (indicator.type == IndicatorType.BOLL) {
-      maxPrice = _findMaxUP(item.bollValues ?? []);
-      minPrice = _findMinDN(item.bollValues ?? []);
+      maxPrice = _findMaxUP(item.bollValues ?? [], indicator.windowId);
+      minPrice = _findMinDN(item.bollValues ?? [], indicator.windowId);
     }
 
-    onSet(max(maxPrice, mMaxValue), min(minPrice, mMinValue));
+    onSet(max(maxPrice, mMaxValue) + 2, min(minPrice, mMinValue) - 2);
+  }
+
+  void _setMaxMin(
+    indicator,
+    KLineEntity item,
+    Function(double maxPrice, double minPrice) onSet,
+    double mMaxValue,
+    double mMinValue,
+  ) {
+    switch (indicator.type) {
+      case IndicatorType.MACD:
+        final max = _findMaxUP(item.macdValues ?? [], indicator.windowId);
+        mMaxValue = max;
+        mMinValue = -max;
+        break;
+      case IndicatorType.RSI:
+        mMaxValue = 100;
+        mMinValue = 0.0;
+        break;
+      case IndicatorType.CCI ||
+            IndicatorType.DEM ||
+            IndicatorType.ATR ||
+            IndicatorType.WPR ||
+            IndicatorType.MOM:
+        double resMax = 0;
+        double resMin = 0;
+        double space = 0;
+        if (indicator.type == IndicatorType.ATR) {
+          resMax = _findMinMA(item.atrValues ?? [], indicator.windowId);
+          resMin = _findMaxMA(item.atrValues ?? [], indicator.windowId);
+          space = 2;
+        } else if (indicator.type == IndicatorType.CCI) {
+          resMax = _findMaxMA(item.cciValues ?? [], indicator.windowId);
+          resMin = _findMinMA(item.cciValues ?? [], indicator.windowId);
+          space = 2;
+        } else if (indicator.type == IndicatorType.WPR) {
+          resMax = _findMaxMA(item.wprValues ?? [], indicator.windowId);
+          resMin = _findMinMA(item.wprValues ?? [], indicator.windowId);
+          space = 2;
+        } else if (indicator.type == IndicatorType.MOM) {
+          resMax = _findMaxMA(item.momentumValues ?? [], indicator.windowId);
+          resMin = _findMinMA(item.momentumValues ?? [], indicator.windowId);
+          space = 2;
+        } else if (indicator.type == IndicatorType.DEM) {
+          resMax = _findMaxMA(item.deMarkerValues ?? [], indicator.windowId);
+          resMin = _findMinMA(item.deMarkerValues ?? [], indicator.windowId);
+          space = 0.005;
+        }
+        mMaxValue = max(mMaxValue, resMax) + space;
+        mMinValue = min(mMinValue, resMin) - space;
+        break;
+      default:
+        break;
+    }
+    onSet(mMaxValue, mMinValue);
   }
 
   // compute maximum and minimum of secondary value
@@ -65,66 +126,55 @@ class SecondaryRect {
     final indicator =
         HighLevelIndicator.getIndicator(secondaryIndicators, i, index);
     switch (indicator.type) {
-      case IndicatorType.MACD:
-        final max = _findMaxUP(item.macdValues ?? []);
-        mSecondaryRectList[rectIndex].mMaxValue = max;
-        mSecondaryRectList[rectIndex].mMinValue = -max;
-        break;
-      case IndicatorType.KDJ:
-        if (item.d != null) {
-          mSecondaryRectList[rectIndex].mMaxValue = max(
-              mSecondaryRectList[rectIndex].mMaxValue,
-              max(item.k!, max(item.d!, item.j!)));
-          mSecondaryRectList[rectIndex].mMinValue = min(
-              mSecondaryRectList[rectIndex].mMinValue,
-              min(item.k!, min(item.d!, item.j!)));
-        }
-        break;
-      case IndicatorType.RSI:
-        mSecondaryRectList[rectIndex].mMaxValue = 100;
-        mSecondaryRectList[rectIndex].mMinValue = 0.0;
-        break;
-      case IndicatorType.WR:
-        mSecondaryRectList[rectIndex].mMaxValue = 0;
-        mSecondaryRectList[rectIndex].mMinValue = -100;
-        break;
-      case IndicatorType.CCI:
-        if (item.cci != null) {
-          mSecondaryRectList[rectIndex].mMaxValue =
-              max(mSecondaryRectList[rectIndex].mMaxValue, item.cci!);
-          mSecondaryRectList[rectIndex].mMinValue =
-              min(mSecondaryRectList[rectIndex].mMinValue, item.cci!);
-        }
+      case IndicatorType.MACD ||
+            IndicatorType.RSI ||
+            IndicatorType.CCI ||
+            IndicatorType.DEM ||
+            IndicatorType.ATR ||
+            IndicatorType.WPR ||
+            IndicatorType.MOM:
+        _setMaxMin(
+          indicator,
+          item,
+          (maxPrice, minPrice) {
+            mSecondaryRectList[rectIndex].mMaxValue = maxPrice;
+            mSecondaryRectList[rectIndex].mMinValue = minPrice;
+          },
+          mSecondaryRectList[rectIndex].mMaxValue,
+          mSecondaryRectList[rectIndex].mMinValue,
+        );
         break;
       default:
         if (indicator.applyTo == ApplyTo.First_Indicator) {
           final items = secondaryIndicators.atWindow(indicator.windowId);
           if (items.isNotEmpty) {
-            if (items.first.type == IndicatorType.RSI) {
-              mSecondaryRectList[rectIndex].mMaxValue = 100;
-              mSecondaryRectList[rectIndex].mMinValue = 0;
-              break;
-            } else if (items.first.type == IndicatorType.MACD) {
-              final max = _findMaxUP(item.macdValues ?? []);
-              mSecondaryRectList[rectIndex].mMaxValue = max;
-              mSecondaryRectList[rectIndex].mMinValue = -max;
-              break;
-            }
+            _setMaxMin(
+              items.first,
+              item,
+              (maxPrice, minPrice) {
+                mSecondaryRectList[rectIndex].mMaxValue = maxPrice;
+                mSecondaryRectList[rectIndex].mMinValue = minPrice;
+              },
+              mSecondaryRectList[rectIndex].mMaxValue,
+              mSecondaryRectList[rectIndex].mMinValue,
+            );
           }
+          break;
         } else if (indicator.applyTo == ApplyTo.Last_Indicator) {
           final items = secondaryIndicators.atWindow(indicator.windowId);
           if (items.isNotEmpty) {
-            if (items.last.type == IndicatorType.RSI) {
-              mSecondaryRectList[rectIndex].mMaxValue = 100;
-              mSecondaryRectList[rectIndex].mMinValue = 0;
-              break;
-            } else if (items.last.type == IndicatorType.MACD) {
-              final max = _findMaxUP(item.macdValues ?? []);
-              mSecondaryRectList[rectIndex].mMaxValue = max;
-              mSecondaryRectList[rectIndex].mMinValue = -max;
-              break;
-            }
+            _setMaxMin(
+              items.last,
+              item,
+              (maxPrice, minPrice) {
+                mSecondaryRectList[rectIndex].mMaxValue = maxPrice;
+                mSecondaryRectList[rectIndex].mMinValue = minPrice;
+              },
+              mSecondaryRectList[rectIndex].mMaxValue,
+              mSecondaryRectList[rectIndex].mMinValue,
+            );
           }
+          break;
         }
         double maxPrice = 0, minPrice = 0;
         _setMaxAndMinSecondary(
@@ -139,19 +189,15 @@ class SecondaryRect {
         );
         mSecondaryRectList[rectIndex].mMaxValue = maxPrice;
         mSecondaryRectList[rectIndex].mMinValue = minPrice;
-        if (indicator.type == IndicatorType.ICHIMOKU) {
-          kPrint(
-              '${mSecondaryRectList[rectIndex].mMinValue} ${mSecondaryRectList[rectIndex].mMaxValue}');
-        }
         break;
     }
   }
 
   // find maximum of the MA
-  double _findMaxMA(List<CandleIndicatorEntity> a) {
+  double _findMaxMA(List<CandleIndicatorEntity> a, int windowId) {
     double result = double.minPositive;
     for (CandleIndicatorEntity i in a) {
-      if (i.isSecondary) {
+      if (i.isSecondary && windowId == i.windowId) {
         result = max(result, i.value);
       }
     }
@@ -159,10 +205,10 @@ class SecondaryRect {
   }
 
   // find minimum of the UP
-  double _findMaxUP(List<CandleIndicatorEntity> a) {
+  double _findMaxUP(List<CandleIndicatorEntity> a, int windowId) {
     double result = double.minPositive;
     for (CandleIndicatorEntity i in a) {
-      if (i.isSecondary) {
+      if (i.isSecondary && windowId == i.windowId) {
         result = max(result, i.up ?? 0);
       }
     }
@@ -170,10 +216,10 @@ class SecondaryRect {
   }
 
   // find minimum of the MA
-  double _findMinMA(List<CandleIndicatorEntity> a) {
+  double _findMinMA(List<CandleIndicatorEntity> a, int windowId) {
     double result = double.maxFinite;
     for (CandleIndicatorEntity i in a) {
-      if (i.isSecondary) {
+      if (i.isSecondary && windowId == i.windowId) {
         result = min(
           result,
           i.value == 0 ? double.maxFinite : i.value,
@@ -184,10 +230,10 @@ class SecondaryRect {
   }
 
   // find minimum of the ChikouSpan
-  double _findMaxIchimoku(List<CandleIndicatorEntity> a) {
+  double _findMaxIchimoku(List<CandleIndicatorEntity> a, int windowId) {
     double result = double.minPositive;
     for (CandleIndicatorEntity i in a) {
-      if (i.isSecondary) {
+      if (i.isSecondary && windowId == i.windowId) {
         result = max(result, i.chikouSpan ?? 0);
         result = max(result, i.senkouSpanA ?? 0);
         result = max(result, i.senkouSpanB ?? 0);
@@ -199,10 +245,10 @@ class SecondaryRect {
   }
 
   // find minimum of the ChikouSpan
-  double _findMinIchimoku(List<CandleIndicatorEntity> a) {
+  double _findMinIchimoku(List<CandleIndicatorEntity> a, int windowId) {
     double result = double.maxFinite;
     for (CandleIndicatorEntity i in a) {
-      if (i.isSecondary) {
+      if (i.isSecondary && windowId == i.windowId) {
         result = min(result,
             i.chikouSpan == 0 ? double.maxFinite : i.chikouSpan ?? result);
         result = min(result,
@@ -219,10 +265,10 @@ class SecondaryRect {
   }
 
   // find minimum of the DN
-  double _findMinDN(List<CandleIndicatorEntity> a) {
+  double _findMinDN(List<CandleIndicatorEntity> a, int windowId) {
     double result = double.maxFinite;
     for (CandleIndicatorEntity i in a) {
-      if (i.isSecondary) {
+      if (i.isSecondary && windowId == i.windowId) {
         result = min(
           result,
           i.dn == 0 ? double.maxFinite : i.dn ?? result,
@@ -237,7 +283,15 @@ extension OnMap on Map<int, List<IndicatorEntity>> {
   List<IndicatorEntity> atWindow(int id) {
     final values = this[id] ?? [];
     final items = values.where((e) {
-      return e.type == IndicatorType.MACD || e.type == IndicatorType.RSI;
+      return e.type == IndicatorType.MACD ||
+          e.type == IndicatorType.RSI ||
+          e.type == IndicatorType.ATR ||
+          e.type == IndicatorType.CCI ||
+          e.type == IndicatorType.MOM ||
+          e.type == IndicatorType.SO ||
+          e.type == IndicatorType.WPR ||
+          e.type == IndicatorType.MFI ||
+          e.type == IndicatorType.DEM;
     });
     return items.toList();
   }

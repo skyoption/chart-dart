@@ -32,7 +32,7 @@ enum IndicatorType {
   MACD,
   RSI,
   ATR,
-  DeM,
+  DEM,
   CCI,
   MOM,
   SO,
