@@ -158,7 +158,6 @@ class _ATRPropertiesScreenState extends State<ATRPropertiesScreen> {
               subTitleColor: Colors.grey.withOpacity(0.8),
               subTitle: indicator!.levels.join(', '),
               onTap: () {
-                kPrint(widget.indicator?.levelsColor);
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => IndicatorLevelsScreen(

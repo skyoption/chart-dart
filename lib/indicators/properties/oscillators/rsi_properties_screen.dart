@@ -155,9 +155,9 @@ class _RSIPropertiesScreenState extends State<RSIPropertiesScreen> {
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
               title: 'Apply To',
-              subTitle: (widget.indicator?.applyTo.name ?? 'Close')
-                  .replaceAll('_', ' ')
-                  .replaceAll('__', '/'),
+              subTitle: indicator!.applyTo.name
+                  .replaceAll('__', '/')
+                  .replaceAll('_', ' '),
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {

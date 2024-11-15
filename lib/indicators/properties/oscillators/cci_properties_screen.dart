@@ -51,7 +51,7 @@ class _CCIPropertiesScreenState extends State<CCIPropertiesScreen> {
         name: widget.name!,
         applyTo: ApplyTo.Typical_Price_HLC__3,
         type: IndicatorType.CCI,
-        levels: [-100, 100],
+        levels: [-100, 0, 100],
         windowId: widget.windowId ?? 0,
         isSecondary: true,
       );
@@ -155,9 +155,9 @@ class _CCIPropertiesScreenState extends State<CCIPropertiesScreen> {
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
               title: 'Apply To',
-              subTitle: (widget.indicator?.applyTo.name ?? 'Close')
-                  .replaceAll('_', ' ')
-                  .replaceAll('__', '/'),
+              subTitle: indicator!.applyTo.name
+                  .replaceAll('__', '/')
+                  .replaceAll('_', ' '),
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {

@@ -1,3 +1,4 @@
+import 'package:candle_chart/entity/volume_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/renderer/rects/render_rect.dart';
 import 'package:flutter/material.dart';
