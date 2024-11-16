@@ -273,7 +273,10 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
           ),
         ),
       );
-    } else if (item.type == IndicatorType.SO) {
+    } else if (item.type == IndicatorType.SO_EMA ||
+        item.type == IndicatorType.SO_LINEAR ||
+        item.type == IndicatorType.SO_SMA ||
+        item.type == IndicatorType.SO_SMMA) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => SOPropertiesScreen(

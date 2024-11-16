@@ -9,16 +9,16 @@ mixin CandleEntity {
   late double close;
 
   ///MA
-  List<CandleIndicatorEntity>? emaMaValues;
-  List<CandleIndicatorEntity>? smaMaValues;
-  List<CandleIndicatorEntity>? lwmaMaValues;
-  List<CandleIndicatorEntity>? smmaMaValues;
+  List<CandleIndicatorEntity>? maEmaValues;
+  List<CandleIndicatorEntity>? maSmaValues;
+  List<CandleIndicatorEntity>? maLwmaValues;
+  List<CandleIndicatorEntity>? maSmmaValues;
 
   ///Envelops
-  List<CandleIndicatorEntity>? emaEnvelopsValues;
-  List<CandleIndicatorEntity>? smaEnvelopsValues;
-  List<CandleIndicatorEntity>? lwmaEnvelopsValues;
-  List<CandleIndicatorEntity>? smmaEnvelopsValues;
+  List<CandleIndicatorEntity>? envelopsEmaValues;
+  List<CandleIndicatorEntity>? envelopsSmaValues;
+  List<CandleIndicatorEntity>? envelopsLwmaValues;
+  List<CandleIndicatorEntity>? envelopsSmmaValues;
 
   ///BOLL
   List<CandleIndicatorEntity>? bollValues;
@@ -35,23 +35,25 @@ mixin CandleEntity {
   /// MACD
   List<CandleIndicatorEntity>? macdValues;
   List<CandleIndicatorEntity>? macdSignalValues;
+
   /// ATR
   List<CandleIndicatorEntity>? atrValues;
+
   /// CCI
   List<CandleIndicatorEntity>? cciValues;
+
   /// DeM
   List<CandleIndicatorEntity>? deMarkerValues;
+
   /// MOM
   List<CandleIndicatorEntity>? momentumValues;
+
   /// WPR
   List<CandleIndicatorEntity>? wprValues;
+
   /// MFI
   List<CandleIndicatorEntity>? mfiValues;
+
   /// SO
   List<CandleIndicatorEntity>? stochasticValues;
-
-
-
-
-
 }

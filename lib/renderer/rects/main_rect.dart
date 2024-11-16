@@ -59,30 +59,30 @@ class MainRect {
       if (indicator.type == IndicatorType.ICHIMOKU) {
         maxPrice = max(_findMaxIchimoku(item.ichimokuValues ?? []), maxPrice);
         minPrice = min(_findMinIchimoku(item.ichimokuValues ?? []), minPrice);
-      } else if (indicator.type == IndicatorType.SMA_ENVELOPS) {
-        maxPrice = max(maxPrice, _findMaxUP(item.smaEnvelopsValues ?? []));
-        minPrice = min(minPrice, _findMinDN(item.smaEnvelopsValues ?? []));
-      } else if (indicator.type == IndicatorType.EMA_ENVELOPS) {
-        maxPrice = max(maxPrice, _findMaxUP(item.emaEnvelopsValues ?? []));
-        minPrice = min(minPrice, _findMinDN(item.emaEnvelopsValues ?? []));
-      } else if (indicator.type == IndicatorType.LINEAR_ENVELOPS) {
-        maxPrice = max(maxPrice, _findMaxUP(item.lwmaEnvelopsValues ?? []));
-        minPrice = min(minPrice, _findMinDN(item.lwmaEnvelopsValues ?? []));
-      } else if (indicator.type == IndicatorType.SMMA_ENVELOPS) {
-        maxPrice = max(maxPrice, _findMaxUP(item.smmaEnvelopsValues ?? []));
-        minPrice = min(minPrice, _findMinDN(item.smmaEnvelopsValues ?? []));
+      } else if (indicator.type == IndicatorType.ENVELOPS_SMA) {
+        maxPrice = max(maxPrice, _findMaxUP(item.envelopsSmaValues ?? []));
+        minPrice = min(minPrice, _findMinDN(item.envelopsSmaValues ?? []));
+      } else if (indicator.type == IndicatorType.ENVELOPS_EMA) {
+        maxPrice = max(maxPrice, _findMaxUP(item.envelopsEmaValues ?? []));
+        minPrice = min(minPrice, _findMinDN(item.envelopsEmaValues ?? []));
+      } else if (indicator.type == IndicatorType.ENVELOPS_LINEAR) {
+        maxPrice = max(maxPrice, _findMaxUP(item.envelopsLwmaValues ?? []));
+        minPrice = min(minPrice, _findMinDN(item.envelopsLwmaValues ?? []));
+      } else if (indicator.type == IndicatorType.ENVELOPS_SMMA) {
+        maxPrice = max(maxPrice, _findMaxUP(item.envelopsSmmaValues ?? []));
+        minPrice = min(minPrice, _findMinDN(item.envelopsSmmaValues ?? []));
       } else if (indicator.type == IndicatorType.PARABOLIC) {
         maxPrice = max(maxPrice, _findMaxMA(item.parabolicValues ?? []));
         minPrice = min(minPrice, _findMinMA(item.parabolicValues ?? []));
-      } else if (indicator.type == IndicatorType.LINEAR_MA) {
-        maxPrice = max(maxPrice, _findMaxMA(item.lwmaMaValues ?? []));
-        minPrice = min(minPrice, _findMinMA(item.lwmaMaValues ?? []));
-      } else if (indicator.type == IndicatorType.EMA_MA) {
-        maxPrice = max(maxPrice, _findMaxMA(item.emaMaValues ?? []));
-        minPrice = min(minPrice, _findMinMA(item.emaMaValues ?? []));
-      } else if (indicator.type == IndicatorType.SMA_MA) {
-        maxPrice = max(maxPrice, _findMaxMA(item.smaMaValues ?? []));
-        minPrice = min(minPrice, _findMinMA(item.smaMaValues ?? []));
+      } else if (indicator.type == IndicatorType.MA_LINEAR) {
+        maxPrice = max(maxPrice, _findMaxMA(item.maLwmaValues ?? []));
+        minPrice = min(minPrice, _findMinMA(item.maLwmaValues ?? []));
+      } else if (indicator.type == IndicatorType.MA_EMA) {
+        maxPrice = max(maxPrice, _findMaxMA(item.maEmaValues ?? []));
+        minPrice = min(minPrice, _findMinMA(item.maEmaValues ?? []));
+      } else if (indicator.type == IndicatorType.MA_SMA) {
+        maxPrice = max(maxPrice, _findMaxMA(item.maSmaValues ?? []));
+        minPrice = min(minPrice, _findMinMA(item.maSmaValues ?? []));
       } else if (indicator.type == IndicatorType.BOLL) {
         maxPrice = max(_findMaxUP(item.bollValues ?? []), maxPrice);
         minPrice = min(_findMinDN(item.bollValues ?? []), minPrice);

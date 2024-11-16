@@ -78,7 +78,11 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         indicator.type == IndicatorType.WPR ||
         indicator.type == IndicatorType.DEM ||
         indicator.type == IndicatorType.CCI ||
-        indicator.type == IndicatorType.SO ||
+        indicator.type == IndicatorType.MFI ||
+        indicator.type == IndicatorType.SO_EMA ||
+        indicator.type == IndicatorType.SO_LINEAR ||
+        indicator.type == IndicatorType.SO_SMA ||
+        indicator.type == IndicatorType.SO_SMMA ||
         indicator.type == IndicatorType.MOM) {
       drawIndicators(
         lastPoint,
@@ -233,6 +237,25 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
       );
     } else if (indicator.type == IndicatorType.WPR) {
       drawWPR(
+        curPoint,
+        canvas,
+        curX,
+        lastPoint,
+        lastX,
+      );
+    } else if (indicator.type == IndicatorType.MFI) {
+      drawMFI(
+        curPoint,
+        canvas,
+        curX,
+        lastPoint,
+        lastX,
+      );
+    } else if (indicator.type == IndicatorType.SO_SMMA ||
+        indicator.type == IndicatorType.SO_LINEAR ||
+        indicator.type == IndicatorType.SO_SMA ||
+        indicator.type == IndicatorType.SO_EMA) {
+      drawSO(
         curPoint,
         canvas,
         curX,
@@ -424,6 +447,26 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     }
   }
 
+  void drawMFI(
+    CandleEntity curPoint,
+    Canvas canvas,
+    double curX,
+    CandleEntity lastPoint,
+    double lastX,
+  ) {
+    if (curPoint.mfiValues == null) return;
+    if (lastPoint.mfiValues?[index].value != 0) {
+      drawLine(
+        lastPoint.mfiValues?[index].value,
+        curPoint.mfiValues?[index].value,
+        canvas,
+        lastX,
+        curX,
+        colorFromHex(this.indicator.color!)!,
+      );
+    }
+  }
+
   void drawRSI(
     CandleEntity curPoint,
     Canvas canvas,
@@ -482,6 +525,35 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         lastX,
         curX,
         colorFromHex(this.indicator.color!)!,
+      );
+    }
+  }
+
+  void drawSO(
+    CandleEntity curPoint,
+    Canvas canvas,
+    double curX,
+    CandleEntity lastPoint,
+    double lastX,
+  ) {
+    if (curPoint.stochasticValues == null) return;
+    if (lastPoint.stochasticValues != null) {
+      drawLine(
+        lastPoint.stochasticValues?[index].kValue,
+        curPoint.stochasticValues?[index].kValue,
+        canvas,
+        lastX,
+        curX,
+        colorFromHex(curPoint.stochasticValues![index].stochastic!.mainColor!)!,
+      );
+      drawLine(
+        lastPoint.stochasticValues?[index].dValue,
+        curPoint.stochasticValues?[index].dValue,
+        canvas,
+        lastX,
+        curX,
+        colorFromHex(
+            curPoint.stochasticValues![index].stochastic!.signalColor!)!,
       );
     }
   }

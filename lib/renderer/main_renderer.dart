@@ -489,7 +489,7 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
     bool isMain,
   ) {
     for (var item in indicators) {
-      if (item.type == IndicatorType.EMA_MA &&
+      if (item.type == IndicatorType.MA_EMA &&
           item.drawAsBackground == drawAsBackground) {
         drawEMA_MA(
           lastPoint,
@@ -500,7 +500,7 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           item.period,
           item.windowId,
         );
-      } else if (item.type == IndicatorType.LINEAR_MA &&
+      } else if (item.type == IndicatorType.MA_LINEAR &&
           item.drawAsBackground == drawAsBackground) {
         drawLINEAR_MA(
           lastPoint,
@@ -511,7 +511,7 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           item.period,
           item.windowId,
         );
-      } else if (item.type == IndicatorType.SMA_MA &&
+      } else if (item.type == IndicatorType.MA_SMA &&
           item.drawAsBackground == drawAsBackground) {
         drawSMA_MA(
           lastPoint,
@@ -522,7 +522,7 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           item.period,
           item.windowId,
         );
-      } else if (item.type == IndicatorType.SMMA_MA &&
+      } else if (item.type == IndicatorType.MA_SMMA &&
           item.drawAsBackground == drawAsBackground) {
         drawSMMA_MA(
           lastPoint,
@@ -533,7 +533,7 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           item.period,
           item.windowId,
         );
-      } else if (item.type == IndicatorType.EMA_ENVELOPS &&
+      } else if (item.type == IndicatorType.ENVELOPS_EMA &&
           item.drawAsBackground == drawAsBackground) {
         drawEMA_ENVELOPS(
           lastPoint,
@@ -544,7 +544,7 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           item.period,
           item.windowId,
         );
-      } else if (item.type == IndicatorType.LINEAR_ENVELOPS &&
+      } else if (item.type == IndicatorType.ENVELOPS_LINEAR &&
           item.drawAsBackground == drawAsBackground) {
         drawLINEAR_ENVELOPS(
           lastPoint,
@@ -555,7 +555,7 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           item.period,
           item.windowId,
         );
-      } else if (item.type == IndicatorType.SMA_ENVELOPS &&
+      } else if (item.type == IndicatorType.ENVELOPS_SMA &&
           item.drawAsBackground == drawAsBackground) {
         drawSMA_ENVELOPS(
           lastPoint,
@@ -566,7 +566,7 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           item.period,
           item.windowId,
         );
-      } else if (item.type == IndicatorType.SMMA_ENVELOPS &&
+      } else if (item.type == IndicatorType.ENVELOPS_SMMA &&
           item.drawAsBackground == drawAsBackground) {
         drawSMMA_ENVELOPS(
           lastPoint,
@@ -623,21 +623,21 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
     int id,
   ) {
-    for (int i = 0; i < (curPoint.emaMaValues?.length ?? 0); i++) {
-      final isShow = id == curPoint.emaMaValues![i].windowId;
-      if ((lastPoint.emaMaValues?.length ?? 0) - 1 >= i &&
-          lastPoint.emaMaValues?[i].value != 0 &&
-          period == curPoint.emaMaValues?[i].period &&
+    for (int i = 0; i < (curPoint.maEmaValues?.length ?? 0); i++) {
+      final isShow = id == curPoint.maEmaValues![i].windowId;
+      if ((lastPoint.maEmaValues?.length ?? 0) - 1 >= i &&
+          lastPoint.maEmaValues?[i].value != 0 &&
+          period == curPoint.maEmaValues?[i].period &&
           isShow) {
         drawLine(
-          lastPoint.emaMaValues?[i].value,
-          curPoint.emaMaValues?[i].value,
+          lastPoint.maEmaValues?[i].value,
+          curPoint.maEmaValues?[i].value,
           canvas,
           lastX,
           curX,
-          colorFromHex(curPoint.emaMaValues![i].color!)!,
-          lineStyle: curPoint.emaMaValues![i].style,
-          strokeWidth: curPoint.emaMaValues![i].strokeWidth,
+          colorFromHex(curPoint.maEmaValues![i].color!)!,
+          lineStyle: curPoint.maEmaValues![i].style,
+          strokeWidth: curPoint.maEmaValues![i].strokeWidth,
         );
       }
     }
@@ -652,21 +652,21 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
     int id,
   ) {
-    for (int i = 0; i < (curPoint.lwmaMaValues?.length ?? 0); i++) {
-      final isShow = id == curPoint.lwmaMaValues![i].windowId;
-      if ((lastPoint.lwmaMaValues?.length ?? 0) - 1 >= i &&
-          lastPoint.lwmaMaValues?[i].value != 0 &&
-          period == curPoint.lwmaMaValues?[i].period &&
+    for (int i = 0; i < (curPoint.maLwmaValues?.length ?? 0); i++) {
+      final isShow = id == curPoint.maLwmaValues![i].windowId;
+      if ((lastPoint.maLwmaValues?.length ?? 0) - 1 >= i &&
+          lastPoint.maLwmaValues?[i].value != 0 &&
+          period == curPoint.maLwmaValues?[i].period &&
           isShow) {
         drawLine(
-          lastPoint.lwmaMaValues?[i].value,
-          curPoint.lwmaMaValues?[i].value,
+          lastPoint.maLwmaValues?[i].value,
+          curPoint.maLwmaValues?[i].value,
           canvas,
           lastX,
           curX,
-          colorFromHex(curPoint.lwmaMaValues![i].color!)!,
-          lineStyle: curPoint.lwmaMaValues![i].style,
-          strokeWidth: curPoint.lwmaMaValues![i].strokeWidth,
+          colorFromHex(curPoint.maLwmaValues![i].color!)!,
+          lineStyle: curPoint.maLwmaValues![i].style,
+          strokeWidth: curPoint.maLwmaValues![i].strokeWidth,
         );
       }
     }
@@ -681,22 +681,22 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
     int id,
   ) {
-    for (int i = 0; i < (curPoint.smaMaValues?.length ?? 0); i++) {
-      final isShow = id == curPoint.smaMaValues![i].windowId;
-      if ((lastPoint.smaMaValues?.length ?? 0) - 1 >= i &&
-          lastPoint.smaMaValues?[i].value != 0 &&
-          period == curPoint.smaMaValues?[i].period &&
+    for (int i = 0; i < (curPoint.maSmaValues?.length ?? 0); i++) {
+      final isShow = id == curPoint.maSmaValues![i].windowId;
+      if ((lastPoint.maSmaValues?.length ?? 0) - 1 >= i &&
+          lastPoint.maSmaValues?[i].value != 0 &&
+          period == curPoint.maSmaValues?[i].period &&
           isShow) {
 
         drawLine(
-          lastPoint.smaMaValues?[i].value,
-          curPoint.smaMaValues?[i].value,
+          lastPoint.maSmaValues?[i].value,
+          curPoint.maSmaValues?[i].value,
           canvas,
           lastX,
           curX,
-          colorFromHex(curPoint.smaMaValues![i].color!)!,
-          lineStyle: curPoint.smaMaValues![i].style,
-          strokeWidth: curPoint.smaMaValues![i].strokeWidth,
+          colorFromHex(curPoint.maSmaValues![i].color!)!,
+          lineStyle: curPoint.maSmaValues![i].style,
+          strokeWidth: curPoint.maSmaValues![i].strokeWidth,
         );
       }
     }
@@ -711,21 +711,21 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
     int id,
   ) {
-    for (int i = 0; i < (curPoint.smmaMaValues?.length ?? 0); i++) {
-      final isShow = id == curPoint.smmaMaValues![i].windowId;
-      if ((lastPoint.smmaMaValues?.length ?? 0) - 1 >= i &&
-          lastPoint.smmaMaValues?[i].value != 0 &&
-          period == curPoint.smmaMaValues?[i].period &&
+    for (int i = 0; i < (curPoint.maSmmaValues?.length ?? 0); i++) {
+      final isShow = id == curPoint.maSmmaValues![i].windowId;
+      if ((lastPoint.maSmmaValues?.length ?? 0) - 1 >= i &&
+          lastPoint.maSmmaValues?[i].value != 0 &&
+          period == curPoint.maSmmaValues?[i].period &&
           isShow) {
         drawLine(
-          lastPoint.smmaMaValues?[i].value,
-          curPoint.smmaMaValues?[i].value,
+          lastPoint.maSmmaValues?[i].value,
+          curPoint.maSmmaValues?[i].value,
           canvas,
           lastX,
           curX,
-          colorFromHex(curPoint.smmaMaValues![i].color!)!,
-          lineStyle: curPoint.smmaMaValues![i].style,
-          strokeWidth: curPoint.smmaMaValues![i].strokeWidth,
+          colorFromHex(curPoint.maSmmaValues![i].color!)!,
+          lineStyle: curPoint.maSmmaValues![i].style,
+          strokeWidth: curPoint.maSmmaValues![i].strokeWidth,
         );
       }
     }
@@ -888,35 +888,35 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
     int id,
   ) {
-    for (int i = 0; i < (curPoint.emaEnvelopsValues?.length ?? 0); i++) {
-      final isShow = id == curPoint.emaEnvelopsValues![i].windowId;
-      if ((lastPoint.emaEnvelopsValues?.length ?? 0) - 1 >= i &&
-          lastPoint.emaEnvelopsValues?[i].up != 0 &&
-          period == curPoint.emaEnvelopsValues?[i].period &&
+    for (int i = 0; i < (curPoint.envelopsEmaValues?.length ?? 0); i++) {
+      final isShow = id == curPoint.envelopsEmaValues![i].windowId;
+      if ((lastPoint.envelopsEmaValues?.length ?? 0) - 1 >= i &&
+          lastPoint.envelopsEmaValues?[i].up != 0 &&
+          period == curPoint.envelopsEmaValues?[i].period &&
           isShow) {
         drawLine(
-          lastPoint.emaEnvelopsValues?[i].up,
-          curPoint.emaEnvelopsValues?[i].up,
+          lastPoint.envelopsEmaValues?[i].up,
+          curPoint.envelopsEmaValues?[i].up,
           canvas,
           lastX,
           curX,
-          colorFromHex(curPoint.emaEnvelopsValues![i].color!)!,
-          strokeWidth: curPoint.emaEnvelopsValues![i].strokeWidth,
+          colorFromHex(curPoint.envelopsEmaValues![i].color!)!,
+          strokeWidth: curPoint.envelopsEmaValues![i].strokeWidth,
         );
       }
 
-      if ((lastPoint.emaEnvelopsValues?.length ?? 0) - 1 >= i &&
-          lastPoint.emaEnvelopsValues?[i].dn != 0 &&
-          period == curPoint.emaEnvelopsValues?[i].period &&
+      if ((lastPoint.envelopsEmaValues?.length ?? 0) - 1 >= i &&
+          lastPoint.envelopsEmaValues?[i].dn != 0 &&
+          period == curPoint.envelopsEmaValues?[i].period &&
           isShow) {
         drawLine(
-          lastPoint.emaEnvelopsValues?[i].dn,
-          curPoint.emaEnvelopsValues?[i].dn,
+          lastPoint.envelopsEmaValues?[i].dn,
+          curPoint.envelopsEmaValues?[i].dn,
           canvas,
           lastX,
           curX,
-          colorFromHex(curPoint.emaEnvelopsValues![i].secondColor!)!,
-          strokeWidth: curPoint.emaEnvelopsValues![i].strokeWidth,
+          colorFromHex(curPoint.envelopsEmaValues![i].secondColor!)!,
+          strokeWidth: curPoint.envelopsEmaValues![i].strokeWidth,
         );
       }
     }
@@ -931,35 +931,35 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
     int id,
   ) {
-    for (int i = 0; i < (curPoint.smaEnvelopsValues?.length ?? 0); i++) {
-      final isShow = id == curPoint.smaEnvelopsValues![i].windowId;
-      if ((lastPoint.smaEnvelopsValues?.length ?? 0) - 1 >= i &&
-          lastPoint.smaEnvelopsValues?[i].up != 0 &&
-          period == curPoint.smaEnvelopsValues?[i].period &&
+    for (int i = 0; i < (curPoint.envelopsSmaValues?.length ?? 0); i++) {
+      final isShow = id == curPoint.envelopsSmaValues![i].windowId;
+      if ((lastPoint.envelopsSmaValues?.length ?? 0) - 1 >= i &&
+          lastPoint.envelopsSmaValues?[i].up != 0 &&
+          period == curPoint.envelopsSmaValues?[i].period &&
           isShow) {
         drawLine(
-          lastPoint.smaEnvelopsValues?[i].up,
-          curPoint.smaEnvelopsValues?[i].up,
+          lastPoint.envelopsSmaValues?[i].up,
+          curPoint.envelopsSmaValues?[i].up,
           canvas,
           lastX,
           curX,
-          colorFromHex(curPoint.smaEnvelopsValues![i].color!)!,
-          strokeWidth: curPoint.smaEnvelopsValues![i].strokeWidth,
+          colorFromHex(curPoint.envelopsSmaValues![i].color!)!,
+          strokeWidth: curPoint.envelopsSmaValues![i].strokeWidth,
         );
       }
 
-      if ((lastPoint.smaEnvelopsValues?.length ?? 0) - 1 >= i &&
-          lastPoint.smaEnvelopsValues?[i].dn != 0 &&
-          period == curPoint.smaEnvelopsValues?[i].period &&
+      if ((lastPoint.envelopsSmaValues?.length ?? 0) - 1 >= i &&
+          lastPoint.envelopsSmaValues?[i].dn != 0 &&
+          period == curPoint.envelopsSmaValues?[i].period &&
           isShow) {
         drawLine(
-          lastPoint.smaEnvelopsValues?[i].dn,
-          curPoint.smaEnvelopsValues?[i].dn,
+          lastPoint.envelopsSmaValues?[i].dn,
+          curPoint.envelopsSmaValues?[i].dn,
           canvas,
           lastX,
           curX,
-          strokeWidth: curPoint.smaEnvelopsValues![i].strokeWidth,
-          colorFromHex(curPoint.smaEnvelopsValues![i].secondColor!)!,
+          strokeWidth: curPoint.envelopsSmaValues![i].strokeWidth,
+          colorFromHex(curPoint.envelopsSmaValues![i].secondColor!)!,
         );
       }
     }
@@ -974,35 +974,35 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
     int id,
   ) {
-    for (int i = 0; i < (curPoint.smmaEnvelopsValues?.length ?? 0); i++) {
-      final isShow = id == curPoint.smmaEnvelopsValues![i].windowId;
-      if ((lastPoint.smmaEnvelopsValues?.length ?? 0) - 1 >= i &&
-          lastPoint.smmaEnvelopsValues?[i].up != 0 &&
-          period == curPoint.smmaEnvelopsValues?[i].period &&
+    for (int i = 0; i < (curPoint.envelopsSmmaValues?.length ?? 0); i++) {
+      final isShow = id == curPoint.envelopsSmmaValues![i].windowId;
+      if ((lastPoint.envelopsSmmaValues?.length ?? 0) - 1 >= i &&
+          lastPoint.envelopsSmmaValues?[i].up != 0 &&
+          period == curPoint.envelopsSmmaValues?[i].period &&
           isShow) {
         drawLine(
-          lastPoint.smmaEnvelopsValues?[i].up,
-          curPoint.smmaEnvelopsValues?[i].up,
+          lastPoint.envelopsSmmaValues?[i].up,
+          curPoint.envelopsSmmaValues?[i].up,
           canvas,
           lastX,
           curX,
-          colorFromHex(curPoint.smmaEnvelopsValues![i].color!)!,
-          strokeWidth: curPoint.smmaEnvelopsValues![i].strokeWidth,
+          colorFromHex(curPoint.envelopsSmmaValues![i].color!)!,
+          strokeWidth: curPoint.envelopsSmmaValues![i].strokeWidth,
         );
       }
 
-      if ((lastPoint.smmaEnvelopsValues?.length ?? 0) - 1 >= i &&
-          lastPoint.smmaEnvelopsValues?[i].dn != 0 &&
-          period == curPoint.smmaEnvelopsValues?[i].period &&
+      if ((lastPoint.envelopsSmmaValues?.length ?? 0) - 1 >= i &&
+          lastPoint.envelopsSmmaValues?[i].dn != 0 &&
+          period == curPoint.envelopsSmmaValues?[i].period &&
           isShow) {
         drawLine(
-          lastPoint.smmaEnvelopsValues?[i].dn,
-          curPoint.smmaEnvelopsValues?[i].dn,
+          lastPoint.envelopsSmmaValues?[i].dn,
+          curPoint.envelopsSmmaValues?[i].dn,
           canvas,
           lastX,
           curX,
-          colorFromHex(curPoint.smmaEnvelopsValues![i].secondColor!)!,
-          strokeWidth: curPoint.smmaEnvelopsValues![i].strokeWidth,
+          colorFromHex(curPoint.envelopsSmmaValues![i].secondColor!)!,
+          strokeWidth: curPoint.envelopsSmmaValues![i].strokeWidth,
         );
       }
     }
@@ -1017,35 +1017,35 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
     int period,
     int id,
   ) {
-    for (int i = 0; i < (curPoint.lwmaEnvelopsValues?.length ?? 0); i++) {
-      final isShow = id == curPoint.lwmaEnvelopsValues![i].windowId;
-      if ((lastPoint.lwmaEnvelopsValues?.length ?? 0) - 1 >= i &&
-          lastPoint.lwmaEnvelopsValues?[i].up != 0 &&
-          period == curPoint.lwmaEnvelopsValues?[i].period &&
+    for (int i = 0; i < (curPoint.envelopsLwmaValues?.length ?? 0); i++) {
+      final isShow = id == curPoint.envelopsLwmaValues![i].windowId;
+      if ((lastPoint.envelopsLwmaValues?.length ?? 0) - 1 >= i &&
+          lastPoint.envelopsLwmaValues?[i].up != 0 &&
+          period == curPoint.envelopsLwmaValues?[i].period &&
           isShow) {
         drawLine(
-          lastPoint.lwmaEnvelopsValues?[i].up,
-          curPoint.lwmaEnvelopsValues?[i].up,
+          lastPoint.envelopsLwmaValues?[i].up,
+          curPoint.envelopsLwmaValues?[i].up,
           canvas,
           lastX,
           curX,
-          strokeWidth: curPoint.lwmaEnvelopsValues![i].strokeWidth,
-          colorFromHex(curPoint.lwmaEnvelopsValues![i].color!)!,
+          strokeWidth: curPoint.envelopsLwmaValues![i].strokeWidth,
+          colorFromHex(curPoint.envelopsLwmaValues![i].color!)!,
         );
       }
 
-      if ((lastPoint.lwmaEnvelopsValues?.length ?? 0) - 1 >= i &&
-          lastPoint.lwmaEnvelopsValues?[i].dn != 0 &&
-          period == curPoint.lwmaEnvelopsValues?[i].period &&
+      if ((lastPoint.envelopsLwmaValues?.length ?? 0) - 1 >= i &&
+          lastPoint.envelopsLwmaValues?[i].dn != 0 &&
+          period == curPoint.envelopsLwmaValues?[i].period &&
           isShow) {
         drawLine(
-          lastPoint.lwmaEnvelopsValues?[i].dn,
-          curPoint.lwmaEnvelopsValues?[i].dn,
+          lastPoint.envelopsLwmaValues?[i].dn,
+          curPoint.envelopsLwmaValues?[i].dn,
           canvas,
           lastX,
           curX,
-          colorFromHex(curPoint.lwmaEnvelopsValues![i].secondColor!)!,
-          strokeWidth: curPoint.lwmaEnvelopsValues![i].strokeWidth,
+          colorFromHex(curPoint.envelopsLwmaValues![i].secondColor!)!,
+          strokeWidth: curPoint.envelopsLwmaValues![i].strokeWidth,
         );
       }
     }

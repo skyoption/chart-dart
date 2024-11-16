@@ -10,14 +10,14 @@ import 'package:candle_chart/utils/properties/chart_properties.dart';
 
 class IndicatorUtils {
   static calculate(List<KLineEntity> data) async {
-    List<IndicatorEntity> SMA_MA = [],
-        EMA_MA = [],
-        Linear_MA = [],
-        Smoothed_MA = [],
-        SMA_ENVELOPS = [],
-        EMA_ENVELOPS = [],
-        LINEAR_ENVELOPS = [],
-        SMMA_ENVELOPS = [],
+    List<IndicatorEntity> MA_SMA = [],
+        MA_EMA = [],
+        MA_LINEAR = [],
+        MA_Smoothed = [],
+        ENVELOPS_SMA = [],
+        ENVELOPS_EMA = [],
+        ENVELOPS_LINEAR = [],
+        ENVELOPS_SMMA = [],
         BOLL = [],
         ICHIMOKU = [],
         PARABOLIC = [],
@@ -38,22 +38,22 @@ class IndicatorUtils {
 
     /// Group the indicators by type
     for (var indicator in chartProperties.indicators) {
-      if (indicator.type == IndicatorType.SMA_MA) {
-        SMA_MA.add(indicator);
-      } else if (indicator.type == IndicatorType.EMA_MA) {
-        EMA_MA.add(indicator);
-      } else if (indicator.type == IndicatorType.LINEAR_MA) {
-        Linear_MA.add(indicator);
-      } else if (indicator.type == IndicatorType.SMMA_MA) {
-        Smoothed_MA.add(indicator);
-      } else if (indicator.type == IndicatorType.SMA_ENVELOPS) {
-        SMA_ENVELOPS.add(indicator);
-      } else if (indicator.type == IndicatorType.EMA_ENVELOPS) {
-        EMA_ENVELOPS.add(indicator);
-      } else if (indicator.type == IndicatorType.LINEAR_ENVELOPS) {
-        LINEAR_ENVELOPS.add(indicator);
-      } else if (indicator.type == IndicatorType.SMMA_ENVELOPS) {
-        SMMA_ENVELOPS.add(indicator);
+      if (indicator.type == IndicatorType.MA_SMA) {
+        MA_SMA.add(indicator);
+      } else if (indicator.type == IndicatorType.MA_EMA) {
+        MA_EMA.add(indicator);
+      } else if (indicator.type == IndicatorType.MA_LINEAR) {
+        MA_LINEAR.add(indicator);
+      } else if (indicator.type == IndicatorType.MA_SMMA) {
+        MA_Smoothed.add(indicator);
+      } else if (indicator.type == IndicatorType.ENVELOPS_SMA) {
+        ENVELOPS_SMA.add(indicator);
+      } else if (indicator.type == IndicatorType.ENVELOPS_EMA) {
+        ENVELOPS_EMA.add(indicator);
+      } else if (indicator.type == IndicatorType.ENVELOPS_LINEAR) {
+        ENVELOPS_LINEAR.add(indicator);
+      } else if (indicator.type == IndicatorType.ENVELOPS_SMMA) {
+        ENVELOPS_SMMA.add(indicator);
       } else if (indicator.type == IndicatorType.BOLL) {
         BOLL.add(indicator);
       } else if (indicator.type == IndicatorType.PARABOLIC) {
@@ -77,28 +77,31 @@ class IndicatorUtils {
           DEM.add(indicator);
         } else if (indicator.type == IndicatorType.MOM) {
           MOM.add(indicator);
-        } else if (indicator.type == IndicatorType.SO) {
+        } else if (indicator.type == IndicatorType.SO_LINEAR ||
+            indicator.type == IndicatorType.SO_SMA ||
+            indicator.type == IndicatorType.SO_EMA ||
+            indicator.type == IndicatorType.SO_SMMA) {
           SO.add(indicator);
         } else if (indicator.type == IndicatorType.WPR) {
           WPR.add(indicator);
         } else if (indicator.type == IndicatorType.MFI) {
           MFI.add(indicator);
-        } else if (indicator.type == IndicatorType.SMA_MA) {
-          SMA_MA.add(indicator);
-        } else if (indicator.type == IndicatorType.EMA_MA) {
-          EMA_MA.add(indicator);
-        } else if (indicator.type == IndicatorType.LINEAR_MA) {
-          Linear_MA.add(indicator);
-        } else if (indicator.type == IndicatorType.SMMA_MA) {
-          Smoothed_MA.add(indicator);
-        } else if (indicator.type == IndicatorType.SMA_ENVELOPS) {
-          SMA_ENVELOPS.add(indicator);
-        } else if (indicator.type == IndicatorType.EMA_ENVELOPS) {
-          EMA_ENVELOPS.add(indicator);
-        } else if (indicator.type == IndicatorType.LINEAR_ENVELOPS) {
-          LINEAR_ENVELOPS.add(indicator);
-        } else if (indicator.type == IndicatorType.SMMA_ENVELOPS) {
-          SMMA_ENVELOPS.add(indicator);
+        } else if (indicator.type == IndicatorType.MA_SMA) {
+          MA_SMA.add(indicator);
+        } else if (indicator.type == IndicatorType.MA_EMA) {
+          MA_EMA.add(indicator);
+        } else if (indicator.type == IndicatorType.MA_LINEAR) {
+          MA_LINEAR.add(indicator);
+        } else if (indicator.type == IndicatorType.MA_SMMA) {
+          MA_Smoothed.add(indicator);
+        } else if (indicator.type == IndicatorType.ENVELOPS_SMA) {
+          ENVELOPS_SMA.add(indicator);
+        } else if (indicator.type == IndicatorType.ENVELOPS_EMA) {
+          ENVELOPS_EMA.add(indicator);
+        } else if (indicator.type == IndicatorType.ENVELOPS_LINEAR) {
+          ENVELOPS_LINEAR.add(indicator);
+        } else if (indicator.type == IndicatorType.ENVELOPS_SMMA) {
+          ENVELOPS_SMMA.add(indicator);
         } else if (indicator.type == IndicatorType.BOLL) {
           BOLL.add(indicator);
         } else if (indicator.type == IndicatorType.PARABOLIC) {
@@ -118,15 +121,15 @@ class IndicatorUtils {
     if (SO.isNotEmpty) calcStochasticOscillator(data, SO);
     if (WPR.isNotEmpty) calcWilliamsPercentRange(data, WPR);
     if (MFI.isNotEmpty) calcMoneyFlowIndex(data, MFI);
-    await Future.delayed(Duration(milliseconds: 500));
-    if (SMA_MA.isNotEmpty) calc_SMA_MA(data, SMA_MA);
-    if (EMA_MA.isNotEmpty) calc_EMA_MA(data, EMA_MA);
-    if (Linear_MA.isNotEmpty) calc_Linear_MA(data, Linear_MA);
-    if (Smoothed_MA.isNotEmpty) calc_Smoothed_MA(data, Smoothed_MA);
-    if (SMA_ENVELOPS.isNotEmpty) calc_SMA_Envelops(data, SMA_ENVELOPS);
-    if (EMA_ENVELOPS.isNotEmpty) calc_EMA_Envelops(data, EMA_ENVELOPS);
-    if (LINEAR_ENVELOPS.isNotEmpty) calc_Linear_Envelops(data, LINEAR_ENVELOPS);
-    if (SMMA_ENVELOPS.isNotEmpty) calc_Smoothed_Envelops(data, SMMA_ENVELOPS);
+    await Future.delayed(Duration(milliseconds: 300));
+    if (MA_SMA.isNotEmpty) calc_SMA_MA(data, MA_SMA);
+    if (MA_EMA.isNotEmpty) calc_EMA_MA(data, MA_EMA);
+    if (MA_LINEAR.isNotEmpty) calc_Linear_MA(data, MA_LINEAR);
+    if (MA_Smoothed.isNotEmpty) calc_Smoothed_MA(data, MA_Smoothed);
+    if (ENVELOPS_SMA.isNotEmpty) calc_SMA_Envelops(data, ENVELOPS_SMA);
+    if (ENVELOPS_EMA.isNotEmpty) calc_EMA_Envelops(data, ENVELOPS_EMA);
+    if (ENVELOPS_LINEAR.isNotEmpty) calc_Linear_Envelops(data, ENVELOPS_LINEAR);
+    if (ENVELOPS_SMMA.isNotEmpty) calc_Smoothed_Envelops(data, ENVELOPS_SMMA);
     if (BOLL.isNotEmpty) calc_BOLL(data, BOLL);
     if (PARABOLIC.isNotEmpty) calc_Parabolic_SAR(data, PARABOLIC);
     if (ICHIMOKU.isNotEmpty) calc_Ichimoku(data, ICHIMOKU);
@@ -138,16 +141,16 @@ class IndicatorUtils {
   static void _resetCandles(List<KLineEntity> data) {
     for (int k = 0; k < data.length; k++) {
       ///MA
-      data[k].emaMaValues = null;
-      data[k].smaMaValues = null;
-      data[k].lwmaMaValues = null;
-      data[k].smmaMaValues = null;
+      data[k].maEmaValues = null;
+      data[k].maSmaValues = null;
+      data[k].maLwmaValues = null;
+      data[k].maSmmaValues = null;
 
       ///Envelops
-      data[k].emaEnvelopsValues = null;
-      data[k].smaEnvelopsValues = null;
-      data[k].lwmaEnvelopsValues = null;
-      data[k].smmaEnvelopsValues = null;
+      data[k].envelopsEmaValues = null;
+      data[k].envelopsSmaValues = null;
+      data[k].envelopsLwmaValues = null;
+      data[k].envelopsSmmaValues = null;
 
       data[k].bollValues = null;
       data[k].parabolicValues = null;
@@ -173,7 +176,7 @@ class IndicatorUtils {
       final indicator = indicators[k];
       for (int i = indicator.period - 1; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
-        entity.smaMaValues ??= List<CandleIndicatorEntity>.filled(
+        entity.maSmaValues ??= List<CandleIndicatorEntity>.filled(
             indicators.length, indicator.copyToCandle(value: 0));
         if (i >= indicator.period - 1) {
           double sum = 0;
@@ -183,14 +186,14 @@ class IndicatorUtils {
             sum += value;
           }
           double smaValue = sum / indicator.period;
-          entity.smaMaValues = _addNewIndicator(
-            entity.smaMaValues,
+          entity.maSmaValues = _addNewIndicator(
+            entity.maSmaValues,
             indicator,
             k,
           );
-          entity.smaMaValues![k] = indicator.copyToCandle(value: smaValue);
+          entity.maSmaValues![k] = indicator.copyToCandle(value: smaValue);
         } else {
-          entity.smaMaValues ??= List<CandleIndicatorEntity>.filled(
+          entity.maSmaValues ??= List<CandleIndicatorEntity>.filled(
               indicators.length, indicator.copyToCandle(value: 0));
         }
       }
@@ -205,7 +208,7 @@ class IndicatorUtils {
       final indicator = indicators[k];
       for (int i = indicator.period - 1; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
-        entity.lwmaMaValues ??= List<CandleIndicatorEntity>.filled(
+        entity.maLwmaValues ??= List<CandleIndicatorEntity>.filled(
             indicators.length, indicator.copyToCandle(value: 0));
         if (i >= indicator.period - 1) {
           double numerator = 0;
@@ -215,15 +218,15 @@ class IndicatorUtils {
                 (indicator.period - j);
           }
           double lwmaValue = numerator / denominator;
-          entity.lwmaMaValues = _addNewIndicator(
-            entity.lwmaMaValues,
+          entity.maLwmaValues = _addNewIndicator(
+            entity.maLwmaValues,
             indicator,
             k,
           );
 
-          entity.lwmaMaValues![k] = indicator.copyToCandle(value: lwmaValue);
+          entity.maLwmaValues![k] = indicator.copyToCandle(value: lwmaValue);
         } else {
-          entity.lwmaMaValues ??= List<CandleIndicatorEntity>.filled(
+          entity.maLwmaValues ??= List<CandleIndicatorEntity>.filled(
               indicators.length, indicator.copyToCandle(value: 0));
         }
       }
@@ -241,7 +244,7 @@ class IndicatorUtils {
       double? previousEma;
       for (int i = indicator.period - 1; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
-        entity.emaMaValues ??= List<CandleIndicatorEntity>.filled(
+        entity.maEmaValues ??= List<CandleIndicatorEntity>.filled(
             indicators.length, indicator.copyToCandle(value: 0));
 
         if (i == 0) {
@@ -255,12 +258,12 @@ class IndicatorUtils {
                   previousEma)
               : _currentPriceValue(indicator, entity);
         }
-        entity.emaMaValues = _addNewIndicator(
-          entity.emaMaValues,
+        entity.maEmaValues = _addNewIndicator(
+          entity.maEmaValues,
           indicator,
           k,
         );
-        entity.emaMaValues![k] = indicator.copyToCandle(value: previousEma);
+        entity.maEmaValues![k] = indicator.copyToCandle(value: previousEma);
       }
     }
   }
@@ -276,7 +279,7 @@ class IndicatorUtils {
       // Loop through data starting from the period - 1
       for (int i = indicator.period - 1; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
-        entity.smmaMaValues ??= List<CandleIndicatorEntity>.filled(
+        entity.maSmmaValues ??= List<CandleIndicatorEntity>.filled(
             indicators.length, indicator.copyToCandle(value: 0));
 
         if (i == indicator.period - 1) {
@@ -286,12 +289,12 @@ class IndicatorUtils {
             sum += _currentPriceValue(indicator, dataList[j]);
           }
           previousSmma = sum / indicator.period;
-          entity.smmaMaValues = _addNewIndicator(
-            entity.smmaMaValues,
+          entity.maSmmaValues = _addNewIndicator(
+            entity.maSmmaValues,
             indicator,
             k,
           );
-          entity.smmaMaValues![k] = indicator.copyToCandle(value: previousSmma);
+          entity.maSmmaValues![k] = indicator.copyToCandle(value: previousSmma);
         } else {
           // Subsequent SMMA values
           double currentClose = _currentPriceValue(indicator, entity);
@@ -299,13 +302,13 @@ class IndicatorUtils {
               ((previousSmma! * (indicator.period - 1)) + currentClose) /
                   indicator.period;
 
-          entity.smmaMaValues = _addNewIndicator(
-            entity.smmaMaValues,
+          entity.maSmmaValues = _addNewIndicator(
+            entity.maSmmaValues,
             indicator,
             k,
           );
           // Set the current SMMA value in the list
-          entity.smmaMaValues![k] = indicator.copyToCandle(value: previousSmma);
+          entity.maSmmaValues![k] = indicator.copyToCandle(value: previousSmma);
         }
       }
     }
@@ -475,7 +478,7 @@ class IndicatorUtils {
       final indicator = indicators[k];
       for (int i = indicator.period - 1; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
-        entity.smaEnvelopsValues ??= List<CandleIndicatorEntity>.filled(
+        entity.envelopsSmaValues ??= List<CandleIndicatorEntity>.filled(
             indicators.length, indicator.copyToCandle(value: 0));
 
         if (i >= indicator.period - 1) {
@@ -487,19 +490,19 @@ class IndicatorUtils {
           double upperEnvelope = smaValue * (1 + indicator.deviations! / 100);
           double lowerEnvelope = smaValue * (1 - indicator.deviations! / 100);
 
-          entity.smaEnvelopsValues = _addNewIndicator(
-            entity.smaEnvelopsValues,
+          entity.envelopsSmaValues = _addNewIndicator(
+            entity.envelopsSmaValues,
             indicator,
             k,
           );
 
-          entity.smaEnvelopsValues?[k] = indicator.copyToCandle(
+          entity.envelopsSmaValues?[k] = indicator.copyToCandle(
             value: smaValue,
             up: upperEnvelope,
             dn: lowerEnvelope,
           );
         } else {
-          entity.smaEnvelopsValues ??= List<CandleIndicatorEntity>.filled(
+          entity.envelopsSmaValues ??= List<CandleIndicatorEntity>.filled(
               indicators.length, indicator.copyToCandle(value: 0));
         }
       }
@@ -517,7 +520,7 @@ class IndicatorUtils {
       double? previousEma;
       for (int i = indicator.period; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
-        entity.emaEnvelopsValues ??= List<CandleIndicatorEntity>.filled(
+        entity.envelopsEmaValues ??= List<CandleIndicatorEntity>.filled(
             indicators.length, indicator.copyToCandle(value: 0));
 
         if (i == 0) {
@@ -533,13 +536,13 @@ class IndicatorUtils {
 
         double upperEnvelope = previousEma * (1 + indicator.deviations! / 100);
         double lowerEnvelope = previousEma * (1 - indicator.deviations! / 100);
-        entity.emaEnvelopsValues = _addNewIndicator(
-          entity.emaEnvelopsValues,
+        entity.envelopsEmaValues = _addNewIndicator(
+          entity.envelopsEmaValues,
           indicator,
           k,
         );
 
-        entity.emaEnvelopsValues?[k] = indicator.copyToCandle(
+        entity.envelopsEmaValues?[k] = indicator.copyToCandle(
           value: previousEma,
           up: upperEnvelope,
           dn: lowerEnvelope,
@@ -556,7 +559,7 @@ class IndicatorUtils {
       final indicator = indicators[k];
       for (int i = indicator.period - 1; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
-        entity.lwmaEnvelopsValues ??= List<CandleIndicatorEntity>.filled(
+        entity.envelopsLwmaValues ??= List<CandleIndicatorEntity>.filled(
             indicators.length, indicator.copyToCandle(value: 0));
 
         if (i >= indicator.period - 1) {
@@ -570,18 +573,18 @@ class IndicatorUtils {
           double upperEnvelope = lwmaValue * (1 + indicator.deviations! / 100);
           double lowerEnvelope = lwmaValue * (1 - indicator.deviations! / 100);
 
-          entity.lwmaEnvelopsValues = _addNewIndicator(
-            entity.lwmaEnvelopsValues,
+          entity.envelopsLwmaValues = _addNewIndicator(
+            entity.envelopsLwmaValues,
             indicator,
             k,
           );
-          entity.lwmaEnvelopsValues?[k] = indicator.copyToCandle(
+          entity.envelopsLwmaValues?[k] = indicator.copyToCandle(
             value: lwmaValue,
             up: upperEnvelope,
             dn: lowerEnvelope,
           );
         } else {
-          entity.lwmaEnvelopsValues ??= List<CandleIndicatorEntity>.filled(
+          entity.envelopsLwmaValues ??= List<CandleIndicatorEntity>.filled(
               indicators.length, indicator.copyToCandle(value: 0));
         }
       }
@@ -598,11 +601,11 @@ class IndicatorUtils {
 
       for (int i = indicator.period - 1; i < dataList.length; i++) {
         KLineEntity entity = dataList[i];
-        entity.smmaEnvelopsValues ??= List<CandleIndicatorEntity>.filled(
+        entity.envelopsSmmaValues ??= List<CandleIndicatorEntity>.filled(
             indicators.length, indicator.copyToCandle(value: 0));
 
-        entity.smmaEnvelopsValues = _addNewIndicator(
-          entity.smmaEnvelopsValues,
+        entity.envelopsSmmaValues = _addNewIndicator(
+          entity.envelopsSmmaValues,
           indicator,
           k,
         );
@@ -626,7 +629,7 @@ class IndicatorUtils {
         double upperEnvelope = previousSmma * (1 + indicator.deviations! / 100);
         double lowerEnvelope = previousSmma * (1 - indicator.deviations! / 100);
 
-        entity.smmaEnvelopsValues?[k] = indicator.copyToCandle(
+        entity.envelopsSmmaValues?[k] = indicator.copyToCandle(
           value: value,
           up: upperEnvelope,
           dn: lowerEnvelope,
@@ -945,33 +948,150 @@ class IndicatorUtils {
     List<KLineEntity> dataList,
     List<IndicatorEntity> indicators,
   ) {
-    for (var indicator in indicators) {
-      final int period = indicator.period;
+    for (int k = 0; k < indicators.length; k++) {
+      final indicator = indicators[k];
+      final kPeriod = indicator.stochastic!.kPeriod; // %K period
+      final dPeriod = indicator.stochastic!.dPeriod; // %D period
+      final slowing = indicator.stochastic!.slowing; // slowing factor
+      final priceField = indicator.stochastic!.priceField;
 
-      for (int i = period; i < dataList.length; i++) {
-        double highestHigh = 0.0;
-        double lowestLow = double.maxFinite;
+      List<double> kValues = [];
 
-        for (int j = i - period; j < i; j++) {
-          if (dataList[j].high > highestHigh) highestHigh = dataList[j].high;
-          if (dataList[j].low < lowestLow) lowestLow = dataList[j].low;
+      // Iterate over data starting from (kPeriod - 1)
+      for (int i = kPeriod - 1; i < dataList.length; i++) {
+        final currentEntity = dataList[i];
+
+        // Determine low/high or close/close based on selected price field
+        double highestHigh = double.negativeInfinity;
+        double lowestLow = double.infinity;
+
+        for (int j = i - kPeriod + 1; j <= i; j++) {
+          final entity = dataList[j];
+          if (priceField == PriceField.Low_High) {
+            if (entity.high > highestHigh) highestHigh = entity.high;
+            if (entity.low < lowestLow) lowestLow = entity.low;
+          } else if (priceField == PriceField.Close_Close) {
+            if (entity.close > highestHigh) highestHigh = entity.close;
+            if (entity.close < lowestLow) lowestLow = entity.close;
+          }
         }
 
-        double percentK =
-            ((dataList[i].close - lowestLow) / (highestHigh - lowestLow)) * 100;
+        // Calculate %K
+        double kValue = 100 *
+            ((currentEntity.close - lowestLow) / (highestHigh - lowestLow));
+        kValues.add(kValue);
 
-        dataList[i].stochasticValues ??= List<CandleIndicatorEntity>.filled(
-            indicators.length, indicator.copyToCandle(value: 0));
-
-        dataList[i].stochasticValues = _addNewIndicator(
-          dataList[i].stochasticValues,
-          indicator,
-          indicators.indexOf(indicator),
+        // Calculate smoothed %D based on method
+        double dValue = calculateStochasticDValue(
+          kValues,
+          dPeriod,
+          slowing,
+          indicator.type,
         );
-        dataList[i].stochasticValues![indicators.indexOf(indicator)] =
-            indicator.copyToCandle(value: percentK);
+
+        // Save %K and %D in the entity
+        currentEntity.stochasticValues ??= List<CandleIndicatorEntity>.filled(
+          indicators.length,
+          indicator.copyToCandle(value: 0),
+        );
+
+        currentEntity.stochasticValues = _addNewIndicator(
+          currentEntity.stochasticValues,
+          indicator,
+          k,
+        );
+
+        currentEntity.stochasticValues![k] = indicator.copyToCandle(
+          kValue: kValue,
+          dValue: dValue,
+        );
       }
     }
+  }
+
+  static double calculateStochasticDValue(
+    List<double> kValues,
+    int dPeriod,
+    int slowing,
+    IndicatorType type,
+  ) {
+    List<double> slowedKValues = [];
+
+    // Apply slowing factor to %K values
+    for (int i = 0; i < kValues.length; i++) {
+      if (i < slowing) {
+        slowedKValues.add(kValues[i]);
+      } else {
+        double slowedValue = 0;
+        for (int j = i - slowing + 1; j <= i; j++) {
+          slowedValue += kValues[j];
+        }
+        slowedKValues.add(slowedValue / slowing);
+      }
+    }
+
+    // Calculate %D based on the chosen method
+    double dValue = 0.0;
+    switch (type) {
+      case IndicatorType.SO_SMA:
+        // Simple Moving Average of slowed %K values
+        dValue = _simpleMovingAverage(slowedKValues, dPeriod);
+        break;
+      case IndicatorType.SO_EMA:
+        // Exponential Moving Average of slowed %K values
+        dValue = _exponentialMovingAverage(slowedKValues, dPeriod);
+        break;
+      case IndicatorType.SO_LINEAR:
+        // Linear Weighted Moving Average of slowed %K values
+        dValue = _linearWeightedMovingAverage(slowedKValues, dPeriod);
+        break;
+      case IndicatorType.SO_SMMA:
+        // Smoothed Moving Average of slowed %K values
+        dValue = _smoothedMovingAverage(slowedKValues, dPeriod);
+        break;
+      default:
+        dValue = 0.0;
+    }
+    return dValue;
+  }
+
+  static double _simpleMovingAverage(List<double> values, int period) {
+    if (values.length < period) return 0.0;
+    double sum = 0.0;
+    for (int i = values.length - period; i < values.length; i++) {
+      sum += values[i];
+    }
+    return sum / period;
+  }
+
+  static double _exponentialMovingAverage(List<double> values, int period) {
+    if (values.isEmpty) return 0.0;
+    double multiplier = 2 / (period + 1);
+    double ema = values.first;
+    for (int i = 1; i < values.length; i++) {
+      ema = ((values[i] - ema) * multiplier) + ema;
+    }
+    return ema;
+  }
+
+  static double _linearWeightedMovingAverage(List<double> values, int period) {
+    if (values.length < period) return 0.0;
+    double numerator = 0.0;
+    double denominator = 0.0;
+    for (int i = 0; i < period; i++) {
+      numerator += values[values.length - period + i] * (period - i);
+      denominator += (period - i);
+    }
+    return numerator / denominator;
+  }
+
+  static double _smoothedMovingAverage(List<double> values, int period) {
+    if (values.length < period) return 0.0;
+    double smma = values.sublist(0, period).reduce((a, b) => a + b) / period;
+    for (int i = period; i < values.length; i++) {
+      smma = ((smma * (period - 1)) + values[i]) / period;
+    }
+    return smma;
   }
 
   static void calcWilliamsPercentRange(
@@ -1007,7 +1127,9 @@ class IndicatorUtils {
   }
 
   static void calcMoneyFlowIndex(
-      List<KLineEntity> dataList, List<IndicatorEntity> indicators) {
+    List<KLineEntity> dataList,
+    List<IndicatorEntity> indicators,
+  ) {
     for (var indicator in indicators) {
       final int period = indicator.period;
 
@@ -1219,10 +1341,19 @@ class IndicatorUtils {
       items = (point.momentumValues ?? [])
           .where((e) => e.windowId == indicator.windowId)
           .toList();
-    } else if (indicator.type == IndicatorType.SO) {
+    } else if (indicator.type == IndicatorType.SO_SMMA ||
+        indicator.type == IndicatorType.SO_SMA ||
+        indicator.type == IndicatorType.SO_LINEAR ||
+        indicator.type == IndicatorType.SO_EMA) {
       items = (point.stochasticValues ?? [])
           .where((e) => e.windowId == indicator.windowId)
           .toList();
+      if (items.isEmpty) return 0.0;
+      if (isFirst) {
+        return items.first.kValue;
+      } else {
+        return items.last.kValue;
+      }
     } else if (indicator.type == IndicatorType.WPR) {
       items = (point.wprValues ?? [])
           .where((e) => e.windowId == indicator.windowId)

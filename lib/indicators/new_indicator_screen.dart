@@ -134,7 +134,7 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                       haveTwoBands: true,
                       isENVELOPS: true,
                       onDone: widget.onDone,
-                      type: IndicatorType.SMA_ENVELOPS,
+                      type: IndicatorType.ENVELOPS_SMA,
                       windowId: widget.windowId,
                     ),
                   ),
@@ -190,6 +190,57 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
               ),
             ),
             PropertiesItemWidget(
+              title: 'Stochastic Oscillator',
+              margin: EdgeInsets.zero,
+              child: const SizedBox(),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => SOPropertiesScreen(
+                      name: 'Stochastic Oscillator',
+                      onDone: widget.onDone,
+                      windowId: widget.windowId,
+                    ),
+                  ),
+                );
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
+              title: 'MACD',
+              margin: EdgeInsets.zero,
+              child: const SizedBox(),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => MACDPropertiesScreen(
+                      name: 'MACD',
+                      onDone: widget.onDone,
+                      windowId: widget.windowId,
+                    ),
+                  ),
+                );
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
+              title: 'Relative Strength Index',
+              margin: EdgeInsets.zero,
+              child: const SizedBox(),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => RSIPropertiesScreen(
+                      name: 'Relative Strength Index',
+                      onDone: widget.onDone,
+                      windowId: widget.windowId,
+                    ),
+                  ),
+                );
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
               title: 'Average True Range',
               margin: EdgeInsets.zero,
               child: const SizedBox(),
@@ -241,23 +292,6 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'MACD',
-              margin: EdgeInsets.zero,
-              child: const SizedBox(),
-              onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => MACDPropertiesScreen(
-                      name: 'MACD',
-                      onDone: widget.onDone,
-                      windowId: widget.windowId,
-                    ),
-                  ),
-                );
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
               title: 'Momentum',
               margin: EdgeInsets.zero,
               child: const SizedBox(),
@@ -275,40 +309,6 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'Relative Strength Index',
-              margin: EdgeInsets.zero,
-              child: const SizedBox(),
-              onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => RSIPropertiesScreen(
-                      name: 'Relative Strength Index',
-                      onDone: widget.onDone,
-                      windowId: widget.windowId,
-                    ),
-                  ),
-                );
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: 'Stochastic Oscillator *',
-              margin: EdgeInsets.zero,
-              child: const SizedBox(),
-              onTap: () {
-                // Navigator.of(context).pushReplacement(
-                //   MaterialPageRoute(
-                //     builder: (context) => SOPropertiesScreen(
-                //       name: 'Stochastic Oscillator',
-                //       onDone: widget.onDone,
-                //       windowId: widget.windowId,
-                //     ),
-                //   ),
-                // );
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
               title: "Williams' Percent Range",
               margin: EdgeInsets.zero,
               child: const SizedBox(),
@@ -316,7 +316,7 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => WPRPropertiesScreen(
-                      name:"Williams' Percent Range",
+                      name: "Williams' Percent Range",
                       onDone: widget.onDone,
                       windowId: widget.windowId,
                     ),

@@ -39,7 +39,7 @@ class IndicatorPropertiesScreen extends StatefulWidget {
     this.haveMethods = false,
     this.haveTwoBands = false,
     this.isENVELOPS = false,
-    this.type = IndicatorType.SMA_MA,
+    this.type = IndicatorType.MA_SMA,
   });
 
   @override
@@ -245,7 +245,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
             if (widget.haveMethods)
               PropertiesItemWidget(
                 title: 'Method',
-                subTitle: (_setMethod(indicator?.type)?.name ?? 'Sample')
+                subTitle: (setMethod(indicator)?.name ?? 'Sample')
                     .replaceAll('_', ' '),
                 margin: EdgeInsets.zero,
                 subTitleColor: Colors.grey.withOpacity(0.8),
@@ -253,7 +253,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => IndicatorMethodsScreen(
-                        method: _setMethod(indicator?.type),
+                        method: setMethod(indicator),
                         onMethod: (method) {
                           _setType(method);
                           setState(() {});
@@ -369,20 +369,20 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
   void _setType(method) {
     if (widget.isENVELOPS) {
       indicator?.type = method == Methods.Exponential
-          ? IndicatorType.EMA_ENVELOPS
+          ? IndicatorType.ENVELOPS_EMA
           : method == Methods.Linear_Weighted
-              ? IndicatorType.LINEAR_ENVELOPS
+              ? IndicatorType.ENVELOPS_LINEAR
               : method == Methods.Simple
-                  ? IndicatorType.SMA_ENVELOPS
-                  : IndicatorType.SMMA_ENVELOPS;
+                  ? IndicatorType.ENVELOPS_SMA
+                  : IndicatorType.ENVELOPS_SMMA;
     } else {
       indicator?.type = method == Methods.Exponential
-          ? IndicatorType.EMA_MA
+          ? IndicatorType.MA_EMA
           : method == Methods.Linear_Weighted
-              ? IndicatorType.LINEAR_MA
+              ? IndicatorType.MA_LINEAR
               : method == Methods.Simple
-                  ? IndicatorType.SMA_MA
-                  : IndicatorType.SMMA_MA;
+                  ? IndicatorType.MA_SMA
+                  : IndicatorType.MA_SMMA;
     }
   }
 
@@ -404,24 +404,24 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
     Navigator.of(context).pop();
   }
 
-  Methods? _setMethod(IndicatorType? type) {
-    if (widget.indicator == null || type == null) return null;
-    if (type.name.contains('EMA')) {
-      return Methods.Exponential;
-    } else if (type.name.contains('LINEAR')) {
-      return Methods.Linear_Weighted;
-    } else if (type.name.contains('SMA')) {
-      return Methods.Simple;
-    } else {
-      return Methods.Smoothed;
-    }
-  }
-
   @override
   void dispose() {
     periodController.dispose();
     shiftController.dispose();
     super.dispose();
+  }
+}
+
+Methods? setMethod(IndicatorEntity? indicator) {
+  if (indicator == null) return null;
+  if (indicator.type.name.contains('EMA')) {
+    return Methods.Exponential;
+  } else if (indicator.type.name.contains('LINEAR')) {
+    return Methods.Linear_Weighted;
+  } else if (indicator.type.name.contains('SMA')) {
+    return Methods.Simple;
+  } else {
+    return Methods.Smoothed;
   }
 }
 

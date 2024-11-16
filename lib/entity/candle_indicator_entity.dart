@@ -12,7 +12,7 @@ class CandleIndicatorEntity {
   int shift, period;
   double? deviations, maximum, steps;
   @enumerated
-  IndicatorType type = IndicatorType.SMA_MA;
+  IndicatorType type = IndicatorType.MA_SMA;
   Ichimoku? ichimoku;
   MACD? macd;
   @enumerated
@@ -40,17 +40,21 @@ class CandleIndicatorEntity {
   double? shortEMA;
   double? longEMA;
   int windowId = 0;
+  Stochastic? stochastic;
+  double kValue = 0;
+  double dValue = 0;
 
   CandleIndicatorEntity({
     this.name = '',
     this.shift = 0,
     this.period = 5,
     this.windowId = 0,
-    this.type = IndicatorType.SMA_MA,
+    this.type = IndicatorType.MA_SMA,
     this.dn,
     this.up,
     this.chikouSpan,
     this.senkouSpanB,
+    this.stochastic,
     this.longEMA,
     this.shortEMA,
     this.senkouSpanA,
@@ -58,6 +62,8 @@ class CandleIndicatorEntity {
     this.kijunSen,
     this.tenkanSen,
     this.value = 0,
+    this.kValue = 0,
+    this.dValue = 0,
     this.deviations,
     this.maximum,
     this.steps,
@@ -89,6 +95,7 @@ class CandleIndicatorEntity {
     method,
     double? value,
     applyTo,
+    stochastic,
     rsi,
     lineHeight,
     style,
@@ -115,6 +122,8 @@ class CandleIndicatorEntity {
     secondColor,
     isMain,
     isSecondary,
+    dValue,
+    kValue,
   }) {
     return CandleIndicatorEntity(
       period: period ?? this.period,
@@ -123,7 +132,10 @@ class CandleIndicatorEntity {
       type: method ?? this.type,
       name: name ?? this.name,
       dn: dn ?? this.dn,
+      dValue: dValue ?? this.dValue,
+      kValue: kValue ?? this.kValue,
       macd: macd ?? this.macd,
+      stochastic: stochastic ?? this.stochastic,
       isMain: isMain ?? this.isMain,
       isSecondary: isSecondary ?? this.isSecondary,
       windowId: windowId ?? this.windowId,

@@ -1,3 +1,4 @@
+import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
@@ -93,10 +94,41 @@ mixin Indicators {
   }
 
   void removeSecondaryIndicator(IndicatorEntity item) {
+    //when remove last secondary return trend indicators to get value from apply to close
+    if (item.windowId != 0) {
+      final items = secondaries[item.windowId] ?? [];
+      if (items.length > 1) {
+        final indicators =
+            items.where((e) => isSecondary(e) && e.id != item.id).toList();
+        if (indicators.isEmpty) {
+          for (var item in items) {
+            if (item.applyTo == ApplyTo.Last_Indicator ||
+                item.applyTo == ApplyTo.First_Indicator) {
+              updateSecondaryIndicator(item..applyTo = ApplyTo.Close);
+            }
+          }
+        }
+      }
+    }
     _secondaryIndicators.removeWhere((e) => e.id == item.id);
     KChart.write(query: (db) async {
       await db.indicatorEntitys.delete(item.id);
     });
+  }
+
+  bool isSecondary(IndicatorEntity indicator) {
+    return (indicator.type == IndicatorType.RSI ||
+        indicator.type == IndicatorType.MACD ||
+        indicator.type == IndicatorType.ATR ||
+        indicator.type == IndicatorType.WPR ||
+        indicator.type == IndicatorType.DEM ||
+        indicator.type == IndicatorType.CCI ||
+        indicator.type == IndicatorType.MFI ||
+        indicator.type == IndicatorType.SO_EMA ||
+        indicator.type == IndicatorType.SO_LINEAR ||
+        indicator.type == IndicatorType.SO_SMA ||
+        indicator.type == IndicatorType.SO_SMMA ||
+        indicator.type == IndicatorType.MOM);
   }
 
   void updateIndicator(IndicatorEntity value) {

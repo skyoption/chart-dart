@@ -33,154 +33,170 @@ const IndicatorEntitySchema = CollectionSchema(
       name: r'color',
       type: IsarType.string,
     ),
-    r'deviations': PropertySchema(
+    r'dValue': PropertySchema(
       id: 3,
+      name: r'dValue',
+      type: IsarType.double,
+    ),
+    r'deviations': PropertySchema(
+      id: 4,
       name: r'deviations',
       type: IsarType.double,
     ),
     r'dn': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'dn',
       type: IsarType.double,
     ),
     r'drawAsBackground': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'drawAsBackground',
       type: IsarType.bool,
     ),
     r'ichimoku': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'ichimoku',
       type: IsarType.object,
       target: r'Ichimoku',
     ),
     r'isMain': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'isMain',
       type: IsarType.bool,
     ),
     r'isSecondary': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'isSecondary',
       type: IsarType.bool,
     ),
+    r'kValue': PropertySchema(
+      id: 10,
+      name: r'kValue',
+      type: IsarType.double,
+    ),
     r'kijunSen': PropertySchema(
-      id: 9,
+      id: 11,
       name: r'kijunSen',
       type: IsarType.double,
     ),
     r'level': PropertySchema(
-      id: 10,
+      id: 12,
       name: r'level',
       type: IsarType.byte,
       enumMap: _IndicatorEntitylevelEnumValueMap,
     ),
     r'levels': PropertySchema(
-      id: 11,
+      id: 13,
       name: r'levels',
       type: IsarType.doubleList,
     ),
     r'levelsColor': PropertySchema(
-      id: 12,
+      id: 14,
       name: r'levelsColor',
       type: IsarType.string,
     ),
     r'longEMA': PropertySchema(
-      id: 13,
+      id: 15,
       name: r'longEMA',
       type: IsarType.double,
     ),
     r'macd': PropertySchema(
-      id: 14,
+      id: 16,
       name: r'macd',
       type: IsarType.object,
       target: r'MACD',
     ),
     r'maximum': PropertySchema(
-      id: 15,
+      id: 17,
       name: r'maximum',
       type: IsarType.double,
     ),
     r'name': PropertySchema(
-      id: 16,
+      id: 18,
       name: r'name',
       type: IsarType.string,
     ),
     r'period': PropertySchema(
-      id: 17,
+      id: 19,
       name: r'period',
       type: IsarType.long,
     ),
     r'secondColor': PropertySchema(
-      id: 18,
+      id: 20,
       name: r'secondColor',
       type: IsarType.string,
     ),
     r'senkouSpanA': PropertySchema(
-      id: 19,
+      id: 21,
       name: r'senkouSpanA',
       type: IsarType.double,
     ),
     r'senkouSpanB': PropertySchema(
-      id: 20,
+      id: 22,
       name: r'senkouSpanB',
       type: IsarType.double,
     ),
     r'shift': PropertySchema(
-      id: 21,
+      id: 23,
       name: r'shift',
       type: IsarType.long,
     ),
     r'shortEMA': PropertySchema(
-      id: 22,
+      id: 24,
       name: r'shortEMA',
       type: IsarType.double,
     ),
     r'steps': PropertySchema(
-      id: 23,
+      id: 25,
       name: r'steps',
       type: IsarType.double,
     ),
+    r'stochastic': PropertySchema(
+      id: 26,
+      name: r'stochastic',
+      type: IsarType.object,
+      target: r'Stochastic',
+    ),
     r'strokeWidth': PropertySchema(
-      id: 24,
+      id: 27,
       name: r'strokeWidth',
       type: IsarType.double,
     ),
     r'style': PropertySchema(
-      id: 25,
+      id: 28,
       name: r'style',
       type: IsarType.byte,
       enumMap: _IndicatorEntitystyleEnumValueMap,
     ),
     r'tenkanSen': PropertySchema(
-      id: 26,
+      id: 29,
       name: r'tenkanSen',
       type: IsarType.double,
     ),
     r'timeframe': PropertySchema(
-      id: 27,
+      id: 30,
       name: r'timeframe',
       type: IsarType.byte,
       enumMap: _IndicatorEntitytimeframeEnumValueMap,
     ),
     r'type': PropertySchema(
-      id: 28,
+      id: 31,
       name: r'type',
       type: IsarType.byte,
       enumMap: _IndicatorEntitytypeEnumValueMap,
     ),
     r'up': PropertySchema(
-      id: 29,
+      id: 32,
       name: r'up',
       type: IsarType.double,
     ),
     r'value': PropertySchema(
-      id: 30,
+      id: 33,
       name: r'value',
       type: IsarType.double,
     ),
     r'windowId': PropertySchema(
-      id: 31,
+      id: 34,
       name: r'windowId',
       type: IsarType.long,
     )
@@ -192,7 +208,11 @@ const IndicatorEntitySchema = CollectionSchema(
   idName: r'id',
   indexes: {},
   links: {},
-  embeddedSchemas: {r'Ichimoku': IchimokuSchema, r'MACD': MACDSchema},
+  embeddedSchemas: {
+    r'Ichimoku': IchimokuSchema,
+    r'MACD': MACDSchema,
+    r'Stochastic': StochasticSchema
+  },
   getId: _indicatorEntityGetId,
   getLinks: _indicatorEntityGetLinks,
   attach: _indicatorEntityAttach,
@@ -239,6 +259,14 @@ int _indicatorEntityEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  {
+    final value = object.stochastic;
+    if (value != null) {
+      bytesCount += 3 +
+          StochasticSchema.estimateSize(
+              value, allOffsets[Stochastic]!, allOffsets);
+    }
+  }
   return bytesCount;
 }
 
@@ -251,45 +279,53 @@ void _indicatorEntitySerialize(
   writer.writeByte(offsets[0], object.applyTo.index);
   writer.writeDouble(offsets[1], object.chikouSpan);
   writer.writeString(offsets[2], object.color);
-  writer.writeDouble(offsets[3], object.deviations);
-  writer.writeDouble(offsets[4], object.dn);
-  writer.writeBool(offsets[5], object.drawAsBackground);
+  writer.writeDouble(offsets[3], object.dValue);
+  writer.writeDouble(offsets[4], object.deviations);
+  writer.writeDouble(offsets[5], object.dn);
+  writer.writeBool(offsets[6], object.drawAsBackground);
   writer.writeObject<Ichimoku>(
-    offsets[6],
+    offsets[7],
     allOffsets,
     IchimokuSchema.serialize,
     object.ichimoku,
   );
-  writer.writeBool(offsets[7], object.isMain);
-  writer.writeBool(offsets[8], object.isSecondary);
-  writer.writeDouble(offsets[9], object.kijunSen);
-  writer.writeByte(offsets[10], object.level.index);
-  writer.writeDoubleList(offsets[11], object.levels);
-  writer.writeString(offsets[12], object.levelsColor);
-  writer.writeDouble(offsets[13], object.longEMA);
+  writer.writeBool(offsets[8], object.isMain);
+  writer.writeBool(offsets[9], object.isSecondary);
+  writer.writeDouble(offsets[10], object.kValue);
+  writer.writeDouble(offsets[11], object.kijunSen);
+  writer.writeByte(offsets[12], object.level.index);
+  writer.writeDoubleList(offsets[13], object.levels);
+  writer.writeString(offsets[14], object.levelsColor);
+  writer.writeDouble(offsets[15], object.longEMA);
   writer.writeObject<MACD>(
-    offsets[14],
+    offsets[16],
     allOffsets,
     MACDSchema.serialize,
     object.macd,
   );
-  writer.writeDouble(offsets[15], object.maximum);
-  writer.writeString(offsets[16], object.name);
-  writer.writeLong(offsets[17], object.period);
-  writer.writeString(offsets[18], object.secondColor);
-  writer.writeDouble(offsets[19], object.senkouSpanA);
-  writer.writeDouble(offsets[20], object.senkouSpanB);
-  writer.writeLong(offsets[21], object.shift);
-  writer.writeDouble(offsets[22], object.shortEMA);
-  writer.writeDouble(offsets[23], object.steps);
-  writer.writeDouble(offsets[24], object.strokeWidth);
-  writer.writeByte(offsets[25], object.style.index);
-  writer.writeDouble(offsets[26], object.tenkanSen);
-  writer.writeByte(offsets[27], object.timeframe.index);
-  writer.writeByte(offsets[28], object.type.index);
-  writer.writeDouble(offsets[29], object.up);
-  writer.writeDouble(offsets[30], object.value);
-  writer.writeLong(offsets[31], object.windowId);
+  writer.writeDouble(offsets[17], object.maximum);
+  writer.writeString(offsets[18], object.name);
+  writer.writeLong(offsets[19], object.period);
+  writer.writeString(offsets[20], object.secondColor);
+  writer.writeDouble(offsets[21], object.senkouSpanA);
+  writer.writeDouble(offsets[22], object.senkouSpanB);
+  writer.writeLong(offsets[23], object.shift);
+  writer.writeDouble(offsets[24], object.shortEMA);
+  writer.writeDouble(offsets[25], object.steps);
+  writer.writeObject<Stochastic>(
+    offsets[26],
+    allOffsets,
+    StochasticSchema.serialize,
+    object.stochastic,
+  );
+  writer.writeDouble(offsets[27], object.strokeWidth);
+  writer.writeByte(offsets[28], object.style.index);
+  writer.writeDouble(offsets[29], object.tenkanSen);
+  writer.writeByte(offsets[30], object.timeframe.index);
+  writer.writeByte(offsets[31], object.type.index);
+  writer.writeDouble(offsets[32], object.up);
+  writer.writeDouble(offsets[33], object.value);
+  writer.writeLong(offsets[34], object.windowId);
 }
 
 IndicatorEntity _indicatorEntityDeserialize(
@@ -304,51 +340,58 @@ IndicatorEntity _indicatorEntityDeserialize(
         ApplyTo.Close,
     chikouSpan: reader.readDoubleOrNull(offsets[1]),
     color: reader.readStringOrNull(offsets[2]),
-    deviations: reader.readDoubleOrNull(offsets[3]),
-    dn: reader.readDoubleOrNull(offsets[4]),
-    drawAsBackground: reader.readBoolOrNull(offsets[5]) ?? false,
+    dValue: reader.readDoubleOrNull(offsets[3]) ?? 0,
+    deviations: reader.readDoubleOrNull(offsets[4]),
+    dn: reader.readDoubleOrNull(offsets[5]),
+    drawAsBackground: reader.readBoolOrNull(offsets[6]) ?? false,
     ichimoku: reader.readObjectOrNull<Ichimoku>(
-      offsets[6],
+      offsets[7],
       IchimokuSchema.deserialize,
       allOffsets,
     ),
-    isMain: reader.readBoolOrNull(offsets[7]) ?? false,
-    isSecondary: reader.readBoolOrNull(offsets[8]) ?? false,
-    kijunSen: reader.readDoubleOrNull(offsets[9]),
+    isMain: reader.readBoolOrNull(offsets[8]) ?? false,
+    isSecondary: reader.readBoolOrNull(offsets[9]) ?? false,
+    kValue: reader.readDoubleOrNull(offsets[10]) ?? 0,
+    kijunSen: reader.readDoubleOrNull(offsets[11]),
     level:
-        _IndicatorEntitylevelValueEnumMap[reader.readByteOrNull(offsets[10])] ??
+        _IndicatorEntitylevelValueEnumMap[reader.readByteOrNull(offsets[12])] ??
             Levels.None,
-    levels: reader.readDoubleList(offsets[11]) ?? const [],
-    levelsColor: reader.readStringOrNull(offsets[12]),
-    longEMA: reader.readDoubleOrNull(offsets[13]),
+    levels: reader.readDoubleList(offsets[13]) ?? const [],
+    levelsColor: reader.readStringOrNull(offsets[14]),
+    longEMA: reader.readDoubleOrNull(offsets[15]),
     macd: reader.readObjectOrNull<MACD>(
-      offsets[14],
+      offsets[16],
       MACDSchema.deserialize,
       allOffsets,
     ),
-    maximum: reader.readDoubleOrNull(offsets[15]),
-    name: reader.readStringOrNull(offsets[16]) ?? '',
-    period: reader.readLongOrNull(offsets[17]) ?? 5,
-    secondColor: reader.readStringOrNull(offsets[18]),
-    senkouSpanA: reader.readDoubleOrNull(offsets[19]),
-    senkouSpanB: reader.readDoubleOrNull(offsets[20]),
-    shift: reader.readLongOrNull(offsets[21]) ?? 0,
-    shortEMA: reader.readDoubleOrNull(offsets[22]),
-    steps: reader.readDoubleOrNull(offsets[23]),
-    strokeWidth: reader.readDoubleOrNull(offsets[24]) ?? 1.0,
+    maximum: reader.readDoubleOrNull(offsets[17]),
+    name: reader.readStringOrNull(offsets[18]) ?? '',
+    period: reader.readLongOrNull(offsets[19]) ?? 5,
+    secondColor: reader.readStringOrNull(offsets[20]),
+    senkouSpanA: reader.readDoubleOrNull(offsets[21]),
+    senkouSpanB: reader.readDoubleOrNull(offsets[22]),
+    shift: reader.readLongOrNull(offsets[23]) ?? 0,
+    shortEMA: reader.readDoubleOrNull(offsets[24]),
+    steps: reader.readDoubleOrNull(offsets[25]),
+    stochastic: reader.readObjectOrNull<Stochastic>(
+      offsets[26],
+      StochasticSchema.deserialize,
+      allOffsets,
+    ),
+    strokeWidth: reader.readDoubleOrNull(offsets[27]) ?? 1.0,
     style:
-        _IndicatorEntitystyleValueEnumMap[reader.readByteOrNull(offsets[25])] ??
+        _IndicatorEntitystyleValueEnumMap[reader.readByteOrNull(offsets[28])] ??
             LineStyle.normal,
-    tenkanSen: reader.readDoubleOrNull(offsets[26]),
+    tenkanSen: reader.readDoubleOrNull(offsets[29]),
     timeframe: _IndicatorEntitytimeframeValueEnumMap[
-            reader.readByteOrNull(offsets[27])] ??
+            reader.readByteOrNull(offsets[30])] ??
         Timeframes.All_Timeframes,
     type:
-        _IndicatorEntitytypeValueEnumMap[reader.readByteOrNull(offsets[28])] ??
-            IndicatorType.SMA_MA,
-    up: reader.readDoubleOrNull(offsets[29]),
-    value: reader.readDoubleOrNull(offsets[30]) ?? 0,
-    windowId: reader.readLongOrNull(offsets[31]) ?? 0,
+        _IndicatorEntitytypeValueEnumMap[reader.readByteOrNull(offsets[31])] ??
+            IndicatorType.MA_SMA,
+    up: reader.readDoubleOrNull(offsets[32]),
+    value: reader.readDoubleOrNull(offsets[33]) ?? 0,
+    windowId: reader.readLongOrNull(offsets[34]) ?? 0,
   );
   object.id = id;
   return object;
@@ -370,77 +413,87 @@ P _indicatorEntityDeserializeProp<P>(
     case 2:
       return (reader.readStringOrNull(offset)) as P;
     case 3:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readDoubleOrNull(offset) ?? 0) as P;
     case 4:
       return (reader.readDoubleOrNull(offset)) as P;
     case 5:
-      return (reader.readBoolOrNull(offset) ?? false) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 6:
+      return (reader.readBoolOrNull(offset) ?? false) as P;
+    case 7:
       return (reader.readObjectOrNull<Ichimoku>(
         offset,
         IchimokuSchema.deserialize,
         allOffsets,
       )) as P;
-    case 7:
-      return (reader.readBoolOrNull(offset) ?? false) as P;
     case 8:
       return (reader.readBoolOrNull(offset) ?? false) as P;
     case 9:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset) ?? false) as P;
     case 10:
+      return (reader.readDoubleOrNull(offset) ?? 0) as P;
+    case 11:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 12:
       return (_IndicatorEntitylevelValueEnumMap[
               reader.readByteOrNull(offset)] ??
           Levels.None) as P;
-    case 11:
-      return (reader.readDoubleList(offset) ?? const []) as P;
-    case 12:
-      return (reader.readStringOrNull(offset)) as P;
     case 13:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readDoubleList(offset) ?? const []) as P;
     case 14:
+      return (reader.readStringOrNull(offset)) as P;
+    case 15:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 16:
       return (reader.readObjectOrNull<MACD>(
         offset,
         MACDSchema.deserialize,
         allOffsets,
       )) as P;
-    case 15:
-      return (reader.readDoubleOrNull(offset)) as P;
-    case 16:
-      return (reader.readStringOrNull(offset) ?? '') as P;
     case 17:
-      return (reader.readLongOrNull(offset) ?? 5) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 18:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 19:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset) ?? 5) as P;
     case 20:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 21:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 22:
       return (reader.readDoubleOrNull(offset)) as P;
     case 23:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 24:
-      return (reader.readDoubleOrNull(offset) ?? 1.0) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 25:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 26:
+      return (reader.readObjectOrNull<Stochastic>(
+        offset,
+        StochasticSchema.deserialize,
+        allOffsets,
+      )) as P;
+    case 27:
+      return (reader.readDoubleOrNull(offset) ?? 1.0) as P;
+    case 28:
       return (_IndicatorEntitystyleValueEnumMap[
               reader.readByteOrNull(offset)] ??
           LineStyle.normal) as P;
-    case 26:
-      return (reader.readDoubleOrNull(offset)) as P;
-    case 27:
-      return (_IndicatorEntitytimeframeValueEnumMap[
-              reader.readByteOrNull(offset)] ??
-          Timeframes.All_Timeframes) as P;
-    case 28:
-      return (_IndicatorEntitytypeValueEnumMap[reader.readByteOrNull(offset)] ??
-          IndicatorType.SMA_MA) as P;
     case 29:
       return (reader.readDoubleOrNull(offset)) as P;
     case 30:
-      return (reader.readDoubleOrNull(offset) ?? 0) as P;
+      return (_IndicatorEntitytimeframeValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          Timeframes.All_Timeframes) as P;
     case 31:
+      return (_IndicatorEntitytypeValueEnumMap[reader.readByteOrNull(offset)] ??
+          IndicatorType.MA_SMA) as P;
+    case 32:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 33:
+      return (reader.readDoubleOrNull(offset) ?? 0) as P;
+    case 34:
       return (reader.readLongOrNull(offset) ?? 0) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -496,36 +549,39 @@ const _IndicatorEntitytimeframeValueEnumMap = {
   1: Timeframes.None,
 };
 const _IndicatorEntitytypeEnumValueMap = {
-  'LINEAR_MA': 0,
-  'SMMA_MA': 1,
-  'EMA_MA': 2,
-  'SMA_MA': 3,
-  'LINEAR_ENVELOPS': 4,
-  'SMMA_ENVELOPS': 5,
-  'EMA_ENVELOPS': 6,
-  'SMA_ENVELOPS': 7,
+  'MA_LINEAR': 0,
+  'MA_SMMA': 1,
+  'MA_EMA': 2,
+  'MA_SMA': 3,
+  'ENVELOPS_LINEAR': 4,
+  'ENVELOPS_SMMA': 5,
+  'ENVELOPS_EMA': 6,
+  'ENVELOPS_SMA': 7,
   'BOLL': 8,
   'PARABOLIC': 9,
   'ICHIMOKU': 10,
   'MACD': 11,
   'RSI': 12,
   'ATR': 13,
-  'DeM': 14,
+  'DEM': 14,
   'CCI': 15,
   'MOM': 16,
-  'SO': 17,
-  'WPR': 18,
-  'MFI': 19,
+  'SO_EMA': 17,
+  'SO_LINEAR': 18,
+  'SO_SMMA': 19,
+  'SO_SMA': 20,
+  'WPR': 21,
+  'MFI': 22,
 };
 const _IndicatorEntitytypeValueEnumMap = {
-  0: IndicatorType.LINEAR_MA,
-  1: IndicatorType.SMMA_MA,
-  2: IndicatorType.EMA_MA,
-  3: IndicatorType.SMA_MA,
-  4: IndicatorType.LINEAR_ENVELOPS,
-  5: IndicatorType.SMMA_ENVELOPS,
-  6: IndicatorType.EMA_ENVELOPS,
-  7: IndicatorType.SMA_ENVELOPS,
+  0: IndicatorType.MA_LINEAR,
+  1: IndicatorType.MA_SMMA,
+  2: IndicatorType.MA_EMA,
+  3: IndicatorType.MA_SMA,
+  4: IndicatorType.ENVELOPS_LINEAR,
+  5: IndicatorType.ENVELOPS_SMMA,
+  6: IndicatorType.ENVELOPS_EMA,
+  7: IndicatorType.ENVELOPS_SMA,
   8: IndicatorType.BOLL,
   9: IndicatorType.PARABOLIC,
   10: IndicatorType.ICHIMOKU,
@@ -535,9 +591,12 @@ const _IndicatorEntitytypeValueEnumMap = {
   14: IndicatorType.DEM,
   15: IndicatorType.CCI,
   16: IndicatorType.MOM,
-  17: IndicatorType.SO,
-  18: IndicatorType.WPR,
-  19: IndicatorType.MFI,
+  17: IndicatorType.SO_EMA,
+  18: IndicatorType.SO_LINEAR,
+  19: IndicatorType.SO_SMMA,
+  20: IndicatorType.SO_SMA,
+  21: IndicatorType.WPR,
+  22: IndicatorType.MFI,
 };
 
 Id _indicatorEntityGetId(IndicatorEntity object) {
@@ -930,6 +989,72 @@ extension IndicatorEntityQueryFilter
   }
 
   QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      dValueEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dValue',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      dValueGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dValue',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      dValueLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dValue',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      dValueBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dValue',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
       deviationsIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1197,6 +1322,72 @@ extension IndicatorEntityQueryFilter
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isSecondary',
         value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      kValueEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'kValue',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      kValueGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'kValue',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      kValueLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'kValue',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      kValueBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'kValue',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
       ));
     });
   }
@@ -2575,6 +2766,24 @@ extension IndicatorEntityQueryFilter
   }
 
   QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      stochasticIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'stochastic',
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      stochasticIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'stochastic',
+      ));
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
       strokeWidthEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -3114,6 +3323,13 @@ extension IndicatorEntityQueryObject
       return query.object(q, r'macd');
     });
   }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
+      stochastic(FilterQuery<Stochastic> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'stochastic');
+    });
+  }
 }
 
 extension IndicatorEntityQueryLinks
@@ -3158,6 +3374,19 @@ extension IndicatorEntityQuerySortBy
       sortByColorDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'color', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy> sortByDValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dValue', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      sortByDValueDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dValue', Sort.desc);
     });
   }
 
@@ -3225,6 +3454,19 @@ extension IndicatorEntityQuerySortBy
       sortByIsSecondaryDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSecondary', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy> sortByKValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'kValue', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      sortByKValueDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'kValue', Sort.desc);
     });
   }
 
@@ -3553,6 +3795,19 @@ extension IndicatorEntityQuerySortThenBy
     });
   }
 
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy> thenByDValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dValue', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      thenByDValueDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dValue', Sort.desc);
+    });
+  }
+
   QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
       thenByDeviations() {
     return QueryBuilder.apply(this, (query) {
@@ -3629,6 +3884,19 @@ extension IndicatorEntityQuerySortThenBy
       thenByIsSecondaryDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSecondary', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy> thenByKValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'kValue', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterSortBy>
+      thenByKValueDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'kValue', Sort.desc);
     });
   }
 
@@ -3938,6 +4206,12 @@ extension IndicatorEntityQueryWhereDistinct
     });
   }
 
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QDistinct> distinctByDValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'dValue');
+    });
+  }
+
   QueryBuilder<IndicatorEntity, IndicatorEntity, QDistinct>
       distinctByDeviations() {
     return QueryBuilder.apply(this, (query) {
@@ -3968,6 +4242,12 @@ extension IndicatorEntityQueryWhereDistinct
       distinctByIsSecondary() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isSecondary');
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, IndicatorEntity, QDistinct> distinctByKValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'kValue');
     });
   }
 
@@ -4144,6 +4424,12 @@ extension IndicatorEntityQueryProperty
     });
   }
 
+  QueryBuilder<IndicatorEntity, double, QQueryOperations> dValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'dValue');
+    });
+  }
+
   QueryBuilder<IndicatorEntity, double?, QQueryOperations>
       deviationsProperty() {
     return QueryBuilder.apply(this, (query) {
@@ -4180,6 +4466,12 @@ extension IndicatorEntityQueryProperty
   QueryBuilder<IndicatorEntity, bool, QQueryOperations> isSecondaryProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isSecondary');
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, double, QQueryOperations> kValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'kValue');
     });
   }
 
@@ -4275,6 +4567,13 @@ extension IndicatorEntityQueryProperty
   QueryBuilder<IndicatorEntity, double?, QQueryOperations> stepsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'steps');
+    });
+  }
+
+  QueryBuilder<IndicatorEntity, Stochastic?, QQueryOperations>
+      stochasticProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'stochastic');
     });
   }
 
@@ -5976,3 +6275,666 @@ extension MACDQueryFilter on QueryBuilder<MACD, MACD, QFilterCondition> {
 }
 
 extension MACDQueryObject on QueryBuilder<MACD, MACD, QFilterCondition> {}
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+const StochasticSchema = Schema(
+  name: r'Stochastic',
+  id: 6422956883162085557,
+  properties: {
+    r'dPeriod': PropertySchema(
+      id: 0,
+      name: r'dPeriod',
+      type: IsarType.long,
+    ),
+    r'kPeriod': PropertySchema(
+      id: 1,
+      name: r'kPeriod',
+      type: IsarType.long,
+    ),
+    r'mainColor': PropertySchema(
+      id: 2,
+      name: r'mainColor',
+      type: IsarType.string,
+    ),
+    r'priceField': PropertySchema(
+      id: 3,
+      name: r'priceField',
+      type: IsarType.byte,
+      enumMap: _StochasticpriceFieldEnumValueMap,
+    ),
+    r'signalColor': PropertySchema(
+      id: 4,
+      name: r'signalColor',
+      type: IsarType.string,
+    ),
+    r'slowing': PropertySchema(
+      id: 5,
+      name: r'slowing',
+      type: IsarType.long,
+    )
+  },
+  estimateSize: _stochasticEstimateSize,
+  serialize: _stochasticSerialize,
+  deserialize: _stochasticDeserialize,
+  deserializeProp: _stochasticDeserializeProp,
+);
+
+int _stochasticEstimateSize(
+  Stochastic object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  {
+    final value = object.mainColor;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.signalColor;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  return bytesCount;
+}
+
+void _stochasticSerialize(
+  Stochastic object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeLong(offsets[0], object.dPeriod);
+  writer.writeLong(offsets[1], object.kPeriod);
+  writer.writeString(offsets[2], object.mainColor);
+  writer.writeByte(offsets[3], object.priceField.index);
+  writer.writeString(offsets[4], object.signalColor);
+  writer.writeLong(offsets[5], object.slowing);
+}
+
+Stochastic _stochasticDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = Stochastic(
+    dPeriod: reader.readLongOrNull(offsets[0]) ?? 3,
+    kPeriod: reader.readLongOrNull(offsets[1]) ?? 5,
+    mainColor: reader.readStringOrNull(offsets[2]),
+    signalColor: reader.readStringOrNull(offsets[4]),
+    slowing: reader.readLongOrNull(offsets[5]) ?? 3,
+  );
+  object.priceField =
+      _StochasticpriceFieldValueEnumMap[reader.readByteOrNull(offsets[3])] ??
+          PriceField.Low_High;
+  return object;
+}
+
+P _stochasticDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readLongOrNull(offset) ?? 3) as P;
+    case 1:
+      return (reader.readLongOrNull(offset) ?? 5) as P;
+    case 2:
+      return (reader.readStringOrNull(offset)) as P;
+    case 3:
+      return (_StochasticpriceFieldValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          PriceField.Low_High) as P;
+    case 4:
+      return (reader.readStringOrNull(offset)) as P;
+    case 5:
+      return (reader.readLongOrNull(offset) ?? 3) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+const _StochasticpriceFieldEnumValueMap = {
+  'Low_High': 0,
+  'Close_Close': 1,
+};
+const _StochasticpriceFieldValueEnumMap = {
+  0: PriceField.Low_High,
+  1: PriceField.Close_Close,
+};
+
+extension StochasticQueryFilter
+    on QueryBuilder<Stochastic, Stochastic, QFilterCondition> {
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition> dPeriodEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dPeriod',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      dPeriodGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dPeriod',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition> dPeriodLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dPeriod',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition> dPeriodBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dPeriod',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition> kPeriodEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'kPeriod',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      kPeriodGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'kPeriod',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition> kPeriodLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'kPeriod',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition> kPeriodBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'kPeriod',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      mainColorIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'mainColor',
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      mainColorIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'mainColor',
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition> mainColorEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mainColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      mainColorGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'mainColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition> mainColorLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'mainColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition> mainColorBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'mainColor',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      mainColorStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'mainColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition> mainColorEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'mainColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition> mainColorContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'mainColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition> mainColorMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'mainColor',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      mainColorIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mainColor',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      mainColorIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'mainColor',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition> priceFieldEqualTo(
+      PriceField value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'priceField',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      priceFieldGreaterThan(
+    PriceField value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'priceField',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      priceFieldLessThan(
+    PriceField value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'priceField',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition> priceFieldBetween(
+    PriceField lower,
+    PriceField upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'priceField',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      signalColorIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'signalColor',
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      signalColorIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'signalColor',
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      signalColorEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'signalColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      signalColorGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'signalColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      signalColorLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'signalColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      signalColorBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'signalColor',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      signalColorStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'signalColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      signalColorEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'signalColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      signalColorContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'signalColor',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      signalColorMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'signalColor',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      signalColorIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'signalColor',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      signalColorIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'signalColor',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition> slowingEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'slowing',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition>
+      slowingGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'slowing',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition> slowingLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'slowing',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Stochastic, Stochastic, QAfterFilterCondition> slowingBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'slowing',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+}
+
+extension StochasticQueryObject
+    on QueryBuilder<Stochastic, Stochastic, QFilterCondition> {}

@@ -23,6 +23,11 @@ enum Levels { None }
 
 enum Timeframes { All_Timeframes, None }
 
+enum PriceField {
+  Low_High,
+  Close_Close,
+}
+
 @collection
 class IndicatorEntity {
   int windowId = 0;
@@ -31,9 +36,10 @@ class IndicatorEntity {
   int shift, period;
   double? deviations, maximum, steps;
   @enumerated
-  IndicatorType type = IndicatorType.SMA_MA;
+  IndicatorType type = IndicatorType.MA_SMA;
   Ichimoku? ichimoku;
   MACD? macd;
+  Stochastic? stochastic;
   @enumerated
   ApplyTo applyTo = ApplyTo.Close;
   @enumerated
@@ -49,6 +55,8 @@ class IndicatorEntity {
 
   List<double> levels = [];
   double value = 0;
+  double kValue = 0;
+  double dValue = 0;
   double? up;
   double? dn;
   double? tenkanSen;
@@ -64,9 +72,10 @@ class IndicatorEntity {
     this.shift = 0,
     this.windowId = 0,
     this.period = 5,
-    this.type = IndicatorType.SMA_MA,
+    this.type = IndicatorType.MA_SMA,
     this.dn,
     this.up,
+    this.stochastic,
     this.levels = const [],
     this.chikouSpan,
     this.senkouSpanB,
@@ -76,6 +85,8 @@ class IndicatorEntity {
     this.longEMA,
     this.shortEMA,
     this.value = 0,
+    this.kValue = 0,
+    this.dValue = 0,
     this.deviations,
     this.macd,
     this.maximum,
@@ -111,6 +122,7 @@ class IndicatorEntity {
     level,
     timeframe,
     levelsColor,
+    stochastic,
     deviations,
     ichimoku,
     windowId,
@@ -133,18 +145,23 @@ class IndicatorEntity {
     isMain,
     secondColor,
     isSecondary,
+    dValue,
+    kValue,
   }) {
     return CandleIndicatorEntity(
       period: period ?? this.period,
       value: value ?? this.value,
       type: method ?? this.type,
       name: name ?? this.name,
+      stochastic: stochastic ?? this.stochastic,
       longEMA: longEMA ?? this.longEMA,
       shortEMA: shortEMA ?? this.shortEMA,
       dn: dn ?? this.dn,
       windowId: windowId ?? this.windowId,
       macd: macd ?? this.macd,
       up: up ?? this.up,
+      dValue: dValue ?? this.dValue,
+      kValue: kValue ?? this.kValue,
       levels: levels ?? this.levels,
       levelsColor: levelsColor ?? this.levelsColor,
       strokeWidth: lineHeight ?? this.strokeWidth,
@@ -209,6 +226,27 @@ class MACD {
     this.fastEma = 12,
     this.slowEma = 26,
     this.macdSma = 9,
+    this.mainColor,
+    this.signalColor,
+  }) {
+    mainColor ??= Colors.red.toHexString();
+    signalColor ??= Colors.blue.toHexString();
+  }
+}
+
+@embedded
+class Stochastic {
+  String? mainColor, signalColor;
+
+  int kPeriod = 5, dPeriod = 3, slowing = 3;
+
+  @enumerated
+  PriceField priceField = PriceField.Low_High;
+
+  Stochastic({
+    this.kPeriod = 5,
+    this.dPeriod = 3,
+    this.slowing = 3,
     this.mainColor,
     this.signalColor,
   }) {

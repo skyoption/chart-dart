@@ -6,7 +6,6 @@ import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/renderer/base_chart_painter.dart';
 import 'package:candle_chart/renderer/rects/render_rect.dart';
-import 'package:candle_chart/utils/kprint.dart';
 
 class SecondaryRect {
   final Map<int, List<IndicatorEntity>> secondaryIndicators;
@@ -34,30 +33,30 @@ class SecondaryRect {
         item.ichimokuValues ?? [],
         indicator.windowId,
       );
-    } else if (indicator.type == IndicatorType.SMA_ENVELOPS) {
-      maxPrice = _findMaxUP(item.smaEnvelopsValues ?? [], indicator.windowId);
-      minPrice = _findMinDN(item.smaEnvelopsValues ?? [], indicator.windowId);
-    } else if (indicator.type == IndicatorType.EMA_ENVELOPS) {
-      maxPrice = _findMaxUP(item.emaEnvelopsValues ?? [], indicator.windowId);
-      minPrice = _findMinDN(item.emaEnvelopsValues ?? [], indicator.windowId);
-    } else if (indicator.type == IndicatorType.LINEAR_ENVELOPS) {
-      maxPrice = _findMaxUP(item.lwmaEnvelopsValues ?? [], indicator.windowId);
-      minPrice = _findMinDN(item.lwmaEnvelopsValues ?? [], indicator.windowId);
-    } else if (indicator.type == IndicatorType.SMMA_ENVELOPS) {
-      maxPrice = _findMaxUP(item.smmaEnvelopsValues ?? [], indicator.windowId);
-      minPrice = _findMinDN(item.smmaEnvelopsValues ?? [], indicator.windowId);
+    } else if (indicator.type == IndicatorType.ENVELOPS_SMA) {
+      maxPrice = _findMaxUP(item.envelopsSmaValues ?? [], indicator.windowId);
+      minPrice = _findMinDN(item.envelopsSmaValues ?? [], indicator.windowId);
+    } else if (indicator.type == IndicatorType.ENVELOPS_EMA) {
+      maxPrice = _findMaxUP(item.envelopsEmaValues ?? [], indicator.windowId);
+      minPrice = _findMinDN(item.envelopsEmaValues ?? [], indicator.windowId);
+    } else if (indicator.type == IndicatorType.ENVELOPS_LINEAR) {
+      maxPrice = _findMaxUP(item.envelopsLwmaValues ?? [], indicator.windowId);
+      minPrice = _findMinDN(item.envelopsLwmaValues ?? [], indicator.windowId);
+    } else if (indicator.type == IndicatorType.ENVELOPS_SMMA) {
+      maxPrice = _findMaxUP(item.envelopsSmmaValues ?? [], indicator.windowId);
+      minPrice = _findMinDN(item.envelopsSmmaValues ?? [], indicator.windowId);
     } else if (indicator.type == IndicatorType.PARABOLIC) {
       maxPrice = _findMaxMA(item.parabolicValues ?? [], indicator.windowId);
       minPrice = _findMinMA(item.parabolicValues ?? [], indicator.windowId);
-    } else if (indicator.type == IndicatorType.LINEAR_MA) {
-      maxPrice = _findMaxMA(item.lwmaMaValues ?? [], indicator.windowId);
-      minPrice = _findMinMA(item.lwmaMaValues ?? [], indicator.windowId);
-    } else if (indicator.type == IndicatorType.EMA_MA) {
-      maxPrice = _findMaxMA(item.emaMaValues ?? [], indicator.windowId);
-      minPrice = _findMinMA(item.emaMaValues ?? [], indicator.windowId);
-    } else if (indicator.type == IndicatorType.SMA_MA) {
-      maxPrice = _findMaxMA(item.smaMaValues ?? [], indicator.windowId);
-      minPrice = _findMinMA(item.smaMaValues ?? [], indicator.windowId);
+    } else if (indicator.type == IndicatorType.MA_LINEAR) {
+      maxPrice = _findMaxMA(item.maLwmaValues ?? [], indicator.windowId);
+      minPrice = _findMinMA(item.maLwmaValues ?? [], indicator.windowId);
+    } else if (indicator.type == IndicatorType.MA_EMA) {
+      maxPrice = _findMaxMA(item.maEmaValues ?? [], indicator.windowId);
+      minPrice = _findMinMA(item.maEmaValues ?? [], indicator.windowId);
+    } else if (indicator.type == IndicatorType.MA_SMA) {
+      maxPrice = _findMaxMA(item.maSmaValues ?? [], indicator.windowId);
+      minPrice = _findMinMA(item.maSmaValues ?? [], indicator.windowId);
     } else if (indicator.type == IndicatorType.BOLL) {
       maxPrice = _findMaxUP(item.bollValues ?? [], indicator.windowId);
       minPrice = _findMinDN(item.bollValues ?? [], indicator.windowId);
@@ -79,13 +78,18 @@ class SecondaryRect {
         mMaxValue = max;
         mMinValue = -max;
         break;
-      case IndicatorType.RSI:
+      case IndicatorType.RSI ||
+            IndicatorType.SO_LINEAR ||
+            IndicatorType.SO_SMA ||
+            IndicatorType.SO_EMA ||
+            IndicatorType.SO_SMMA:
         mMaxValue = 100;
         mMinValue = 0.0;
         break;
       case IndicatorType.CCI ||
             IndicatorType.DEM ||
             IndicatorType.ATR ||
+            IndicatorType.MFI ||
             IndicatorType.WPR ||
             IndicatorType.MOM:
         double resMax = 0;
@@ -107,6 +111,10 @@ class SecondaryRect {
           resMax = _findMaxMA(item.momentumValues ?? [], indicator.windowId);
           resMin = _findMinMA(item.momentumValues ?? [], indicator.windowId);
           space = 2;
+        } else if (indicator.type == IndicatorType.MFI) {
+          resMax = _findMaxMA(item.mfiValues ?? [], indicator.windowId);
+          resMin = _findMinMA(item.mfiValues ?? [], indicator.windowId);
+          space = 0.5;
         } else if (indicator.type == IndicatorType.DEM) {
           resMax = _findMaxMA(item.deMarkerValues ?? [], indicator.windowId);
           resMin = _findMinMA(item.deMarkerValues ?? [], indicator.windowId);
@@ -131,7 +139,12 @@ class SecondaryRect {
             IndicatorType.CCI ||
             IndicatorType.DEM ||
             IndicatorType.ATR ||
+            IndicatorType.MFI ||
             IndicatorType.WPR ||
+            IndicatorType.SO_LINEAR ||
+            IndicatorType.SO_SMA ||
+            IndicatorType.SO_EMA ||
+            IndicatorType.SO_SMMA ||
             IndicatorType.MOM:
         _setMaxMin(
           indicator,
@@ -288,7 +301,10 @@ extension OnMap on Map<int, List<IndicatorEntity>> {
           e.type == IndicatorType.ATR ||
           e.type == IndicatorType.CCI ||
           e.type == IndicatorType.MOM ||
-          e.type == IndicatorType.SO ||
+          e.type == IndicatorType.SO_EMA ||
+          e.type == IndicatorType.SO_LINEAR ||
+          e.type == IndicatorType.SO_SMA ||
+          e.type == IndicatorType.SO_SMMA ||
           e.type == IndicatorType.WPR ||
           e.type == IndicatorType.MFI ||
           e.type == IndicatorType.DEM;
