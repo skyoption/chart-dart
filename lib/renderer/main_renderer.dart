@@ -1,4 +1,6 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/renderer/objects/draw_vertical_lines.dart';
+import 'package:candle_chart/renderer/objects/draw_vertical_lines.dart';
 import 'package:candle_chart/renderer/rects/render_rect.dart';
 import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +35,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   final VerticalTextAlignment verticalTextAlignment;
   final List<IndicatorEntity> indicators;
   late final SubMainRenderer subMainRenderer;
+  final Function(Canvas canvas, Size size, double lastX, double curX)
+      drawVerticalLines;
 
   MainRenderer(
     Rect mainRect,
@@ -47,6 +51,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     this.scaleX,
     this.verticalTextAlignment,
     this.indicators,
+    this.drawVerticalLines,
   ) : super(
             chartRect: mainRect,
             maxValue: maxValue,
@@ -65,6 +70,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       chartColors,
       indicators,
     );
+
     mCandleWidth = this.chartStyle.candleWidth;
     mCandleLineWidth = this.chartStyle.candleLineWidth;
     mLinePaint = Paint()
@@ -73,15 +79,17 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       ..strokeWidth = mLineStrokeWidth
       ..color = this.chartColors.kLineColor;
     _contentRect = Rect.fromLTRB(
-        chartRect.left,
-        chartRect.top + _contentPadding,
-        chartRect.right,
-        chartRect.bottom - _contentPadding);
+      chartRect.left,
+      chartRect.top + _contentPadding,
+      chartRect.right,
+      chartRect.bottom - _contentPadding,
+    );
     if (maxValue == minValue) {
       maxValue *= 1.5;
       minValue /= 2;
     }
     scaleY = _contentRect.height / (maxValue - minValue);
+
   }
 
   @override
@@ -93,6 +101,12 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     Size size,
     Canvas canvas,
   ) {
+    drawVerticalLines(
+      canvas,
+      size,
+      lastX,
+      curX,
+    );
     if (isLine) {
       drawPolyline(
         lastPoint.close,
@@ -687,7 +701,6 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           lastPoint.maSmaValues?[i].value != 0 &&
           period == curPoint.maSmaValues?[i].period &&
           isShow) {
-
         drawLine(
           lastPoint.maSmaValues?[i].value,
           curPoint.maSmaValues?[i].value,

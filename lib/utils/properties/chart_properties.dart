@@ -54,6 +54,7 @@ class ChartProperties with Indicators, LinePriceObject, TrendLineObject {
           ),
         );
       });
+      await loadObjects();
     } catch (e) {
       kPrint(e.toString());
     }
@@ -66,6 +67,7 @@ class ChartProperties with Indicators, LinePriceObject, TrendLineObject {
         frame = res.frame;
         symbol = res.symbol;
       }
+      await loadObjects();
     } catch (e) {
       kPrint(e.toString());
     }

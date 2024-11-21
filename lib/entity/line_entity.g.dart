@@ -22,55 +22,70 @@ const LineEntitySchema = CollectionSchema(
       name: r'color',
       type: IsarType.string,
     ),
-    r'drawAsBackground': PropertySchema(
+    r'currentEditIndex': PropertySchema(
       id: 1,
+      name: r'currentEditIndex',
+      type: IsarType.long,
+    ),
+    r'datetime': PropertySchema(
+      id: 2,
+      name: r'datetime',
+      type: IsarType.long,
+    ),
+    r'drawAsBackground': PropertySchema(
+      id: 3,
       name: r'drawAsBackground',
       type: IsarType.bool,
     ),
-    r'dy': PropertySchema(
-      id: 2,
-      name: r'dy',
+    r'dx1': PropertySchema(
+      id: 4,
+      name: r'dx1',
       type: IsarType.double,
     ),
-    r'editable': PropertySchema(
-      id: 3,
-      name: r'editable',
-      type: IsarType.bool,
+    r'dx2': PropertySchema(
+      id: 5,
+      name: r'dx2',
+      type: IsarType.double,
+    ),
+    r'dy1': PropertySchema(
+      id: 6,
+      name: r'dy1',
+      type: IsarType.double,
+    ),
+    r'dy2': PropertySchema(
+      id: 7,
+      name: r'dy2',
+      type: IsarType.double,
     ),
     r'height': PropertySchema(
-      id: 4,
+      id: 8,
       name: r'height',
       type: IsarType.double,
     ),
     r'name': PropertySchema(
-      id: 5,
+      id: 9,
       name: r'name',
       type: IsarType.string,
     ),
-    r'newDy': PropertySchema(
-      id: 6,
-      name: r'newDy',
-      type: IsarType.double,
-    ),
     r'style': PropertySchema(
-      id: 7,
+      id: 10,
       name: r'style',
       type: IsarType.byte,
       enumMap: _LineEntitystyleEnumValueMap,
     ),
     r'symbol': PropertySchema(
-      id: 8,
+      id: 11,
       name: r'symbol',
       type: IsarType.string,
     ),
     r'type': PropertySchema(
-      id: 9,
+      id: 12,
       name: r'type',
       type: IsarType.byte,
       enumMap: _LineEntitytypeEnumValueMap,
     ),
     r'value': PropertySchema(
-      id: 10,
+      id: 13,
       name: r'value',
       type: IsarType.double,
     )
@@ -113,16 +128,19 @@ void _lineEntitySerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.color);
-  writer.writeBool(offsets[1], object.drawAsBackground);
-  writer.writeDouble(offsets[2], object.dy);
-  writer.writeBool(offsets[3], object.editable);
-  writer.writeDouble(offsets[4], object.height);
-  writer.writeString(offsets[5], object.name);
-  writer.writeDouble(offsets[6], object.newDy);
-  writer.writeByte(offsets[7], object.style.index);
-  writer.writeString(offsets[8], object.symbol);
-  writer.writeByte(offsets[9], object.type.index);
-  writer.writeDouble(offsets[10], object.value);
+  writer.writeLong(offsets[1], object.currentEditIndex);
+  writer.writeLong(offsets[2], object.datetime);
+  writer.writeBool(offsets[3], object.drawAsBackground);
+  writer.writeDouble(offsets[4], object.dx1);
+  writer.writeDouble(offsets[5], object.dx2);
+  writer.writeDouble(offsets[6], object.dy1);
+  writer.writeDouble(offsets[7], object.dy2);
+  writer.writeDouble(offsets[8], object.height);
+  writer.writeString(offsets[9], object.name);
+  writer.writeByte(offsets[10], object.style.index);
+  writer.writeString(offsets[11], object.symbol);
+  writer.writeByte(offsets[12], object.type.index);
+  writer.writeDouble(offsets[13], object.value);
 }
 
 LineEntity _lineEntityDeserialize(
@@ -133,18 +151,21 @@ LineEntity _lineEntityDeserialize(
 ) {
   final object = LineEntity(
     color: reader.readStringOrNull(offsets[0]),
-    drawAsBackground: reader.readBoolOrNull(offsets[1]) ?? false,
-    dy: reader.readDoubleOrNull(offsets[2]) ?? 0,
-    editable: reader.readBoolOrNull(offsets[3]) ?? false,
-    height: reader.readDoubleOrNull(offsets[4]) ?? 1.2,
-    name: reader.readStringOrNull(offsets[5]) ?? '',
-    newDy: reader.readDoubleOrNull(offsets[6]) ?? 0,
-    style: _LineEntitystyleValueEnumMap[reader.readByteOrNull(offsets[7])] ??
+    currentEditIndex: reader.readLongOrNull(offsets[1]) ?? -1,
+    datetime: reader.readLongOrNull(offsets[2]) ?? 0,
+    drawAsBackground: reader.readBoolOrNull(offsets[3]) ?? false,
+    dx1: reader.readDoubleOrNull(offsets[4]) ?? 0,
+    dx2: reader.readDoubleOrNull(offsets[5]) ?? 0,
+    dy1: reader.readDoubleOrNull(offsets[6]) ?? 0,
+    dy2: reader.readDoubleOrNull(offsets[7]) ?? 0,
+    height: reader.readDoubleOrNull(offsets[8]) ?? 1.2,
+    name: reader.readStringOrNull(offsets[9]) ?? '',
+    style: _LineEntitystyleValueEnumMap[reader.readByteOrNull(offsets[10])] ??
         LineStyle.normal,
-    symbol: reader.readStringOrNull(offsets[8]) ?? '',
-    type: _LineEntitytypeValueEnumMap[reader.readByteOrNull(offsets[9])] ??
+    symbol: reader.readStringOrNull(offsets[11]) ?? '',
+    type: _LineEntitytypeValueEnumMap[reader.readByteOrNull(offsets[12])] ??
         LineType.horizontal,
-    value: reader.readDoubleOrNull(offsets[10]) ?? 50559.50,
+    value: reader.readDoubleOrNull(offsets[13]) ?? 50559.50,
   );
   object.id = id;
   return object;
@@ -160,26 +181,32 @@ P _lineEntityDeserializeProp<P>(
     case 0:
       return (reader.readStringOrNull(offset)) as P;
     case 1:
-      return (reader.readBoolOrNull(offset) ?? false) as P;
+      return (reader.readLongOrNull(offset) ?? -1) as P;
     case 2:
-      return (reader.readDoubleOrNull(offset) ?? 0) as P;
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 3:
       return (reader.readBoolOrNull(offset) ?? false) as P;
     case 4:
-      return (reader.readDoubleOrNull(offset) ?? 1.2) as P;
+      return (reader.readDoubleOrNull(offset) ?? 0) as P;
     case 5:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return (reader.readDoubleOrNull(offset) ?? 0) as P;
     case 6:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
     case 7:
+      return (reader.readDoubleOrNull(offset) ?? 0) as P;
+    case 8:
+      return (reader.readDoubleOrNull(offset) ?? 1.2) as P;
+    case 9:
+      return (reader.readStringOrNull(offset) ?? '') as P;
+    case 10:
       return (_LineEntitystyleValueEnumMap[reader.readByteOrNull(offset)] ??
           LineStyle.normal) as P;
-    case 8:
+    case 11:
       return (reader.readStringOrNull(offset) ?? '') as P;
-    case 9:
+    case 12:
       return (_LineEntitytypeValueEnumMap[reader.readByteOrNull(offset)] ??
           LineType.horizontal) as P;
-    case 10:
+    case 13:
       return (reader.readDoubleOrNull(offset) ?? 50559.50) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -446,6 +473,116 @@ extension LineEntityQueryFilter
   }
 
   QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition>
+      currentEditIndexEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'currentEditIndex',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition>
+      currentEditIndexGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'currentEditIndex',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition>
+      currentEditIndexLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'currentEditIndex',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition>
+      currentEditIndexBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'currentEditIndex',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> datetimeEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'datetime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition>
+      datetimeGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'datetime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> datetimeLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'datetime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> datetimeBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'datetime',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition>
       drawAsBackgroundEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -455,20 +592,20 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dyEqualTo(
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dx1EqualTo(
     double value, {
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dy',
+        property: r'dx1',
         value: value,
         epsilon: epsilon,
       ));
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dyGreaterThan(
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dx1GreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
@@ -476,14 +613,14 @@ extension LineEntityQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'dy',
+        property: r'dx1',
         value: value,
         epsilon: epsilon,
       ));
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dyLessThan(
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dx1LessThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
@@ -491,14 +628,14 @@ extension LineEntityQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'dy',
+        property: r'dx1',
         value: value,
         epsilon: epsilon,
       ));
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dyBetween(
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dx1Between(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -507,7 +644,7 @@ extension LineEntityQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'dy',
+        property: r'dx1',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -517,12 +654,188 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> editableEqualTo(
-      bool value) {
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dx2EqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'editable',
+        property: r'dx2',
         value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dx2GreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dx2',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dx2LessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dx2',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dx2Between(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dx2',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dy1EqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dy1',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dy1GreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dy1',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dy1LessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dy1',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dy1Between(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dy1',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dy2EqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dy2',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dy2GreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dy2',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dy2LessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dy2',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dy2Between(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dy2',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
       ));
     });
   }
@@ -768,68 +1081,6 @@ extension LineEntityQueryFilter
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'name',
         value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> newDyEqualTo(
-    double value, {
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'newDy',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> newDyGreaterThan(
-    double value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'newDy',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> newDyLessThan(
-    double value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'newDy',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> newDyBetween(
-    double lower,
-    double upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'newDy',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
       ));
     });
   }
@@ -1154,6 +1405,31 @@ extension LineEntityQuerySortBy
     });
   }
 
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByCurrentEditIndex() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'currentEditIndex', Sort.asc);
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy>
+      sortByCurrentEditIndexDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'currentEditIndex', Sort.desc);
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDatetime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'datetime', Sort.asc);
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDatetimeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'datetime', Sort.desc);
+    });
+  }
+
   QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDrawAsBackground() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'drawAsBackground', Sort.asc);
@@ -1167,27 +1443,51 @@ extension LineEntityQuerySortBy
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDy() {
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDx1() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'dy', Sort.asc);
+      return query.addSortBy(r'dx1', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDyDesc() {
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDx1Desc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'dy', Sort.desc);
+      return query.addSortBy(r'dx1', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByEditable() {
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDx2() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'editable', Sort.asc);
+      return query.addSortBy(r'dx2', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByEditableDesc() {
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDx2Desc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'editable', Sort.desc);
+      return query.addSortBy(r'dx2', Sort.desc);
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDy1() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dy1', Sort.asc);
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDy1Desc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dy1', Sort.desc);
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDy2() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dy2', Sort.asc);
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDy2Desc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dy2', Sort.desc);
     });
   }
 
@@ -1212,18 +1512,6 @@ extension LineEntityQuerySortBy
   QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
-    });
-  }
-
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByNewDy() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'newDy', Sort.asc);
-    });
-  }
-
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByNewDyDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'newDy', Sort.desc);
     });
   }
 
@@ -1290,6 +1578,31 @@ extension LineEntityQuerySortThenBy
     });
   }
 
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByCurrentEditIndex() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'currentEditIndex', Sort.asc);
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy>
+      thenByCurrentEditIndexDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'currentEditIndex', Sort.desc);
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDatetime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'datetime', Sort.asc);
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDatetimeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'datetime', Sort.desc);
+    });
+  }
+
   QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDrawAsBackground() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'drawAsBackground', Sort.asc);
@@ -1303,27 +1616,51 @@ extension LineEntityQuerySortThenBy
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDy() {
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDx1() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'dy', Sort.asc);
+      return query.addSortBy(r'dx1', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDyDesc() {
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDx1Desc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'dy', Sort.desc);
+      return query.addSortBy(r'dx1', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByEditable() {
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDx2() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'editable', Sort.asc);
+      return query.addSortBy(r'dx2', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByEditableDesc() {
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDx2Desc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'editable', Sort.desc);
+      return query.addSortBy(r'dx2', Sort.desc);
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDy1() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dy1', Sort.asc);
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDy1Desc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dy1', Sort.desc);
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDy2() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dy2', Sort.asc);
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDy2Desc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dy2', Sort.desc);
     });
   }
 
@@ -1360,18 +1697,6 @@ extension LineEntityQuerySortThenBy
   QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
-    });
-  }
-
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByNewDy() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'newDy', Sort.asc);
-    });
-  }
-
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByNewDyDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'newDy', Sort.desc);
     });
   }
 
@@ -1433,21 +1758,45 @@ extension LineEntityQueryWhereDistinct
     });
   }
 
+  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByCurrentEditIndex() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'currentEditIndex');
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByDatetime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'datetime');
+    });
+  }
+
   QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByDrawAsBackground() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'drawAsBackground');
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByDy() {
+  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByDx1() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'dy');
+      return query.addDistinctBy(r'dx1');
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByEditable() {
+  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByDx2() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'editable');
+      return query.addDistinctBy(r'dx2');
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByDy1() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'dy1');
+    });
+  }
+
+  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByDy2() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'dy2');
     });
   }
 
@@ -1461,12 +1810,6 @@ extension LineEntityQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByNewDy() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'newDy');
     });
   }
 
@@ -1510,21 +1853,45 @@ extension LineEntityQueryProperty
     });
   }
 
+  QueryBuilder<LineEntity, int, QQueryOperations> currentEditIndexProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'currentEditIndex');
+    });
+  }
+
+  QueryBuilder<LineEntity, int, QQueryOperations> datetimeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'datetime');
+    });
+  }
+
   QueryBuilder<LineEntity, bool, QQueryOperations> drawAsBackgroundProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'drawAsBackground');
     });
   }
 
-  QueryBuilder<LineEntity, double, QQueryOperations> dyProperty() {
+  QueryBuilder<LineEntity, double, QQueryOperations> dx1Property() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'dy');
+      return query.addPropertyName(r'dx1');
     });
   }
 
-  QueryBuilder<LineEntity, bool, QQueryOperations> editableProperty() {
+  QueryBuilder<LineEntity, double, QQueryOperations> dx2Property() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'editable');
+      return query.addPropertyName(r'dx2');
+    });
+  }
+
+  QueryBuilder<LineEntity, double, QQueryOperations> dy1Property() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'dy1');
+    });
+  }
+
+  QueryBuilder<LineEntity, double, QQueryOperations> dy2Property() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'dy2');
     });
   }
 
@@ -1537,12 +1904,6 @@ extension LineEntityQueryProperty
   QueryBuilder<LineEntity, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
-    });
-  }
-
-  QueryBuilder<LineEntity, double, QQueryOperations> newDyProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'newDy');
     });
   }
 

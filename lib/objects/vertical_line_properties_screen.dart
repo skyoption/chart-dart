@@ -1,36 +1,46 @@
 import 'dart:math';
 
+import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
-import 'package:candle_chart/objects/widgets/object_item_widget.dart';
+import 'package:candle_chart/objects/horizontal_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/object_style_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
-import 'package:candle_chart/utils/icons.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:candle_chart/utils/date_format_util.dart';
+import 'package:candle_chart/utils/kprint.dart';
+import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-class ObjectPropertiesScreen extends StatefulWidget {
-  static const id = 'ObjectPropertiesScreen';
-  final Function(LineEntity line) onDone;
+class VerticalLinePropertiesScreen extends StatefulWidget {
+  static const id = 'VerticalLinePropertiesScreen';
+  final Function onDone;
+  final List<KLineEntity> data;
 
-  const ObjectPropertiesScreen({
+  const VerticalLinePropertiesScreen({
     super.key,
     required this.onDone,
+    this.data = const [],
   });
 
   @override
-  State<ObjectPropertiesScreen> createState() => _ObjectPropertiesScreenState();
+  State<VerticalLinePropertiesScreen> createState() =>
+      _VerticalLinePropertiesScreenState();
 }
 
-class _ObjectPropertiesScreenState extends State<ObjectPropertiesScreen> {
-  late final controller = TextEditingController(text: line.value.toString());
+class _VerticalLinePropertiesScreenState
+    extends State<VerticalLinePropertiesScreen> {
   final rand = Random();
   final LineEntity line = LineEntity();
+  late final lastTime =
+      DateTime.fromMillisecondsSinceEpoch(widget.data.last.time!);
+  final formats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn];
+  String date = '';
 
   @override
   void initState() {
-    line.name = 'M15 Horizontal Line ${rand.nextInt(10000)}';
-    line.symbol = 'EURUSD';
+    line.name = 'M15 Vertical Line ${rand.nextInt(10000)}';
+    date = dateFormat(lastTime, formats);
+    line.datetime = widget.data.last.time!;
     super.initState();
   }
 
@@ -71,8 +81,9 @@ class _ObjectPropertiesScreenState extends State<ObjectPropertiesScreen> {
                   alignment: AlignmentDirectional.centerEnd,
                   child: InkWell(
                     onTap: () {
-                      widget.onDone(line);
+                      widget.onDone();
                       Navigator.of(context).pop();
+                      chartProperties.addVerticalLine(line, widget.data);
                     },
                     child: Text(
                       'Done',
@@ -101,30 +112,25 @@ class _ObjectPropertiesScreenState extends State<ObjectPropertiesScreen> {
             ),
             PropertiesTitleWidget(title: 'Coordinates'),
             PropertiesItemWidget(
-              title: 'Point',
-              child: SizedBox(
-                width: 60.0,
-                height: 20.0,
-                child: TextField(
-                  cursorHeight: 12.0,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: Colors.blueAccent,
-                      ),
-                  onChanged: (value) {
-                    if (value.isNotEmpty) {
-                      line.value = double.parse(value);
-                    }
-                  },
-                  controller: controller,
-                  textAlignVertical: TextAlignVertical.center,
-                  keyboardType: TextInputType.numberWithOptions(signed: false),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 11.0),
-                  ),
-                ),
+              title: 'Date',
+              onTap: () async {
+                final res = await showDatePicker(
+                  initialEntryMode: DatePickerEntryMode.calendarOnly,
+                  context: context,
+                  firstDate: DateTime(1900),
+                  lastDate: lastTime,
+                );
+                if (res != null) {
+                  date = dateFormat(res, formats);
+                  line.datetime = res.millisecondsSinceEpoch;
+                  setState(() {});
+                }
+              },
+              child: Text(
+                date,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w400,
+                    ),
               ),
             ),
             PropertiesTitleWidget(title: 'visualization'),
@@ -153,34 +159,6 @@ class _ObjectPropertiesScreenState extends State<ObjectPropertiesScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-}
-
-class PropertiesTitleWidget extends StatelessWidget {
-  final String title;
-
-  const PropertiesTitleWidget({
-    super.key,
-    required this.title,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 21.0),
-      child: Text(
-        title.toUpperCase(),
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w400,
-            ),
       ),
     );
   }

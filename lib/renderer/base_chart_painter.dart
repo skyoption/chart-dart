@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
-import 'package:candle_chart/renderer/draw_object_lines.dart';
+import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
+import 'package:candle_chart/renderer/objects/draw_vertical_lines.dart';
+import 'package:candle_chart/renderer/objects/update_point_position.dart';
 import 'package:candle_chart/renderer/rects/main_rect.dart';
 import 'package:candle_chart/renderer/rects/render_rect.dart';
 import 'package:candle_chart/renderer/rects/secondary_rect.dart';
@@ -14,10 +16,10 @@ export 'package:flutter/material.dart'
 
 /// BaseChartPainter
 abstract class BaseChartPainter extends CustomPainter
-    implements DrawObjectLines {
+    implements DrawHorizontalLines, UpdatePointPosition, DrawVerticalLines {
   static double maxScrollX = 0.0;
   List<KLineEntity>? data; // data of chart
-  List<LineEntity> linesPrice; // data of chart
+  List<LineEntity> horizontalLines; // data of chart
 
   final List<IndicatorEntity> indicators;
 
@@ -39,6 +41,7 @@ abstract class BaseChartPainter extends CustomPainter
   /// Secondary list support
   List<RenderRect> mSecondaryRectList = [];
   late double mDisplayHeight, mWidth;
+  double? fDisplayHeight;
 
   // padding
   double mTopPadding = 30.0,
@@ -63,15 +66,15 @@ abstract class BaseChartPainter extends CustomPainter
 
   /// base dimension
   final BaseDimension baseDimension;
-    MainRect? mainRect;
-    SecondaryRect? secondaryRect;
+  MainRect? mainRect;
+  SecondaryRect? secondaryRect;
 
   /// constructor BaseChartPainter
   ///
   BaseChartPainter(
     this.chartStyle, {
     this.data,
-    this.linesPrice = const [],
+    this.horizontalLines = const [],
     required this.scaleX,
     required this.scrollX,
     required this.isLongPress,
@@ -132,6 +135,7 @@ abstract class BaseChartPainter extends CustomPainter
     canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
     mDisplayHeight = size.height - mTopPadding - mBottomPadding;
     mWidth = size.width - this.chartStyle.priceWidth;
+    fDisplayHeight = size.height - mBottomPadding;
     initRect(size);
     calculateValue();
     initChartRenderer(size.height);
@@ -147,8 +151,8 @@ abstract class BaseChartPainter extends CustomPainter
 
       drawText(canvas, data!.last, 5);
       drawMaxAndMin(canvas);
-      // drawNowPrice(canvas);
-      drawLinePrice(canvas, size);
+      drawNowPrice(canvas);
+      drawHorizontalLines(canvas, size);
       if (this.chartStyle.isLongFocus &&
           (isLongPress == true ||
               (isTapShowInfoDialog && longPressTriggered))) {
@@ -189,7 +193,7 @@ abstract class BaseChartPainter extends CustomPainter
   void drawNowPrice(Canvas canvas);
 
   /// draw the line price
-  void drawLinePrice(Canvas canvas, Size size);
+  void drawHorizontalLines(Canvas canvas, Size size);
 
   /// draw cross line
   void drawCrossLine(Canvas canvas, Size size);
@@ -286,40 +290,40 @@ abstract class BaseChartPainter extends CustomPainter
     );
   }
 
-  // translate x
-  double xToTranslateX(double x) => -mTranslateX + x / scaleX;
-
-  int indexOfTranslateX(double translateX) {
-    return _indexOfTranslateX(translateX, 0, mItemCount - 1);
-  }
-
-  /// Using binary search for the index of the current value
-  int _indexOfTranslateX(double translateX, int start, int end) {
-    if (end == start || end == -1) {
-      return start;
-    }
-    if (end - start == 1) {
-      double startValue = getX(start);
-      double endValue = getX(end);
-      return (translateX - startValue).abs() < (translateX - endValue).abs()
-          ? start
-          : end;
-    }
-    int mid = start + (end - start) ~/ 2;
-    double midValue = getX(mid);
-    if (translateX < midValue) {
-      return _indexOfTranslateX(translateX, start, mid);
-    } else if (translateX > midValue) {
-      return _indexOfTranslateX(translateX, mid, end);
-    } else {
-      return mid;
-    }
-  }
-
-  /// Get x coordinate based on index
-  /// + mPointWidth / 2 to prevent the first and last K-line from displaying incorrectly
-  /// @param position index value
-  double getX(int position) => position * mPointWidth + mPointWidth / 2;
+  // // translate x
+  // double xToTranslateX(double x) => -mTranslateX + x / scaleX;
+  //
+  // int indexOfTranslateX(double translateX) {
+  //   return _indexOfTranslateX(translateX, 0, mItemCount - 1);
+  // }
+  //
+  // /// Using binary search for the index of the current value
+  // int _indexOfTranslateX(double translateX, int start, int end) {
+  //   if (end == start || end == -1) {
+  //     return start;
+  //   }
+  //   if (end - start == 1) {
+  //     double startValue = getX(start);
+  //     double endValue = getX(end);
+  //     return (translateX - startValue).abs() < (translateX - endValue).abs()
+  //         ? start
+  //         : end;
+  //   }
+  //   int mid = start + (end - start) ~/ 2;
+  //   double midValue = getX(mid);
+  //   if (translateX < midValue) {
+  //     return _indexOfTranslateX(translateX, start, mid);
+  //   } else if (translateX > midValue) {
+  //     return _indexOfTranslateX(translateX, mid, end);
+  //   } else {
+  //     return mid;
+  //   }
+  // }
+  //
+  // /// Get x coordinate based on index
+  // /// + mPointWidth / 2 to prevent the first and last K-line from displaying incorrectly
+  // /// @param position index value
+  // double getX(int position) => position * mPointWidth + mPointWidth / 2;
 
   KLineEntity getItem(int position) {
     return data![position];
@@ -341,22 +345,23 @@ abstract class BaseChartPainter extends CustomPainter
     return x >= 0 ? 0.0 : x;
   }
 
-  /// calculate the value of x after long pressing and convert to [index]
-  int calculateSelectedX(double selectX) {
-    int mSelectedIndex = indexOfTranslateX(xToTranslateX(selectX));
-    if (mSelectedIndex < mStartIndex) {
-      mSelectedIndex = mStartIndex;
-    }
-    if (mSelectedIndex > mStopIndex) {
-      mSelectedIndex = mStopIndex;
-    }
-    return mSelectedIndex;
-  }
-
-  /// translateX is converted to X in view
-  double translateXtoX(double translateX) {
-    return (translateX + mTranslateX) * scaleX;
-  }
+  //
+  // /// calculate the value of x after long pressing and convert to [index]
+  // int calculateSelectedX(double selectX) {
+  //   int mSelectedIndex = indexOfTranslateX(xToTranslateX(selectX));
+  //   if (mSelectedIndex < mStartIndex) {
+  //     mSelectedIndex = mStartIndex;
+  //   }
+  //   if (mSelectedIndex > mStopIndex) {
+  //     mSelectedIndex = mStopIndex;
+  //   }
+  //   return mSelectedIndex;
+  // }
+  //
+  // /// translateX is converted to X in view
+  // double translateXtoX(double translateX) {
+  //   return (translateX + mTranslateX) * scaleX;
+  // }
 
   @override
   bool shouldRepaint(BaseChartPainter oldDelegate) {

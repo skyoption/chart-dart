@@ -1,7 +1,7 @@
 import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/objects/bottom_sheets/color_picker.dart';
-import 'package:candle_chart/objects/object_properties_screen.dart';
+import 'package:candle_chart/objects/horizontal_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/objects/widgets/svg.dart';
 import 'package:candle_chart/utils/icons.dart';

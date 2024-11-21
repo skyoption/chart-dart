@@ -1,5 +1,7 @@
+import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
-import 'package:candle_chart/objects/object_properties_screen.dart';
+import 'package:candle_chart/objects/horizontal_line_properties_screen.dart';
+import 'package:candle_chart/objects/vertical_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/object_item_widget.dart';
 import 'package:candle_chart/utils/icons.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +9,13 @@ import 'package:flutter/material.dart';
 class ObjectsScreen extends StatefulWidget {
   static const id = 'ObjectsScreen';
 
-  final Function(LineEntity line) onDone;
+  final List<KLineEntity> data;
+  final Function onDone;
 
   const ObjectsScreen({
     super.key,
     required this.onDone,
+    this.data = const [],
   });
 
   @override
@@ -78,7 +82,7 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
               onTap: () {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (context) => ObjectPropertiesScreen(
+                    builder: (context) => HorizontalLinePropertiesScreen(
                       onDone: widget.onDone,
                     ),
                   ),
@@ -89,7 +93,16 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
               iconSize: 30.0,
               icon: Svgs.verticalLine,
               title: 'Vertical Line',
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => VerticalLinePropertiesScreen(
+                      onDone: widget.onDone,
+                      data: widget.data,
+                    ),
+                  ),
+                );
+              },
             ),
             ObjectItemWidget(
               iconSize: 30.0,

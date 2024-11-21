@@ -1,12 +1,13 @@
 import 'dart:async' show StreamSink;
 
+import 'package:candle_chart/renderer/objects/draw_vertical_lines.dart';
 import 'package:candle_chart/renderer/rects/render_rect.dart';
 import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
-import 'package:candle_chart/renderer/draw_object_lines.dart';
-import 'package:candle_chart/renderer/update_point_position.dart';
+import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
+import 'package:candle_chart/renderer/objects/update_point_position.dart';
 import 'package:candle_chart/utils/indicator_utils.dart';
 import 'package:candle_chart/utils/number_util.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ double getTrendLineX() {
 int lastLength = 0;
 
 class ChartPainter extends BaseChartPainter
-    with ChartDetails, DrawObjectLines, ChartCalc {
+    with ChartDetails, DrawHorizontalLines, DrawVerticalLines,UpdatePointPosition, ChartCalc {
   final List<TrendLine> lines; //For TrendLine
   final bool isTrendLine; //For TrendLine
   bool isrecordingCord = false; //For TrendLine
@@ -56,13 +57,18 @@ class ChartPainter extends BaseChartPainter
   Color? macdColor, difColor, deaColor, jColor;
   int fixedLength;
   final ChartColors chartColors;
-  late Paint selectPointPaint, selectorBorderPaint, nowPricePaint, pricePaint;
+  late Paint selectPointPaint,
+      selectorBorderPaint,
+      nowPricePaint,
+      pricePaint,
+      dot,
+      askPaint,
+      bidPaint;
   final ChartStyle chartStyle;
   final bool hideGrid;
   final bool showNowPrice;
   final VerticalTextAlignment verticalTextAlignment;
   final BaseDimension baseDimension;
-  final List<LineEntity> linesPrice;
   final List<IndicatorEntity> indicators;
   final Map<int, List<IndicatorEntity>> secondaryIndicators;
   late final ChartPosition chartPosition;
@@ -71,7 +77,6 @@ class ChartPainter extends BaseChartPainter
       mMainLowMinValue = double.maxFinite;
   final double scaleX;
 
-  UpdatePointPosition? updatePointPosition;
 
   ChartPainter(
     this.chartStyle,
@@ -90,7 +95,6 @@ class ChartPainter extends BaseChartPainter
     required this.baseDimension,
     required this.indicators,
     required this.secondaryIndicators,
-    this.linesPrice = const [],
     isOnTap,
     isTapShowInfoDialog,
     required this.verticalTextAlignment,
@@ -109,7 +113,6 @@ class ChartPainter extends BaseChartPainter
           isOnTap: isOnTap,
           isTapShowInfoDialog: isTapShowInfoDialog,
           selectX: selectX,
-          linesPrice: linesPrice,
           indicators: indicators,
           volHidden: volHidden,
           secondaryIndicators: secondaryIndicators,
@@ -117,6 +120,7 @@ class ChartPainter extends BaseChartPainter
           isLine: isLine,
         ) {
     chartPosition = ChartPosition();
+    dot = Paint()..color = Colors.grey;
     selectPointPaint = Paint()
       ..isAntiAlias = true
       //EMA
@@ -131,8 +135,13 @@ class ChartPainter extends BaseChartPainter
     nowPricePaint = Paint()
       ..strokeWidth = this.chartStyle.nowPriceLineWidth
       ..isAntiAlias = true;
-    nowPricePaint = Paint()
+    askPaint = Paint()
       ..strokeWidth = this.chartStyle.nowPriceLineWidth
+      ..color = Colors.red
+      ..isAntiAlias = true;
+    bidPaint = Paint()
+      ..strokeWidth = this.chartStyle.nowPriceLineWidth
+      ..color = Colors.black
       ..isAntiAlias = true;
     pricePaint = Paint()
       ..strokeWidth = this.chartStyle.priceLineWidth
@@ -164,6 +173,9 @@ class ChartPainter extends BaseChartPainter
       this.scaleX,
       verticalTextAlignment,
       indicators,
+      (canvas, size, lastX, curX) {
+        drawVerticalLines(canvas, size, lastX, curX);
+      },
     );
 
     if (mVolRect != null) {
@@ -204,12 +216,12 @@ class ChartPainter extends BaseChartPainter
         rectIndex++;
       }
     }
-    updatePointPosition = UpdatePointPosition(
-      chartPosition: chartPosition,
-      screenHeight: screenHeight,
-      mMainRenderer: mMainRenderer,
-      mMainRect: mMainRect,
-    );
+    // updatePointPosition = UpdatePointPosition(
+    //   chartPosition: chartPosition,
+    //   screenHeight: screenHeight,
+    //   mMainRenderer: mMainRenderer,
+    //   mMainRect: mMainRect,
+    // );
   }
 
   @override
@@ -562,14 +574,18 @@ class ChartPainter extends BaseChartPainter
     double value = data!.last.close;
     double y = getMainY(value);
 
-    //view display area boundary value drawing
-    if (y > getMainY(mMainLowMinValue)) {
-      y = getMainY(mMainLowMinValue);
-    }
+    drawLine(canvas, askPaint, value - 10);
+    drawLine(canvas, bidPaint, value - 30);
 
-    if (y < getMainY(mMainHighMaxValue)) {
-      y = getMainY(mMainHighMaxValue);
-    }
+    return;
+    //view display area boundary value drawing
+    // if (y > getMainY(mMainLowMinValue)) {
+    //   y = getMainY(mMainLowMinValue);
+    // }
+    //
+    // if (y < getMainY(mMainHighMaxValue)) {
+    //   y = getMainY(mMainHighMaxValue);
+    // }
 
     nowPricePaint
       ..color = value >= data!.last.open
@@ -606,10 +622,58 @@ class ChartPainter extends BaseChartPainter
     double offsetX = mWidth - tp.width + this.chartStyle.priceWidth + 4;
     double top = y - tp.height / 2;
     canvas.drawRect(
+      Rect.fromLTRB(
+          offsetX - 12, top - 2, offsetX + tp.width, top + tp.height + 3),
+      nowPricePaint,
+    );
+    tp.paint(canvas, Offset(offsetX - 6, top + 2));
+  }
+
+  void drawLine(
+    Canvas canvas,
+    Paint paint,
+    double price,
+  ) {
+    if (price <= this.chartPosition.topPrice &&
+        price >= this.chartPosition.bottomPrice) {
+      double y = getMainY(price);
+      //view display area boundary value drawing
+      // if (y > getMainY(mMainLowMinValue)) {
+      //   y = getMainY(mMainLowMinValue);
+      // }
+      //
+      // if (y < getMainY(mMainHighMaxValue)) {
+      //   y = getMainY(mMainHighMaxValue);
+      // }
+
+      double startX = 0;
+      final max = -mTranslateX + mWidth / scaleX;
+      canvas.drawLine(Offset(startX, y), Offset(max, y), paint);
+      //repaint the background and text
+      TextPainter tp = getTextPainter(
+        price.toStringAsFixed(fixedLength),
+        this.chartColors.priceTextColor,
+      );
+
+      // switch (verticalTextAlignment) {
+      //   case VerticalTextAlignment.left:
+      //     offsetX = mWidth - tp.width;
+      //     break;
+      //   case VerticalTextAlignment.right:
+      //     offsetX = 0;
+      //     break;
+      // }
+
+      double offsetX = mWidth - tp.width + this.chartStyle.priceWidth + 4;
+
+      double top = y - tp.height / 2;
+      canvas.drawRect(
         Rect.fromLTRB(
             offsetX - 12, top - 2, offsetX + tp.width, top + tp.height + 3),
-        nowPricePaint);
-    tp.paint(canvas, Offset(offsetX - 6, top + 2));
+        paint,
+      );
+      tp.paint(canvas, Offset(offsetX - 6, top + 2));
+    }
   }
 
   void drawCrossLine(Canvas canvas, Size size) {

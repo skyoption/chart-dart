@@ -53,32 +53,9 @@ mixin Indicators {
     }
   }
 
-  Future<void> _getSecondaryIndicators() async {
-    try {
-      final res = await KChart.query.indicatorEntitys
-          .filter()
-          .isSecondaryEqualTo(true)
-          .findAll();
-      _secondaryIndicators = res;
-    } catch (e) {
-      return kPrint(e.toString());
-    }
-  }
-
   void addIndicator(IndicatorEntity value) {
     value.isMain = true;
     value.isSecondary = false;
-    indicators.add(value);
-    KChart.write(query: (db) async {
-      await db.indicatorEntitys.put(value);
-    });
-  }
-
-  void addSecondaryIndicator(IndicatorEntity value, int? windowId) {
-    windowId ??= newWindowId;
-    value.windowId = windowId;
-    value.isMain = false;
-    value.isSecondary = true;
     indicators.add(value);
     KChart.write(query: (db) async {
       await db.indicatorEntitys.put(value);
@@ -92,6 +69,40 @@ mixin Indicators {
       await db.indicatorEntitys.delete(id);
     });
   }
+
+  void updateIndicator(IndicatorEntity value) {
+    final index = indicators.indexWhere((e) => e.id == value.id);
+    if (index != -1) {
+      indicators[index] = value;
+      KChart.write(query: (db) async {
+        await db.indicatorEntitys.put(value);
+      });
+    }
+  }
+
+  Future<void> _getSecondaryIndicators() async {
+    try {
+      final res = await KChart.query.indicatorEntitys
+          .filter()
+          .isSecondaryEqualTo(true)
+          .findAll();
+      _secondaryIndicators = res;
+    } catch (e) {
+      return kPrint(e.toString());
+    }
+  }
+
+  void addSecondaryIndicator(IndicatorEntity value, int? windowId) {
+    windowId ??= newWindowId;
+    value.windowId = windowId;
+    value.isMain = false;
+    value.isSecondary = true;
+    indicators.add(value);
+    KChart.write(query: (db) async {
+      await db.indicatorEntitys.put(value);
+    });
+  }
+
 
   void removeSecondaryIndicator(IndicatorEntity item) {
     //when remove last secondary return trend indicators to get value from apply to close
@@ -131,15 +142,7 @@ mixin Indicators {
         indicator.type == IndicatorType.MOM);
   }
 
-  void updateIndicator(IndicatorEntity value) {
-    final index = indicators.indexWhere((e) => e.id == value.id);
-    if (index != -1) {
-      indicators[index] = value;
-      KChart.write(query: (db) async {
-        await db.indicatorEntitys.put(value);
-      });
-    }
-  }
+
 
   void updateSecondaryIndicator(IndicatorEntity value) {
     final index = _secondaryIndicators.indexWhere((e) => e.id == value.id);

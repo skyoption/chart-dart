@@ -2,7 +2,7 @@ import 'dart:async' show StreamSink;
 
 import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/entity/line_entity.dart';
-import 'package:candle_chart/renderer/draw_object_lines.dart';
+import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
 import 'package:candle_chart/utils/number_util.dart';
 import 'package:flutter/material.dart';
 
@@ -62,7 +62,8 @@ mixin ChartDetails on ChartCalc {
     final d = dateFormat(
       DateTime.fromMillisecondsSinceEpoch(
         date ?? DateTime.now().millisecondsSinceEpoch,
-      ), mFormats,
+      ),
+      mFormats,
     );
     return d;
   }
@@ -81,6 +82,18 @@ mixin ChartCalc {
   late BaseChartRenderer mMainRenderer;
   late final double screenHeight;
   late Rect mMainRect;
+  late double mTranslateX;
+  late int mStartIndex, mStopIndex;
+  late int mItemCount;
+  late double mPointWidth;
+  late double mWidth;
+  late double mDataLen;
+  late final ChartStyle chartStyle;
+
+  // late double xFrontPadding;
+  late double scaleX;
+
+  // List<KLineEntity>? data;
 
   double getMainY(double y) => mMainRenderer.getY(y);
 
@@ -99,8 +112,84 @@ mixin ChartCalc {
     return value;
   }
 
+  double getYValue(double d) {
+    final scope = this.chartPosition.topPrice - this.chartPosition.bottomPrice;
+    double perValue = (screenHeight / scope);
+
+    final value = (perValue * d) / 1000;
+    return value;
+  }
+
   /// Whether the point is in MainRect
   bool isInMainRect(Offset point) {
     return mMainRect.contains(point);
+  }
+
+  /// Get x coordinate based on index
+  /// + mPointWidth / 2 to prevent the first and last K-line from displaying incorrectly
+  /// @param position index value
+
+  // translate x
+  double xToTranslateX(double x) => -mTranslateX + x / scaleX;
+
+  int indexOfTranslateX(double translateX) {
+    return _indexOfTranslateX(translateX, 0, mItemCount - 1);
+  }
+
+  /// Using binary search for the index of the current value
+  int _indexOfTranslateX(double translateX, int start, int end) {
+    if (end == start || end == -1) {
+      return start;
+    }
+    if (end - start == 1) {
+      double startValue = getX(start);
+      double endValue = getX(end);
+      return (translateX - startValue).abs() < (translateX - endValue).abs()
+          ? start
+          : end;
+    }
+    int mid = start + (end - start) ~/ 2;
+    double midValue = getX(mid);
+    if (translateX < midValue) {
+      return _indexOfTranslateX(translateX, start, mid);
+    } else if (translateX > midValue) {
+      return _indexOfTranslateX(translateX, mid, end);
+    } else {
+      return mid;
+    }
+  }
+
+  /// Get x coordinate based on index
+  /// + mPointWidth / 2 to prevent the first and last K-line from displaying incorrectly
+  /// @param position index value
+  double getX(int position) => position * mPointWidth + mPointWidth / 2;
+
+  /// calculate the value of x after long pressing and convert to [index]
+  int calculateSelectedX(double selectX) {
+    int mSelectedIndex = indexOfTranslateX(xToTranslateX(selectX));
+    if (mSelectedIndex < mStartIndex) {
+      mSelectedIndex = mStartIndex;
+    }
+    if (mSelectedIndex > mStopIndex) {
+      mSelectedIndex = mStopIndex;
+    }
+    return mSelectedIndex;
+  }
+
+  /// calculate the value of x after long pressing and convert to [index]
+  int calculateReversedSelectedX(double selectX) {
+    int mSelectedIndex = indexOfTranslateX(xToTranslateX(selectX));
+    if (mSelectedIndex < mStartIndex) {
+      mSelectedIndex = mStartIndex;
+    }
+    if (mSelectedIndex > mStopIndex) {
+      mSelectedIndex = mStopIndex;
+    }
+    return mStopIndex - mSelectedIndex;
+  }
+
+  /// translateX is converted to X in view
+  double translateXtoX(double translateX) {
+    return (translateX + mTranslateX) * scaleX;
   }
 }

@@ -2,7 +2,7 @@ import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/indicators/indicator_levels_screen.dart';
 import 'package:candle_chart/indicators/indicator_pixels_screen.dart';
 import 'package:candle_chart/indicators/widgets/indicator_color_widget.dart';
-import 'package:candle_chart/objects/object_properties_screen.dart';
+import 'package:candle_chart/objects/horizontal_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/indicators/apply_to_screen.dart';
 import 'package:candle_chart/indicators/indicators_methods_screen.dart';
