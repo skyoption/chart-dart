@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
@@ -13,22 +14,28 @@ mixin DrawRectangleLines on ChartDetails {
   late Paint dot;
   late double scaleX;
 
-  void setRectangleOffset1(ObjectEntity item, Offset offset) {
+  ObjectEntity? setRectangleOffset1(ObjectEntity item, Offset offset) {
     final rectangles = chartProperties.rectangles;
     final i = rectangles.indexWhere((e) => e.id == item.id);
     if (i != -1) {
+      rectangles[i].currentEditIndex = item.currentEditIndex;
       rectangles[i].dx1 = getX(mStartIndex) + (offset.dx / scaleX);
       rectangles[i].value = getYPositionValue(offset.dy);
+      return rectangles[i];
     }
+    return null;
   }
 
-  void setRectangleOffset2(ObjectEntity item, Offset offset) {
+  ObjectEntity? setRectangleOffset2(ObjectEntity item, Offset offset) {
     final rectangles = chartProperties.rectangles;
     final i = rectangles.indexWhere((e) => e.id == item.id);
     if (i != -1) {
+      rectangles[i].currentEditIndex = item.currentEditIndex;
       rectangles[i].dx2 = getX(mStartIndex) + (offset.dx / scaleX);
       rectangles[i].value2 = getYPositionValue(offset.dy);
+      return rectangles[i];
     }
+    return null;
   }
 
   void drawRectangles(Canvas canvas, Size size, double lastX, double curX) {

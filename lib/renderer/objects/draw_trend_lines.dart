@@ -13,22 +13,28 @@ mixin DrawTrendLines on ChartDetails {
   late Paint dot;
   late double scaleX;
 
-  void setTrendLineOffset1(ObjectEntity item, Offset offset) {
+  ObjectEntity? setTrendLineOffset1(ObjectEntity item, Offset offset) {
     final trendLines = chartProperties.trendLines;
     final i = trendLines.indexWhere((e) => e.id == item.id);
     if (i != -1) {
-      trendLines[i].dx1 = getX(mStartIndex)  + (offset.dx / scaleX);
+      trendLines[i].currentEditIndex = item.currentEditIndex;
+      trendLines[i].dx1 = getX(mStartIndex) + (offset.dx / scaleX);
       trendLines[i].value = getYPositionValue(offset.dy);
+      return trendLines[i];
     }
+    return null;
   }
 
-  void setTrendLineOffset2(ObjectEntity item, Offset offset) {
+  ObjectEntity? setTrendLineOffset2(ObjectEntity item, Offset offset) {
     final trendLines = chartProperties.trendLines;
     final i = trendLines.indexWhere((e) => e.id == item.id);
     if (i != -1) {
+      trendLines[i].currentEditIndex = item.currentEditIndex;
       trendLines[i].dx2 = getX(mStartIndex) + (offset.dx / scaleX);
       trendLines[i].value2 = getYPositionValue(offset.dy);
+      return trendLines[i];
     }
+    return null;
   }
 
   void drawTrendLines(Canvas canvas, Size size, double lastX, double curX) {

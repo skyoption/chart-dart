@@ -18,13 +18,16 @@ mixin DrawHorizontalLines on ChartDetails {
   late double mMainHighMaxValue, mMainLowMinValue;
   late int fixedLength;
 
-  void setHorizontalLineOffset(ObjectEntity item, Offset offset) {
+  ObjectEntity? setHorizontalLineOffset(ObjectEntity item, Offset offset) {
     final horizontalLines = chartProperties.horizontalLines;
     final i = horizontalLines.indexWhere((e) => e.id == item.id);
     if (i != -1) {
+      horizontalLines[i].currentEditIndex = item.currentEditIndex;
       horizontalLines[i].value = getYPositionValue(offset.dy);
       horizontalLines[i].dy1 = getMainY(horizontalLines[i].value);
+      return horizontalLines[i];
     }
+    return null;
   }
 
   void drawHorizontalLines(Canvas canvas, Size size) {
@@ -38,12 +41,6 @@ mixin DrawHorizontalLines on ChartDetails {
       if (value <= this.chartPosition.topPrice &&
           value >= this.chartPosition.bottomPrice) {
         double y = getMainY(value);
-
-        // if (horizontalLines[i].currentEditIndex == i) {
-        //   value = getYPositionValue(horizontalLines[i].dy1);
-        //   horizontalLines[i].value = value;
-        //   y = getMainY(value);
-        // }
 
         final pricePaint = Paint()
           ..color = colorFromHex(horizontalLines[i].color!)!

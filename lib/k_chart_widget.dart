@@ -147,7 +147,7 @@ class _KChartWidgetState extends State<KChartWidget>
   double? changeInYposition;
   double mSelectY = 0.0;
   bool waitingForOtherPairOfCords = false;
-  bool enableCordRecord = false;
+  bool isSecondOffset = false;
   bool objectEditable = false;
   bool openTimeframe = false;
 
@@ -163,8 +163,6 @@ class _KChartWidgetState extends State<KChartWidget>
   Random rand = Random();
   int pointerCount = 0;
   String currentLineName = '';
-  int currentHorizontalEditIndex = -1;
-  int currentVerticalEditIndex = -1;
 
   @override
   void initState() {
@@ -216,20 +214,30 @@ class _KChartWidgetState extends State<KChartWidget>
     mInfoWindowStream.sink.close();
     mInfoWindowStream.close();
     _controller?.dispose();
-    _timer?.cancel();
     super.dispose();
   }
-
-  Timer? _timer;
 
   late final height = MediaQuery.of(context).size.height;
   ChartPainter? _painter;
   late double mBaseHeight = height * 0.7;
 
-
   @override
   Widget build(BuildContext context) {
     Map<Type, GestureRecognizerFactory<GestureRecognizer>> gestures = {};
+    if (objectType != null) {
+      if (objectEditable) {
+        gestures[PanGestureRecognizer] = panUpdateGestureRecognizer();
+      } else {
+        gestures[PanGestureRecognizer] = panFirstGestureRecognizer();
+      }
+    } else {
+      gestures[LongPressGestureRecognizer] = longPressRecognizer();
+
+      gestures[ScaleGestureRecognizer] = scaleGestureRecognizer();
+
+      gestures[HorizontalDragGestureRecognizer] = horizontalRecognizer();
+    }
+
     if (widget.data != null && widget.data!.isEmpty) {
       mScrollX = mSelectX = 0.0;
       mScaleX = 1.0;
@@ -336,7 +344,6 @@ class _KChartWidgetState extends State<KChartWidget>
                               data: widget.data!,
                               onDone: (type) {
                                 objectType = type;
-                                objectEditable = objectType != null;
                                 notifyChanged();
                               },
                             ),
@@ -360,102 +367,52 @@ class _KChartWidgetState extends State<KChartWidget>
             builder: (context, constraints) {
               mHeight = constraints.maxHeight;
               mWidth = constraints.maxWidth;
-
-              if (objectEditable) {
-                if (objectType != null) {
-                  gestures[PanGestureRecognizer] = panGestureRecognizer();
-                } else if (currentHorizontalEditIndex != -1) {
-                  gestures[VerticalDragGestureRecognizer] =
-                      verticalDragGestureRecognizer();
-                } else if (currentVerticalEditIndex != -1) {
-                  gestures[HorizontalDragGestureRecognizer] =
-                      horizontalDragGestureRecognizer2();
-                }
-              } else {
-                gestures[LongPressGestureRecognizer] =
-                    longPressGestureRecognizer();
-                // Registering a ScaleGestureRecognizer to handle scale gestures
-                gestures[ScaleGestureRecognizer] = scaleGestureRecognizer();
-
-                // Registering a HorizontalDragGestureRecognizer to handle horizontal drag gestures
-                gestures[HorizontalDragGestureRecognizer] =
-                    horizontalDragGestureRecognizer();
-              }
-
-              final child =
-                  //GestureDetector(
-                  // onTapUp: (details) {
-                  //   if (!objectEditable) _onTapUp(details);
-                  // },
-                  // onPanStart: (details) {
-                  //   _objectSetOnUpdate(details.localPosition);
-                  // },
-                  // onPanUpdate: (details) {
-                  //   _updateObjectPosition(details.globalPosition);
-                  // },
-                  // onPanEnd: (details) {
-                  //   objectEditable = !objectEditable;
-                  //   notifyChanged();
-                  // },
-                  // onLongPressStart: (details) {
-                  //   _objectSetOnUpdate(details.localPosition);
-                  //   if (!objectEditable) _longPressStart(details);
-                  // },
-                  // onLongPressMoveUpdate: (details) {
-                  //    if (!objectEditable) _onLongPressMoveUpdate(details);
-                  // },
-                  // onLongPressEnd: (details) {
-                  //   if (!objectEditable) _onLongPressEnd();
-                  // },
-                  //   child:
-                  Stack(
-                children: <Widget>[
-                  CustomPaint(
-                    size: Size(
-                      double.infinity,
-                      baseDimension.mDisplayHeight,
-                    ),
-                    painter: _painter,
-                  ),
-                  if (openTimeframe)
-                    TimeFrameWidget(
-                      frame: chartProperties.frame,
-                      onSelectTimeFrame: (value) async {
-                        if (value != chartProperties.frame) {
-                          _loadCandles(frame: value);
-                        }
-                      },
-                    ),
-                  if (loading)
-                    Positioned(
-                      bottom: 0.0,
-                      right: 0.0,
-                      left: 0.0,
-                      child: ChartLoader(),
-                    ),
-                  if (_tapPosition != null)
-                    Container(
-                      margin: MPadding.set(horizontal: 6.0),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
-                      child: RawMagnifier(
-                        focalPointOffset: Offset(
-                          _tapPosition!.dx - 25.0,
-                          _tapPosition!.dy - 25.0,
-                        ),
-                        size: const Size(50, 45),
-                        magnificationScale: 1.0,
-                      ),
-                    ),
-                ],
-                // ),
-              );
               return RawGestureDetector(
                 gestures: gestures,
-                child: child,
+                child: Stack(
+                  children: <Widget>[
+                    CustomPaint(
+                      size: Size(
+                        double.infinity,
+                        baseDimension.mDisplayHeight,
+                      ),
+                      painter: _painter,
+                    ),
+                    if (openTimeframe)
+                      TimeFrameWidget(
+                        frame: chartProperties.frame,
+                        onSelectTimeFrame: (value) async {
+                          if (value != chartProperties.frame) {
+                            _loadCandles(frame: value);
+                          }
+                        },
+                      ),
+                    if (loading)
+                      Positioned(
+                        bottom: 0.0,
+                        right: 0.0,
+                        left: 0.0,
+                        child: ChartLoader(),
+                      ),
+                    if (_tapPosition != null)
+                      Container(
+                        margin: MPadding.set(horizontal: 6.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                        child: RawMagnifier(
+                          focalPointOffset: Offset(
+                            _tapPosition!.dx - 25.0,
+                            _tapPosition!.dy - 25.0,
+                          ),
+                          size: const Size(50, 45),
+                          magnificationScale: 1.0,
+                        ),
+                      ),
+                  ],
+                ),
               );
             },
           ),
@@ -464,92 +421,42 @@ class _KChartWidgetState extends State<KChartWidget>
     );
   }
 
-  void _updateObjectPosition(Offset offset, ObjectType type) {
-    if (type == ObjectType.Horizontal) {
-      if (currentHorizontalEditIndex != -1) {
-        chartProperties.horizontalLines[currentHorizontalEditIndex].dy1 =
-            offset.dy;
-        notifyChanged();
-      }
-    } else if (type == ObjectType.Vertical) {
-      if (currentVerticalEditIndex != -1) {
-        chartProperties.verticalLines[currentVerticalEditIndex].dx1 = offset.dx;
-        notifyChanged();
-      }
-    }
-  }
-
-  void _objectSetOnUpdate(Offset offset) {
-    if (currentVerticalEditIndex == -1) {
-      currentVerticalEditIndex = _painter!.updateOffsetPoint(
-        offset: offset,
-        linesPrice: chartProperties.verticalLines,
-      );
-
-      objectEditable = currentVerticalEditIndex != -1;
-      currentHorizontalEditIndex = -1;
-      notifyChanged();
-      if (objectEditable) {
-        chartProperties.updateVerticalLine(
-          chartProperties.verticalLines[currentVerticalEditIndex]
-            ..currentEditIndex = currentVerticalEditIndex,
-        );
-        return;
+  void _objectSetOnUpdate(LongPressDownDetails details) {
+    final nearObject = _painter!.findNearOffset(
+      offset: details.globalPosition,
+    );
+    objectEditable = nearObject.object != null;
+    if (objectEditable) {
+      object = nearObject.object;
+      objectType = nearObject.object?.type;
+      isSecondOffset = nearObject.isSecondPoint;
+      if (objectType == ObjectType.Trend) {
+        chartProperties.updateTrendLine(object!);
+      } else if (objectType == ObjectType.Rectangle) {
+        chartProperties.updateRectangle(object!);
+      } else if (objectType == ObjectType.Horizontal) {
+        chartProperties.updateHorizontalLine(object!);
+      } else if (objectType == ObjectType.Vertical) {
+        chartProperties.updateVerticalLine(object!);
       }
     }
-    if (currentHorizontalEditIndex == -1) {
-      currentHorizontalEditIndex = _painter!.updateOffsetPoint(
-        offset: offset,
-        linesPrice: chartProperties.horizontalLines,
-      );
-      objectEditable = currentHorizontalEditIndex != -1;
-      currentVerticalEditIndex = -1;
-      notifyChanged();
-      if (objectEditable) {
-        chartProperties.updateHorizontalLine(
-          chartProperties.horizontalLines[currentHorizontalEditIndex]
-            ..currentEditIndex = currentHorizontalEditIndex,
-        );
-        return;
-      }
-    }
+    notifyChanged();
   }
 
   GestureRecognizerFactoryWithHandlers<LongPressGestureRecognizer>
-      longPressGestureRecognizer() {
+      longPressRecognizer() {
     return GestureRecognizerFactoryWithHandlers<LongPressGestureRecognizer>(
         () => LongPressGestureRecognizer(),
         (LongPressGestureRecognizer instance) {
       instance
-        ..onLongPressStart = (details) {
-          _objectSetOnUpdate(details.globalPosition);
-        };
-    });
-  }
-
-  GestureRecognizerFactoryWithHandlers<VerticalDragGestureRecognizer>
-      verticalDragGestureRecognizer() {
-    return GestureRecognizerFactoryWithHandlers<VerticalDragGestureRecognizer>(
-        () => VerticalDragGestureRecognizer(),
-        (VerticalDragGestureRecognizer instance) {
-      instance
-        ..onUpdate = (DragUpdateDetails details) {
-          _updateObjectPosition(details.localPosition, ObjectType.Horizontal);
-        }
-        ..onEnd = (DragEndDetails details) async {
-          await chartProperties.updateHorizontalLine(
-            chartProperties.horizontalLines[currentHorizontalEditIndex]
-              ..currentEditIndex = -1,
-          );
-          objectEditable = false;
-          currentHorizontalEditIndex = -1;
-          notifyChanged();
+        ..onLongPressDown = (details) {
+          _objectSetOnUpdate(details);
         };
     });
   }
 
   GestureRecognizerFactoryWithHandlers<PanGestureRecognizer>
-      panGestureRecognizer() {
+      panFirstGestureRecognizer() {
     return GestureRecognizerFactoryWithHandlers<PanGestureRecognizer>(
         () => PanGestureRecognizer(), (PanGestureRecognizer instance) {
       instance
@@ -637,31 +544,86 @@ class _KChartWidgetState extends State<KChartWidget>
           _tapPosition = null;
           objectType = null;
           object = null;
-          objectEditable = false;
           notifyChanged();
         };
     });
   }
 
-  GestureRecognizerFactoryWithHandlers<HorizontalDragGestureRecognizer>
-      horizontalDragGestureRecognizer2() {
-    return GestureRecognizerFactoryWithHandlers<
-            HorizontalDragGestureRecognizer>(
-        () => HorizontalDragGestureRecognizer(),
-        (HorizontalDragGestureRecognizer instance) {
+  GestureRecognizerFactoryWithHandlers<PanGestureRecognizer>
+      panUpdateGestureRecognizer() {
+    return GestureRecognizerFactoryWithHandlers<PanGestureRecognizer>(
+        () => PanGestureRecognizer(), (PanGestureRecognizer instance) {
       instance
-        ..onUpdate = (DragUpdateDetails details) {
-          _updateObjectPosition(details.localPosition, ObjectType.Vertical);
+        ..onUpdate = (details) {
+          if (object != null) {
+            _tapPosition = details.localPosition;
+            if (object!.type == ObjectType.Trend) {
+              if (isSecondOffset) {
+                _painter!.setTrendLineOffset2(object!, details.localPosition);
+              } else {
+                _painter!.setTrendLineOffset1(object!, details.localPosition);
+              }
+            } else if (object!.type == ObjectType.Rectangle) {
+              if (isSecondOffset) {
+                _painter!.setRectangleOffset2(object!, details.localPosition);
+              } else {
+                _painter!.setRectangleOffset1(object!, details.localPosition);
+              }
+            } else if (object!.type == ObjectType.Horizontal) {
+              _painter!.setHorizontalLineOffset(object!, details.localPosition);
+            } else if (object!.type == ObjectType.Vertical) {
+              _painter!.setVerticalLineOffset(object!, details.localPosition);
+            }
+            notifyChanged();
+          }
         }
         ..onEnd = (DragEndDetails details) async {
-          if (currentVerticalEditIndex != -1) {
-            await chartProperties.updateVerticalLine(
-              chartProperties.verticalLines[currentVerticalEditIndex]
-                ..currentEditIndex = -1,
-            );
+          if (object != null) {
+            object!.currentEditIndex = -1;
+            if (object!.type == ObjectType.Trend) {
+              if (isSecondOffset) {
+                object = _painter!.setTrendLineOffset2(
+                  object!,
+                  details.localPosition,
+                );
+              } else {
+                object = _painter!.setTrendLineOffset1(
+                  object!,
+                  details.localPosition,
+                );
+              }
+              chartProperties.updateTrendLine(object!);
+            } else if (object!.type == ObjectType.Rectangle) {
+              if (isSecondOffset) {
+                object = _painter!.setRectangleOffset2(
+                  object!,
+                  details.localPosition,
+                );
+              } else {
+                object = _painter!.setRectangleOffset1(
+                  object!,
+                  details.localPosition,
+                );
+              }
+              chartProperties.updateRectangle(object!);
+            } else if (object!.type == ObjectType.Horizontal) {
+              object = _painter!.setHorizontalLineOffset(
+                object!,
+                details.localPosition,
+              );
+              chartProperties.updateHorizontalLine(object!);
+            } else if (object!.type == ObjectType.Vertical) {
+              object = _painter!.setVerticalLineOffset(
+                object!,
+                details.localPosition,
+              );
+              chartProperties.updateVerticalLine(object!);
+            }
           }
+          _tapPosition = null;
+          objectType = null;
+          object = null;
           objectEditable = false;
-          currentVerticalEditIndex = -1;
           notifyChanged();
         };
     });
@@ -694,7 +656,7 @@ class _KChartWidgetState extends State<KChartWidget>
   }
 
   GestureRecognizerFactoryWithHandlers<HorizontalDragGestureRecognizer>
-      horizontalDragGestureRecognizer() {
+      horizontalRecognizer() {
     return GestureRecognizerFactoryWithHandlers<
         HorizontalDragGestureRecognizer>(
       () => HorizontalDragGestureRecognizer(),

@@ -14,12 +14,15 @@ mixin DrawVerticalLines on ChartDetails {
   late double scaleX;
   double? fDisplayHeight;
 
-  void setVerticalLineOffset(ObjectEntity item, Offset offset) {
+  ObjectEntity? setVerticalLineOffset(ObjectEntity item, Offset offset) {
     final verticalLines = chartProperties.verticalLines;
     final i = verticalLines.indexWhere((e) => e.id == item.id);
     if (i != -1) {
+      verticalLines[i].currentEditIndex = item.currentEditIndex;
       verticalLines[i].dx1 = getX(mStartIndex) + (offset.dx / scaleX);
+      return verticalLines[i];
     }
+    return null;
   }
 
   void drawVerticalLines(Canvas canvas, Size size, double lastX, double curX) {
@@ -28,12 +31,6 @@ mixin DrawVerticalLines on ChartDetails {
       return;
     }
     for (int i = 0; i < verticalLines.length; i++) {
-      // if (verticalLines[i].currentEditIndex == i &&
-      //     verticalLines[i].dx1 != verticalLines[i].dx2) {
-      //   chartProperties.verticalLines[i].dx2 =
-      //       getX(mStartIndex) + verticalLines[i].dx1;
-      // }
-
       double x = verticalLines[i].dx1;
 
       final pricePaint = Paint()
