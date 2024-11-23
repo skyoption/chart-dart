@@ -3,19 +3,16 @@ import 'dart:math';
 
 import 'package:candle_chart/chart_translations.dart';
 import 'package:candle_chart/entity/k_line_entity.dart';
-import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/objects/widgets/svg.dart';
 import 'package:candle_chart/objects/objects_screen.dart';
 import 'package:candle_chart/indicators/indicators_screen.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/renderer/base_dimension.dart';
 import 'package:candle_chart/utils/date_util.dart';
-import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:candle_chart/utils/icons.dart';
 import 'package:candle_chart/widgets/chart_loader.dart';
 import 'package:candle_chart/widgets/paddings.dart';
-import 'package:candle_chart/widgets/popup_info_view.dart';
 import 'package:candle_chart/widgets/time_frame_widget.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -223,23 +220,12 @@ class _KChartWidgetState extends State<KChartWidget>
     super.dispose();
   }
 
-  DateTime? _longPressStartTime;
   Timer? _timer;
 
   late final height = MediaQuery.of(context).size.height;
   ChartPainter? _painter;
   late double mBaseHeight = height * 0.7;
 
-  // CandleAggregator aggregator = CandleAggregator();
-
-  // @override
-  // void initState() {
-  //   widget.data = aggregator.aggregateCandles(
-  //     widget.data!,
-  //     CandleTimeFormat.hour4,
-  //   );
-  //   super.initState();
-  // }
 
   @override
   Widget build(BuildContext context) {
