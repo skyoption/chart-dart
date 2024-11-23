@@ -49,7 +49,7 @@ class IndicatorEntity {
   double strokeWidth;
   bool drawAsBackground, isMain, isSecondary;
   @enumerated
-  LineStyle style = LineStyle.normal;
+  ObjectStyle style = ObjectStyle.normal;
 
   String? color, secondColor, levelsColor;
 
@@ -97,7 +97,7 @@ class IndicatorEntity {
     this.isSecondary = false,
     this.applyTo = ApplyTo.Close,
     this.strokeWidth = 1.0,
-    this.style = LineStyle.normal,
+    this.style = ObjectStyle.normal,
     this.level = Levels.None,
     this.timeframe = Timeframes.All_Timeframes,
     this.color,

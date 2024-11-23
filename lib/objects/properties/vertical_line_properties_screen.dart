@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:candle_chart/entity/k_line_entity.dart';
-import 'package:candle_chart/entity/line_entity.dart';
-import 'package:candle_chart/objects/horizontal_line_properties_screen.dart';
+import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/object_style_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/utils/date_format_util.dart';
@@ -30,7 +30,7 @@ class VerticalLinePropertiesScreen extends StatefulWidget {
 class _VerticalLinePropertiesScreenState
     extends State<VerticalLinePropertiesScreen> {
   final rand = Random();
-  final LineEntity line = LineEntity();
+  final ObjectEntity line = ObjectEntity();
   late final lastTime =
       DateTime.fromMillisecondsSinceEpoch(widget.data.last.time!);
   final formats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn];
@@ -38,7 +38,7 @@ class _VerticalLinePropertiesScreenState
 
   @override
   void initState() {
-    line.name = 'M15 Vertical Line ${rand.nextInt(10000)}';
+    line.name = 'Vertical Line ${rand.nextInt(10000)}';
     date = dateFormat(lastTime, formats);
     line.datetime = widget.data.last.time!;
     super.initState();

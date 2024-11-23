@@ -1,16 +1,20 @@
 import 'package:candle_chart/entity/k_line_entity.dart';
-import 'package:candle_chart/entity/line_entity.dart';
-import 'package:candle_chart/objects/horizontal_line_properties_screen.dart';
-import 'package:candle_chart/objects/vertical_line_properties_screen.dart';
+import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/objects/add_objects_screen.dart';
+import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
+import 'package:candle_chart/objects/properties/vertical_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/object_item_widget.dart';
+import 'package:candle_chart/objects/widgets/svg.dart';
 import 'package:candle_chart/utils/icons.dart';
+import 'package:candle_chart/utils/properties/chart_properties.dart';
+import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/material.dart';
 
 class ObjectsScreen extends StatefulWidget {
   static const id = 'ObjectsScreen';
 
   final List<KLineEntity> data;
-  final Function onDone;
+  final Function(ObjectType? type) onDone;
 
   const ObjectsScreen({
     super.key,
@@ -56,6 +60,25 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
                         ),
                   ),
                 ),
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => AddObjectsScreen(
+                            onDone: widget.onDone,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Icon(
+                      Icons.add,
+                      size: 21.0,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -69,50 +92,166 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                'Lines',
+                'Add Object',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w400,
                     ),
               ),
             ),
-            ObjectItemWidget(
-              iconSize: 35.0,
-              icon: Svgs.horizontalLine,
-              title: 'Horizontal Line',
-              onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => HorizontalLinePropertiesScreen(
-                      onDone: widget.onDone,
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    widget.onDone(ObjectType.Trend);
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    width: 35.0,
+                    margin: EdgeInsetsDirectional.only(end: 21.0),
+                    child: MSvg(
+                      name: Svgs.trendLine,
+                      width: 30.0,
+                      height: 30.0,
                     ),
                   ),
-                );
-              },
-            ),
-            ObjectItemWidget(
-              iconSize: 30.0,
-              icon: Svgs.verticalLine,
-              title: 'Vertical Line',
-              onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => VerticalLinePropertiesScreen(
-                      onDone: widget.onDone,
-                      data: widget.data,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    widget.onDone(ObjectType.Horizontal);
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    width: 35.0,
+                    margin: EdgeInsetsDirectional.only(end: 21.0),
+                    child: MSvg(
+                      name: Svgs.horizontalLine,
+                      width: 35.0,
+                      height: 35.0,
                     ),
                   ),
-                );
-              },
-            ),
-            ObjectItemWidget(
-              iconSize: 30.0,
-              icon: Svgs.trendLine,
-              title: 'Trend Line',
-              onTap: () {},
-            ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    widget.onDone(ObjectType.Vertical);
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    width: 35.0,
+                    margin: EdgeInsetsDirectional.only(end: 21.0),
+                    child: MSvg(
+                      name: Svgs.verticalLine,
+                      width: 30.0,
+                      height: 30.0,
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    widget.onDone(ObjectType.Rectangle);
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    width: 35.0,
+                    margin: EdgeInsetsDirectional.only(end: 21.0),
+                    child: MSvg(
+                      name: Svgs.rectangle,
+                      width: 30.0,
+                      height: 30.0,
+                    ),
+                  ),
+                ),
+              ],
+            ).addPadding(horizontal: 21.0, vertical: 8.0),
+            if (chartProperties.objects.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Objects',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w400,
+                      ),
+                ),
+              ),
+            ...chartProperties.objects.asMap().entries.map((e) {
+              final id = '${e.value.frame.name} ${e.value.name}';
+              return ObjectItemWidget(
+                iconSize: 30.0,
+                icon: _icon(e.value),
+                hideArrow: true,
+                id: id,
+                title: id,
+                subtitle: _name(e.value),
+                onTap: () {
+                  _onTap(e.value);
+                },
+                onDelete: () {
+                  _onDelete(e.value.type, e.value.id);
+                },
+              );
+            }),
           ],
         ),
       ),
     );
+  }
+
+  String _icon(ObjectEntity item) {
+    if (item.type == ObjectType.Horizontal) {
+      return Svgs.horizontalLine;
+    } else if (item.type == ObjectType.Vertical) {
+      return Svgs.verticalLine;
+    } else if (item.type == ObjectType.Rectangle) {
+      return Svgs.rectangle;
+    } else if (item.type == ObjectType.Trend) {
+      return Svgs.trendLine;
+    }
+    return '';
+  }
+
+  String _name(ObjectEntity item) {
+    if (item.type == ObjectType.Horizontal ||
+        item.type == ObjectType.Vertical ||
+        item.type == ObjectType.Trend) {
+      return '${item.type.name} Line';
+    } else if (item.type == ObjectType.Rectangle) {
+      return item.type.name;
+    }
+    return '';
+  }
+
+  void _onDelete(ObjectType type, int id) async {
+    if (type == ObjectType.Horizontal) {
+      await chartProperties.removeHorizontalLine(id);
+    } else if (type == ObjectType.Vertical) {
+      await chartProperties.removeVerticalLine(id);
+    } else if (type == ObjectType.Rectangle) {
+      await chartProperties.removeRectangle(id);
+    } else if (type == ObjectType.Trend) {
+      await chartProperties.removeTrendLine(id);
+    }
+    setState(() {});
+    widget.onDone(null);
+  }
+
+  void _onTap(ObjectEntity item) {
+    if (item.type == ObjectType.Horizontal) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => HorizontalLinePropertiesScreen(
+            onDone: widget.onDone,
+          ),
+        ),
+      );
+    } else if (item.type == ObjectType.Vertical) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => VerticalLinePropertiesScreen(
+            onDone: widget.onDone,
+            data: widget.data,
+          ),
+        ),
+      );
+    } else if (item.type == ObjectType.Rectangle) {
+    } else if (item.type == ObjectType.Trend) {}
   }
 }

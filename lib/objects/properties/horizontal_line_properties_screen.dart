@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:candle_chart/entity/line_entity.dart';
+import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/objects/widgets/object_style_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
@@ -23,11 +23,11 @@ class HorizontalLinePropertiesScreen extends StatefulWidget {
 class _HorizontalLinePropertiesScreenState extends State<HorizontalLinePropertiesScreen> {
   late final controller = TextEditingController(text: line.value.toString());
   final rand = Random();
-  final LineEntity line = LineEntity();
+  final ObjectEntity line = ObjectEntity();
 
   @override
   void initState() {
-    line.name = 'M15 Horizontal Line ${rand.nextInt(10000)}';
+    line.name = 'Horizontal Line ${rand.nextInt(10000)}';
     super.initState();
   }
 

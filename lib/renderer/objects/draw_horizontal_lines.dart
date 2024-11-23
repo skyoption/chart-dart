@@ -1,4 +1,4 @@
-import 'package:candle_chart/entity/line_entity.dart';
+import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
 import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
@@ -10,13 +10,22 @@ import '../base_chart_renderer.dart';
 mixin DrawHorizontalLines on ChartDetails {
   late final ChartPosition chartPosition;
   late final ChartStyle chartStyle;
-  late Paint pricePaint, dot;
+  late Paint dot;
   late double mTranslateX;
   late double mWidth;
   late double scaleX;
   late final ChartColors chartColors;
   late double mMainHighMaxValue, mMainLowMinValue;
   late int fixedLength;
+
+  void setHorizontalLineOffset(ObjectEntity item, Offset offset) {
+    final horizontalLines = chartProperties.horizontalLines;
+    final i = horizontalLines.indexWhere((e) => e.id == item.id);
+    if (i != -1) {
+      horizontalLines[i].value = getYPositionValue(offset.dy);
+      horizontalLines[i].dy1 = getMainY(horizontalLines[i].value);
+    }
+  }
 
   void drawHorizontalLines(Canvas canvas, Size size) {
     final horizontalLines = chartProperties.horizontalLines;
@@ -25,47 +34,26 @@ mixin DrawHorizontalLines on ChartDetails {
     }
     for (int i = 0; i < horizontalLines.length; i++) {
       double value = horizontalLines[i].value;
-      if (horizontalLines[i].dy1 == 0) {
-        horizontalLines[i].dy1 = getMainY(horizontalLines[i].value);
-      }
+
       if (value <= this.chartPosition.topPrice &&
           value >= this.chartPosition.bottomPrice) {
         double y = getMainY(value);
-        //view display area boundary value drawing
-        // if (y > getMainY(mMainLowMinValue)) {
-        //   y = getMainY(mMainLowMinValue);
+
+        // if (horizontalLines[i].currentEditIndex == i) {
+        //   value = getYPositionValue(horizontalLines[i].dy1);
+        //   horizontalLines[i].value = value;
+        //   y = getMainY(value);
         // }
-        //
-        // if (y < getMainY(mMainHighMaxValue)) {
-        //   y = getMainY(mMainHighMaxValue);
-        // }
-        if (horizontalLines[i].currentEditIndex == i) {
-          value = getYPositionValue(horizontalLines[i].dy1);
-          y = getMainY(value);
-          // if (y > getMainY(mMainLowMinValue)) {
-          //   y = getMainY(mMainLowMinValue);
-          // }
-          // if (y < getMainY(mMainHighMaxValue)) {
-          //   y = getMainY(mMainHighMaxValue);
-          // }
-          horizontalLines[i].value = value;
-        }
-        pricePaint
+
+        final pricePaint = Paint()
           ..color = colorFromHex(horizontalLines[i].color!)!
           ..strokeWidth = horizontalLines[i].height;
-        //first draw the horizontal line
+
         double startX = 0;
         final max = -mTranslateX + mWidth / scaleX;
-        double space = 0.0;
-        if (horizontalLines[i].style == LineStyle.longDash) {
-          space = this.chartStyle.priceLineLongSpan +
-              this.chartStyle.priceLineLength;
-        } else {
-          space =
-              this.chartStyle.priceLineSpan + this.chartStyle.priceLineLength;
-        }
-        if (horizontalLines[i].style == LineStyle.dash ||
-            horizontalLines[i].style == LineStyle.longDash) {
+        double space =
+            this.chartStyle.priceLineSpan + this.chartStyle.priceLineLength;
+        if (horizontalLines[i].style == ObjectStyle.dash) {
           while (startX < max) {
             canvas.drawLine(
                 Offset(startX, y),
@@ -76,32 +64,24 @@ mixin DrawHorizontalLines on ChartDetails {
         } else {
           canvas.drawLine(Offset(startX, y), Offset(max, y), pricePaint);
         }
+
         if (horizontalLines[i].currentEditIndex == i) {
           canvas.drawCircle(
             Offset(startX, y),
-            5.0,
+            2.5,
             dot,
           );
           canvas.drawCircle(
             Offset(max, y),
-            5.0,
+            2.5,
             dot,
           );
         }
-        //repaint the background and text
+
         TextPainter tp = getTextPainter(
           value.toStringAsFixed(fixedLength),
           this.chartColors.priceTextColor,
         );
-
-        // switch (verticalTextAlignment) {
-        //   case VerticalTextAlignment.left:
-        //     offsetX = mWidth - tp.width;
-        //     break;
-        //   case VerticalTextAlignment.right:
-        //     offsetX = 0;
-        //     break;
-        // }
 
         double offsetX = mWidth - tp.width + this.chartStyle.priceWidth + 4;
 

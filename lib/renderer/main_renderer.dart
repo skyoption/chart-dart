@@ -35,8 +35,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   final VerticalTextAlignment verticalTextAlignment;
   final List<IndicatorEntity> indicators;
   late final SubMainRenderer subMainRenderer;
-  final Function(Canvas canvas, Size size, double lastX, double curX)
-      drawVerticalLines;
+  final Function(Canvas canvas, Size size, double lastX, double curX) drawLines;
 
   MainRenderer(
     Rect mainRect,
@@ -51,7 +50,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     this.scaleX,
     this.verticalTextAlignment,
     this.indicators,
-    this.drawVerticalLines,
+    this.drawLines,
   ) : super(
             chartRect: mainRect,
             maxValue: maxValue,
@@ -60,6 +59,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
             topPadding: topPadding,
             fixedLength: fixedLength,
             gridColor: chartColors.gridColor) {
+    chartPositions.bottomPrice = minValue;
+    chartPositions.topPrice = maxValue;
     subMainRenderer = SubMainRenderer(
       mainRect,
       maxValue,
@@ -89,7 +90,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       minValue /= 2;
     }
     scaleY = _contentRect.height / (maxValue - minValue);
-
   }
 
   @override
@@ -101,7 +101,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     Size size,
     Canvas canvas,
   ) {
-    drawVerticalLines(
+    drawLines(
       canvas,
       size,
       lastX,

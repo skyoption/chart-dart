@@ -365,7 +365,7 @@ CandleIndicatorEntity _candleIndicatorEntityDeserialize(
     strokeWidth: reader.readDoubleOrNull(offsets[27]) ?? 1.0,
     style: _CandleIndicatorEntitystyleValueEnumMap[
             reader.readByteOrNull(offsets[28])] ??
-        LineStyle.normal,
+        ObjectStyle.normal,
     tenkanSen: reader.readDoubleOrNull(offsets[29]),
     timeframe: _CandleIndicatorEntitytimeframeValueEnumMap[
             reader.readByteOrNull(offsets[30])] ??
@@ -462,7 +462,7 @@ P _candleIndicatorEntityDeserializeProp<P>(
     case 28:
       return (_CandleIndicatorEntitystyleValueEnumMap[
               reader.readByteOrNull(offset)] ??
-          LineStyle.normal) as P;
+          ObjectStyle.normal) as P;
     case 29:
       return (reader.readDoubleOrNull(offset)) as P;
     case 30:
@@ -517,12 +517,10 @@ const _CandleIndicatorEntitylevelValueEnumMap = {
 const _CandleIndicatorEntitystyleEnumValueMap = {
   'dash': 0,
   'normal': 1,
-  'longDash': 2,
 };
 const _CandleIndicatorEntitystyleValueEnumMap = {
-  0: LineStyle.dash,
-  1: LineStyle.normal,
-  2: LineStyle.longDash,
+  0: ObjectStyle.dash,
+  1: ObjectStyle.normal,
 };
 const _CandleIndicatorEntitytimeframeEnumValueMap = {
   'All_Timeframes': 0,
@@ -2693,7 +2691,7 @@ extension CandleIndicatorEntityQueryFilter on QueryBuilder<
   }
 
   QueryBuilder<CandleIndicatorEntity, CandleIndicatorEntity,
-      QAfterFilterCondition> styleEqualTo(LineStyle value) {
+      QAfterFilterCondition> styleEqualTo(ObjectStyle value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'style',
@@ -2704,7 +2702,7 @@ extension CandleIndicatorEntityQueryFilter on QueryBuilder<
 
   QueryBuilder<CandleIndicatorEntity, CandleIndicatorEntity,
       QAfterFilterCondition> styleGreaterThan(
-    LineStyle value, {
+    ObjectStyle value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -2718,7 +2716,7 @@ extension CandleIndicatorEntityQueryFilter on QueryBuilder<
 
   QueryBuilder<CandleIndicatorEntity, CandleIndicatorEntity,
       QAfterFilterCondition> styleLessThan(
-    LineStyle value, {
+    ObjectStyle value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -2732,8 +2730,8 @@ extension CandleIndicatorEntityQueryFilter on QueryBuilder<
 
   QueryBuilder<CandleIndicatorEntity, CandleIndicatorEntity,
       QAfterFilterCondition> styleBetween(
-    LineStyle lower,
-    LineStyle upper, {
+    ObjectStyle lower,
+    ObjectStyle upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {

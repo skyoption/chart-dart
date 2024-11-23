@@ -1,10 +1,12 @@
 import 'dart:async' show StreamSink;
 
+import 'package:candle_chart/renderer/objects/draw_rectangle_lines.dart';
+import 'package:candle_chart/renderer/objects/draw_trend_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_vertical_lines.dart';
 import 'package:candle_chart/renderer/rects/render_rect.dart';
 import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/entity/line_entity.dart';
+import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
 import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
 import 'package:candle_chart/renderer/objects/update_point_position.dart';
@@ -41,8 +43,14 @@ double getTrendLineX() {
 int lastLength = 0;
 
 class ChartPainter extends BaseChartPainter
-    with ChartDetails, DrawHorizontalLines, DrawVerticalLines,UpdatePointPosition, ChartCalc {
-  final List<TrendLine> lines; //For TrendLine
+    with
+        ChartDetails,
+        DrawHorizontalLines,
+        DrawVerticalLines,
+        DrawTrendLines,
+        DrawRectangleLines,
+        UpdatePointPosition,
+        ChartCalc {
   final bool isTrendLine; //For TrendLine
   bool isrecordingCord = false; //For TrendLine
   final double selectY; //For TrendLine
@@ -77,11 +85,9 @@ class ChartPainter extends BaseChartPainter
       mMainLowMinValue = double.maxFinite;
   final double scaleX;
 
-
   ChartPainter(
     this.chartStyle,
     this.chartColors, {
-    required this.lines, //For TrendLine
     required this.screenHeight, //For TrendLine
     required this.isTrendLine, //For TrendLine
     required this.selectY, //For TrendLine
@@ -175,6 +181,8 @@ class ChartPainter extends BaseChartPainter
       indicators,
       (canvas, size, lastX, curX) {
         drawVerticalLines(canvas, size, lastX, curX);
+        drawTrendLines(canvas, size, lastX, curX);
+        drawRectangles(canvas, size, lastX, curX);
       },
     );
 
@@ -321,7 +329,7 @@ class ChartPainter extends BaseChartPainter
             isTrendLine == false)) {
       drawCrossLine(canvas, size);
     }
-    if (isTrendLine == true) drawTrendLines(canvas, size);
+    // if (isTrendLine == true) drawTrendLines(canvas, size);
 
     canvas.restore();
   }
@@ -572,7 +580,7 @@ class ChartPainter extends BaseChartPainter
     }
 
     double value = data!.last.close;
-    double y = getMainY(value);
+    // double y = getMainY(value);
 
     drawLine(canvas, askPaint, value - 10);
     drawLine(canvas, bidPaint, value - 30);
@@ -587,27 +595,27 @@ class ChartPainter extends BaseChartPainter
     //   y = getMainY(mMainHighMaxValue);
     // }
 
-    nowPricePaint
-      ..color = value >= data!.last.open
-          ? this.chartColors.nowPriceUpColor
-          : this.chartColors.nowPriceDnColor;
-    //first draw the horizontal line
-    double startX = 0;
-    final max = -mTranslateX + mWidth / scaleX;
-    final space =
-        this.chartStyle.nowPriceLineSpan + this.chartStyle.nowPriceLineLength;
-    while (startX < max) {
-      canvas.drawLine(
-          Offset(startX, y),
-          Offset(startX + this.chartStyle.nowPriceLineLength, y),
-          nowPricePaint);
-      startX += space;
-    }
+    // nowPricePaint
+    //   ..color = value >= data!.last.open
+    //       ? this.chartColors.nowPriceUpColor
+    //       : this.chartColors.nowPriceDnColor;
+    // //first draw the horizontal line
+    // double startX = 0;
+    // final max = -mTranslateX + mWidth / scaleX;
+    // final space =
+    //     this.chartStyle.nowPriceLineSpan + this.chartStyle.nowPriceLineLength;
+    // while (startX < max) {
+    //   canvas.drawLine(
+    //       Offset(startX, y),
+    //       Offset(startX + this.chartStyle.nowPriceLineLength, y),
+    //       nowPricePaint);
+    //   startX += space;
+    // }
     //repaint the background and text
-    TextPainter tp = getTextPainter(
-      value.toStringAsFixed(fixedLength),
-      this.chartColors.nowPriceTextColor,
-    );
+    // TextPainter tp = getTextPainter(
+    //   value.toStringAsFixed(fixedLength),
+    //   this.chartColors.nowPriceTextColor,
+    // );
 
     // double offsetX;
     // switch (verticalTextAlignment) {
@@ -618,15 +626,15 @@ class ChartPainter extends BaseChartPainter
     //     offsetX = 0;
     //     break;
     // }
-
-    double offsetX = mWidth - tp.width + this.chartStyle.priceWidth + 4;
-    double top = y - tp.height / 2;
-    canvas.drawRect(
-      Rect.fromLTRB(
-          offsetX - 12, top - 2, offsetX + tp.width, top + tp.height + 3),
-      nowPricePaint,
-    );
-    tp.paint(canvas, Offset(offsetX - 6, top + 2));
+    //
+    // double offsetX = mWidth - tp.width + this.chartStyle.priceWidth + 4;
+    // double top = y - tp.height / 2;
+    // canvas.drawRect(
+    //   Rect.fromLTRB(
+    //       offsetX - 12, top - 2, offsetX + tp.width, top + tp.height + 3),
+    //   nowPricePaint,
+    // );
+    // tp.paint(canvas, Offset(offsetX - 6, top + 2));
   }
 
   void drawLine(
@@ -709,65 +717,6 @@ class ChartPainter extends BaseChartPainter
         Rect.fromCenter(center: Offset(x, y), height: 2.0, width: 2.0 / scaleX),
         paintX,
       );
-    }
-  }
-
-  void drawTrendLines(Canvas canvas, Size size) {
-    var index = calculateSelectedX(selectX);
-    Paint paintY = Paint()
-      ..color = chartColors.trendLineColor
-      ..strokeWidth = 1
-      ..isAntiAlias = true;
-    double x = getX(index);
-    trendLineX = x;
-
-    double y = selectY;
-
-    drawDashedLine(canvas, Offset(x, mTopPadding),
-        Offset(x, size.height - mBottomPadding), paintY);
-
-    Paint paintX = Paint()
-      ..color = chartColors.trendLineColor
-      ..strokeWidth = 1
-      ..isAntiAlias = true;
-
-    drawDashedLine(canvas, Offset(-mTranslateX, y),
-        Offset(-mTranslateX + mWidth / scaleX, y), paintX);
-
-    Paint paint = Paint()
-      ..color = chartColors.trendLineColor
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    if (scaleX >= 1) {
-      canvas.drawOval(
-        Rect.fromCenter(
-            center: Offset(x, y), height: 15.0 * scaleX, width: 15.0),
-        paint,
-      );
-    } else {
-      canvas.drawOval(
-        Rect.fromCenter(
-            center: Offset(x, y), height: 10.0, width: 10.0 / scaleX),
-        paint,
-      );
-    }
-    if (lines.isNotEmpty) {
-      lines.forEach((element) {
-        var y1 = -((element.p1.dy - 35) / element.scale) + element.maxHeight;
-        var y2 = -((element.p2.dy - 35) / element.scale) + element.maxHeight;
-        var a = (trendLineMax! - y1) * trendLineScale! + trendLineContentRec!;
-        var b = (trendLineMax! - y2) * trendLineScale! + trendLineContentRec!;
-        var p1 = Offset(element.p1.dx, a);
-        var p2 = Offset(element.p2.dx, b);
-        canvas.drawLine(
-            p1,
-            element.p2 == Offset(-1, -1) ? Offset(x, y) : p2,
-            Paint()
-              ..color = Colors.yellow
-              ..strokeWidth = 2);
-      });
     }
   }
 

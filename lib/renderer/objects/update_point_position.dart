@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'dart:math';
-import 'package:candle_chart/entity/line_entity.dart';
+import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/renderer/base_chart_renderer.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
 import 'package:candle_chart/utils/kprint.dart';
@@ -14,7 +14,7 @@ mixin UpdatePointPosition on ChartCalc {
 
   int updateOffsetPoint({
     required Offset offset,
-    required List<LineEntity> linesPrice,
+    required List<ObjectEntity> linesPrice,
   }) {
     return findLineNearOffset(
       offset: offset,
@@ -24,24 +24,25 @@ mixin UpdatePointPosition on ChartCalc {
 
   int findLineNearOffset({
     required Offset offset,
-    required List<LineEntity> linesPrice,
+    required List<ObjectEntity> linesPrice,
   }) {
     for (int i = 0; i < linesPrice.length; i++) {
       var line = linesPrice[i];
-      if (line.type == LineType.horizontal) {
+      if (line.type == ObjectType.Horizontal) {
         final dy1 = offset.dy - 75.0 - (offset.dy < 150 ? 20 : 0);
         final dy2 = getMainY(line.value);
         final disDy = dy2 - dy1;
         if (disDy.abs() <= 20) {
           return i;
         }
-      } else if (line.type == LineType.vertical) {
+      } else if (line.type == ObjectType.Vertical) {
         final dx1 = getX(mStartIndex) +
             offset.dx -
             chartStyle.leftPadding -
             chartStyle.rightPadding;
-        final dx2 = line.dx1;
+        final dx2 =  line.dx1;
         final disDx = dx2 - dx1;
+        kPrint(disDx.abs());
         if (disDx.abs() <= 20) {
           return i;
         }

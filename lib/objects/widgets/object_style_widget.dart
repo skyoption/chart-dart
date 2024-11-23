@@ -1,7 +1,7 @@
 import 'package:candle_chart/utils/kprint.dart';
-import 'package:candle_chart/entity/line_entity.dart';
+import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/objects/bottom_sheets/color_picker.dart';
-import 'package:candle_chart/objects/horizontal_line_properties_screen.dart';
+import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/objects/widgets/svg.dart';
 import 'package:candle_chart/utils/icons.dart';
@@ -14,7 +14,7 @@ class ObjectStyleWidget extends StatefulWidget {
     Color color,
     bool drawAsBackground,
     double strokeWidth,
-    LineStyle style,
+    ObjectStyle style,
   ) onChange;
 
   final bool hideDrawAsBackground;
@@ -23,7 +23,7 @@ class ObjectStyleWidget extends StatefulWidget {
   final Color? color;
   final bool? drawAsBackground;
   final double? strokeWidth;
-  final LineStyle? style;
+  final ObjectStyle? style;
 
   const ObjectStyleWidget({
     super.key,
@@ -45,7 +45,7 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
   late bool drawAsBackground = widget.drawAsBackground ?? false;
   int index = 0;
   double strokeWidth = 1.0;
-  late LineStyle style = widget.style ?? LineStyle.normal;
+  late ObjectStyle style = widget.style ?? ObjectStyle.normal;
 
   @override
   void initState() {
@@ -267,13 +267,10 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
   void _setStyle(index) {
     switch (index) {
       case 0:
-        style = LineStyle.normal;
+        style = ObjectStyle.normal;
         break;
       case 1:
-        style = LineStyle.longDash;
-        break;
-      case 2:
-        style = LineStyle.dash;
+        style = ObjectStyle.dash;
         break;
     }
     widget.onChange(

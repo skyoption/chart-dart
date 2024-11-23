@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
+import 'package:candle_chart/renderer/objects/draw_rectangle_lines.dart';
+import 'package:candle_chart/renderer/objects/draw_trend_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_vertical_lines.dart';
 import 'package:candle_chart/renderer/objects/update_point_position.dart';
 import 'package:candle_chart/renderer/rects/main_rect.dart';
@@ -16,10 +18,15 @@ export 'package:flutter/material.dart'
 
 /// BaseChartPainter
 abstract class BaseChartPainter extends CustomPainter
-    implements DrawHorizontalLines, UpdatePointPosition, DrawVerticalLines {
+    implements
+        DrawHorizontalLines,
+        UpdatePointPosition,
+        DrawTrendLines,
+        DrawRectangleLines,
+        DrawVerticalLines {
   static double maxScrollX = 0.0;
   List<KLineEntity>? data; // data of chart
-  List<LineEntity> horizontalLines; // data of chart
+  List<ObjectEntity> horizontalLines; // data of chart
 
   final List<IndicatorEntity> indicators;
 

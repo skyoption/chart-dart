@@ -5,31 +5,37 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:isar/isar.dart';
 
-part 'line_entity.g.dart';
+import '../utils/date_util.dart';
 
-enum LineStyle { dash, normal, longDash }
+part 'object_entity.g.dart';
 
-enum LineType { vertical, horizontal, trend }
+enum ObjectStyle { dash, normal }
+
+enum ObjectType { Vertical, Horizontal, Trend, Rectangle }
 
 @collection
-class LineEntity {
+class ObjectEntity {
   Id id = Isar.autoIncrement;
-  double value;
+  double value, value2;
   String? color = Colors.black.toHexString();
   @enumerated
-  LineStyle style;
+  ObjectStyle style;
   @enumerated
-  LineType type;
+  ObjectType type;
+  @enumerated
+  CandleTimeFormat frame;
   double height;
-  double dx1,dx2,dy1,dy2;
+  double dx1, dx2, dy1, dy2;
   String name;
-  int datetime;
+  int datetime,datetime2;
   String symbol;
   bool drawAsBackground;
+  bool isFill;
   int currentEditIndex;
 
-  LineEntity({
-    this.value = 50559.50,
+  ObjectEntity({
+    this.value = 0,
+    this.value2 = 0,
     this.dx1 = 0,
     this.dx2 = 0,
     this.dy1 = 0,
@@ -38,11 +44,14 @@ class LineEntity {
     this.color,
     this.name = '',
     this.datetime = 0,
+    this.datetime2 = 0,
     this.symbol = '',
-    this.height = 1.2,
-    this.style = LineStyle.normal,
-    this.type = LineType.horizontal,
+    this.height = 0.8,
+    this.style = ObjectStyle.normal,
+    this.type = ObjectType.Horizontal,
+    this.frame = CandleTimeFormat.H4,
     this.drawAsBackground = false,
+    this.isFill = false,
   }) {
     color = Colors.black.toHexString();
   }

@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:candle_chart/chart_style.dart';
 import 'package:candle_chart/entity/k_line_entity.dart';
-import 'package:candle_chart/entity/line_entity.dart';
+import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/material.dart';
 
@@ -157,7 +157,7 @@ abstract class BaseChartRenderer<T> {
     double lastX,
     double curX,
     Color color, {
-    LineStyle lineStyle = LineStyle.normal,
+    ObjectStyle lineStyle = ObjectStyle.normal,
     double strokeWidth = 1.0,
     bool isDot = false,
   }) {
@@ -253,7 +253,7 @@ abstract class BaseChartRenderer<T> {
     double lastX,
     double curX,
     Color color,
-    LineStyle style,
+    ObjectStyle style,
     double strokeWidth, {
     bool isDot = false,
   }) {
@@ -262,7 +262,7 @@ abstract class BaseChartRenderer<T> {
     }
     double lastY = getY(lastPrice);
     double curY = getY(curPrice);
-    if (style == LineStyle.dash || style == LineStyle.longDash) {
+    if (style == ObjectStyle.dash) {
       canvas.drawPoints(
         PointMode.points,
         [Offset(curX, curY)],

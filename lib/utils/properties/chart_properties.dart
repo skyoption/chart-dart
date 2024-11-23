@@ -4,13 +4,12 @@ import 'package:candle_chart/entity/symbol_enity.dart';
 import 'package:candle_chart/utils/date_util.dart';
 import 'package:candle_chart/utils/isar.dart';
 import 'package:candle_chart/utils/properties/indicators.dart';
-import 'package:candle_chart/utils/properties/line_price_object.dart';
-import 'package:candle_chart/utils/properties/trend_line_object.dart';
+import 'package:candle_chart/utils/properties/objects.dart';
 import 'package:isar/isar.dart';
 
 final chartProperties = ChartProperties._set();
 
-class ChartProperties with Indicators, LinePriceObject, TrendLineObject {
+class ChartProperties with Indicators, Objects {
   String symbol = 'btcusdt';
   CandleTimeFormat frame = CandleTimeFormat.H4;
 

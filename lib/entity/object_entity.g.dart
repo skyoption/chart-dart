@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'line_entity.dart';
+part of 'object_entity.dart';
 
 // **************************************************************************
 // IsarCollectionGenerator
@@ -9,13 +9,13 @@ part of 'line_entity.dart';
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-extension GetLineEntityCollection on Isar {
-  IsarCollection<LineEntity> get lineEntitys => this.collection();
+extension GetObjectEntityCollection on Isar {
+  IsarCollection<ObjectEntity> get objectEntitys => this.collection();
 }
 
-const LineEntitySchema = CollectionSchema(
-  name: r'LineEntity',
-  id: -2643489878973826560,
+const ObjectEntitySchema = CollectionSchema(
+  name: r'ObjectEntity',
+  id: -7933839839827304844,
   properties: {
     r'color': PropertySchema(
       id: 0,
@@ -32,80 +32,101 @@ const LineEntitySchema = CollectionSchema(
       name: r'datetime',
       type: IsarType.long,
     ),
-    r'drawAsBackground': PropertySchema(
+    r'datetime2': PropertySchema(
       id: 3,
+      name: r'datetime2',
+      type: IsarType.long,
+    ),
+    r'drawAsBackground': PropertySchema(
+      id: 4,
       name: r'drawAsBackground',
       type: IsarType.bool,
     ),
     r'dx1': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'dx1',
       type: IsarType.double,
     ),
     r'dx2': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'dx2',
       type: IsarType.double,
     ),
     r'dy1': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'dy1',
       type: IsarType.double,
     ),
     r'dy2': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'dy2',
       type: IsarType.double,
     ),
+    r'frame': PropertySchema(
+      id: 9,
+      name: r'frame',
+      type: IsarType.byte,
+      enumMap: _ObjectEntityframeEnumValueMap,
+    ),
     r'height': PropertySchema(
-      id: 8,
+      id: 10,
       name: r'height',
       type: IsarType.double,
     ),
+    r'isFill': PropertySchema(
+      id: 11,
+      name: r'isFill',
+      type: IsarType.bool,
+    ),
     r'name': PropertySchema(
-      id: 9,
+      id: 12,
       name: r'name',
       type: IsarType.string,
     ),
     r'style': PropertySchema(
-      id: 10,
+      id: 13,
       name: r'style',
       type: IsarType.byte,
-      enumMap: _LineEntitystyleEnumValueMap,
+      enumMap: _ObjectEntitystyleEnumValueMap,
     ),
     r'symbol': PropertySchema(
-      id: 11,
+      id: 14,
       name: r'symbol',
       type: IsarType.string,
     ),
     r'type': PropertySchema(
-      id: 12,
+      id: 15,
       name: r'type',
       type: IsarType.byte,
-      enumMap: _LineEntitytypeEnumValueMap,
+      enumMap: _ObjectEntitytypeEnumValueMap,
     ),
     r'value': PropertySchema(
-      id: 13,
+      id: 16,
       name: r'value',
+      type: IsarType.double,
+    ),
+    r'value2': PropertySchema(
+      id: 17,
+      name: r'value2',
       type: IsarType.double,
     )
   },
-  estimateSize: _lineEntityEstimateSize,
-  serialize: _lineEntitySerialize,
-  deserialize: _lineEntityDeserialize,
-  deserializeProp: _lineEntityDeserializeProp,
+  estimateSize: _objectEntityEstimateSize,
+  serialize: _objectEntitySerialize,
+  deserialize: _objectEntityDeserialize,
+  deserializeProp: _objectEntityDeserializeProp,
   idName: r'id',
   indexes: {},
   links: {},
   embeddedSchemas: {},
-  getId: _lineEntityGetId,
-  getLinks: _lineEntityGetLinks,
-  attach: _lineEntityAttach,
+  getId: _objectEntityGetId,
+  getLinks: _objectEntityGetLinks,
+  attach: _objectEntityAttach,
   version: '3.1.0+1',
 );
 
-int _lineEntityEstimateSize(
-  LineEntity object,
+int _objectEntityEstimateSize(
+  ObjectEntity object,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
@@ -121,8 +142,8 @@ int _lineEntityEstimateSize(
   return bytesCount;
 }
 
-void _lineEntitySerialize(
-  LineEntity object,
+void _objectEntitySerialize(
+  ObjectEntity object,
   IsarWriter writer,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
@@ -130,48 +151,57 @@ void _lineEntitySerialize(
   writer.writeString(offsets[0], object.color);
   writer.writeLong(offsets[1], object.currentEditIndex);
   writer.writeLong(offsets[2], object.datetime);
-  writer.writeBool(offsets[3], object.drawAsBackground);
-  writer.writeDouble(offsets[4], object.dx1);
-  writer.writeDouble(offsets[5], object.dx2);
-  writer.writeDouble(offsets[6], object.dy1);
-  writer.writeDouble(offsets[7], object.dy2);
-  writer.writeDouble(offsets[8], object.height);
-  writer.writeString(offsets[9], object.name);
-  writer.writeByte(offsets[10], object.style.index);
-  writer.writeString(offsets[11], object.symbol);
-  writer.writeByte(offsets[12], object.type.index);
-  writer.writeDouble(offsets[13], object.value);
+  writer.writeLong(offsets[3], object.datetime2);
+  writer.writeBool(offsets[4], object.drawAsBackground);
+  writer.writeDouble(offsets[5], object.dx1);
+  writer.writeDouble(offsets[6], object.dx2);
+  writer.writeDouble(offsets[7], object.dy1);
+  writer.writeDouble(offsets[8], object.dy2);
+  writer.writeByte(offsets[9], object.frame.index);
+  writer.writeDouble(offsets[10], object.height);
+  writer.writeBool(offsets[11], object.isFill);
+  writer.writeString(offsets[12], object.name);
+  writer.writeByte(offsets[13], object.style.index);
+  writer.writeString(offsets[14], object.symbol);
+  writer.writeByte(offsets[15], object.type.index);
+  writer.writeDouble(offsets[16], object.value);
+  writer.writeDouble(offsets[17], object.value2);
 }
 
-LineEntity _lineEntityDeserialize(
+ObjectEntity _objectEntityDeserialize(
   Id id,
   IsarReader reader,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = LineEntity(
+  final object = ObjectEntity(
     color: reader.readStringOrNull(offsets[0]),
     currentEditIndex: reader.readLongOrNull(offsets[1]) ?? -1,
     datetime: reader.readLongOrNull(offsets[2]) ?? 0,
-    drawAsBackground: reader.readBoolOrNull(offsets[3]) ?? false,
-    dx1: reader.readDoubleOrNull(offsets[4]) ?? 0,
-    dx2: reader.readDoubleOrNull(offsets[5]) ?? 0,
-    dy1: reader.readDoubleOrNull(offsets[6]) ?? 0,
-    dy2: reader.readDoubleOrNull(offsets[7]) ?? 0,
-    height: reader.readDoubleOrNull(offsets[8]) ?? 1.2,
-    name: reader.readStringOrNull(offsets[9]) ?? '',
-    style: _LineEntitystyleValueEnumMap[reader.readByteOrNull(offsets[10])] ??
-        LineStyle.normal,
-    symbol: reader.readStringOrNull(offsets[11]) ?? '',
-    type: _LineEntitytypeValueEnumMap[reader.readByteOrNull(offsets[12])] ??
-        LineType.horizontal,
-    value: reader.readDoubleOrNull(offsets[13]) ?? 50559.50,
+    datetime2: reader.readLongOrNull(offsets[3]) ?? 0,
+    drawAsBackground: reader.readBoolOrNull(offsets[4]) ?? false,
+    dx1: reader.readDoubleOrNull(offsets[5]) ?? 0,
+    dx2: reader.readDoubleOrNull(offsets[6]) ?? 0,
+    dy1: reader.readDoubleOrNull(offsets[7]) ?? 0,
+    dy2: reader.readDoubleOrNull(offsets[8]) ?? 0,
+    frame: _ObjectEntityframeValueEnumMap[reader.readByteOrNull(offsets[9])] ??
+        CandleTimeFormat.H4,
+    height: reader.readDoubleOrNull(offsets[10]) ?? 0.8,
+    isFill: reader.readBoolOrNull(offsets[11]) ?? false,
+    name: reader.readStringOrNull(offsets[12]) ?? '',
+    style: _ObjectEntitystyleValueEnumMap[reader.readByteOrNull(offsets[13])] ??
+        ObjectStyle.normal,
+    symbol: reader.readStringOrNull(offsets[14]) ?? '',
+    type: _ObjectEntitytypeValueEnumMap[reader.readByteOrNull(offsets[15])] ??
+        ObjectType.Horizontal,
+    value: reader.readDoubleOrNull(offsets[16]) ?? 0,
+    value2: reader.readDoubleOrNull(offsets[17]) ?? 0,
   );
   object.id = id;
   return object;
 }
 
-P _lineEntityDeserializeProp<P>(
+P _objectEntityDeserializeProp<P>(
   IsarReader reader,
   int propertyId,
   int offset,
@@ -185,9 +215,9 @@ P _lineEntityDeserializeProp<P>(
     case 2:
       return (reader.readLongOrNull(offset) ?? 0) as P;
     case 3:
-      return (reader.readBoolOrNull(offset) ?? false) as P;
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 4:
-      return (reader.readDoubleOrNull(offset) ?? 0) as P;
+      return (reader.readBoolOrNull(offset) ?? false) as P;
     case 5:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
     case 6:
@@ -195,69 +225,101 @@ P _lineEntityDeserializeProp<P>(
     case 7:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
     case 8:
-      return (reader.readDoubleOrNull(offset) ?? 1.2) as P;
+      return (reader.readDoubleOrNull(offset) ?? 0) as P;
     case 9:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return (_ObjectEntityframeValueEnumMap[reader.readByteOrNull(offset)] ??
+          CandleTimeFormat.H4) as P;
     case 10:
-      return (_LineEntitystyleValueEnumMap[reader.readByteOrNull(offset)] ??
-          LineStyle.normal) as P;
+      return (reader.readDoubleOrNull(offset) ?? 0.8) as P;
     case 11:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return (reader.readBoolOrNull(offset) ?? false) as P;
     case 12:
-      return (_LineEntitytypeValueEnumMap[reader.readByteOrNull(offset)] ??
-          LineType.horizontal) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 13:
-      return (reader.readDoubleOrNull(offset) ?? 50559.50) as P;
+      return (_ObjectEntitystyleValueEnumMap[reader.readByteOrNull(offset)] ??
+          ObjectStyle.normal) as P;
+    case 14:
+      return (reader.readStringOrNull(offset) ?? '') as P;
+    case 15:
+      return (_ObjectEntitytypeValueEnumMap[reader.readByteOrNull(offset)] ??
+          ObjectType.Horizontal) as P;
+    case 16:
+      return (reader.readDoubleOrNull(offset) ?? 0) as P;
+    case 17:
+      return (reader.readDoubleOrNull(offset) ?? 0) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
-const _LineEntitystyleEnumValueMap = {
+const _ObjectEntityframeEnumValueMap = {
+  'M1': 0,
+  'M5': 1,
+  'M15': 2,
+  'M30': 3,
+  'H1': 4,
+  'H4': 5,
+  'D1': 6,
+  'W1': 7,
+  'MN': 8,
+};
+const _ObjectEntityframeValueEnumMap = {
+  0: CandleTimeFormat.M1,
+  1: CandleTimeFormat.M5,
+  2: CandleTimeFormat.M15,
+  3: CandleTimeFormat.M30,
+  4: CandleTimeFormat.H1,
+  5: CandleTimeFormat.H4,
+  6: CandleTimeFormat.D1,
+  7: CandleTimeFormat.W1,
+  8: CandleTimeFormat.MN,
+};
+const _ObjectEntitystyleEnumValueMap = {
   'dash': 0,
   'normal': 1,
-  'longDash': 2,
 };
-const _LineEntitystyleValueEnumMap = {
-  0: LineStyle.dash,
-  1: LineStyle.normal,
-  2: LineStyle.longDash,
+const _ObjectEntitystyleValueEnumMap = {
+  0: ObjectStyle.dash,
+  1: ObjectStyle.normal,
 };
-const _LineEntitytypeEnumValueMap = {
-  'vertical': 0,
-  'horizontal': 1,
-  'trend': 2,
+const _ObjectEntitytypeEnumValueMap = {
+  'Vertical': 0,
+  'Horizontal': 1,
+  'Trend': 2,
+  'Rectangle': 3,
 };
-const _LineEntitytypeValueEnumMap = {
-  0: LineType.vertical,
-  1: LineType.horizontal,
-  2: LineType.trend,
+const _ObjectEntitytypeValueEnumMap = {
+  0: ObjectType.Vertical,
+  1: ObjectType.Horizontal,
+  2: ObjectType.Trend,
+  3: ObjectType.Rectangle,
 };
 
-Id _lineEntityGetId(LineEntity object) {
+Id _objectEntityGetId(ObjectEntity object) {
   return object.id;
 }
 
-List<IsarLinkBase<dynamic>> _lineEntityGetLinks(LineEntity object) {
+List<IsarLinkBase<dynamic>> _objectEntityGetLinks(ObjectEntity object) {
   return [];
 }
 
-void _lineEntityAttach(IsarCollection<dynamic> col, Id id, LineEntity object) {
+void _objectEntityAttach(
+    IsarCollection<dynamic> col, Id id, ObjectEntity object) {
   object.id = id;
 }
 
-extension LineEntityQueryWhereSort
-    on QueryBuilder<LineEntity, LineEntity, QWhere> {
-  QueryBuilder<LineEntity, LineEntity, QAfterWhere> anyId() {
+extension ObjectEntityQueryWhereSort
+    on QueryBuilder<ObjectEntity, ObjectEntity, QWhere> {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
 }
 
-extension LineEntityQueryWhere
-    on QueryBuilder<LineEntity, LineEntity, QWhereClause> {
-  QueryBuilder<LineEntity, LineEntity, QAfterWhereClause> idEqualTo(Id id) {
+extension ObjectEntityQueryWhere
+    on QueryBuilder<ObjectEntity, ObjectEntity, QWhereClause> {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
         lower: id,
@@ -266,7 +328,8 @@ extension LineEntityQueryWhere
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterWhereClause> idNotEqualTo(Id id) {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterWhereClause> idNotEqualTo(
+      Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -288,7 +351,8 @@ extension LineEntityQueryWhere
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterWhereClause> idGreaterThan(Id id,
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterWhereClause> idGreaterThan(
+      Id id,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -297,7 +361,7 @@ extension LineEntityQueryWhere
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterWhereClause> idLessThan(Id id,
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterWhereClause> idLessThan(Id id,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -306,7 +370,7 @@ extension LineEntityQueryWhere
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterWhereClause> idBetween(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterWhereClause> idBetween(
     Id lowerId,
     Id upperId, {
     bool includeLower = true,
@@ -323,9 +387,10 @@ extension LineEntityQueryWhere
   }
 }
 
-extension LineEntityQueryFilter
-    on QueryBuilder<LineEntity, LineEntity, QFilterCondition> {
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> colorIsNull() {
+extension ObjectEntityQueryFilter
+    on QueryBuilder<ObjectEntity, ObjectEntity, QFilterCondition> {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      colorIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'color',
@@ -333,7 +398,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> colorIsNotNull() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      colorIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'color',
@@ -341,7 +407,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> colorEqualTo(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> colorEqualTo(
     String? value, {
     bool caseSensitive = true,
   }) {
@@ -354,7 +420,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> colorGreaterThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      colorGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -369,7 +436,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> colorLessThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> colorLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -384,7 +451,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> colorBetween(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> colorBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -403,7 +470,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> colorStartsWith(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      colorStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -416,7 +484,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> colorEndsWith(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> colorEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -429,7 +497,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> colorContains(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> colorContains(
       String value,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -441,7 +509,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> colorMatches(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> colorMatches(
       String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -453,7 +521,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> colorIsEmpty() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      colorIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'color',
@@ -462,7 +531,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition>
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
       colorIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
@@ -472,7 +541,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition>
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
       currentEditIndexEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -482,7 +551,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition>
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
       currentEditIndexGreaterThan(
     int value, {
     bool include = false,
@@ -496,7 +565,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition>
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
       currentEditIndexLessThan(
     int value, {
     bool include = false,
@@ -510,7 +579,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition>
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
       currentEditIndexBetween(
     int lower,
     int upper, {
@@ -528,8 +597,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> datetimeEqualTo(
-      int value) {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      datetimeEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'datetime',
@@ -538,7 +607,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition>
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
       datetimeGreaterThan(
     int value, {
     bool include = false,
@@ -552,7 +621,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> datetimeLessThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      datetimeLessThan(
     int value, {
     bool include = false,
   }) {
@@ -565,7 +635,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> datetimeBetween(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      datetimeBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -582,7 +653,63 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition>
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      datetime2EqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'datetime2',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      datetime2GreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'datetime2',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      datetime2LessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'datetime2',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      datetime2Between(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'datetime2',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
       drawAsBackgroundEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -592,7 +719,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dx1EqualTo(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dx1EqualTo(
     double value, {
     double epsilon = Query.epsilon,
   }) {
@@ -605,7 +732,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dx1GreaterThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      dx1GreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
@@ -620,7 +748,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dx1LessThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dx1LessThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
@@ -635,7 +763,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dx1Between(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dx1Between(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -654,7 +782,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dx2EqualTo(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dx2EqualTo(
     double value, {
     double epsilon = Query.epsilon,
   }) {
@@ -667,7 +795,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dx2GreaterThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      dx2GreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
@@ -682,7 +811,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dx2LessThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dx2LessThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
@@ -697,7 +826,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dx2Between(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dx2Between(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -716,7 +845,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dy1EqualTo(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dy1EqualTo(
     double value, {
     double epsilon = Query.epsilon,
   }) {
@@ -729,7 +858,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dy1GreaterThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      dy1GreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
@@ -744,7 +874,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dy1LessThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dy1LessThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
@@ -759,7 +889,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dy1Between(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dy1Between(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -778,7 +908,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dy2EqualTo(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dy2EqualTo(
     double value, {
     double epsilon = Query.epsilon,
   }) {
@@ -791,7 +921,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dy2GreaterThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      dy2GreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
@@ -806,7 +937,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dy2LessThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dy2LessThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
@@ -821,7 +952,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> dy2Between(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dy2Between(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -840,7 +971,61 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> heightEqualTo(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> frameEqualTo(
+      CandleTimeFormat value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'frame',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      frameGreaterThan(
+    CandleTimeFormat value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'frame',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> frameLessThan(
+    CandleTimeFormat value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'frame',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> frameBetween(
+    CandleTimeFormat lower,
+    CandleTimeFormat upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'frame',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> heightEqualTo(
     double value, {
     double epsilon = Query.epsilon,
   }) {
@@ -853,7 +1038,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> heightGreaterThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      heightGreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
@@ -868,7 +1054,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> heightLessThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      heightLessThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
@@ -883,7 +1070,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> heightBetween(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> heightBetween(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -902,7 +1089,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> idEqualTo(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -912,7 +1099,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> idGreaterThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> idGreaterThan(
     Id value, {
     bool include = false,
   }) {
@@ -925,7 +1112,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> idLessThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> idLessThan(
     Id value, {
     bool include = false,
   }) {
@@ -938,7 +1125,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> idBetween(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> idBetween(
     Id lower,
     Id upper, {
     bool includeLower = true,
@@ -955,7 +1142,17 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> nameEqualTo(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> isFillEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isFill',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> nameEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -968,7 +1165,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> nameGreaterThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      nameGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -983,7 +1181,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> nameLessThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> nameLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -998,7 +1196,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> nameBetween(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> nameBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -1017,7 +1215,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> nameStartsWith(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      nameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -1030,7 +1229,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> nameEndsWith(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> nameEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -1043,7 +1242,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> nameContains(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> nameContains(
       String value,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1055,7 +1254,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> nameMatches(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> nameMatches(
       String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1067,7 +1266,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> nameIsEmpty() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      nameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'name',
@@ -1076,7 +1276,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> nameIsNotEmpty() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      nameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'name',
@@ -1085,8 +1286,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> styleEqualTo(
-      LineStyle value) {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> styleEqualTo(
+      ObjectStyle value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'style',
@@ -1095,8 +1296,9 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> styleGreaterThan(
-    LineStyle value, {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      styleGreaterThan(
+    ObjectStyle value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1108,8 +1310,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> styleLessThan(
-    LineStyle value, {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> styleLessThan(
+    ObjectStyle value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1121,9 +1323,9 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> styleBetween(
-    LineStyle lower,
-    LineStyle upper, {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> styleBetween(
+    ObjectStyle lower,
+    ObjectStyle upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -1138,7 +1340,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> symbolEqualTo(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> symbolEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -1151,7 +1353,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> symbolGreaterThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      symbolGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -1166,7 +1369,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> symbolLessThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      symbolLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -1181,7 +1385,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> symbolBetween(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> symbolBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -1200,7 +1404,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> symbolStartsWith(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      symbolStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -1213,7 +1418,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> symbolEndsWith(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      symbolEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -1226,9 +1432,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> symbolContains(
-      String value,
-      {bool caseSensitive = true}) {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      symbolContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'symbol',
@@ -1238,7 +1443,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> symbolMatches(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> symbolMatches(
       String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1250,7 +1455,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> symbolIsEmpty() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      symbolIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'symbol',
@@ -1259,7 +1465,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition>
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
       symbolIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
@@ -1269,8 +1475,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> typeEqualTo(
-      LineType value) {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> typeEqualTo(
+      ObjectType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'type',
@@ -1279,8 +1485,9 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> typeGreaterThan(
-    LineType value, {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      typeGreaterThan(
+    ObjectType value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1292,8 +1499,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> typeLessThan(
-    LineType value, {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> typeLessThan(
+    ObjectType value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1305,9 +1512,9 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> typeBetween(
-    LineType lower,
-    LineType upper, {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> typeBetween(
+    ObjectType lower,
+    ObjectType upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -1322,7 +1529,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> valueEqualTo(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> valueEqualTo(
     double value, {
     double epsilon = Query.epsilon,
   }) {
@@ -1335,7 +1542,8 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> valueGreaterThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      valueGreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
@@ -1350,7 +1558,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> valueLessThan(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> valueLessThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
@@ -1365,7 +1573,7 @@ extension LineEntityQueryFilter
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterFilterCondition> valueBetween(
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> valueBetween(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -1383,551 +1591,767 @@ extension LineEntityQueryFilter
       ));
     });
   }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> value2EqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'value2',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      value2GreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'value2',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      value2LessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'value2',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> value2Between(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'value2',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
 }
 
-extension LineEntityQueryObject
-    on QueryBuilder<LineEntity, LineEntity, QFilterCondition> {}
+extension ObjectEntityQueryObject
+    on QueryBuilder<ObjectEntity, ObjectEntity, QFilterCondition> {}
 
-extension LineEntityQueryLinks
-    on QueryBuilder<LineEntity, LineEntity, QFilterCondition> {}
+extension ObjectEntityQueryLinks
+    on QueryBuilder<ObjectEntity, ObjectEntity, QFilterCondition> {}
 
-extension LineEntityQuerySortBy
-    on QueryBuilder<LineEntity, LineEntity, QSortBy> {
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByColor() {
+extension ObjectEntityQuerySortBy
+    on QueryBuilder<ObjectEntity, ObjectEntity, QSortBy> {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByColor() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'color', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByColorDesc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByColorDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'color', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByCurrentEditIndex() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy>
+      sortByCurrentEditIndex() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentEditIndex', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy>
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy>
       sortByCurrentEditIndexDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentEditIndex', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDatetime() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDatetime() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'datetime', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDatetimeDesc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDatetimeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'datetime', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDrawAsBackground() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDatetime2() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'datetime2', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDatetime2Desc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'datetime2', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy>
+      sortByDrawAsBackground() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'drawAsBackground', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy>
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy>
       sortByDrawAsBackgroundDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'drawAsBackground', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDx1() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDx1() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dx1', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDx1Desc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDx1Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dx1', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDx2() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDx2() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dx2', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDx2Desc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDx2Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dx2', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDy1() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDy1() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dy1', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDy1Desc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDy1Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dy1', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDy2() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDy2() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dy2', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByDy2Desc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDy2Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dy2', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByHeight() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByFrame() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'frame', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByFrameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'frame', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByHeight() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'height', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByHeightDesc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByHeightDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'height', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByName() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByIsFill() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isFill', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByIsFillDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isFill', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByNameDesc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByStyle() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByStyle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'style', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByStyleDesc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByStyleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'style', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortBySymbol() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortBySymbol() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'symbol', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortBySymbolDesc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortBySymbolDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'symbol', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByType() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByTypeDesc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByValue() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByValue() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'value', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> sortByValueDesc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByValueDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'value', Sort.desc);
     });
   }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByValue2() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'value2', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByValue2Desc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'value2', Sort.desc);
+    });
+  }
 }
 
-extension LineEntityQuerySortThenBy
-    on QueryBuilder<LineEntity, LineEntity, QSortThenBy> {
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByColor() {
+extension ObjectEntityQuerySortThenBy
+    on QueryBuilder<ObjectEntity, ObjectEntity, QSortThenBy> {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByColor() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'color', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByColorDesc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByColorDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'color', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByCurrentEditIndex() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy>
+      thenByCurrentEditIndex() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentEditIndex', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy>
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy>
       thenByCurrentEditIndexDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentEditIndex', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDatetime() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDatetime() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'datetime', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDatetimeDesc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDatetimeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'datetime', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDrawAsBackground() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDatetime2() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'datetime2', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDatetime2Desc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'datetime2', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy>
+      thenByDrawAsBackground() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'drawAsBackground', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy>
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy>
       thenByDrawAsBackgroundDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'drawAsBackground', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDx1() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDx1() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dx1', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDx1Desc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDx1Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dx1', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDx2() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDx2() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dx2', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDx2Desc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDx2Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dx2', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDy1() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDy1() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dy1', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDy1Desc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDy1Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dy1', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDy2() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDy2() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dy2', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByDy2Desc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDy2Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dy2', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByHeight() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByFrame() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'frame', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByFrameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'frame', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByHeight() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'height', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByHeightDesc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByHeightDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'height', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenById() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByIdDesc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByName() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByIsFill() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isFill', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByIsFillDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isFill', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByNameDesc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByStyle() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByStyle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'style', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByStyleDesc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByStyleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'style', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenBySymbol() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenBySymbol() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'symbol', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenBySymbolDesc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenBySymbolDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'symbol', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByType() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByTypeDesc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.desc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByValue() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByValue() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'value', Sort.asc);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QAfterSortBy> thenByValueDesc() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByValueDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'value', Sort.desc);
     });
   }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByValue2() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'value2', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByValue2Desc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'value2', Sort.desc);
+    });
+  }
 }
 
-extension LineEntityQueryWhereDistinct
-    on QueryBuilder<LineEntity, LineEntity, QDistinct> {
-  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByColor(
+extension ObjectEntityQueryWhereDistinct
+    on QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> {
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByColor(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'color', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByCurrentEditIndex() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct>
+      distinctByCurrentEditIndex() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'currentEditIndex');
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByDatetime() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByDatetime() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'datetime');
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByDrawAsBackground() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByDatetime2() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'datetime2');
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct>
+      distinctByDrawAsBackground() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'drawAsBackground');
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByDx1() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByDx1() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dx1');
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByDx2() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByDx2() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dx2');
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByDy1() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByDy1() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dy1');
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByDy2() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByDy2() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dy2');
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByHeight() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByFrame() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'frame');
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByHeight() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'height');
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByName(
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByIsFill() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isFill');
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByStyle() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByStyle() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'style');
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctBySymbol(
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctBySymbol(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'symbol', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByType() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'type');
     });
   }
 
-  QueryBuilder<LineEntity, LineEntity, QDistinct> distinctByValue() {
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByValue() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'value');
     });
   }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByValue2() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'value2');
+    });
+  }
 }
 
-extension LineEntityQueryProperty
-    on QueryBuilder<LineEntity, LineEntity, QQueryProperty> {
-  QueryBuilder<LineEntity, int, QQueryOperations> idProperty() {
+extension ObjectEntityQueryProperty
+    on QueryBuilder<ObjectEntity, ObjectEntity, QQueryProperty> {
+  QueryBuilder<ObjectEntity, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
   }
 
-  QueryBuilder<LineEntity, String?, QQueryOperations> colorProperty() {
+  QueryBuilder<ObjectEntity, String?, QQueryOperations> colorProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'color');
     });
   }
 
-  QueryBuilder<LineEntity, int, QQueryOperations> currentEditIndexProperty() {
+  QueryBuilder<ObjectEntity, int, QQueryOperations> currentEditIndexProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'currentEditIndex');
     });
   }
 
-  QueryBuilder<LineEntity, int, QQueryOperations> datetimeProperty() {
+  QueryBuilder<ObjectEntity, int, QQueryOperations> datetimeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'datetime');
     });
   }
 
-  QueryBuilder<LineEntity, bool, QQueryOperations> drawAsBackgroundProperty() {
+  QueryBuilder<ObjectEntity, int, QQueryOperations> datetime2Property() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'datetime2');
+    });
+  }
+
+  QueryBuilder<ObjectEntity, bool, QQueryOperations>
+      drawAsBackgroundProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'drawAsBackground');
     });
   }
 
-  QueryBuilder<LineEntity, double, QQueryOperations> dx1Property() {
+  QueryBuilder<ObjectEntity, double, QQueryOperations> dx1Property() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dx1');
     });
   }
 
-  QueryBuilder<LineEntity, double, QQueryOperations> dx2Property() {
+  QueryBuilder<ObjectEntity, double, QQueryOperations> dx2Property() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dx2');
     });
   }
 
-  QueryBuilder<LineEntity, double, QQueryOperations> dy1Property() {
+  QueryBuilder<ObjectEntity, double, QQueryOperations> dy1Property() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dy1');
     });
   }
 
-  QueryBuilder<LineEntity, double, QQueryOperations> dy2Property() {
+  QueryBuilder<ObjectEntity, double, QQueryOperations> dy2Property() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dy2');
     });
   }
 
-  QueryBuilder<LineEntity, double, QQueryOperations> heightProperty() {
+  QueryBuilder<ObjectEntity, CandleTimeFormat, QQueryOperations>
+      frameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'frame');
+    });
+  }
+
+  QueryBuilder<ObjectEntity, double, QQueryOperations> heightProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'height');
     });
   }
 
-  QueryBuilder<LineEntity, String, QQueryOperations> nameProperty() {
+  QueryBuilder<ObjectEntity, bool, QQueryOperations> isFillProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isFill');
+    });
+  }
+
+  QueryBuilder<ObjectEntity, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
     });
   }
 
-  QueryBuilder<LineEntity, LineStyle, QQueryOperations> styleProperty() {
+  QueryBuilder<ObjectEntity, ObjectStyle, QQueryOperations> styleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'style');
     });
   }
 
-  QueryBuilder<LineEntity, String, QQueryOperations> symbolProperty() {
+  QueryBuilder<ObjectEntity, String, QQueryOperations> symbolProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'symbol');
     });
   }
 
-  QueryBuilder<LineEntity, LineType, QQueryOperations> typeProperty() {
+  QueryBuilder<ObjectEntity, ObjectType, QQueryOperations> typeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'type');
     });
   }
 
-  QueryBuilder<LineEntity, double, QQueryOperations> valueProperty() {
+  QueryBuilder<ObjectEntity, double, QQueryOperations> valueProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'value');
+    });
+  }
+
+  QueryBuilder<ObjectEntity, double, QQueryOperations> value2Property() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'value2');
     });
   }
 }

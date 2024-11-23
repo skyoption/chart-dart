@@ -1,7 +1,7 @@
 import 'dart:async' show StreamSink;
 
 import 'package:candle_chart/utils/kprint.dart';
-import 'package:candle_chart/entity/line_entity.dart';
+import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
 import 'package:candle_chart/utils/number_util.dart';
 import 'package:flutter/material.dart';
@@ -108,7 +108,7 @@ mixin ChartCalc {
   double getYPositionValue(double dy) {
     final scope = this.chartPosition.topPrice - this.chartPosition.bottomPrice;
     double perPixel = scope / screenHeight;
-    final value = this.chartPosition.topPrice - dy * perPixel;
+    final value = this.chartPosition.topPrice - (dy * perPixel);
     return value;
   }
 

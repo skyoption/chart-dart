@@ -381,7 +381,7 @@ IndicatorEntity _indicatorEntityDeserialize(
     strokeWidth: reader.readDoubleOrNull(offsets[27]) ?? 1.0,
     style:
         _IndicatorEntitystyleValueEnumMap[reader.readByteOrNull(offsets[28])] ??
-            LineStyle.normal,
+            ObjectStyle.normal,
     tenkanSen: reader.readDoubleOrNull(offsets[29]),
     timeframe: _IndicatorEntitytimeframeValueEnumMap[
             reader.readByteOrNull(offsets[30])] ??
@@ -479,7 +479,7 @@ P _indicatorEntityDeserializeProp<P>(
     case 28:
       return (_IndicatorEntitystyleValueEnumMap[
               reader.readByteOrNull(offset)] ??
-          LineStyle.normal) as P;
+          ObjectStyle.normal) as P;
     case 29:
       return (reader.readDoubleOrNull(offset)) as P;
     case 30:
@@ -533,12 +533,10 @@ const _IndicatorEntitylevelValueEnumMap = {
 const _IndicatorEntitystyleEnumValueMap = {
   'dash': 0,
   'normal': 1,
-  'longDash': 2,
 };
 const _IndicatorEntitystyleValueEnumMap = {
-  0: LineStyle.dash,
-  1: LineStyle.normal,
-  2: LineStyle.longDash,
+  0: ObjectStyle.dash,
+  1: ObjectStyle.normal,
 };
 const _IndicatorEntitytimeframeEnumValueMap = {
   'All_Timeframes': 0,
@@ -2850,7 +2848,7 @@ extension IndicatorEntityQueryFilter
   }
 
   QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
-      styleEqualTo(LineStyle value) {
+      styleEqualTo(ObjectStyle value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'style',
@@ -2861,7 +2859,7 @@ extension IndicatorEntityQueryFilter
 
   QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
       styleGreaterThan(
-    LineStyle value, {
+    ObjectStyle value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -2875,7 +2873,7 @@ extension IndicatorEntityQueryFilter
 
   QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
       styleLessThan(
-    LineStyle value, {
+    ObjectStyle value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -2889,8 +2887,8 @@ extension IndicatorEntityQueryFilter
 
   QueryBuilder<IndicatorEntity, IndicatorEntity, QAfterFilterCondition>
       styleBetween(
-    LineStyle lower,
-    LineStyle upper, {
+    ObjectStyle lower,
+    ObjectStyle upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -4584,7 +4582,7 @@ extension IndicatorEntityQueryProperty
     });
   }
 
-  QueryBuilder<IndicatorEntity, LineStyle, QQueryOperations> styleProperty() {
+  QueryBuilder<IndicatorEntity, ObjectStyle, QQueryOperations> styleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'style');
     });
