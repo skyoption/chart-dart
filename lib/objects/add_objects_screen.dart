@@ -31,7 +31,7 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              vertical: 12.0,
+              vertical: 16.0,
               horizontal: 12.0,
             ),
             child: Stack(
@@ -67,7 +67,8 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding:
+              const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
               child: Text(
                 'Lines',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -103,7 +104,8 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
               },
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding:
+              const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
               child: Text(
                 'Shapes',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(

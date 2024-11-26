@@ -37,8 +37,8 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              vertical: 12.0,
-              horizontal: 12.0,
+              vertical: 16.0,
+              horizontal: 16.0,
             ),
             child: Stack(
               children: [
@@ -48,7 +48,7 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
                     onTap: () => Navigator.of(context).pop(),
                     child: Icon(
                       Icons.arrow_back_ios_new_rounded,
-                      size: 21.0,
+                      size: 26.0,
                       color: Colors.black,
                     ),
                   ),
@@ -92,7 +92,8 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding:
+              const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
               child: Text(
                 'Add Object',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -166,7 +167,8 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
             ).addPadding(horizontal: 21.0, vertical: 8.0),
             if (chartProperties.objects.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                 child: Text(
                   'Objects',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
