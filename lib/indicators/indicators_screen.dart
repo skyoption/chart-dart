@@ -131,8 +131,8 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                     children: [
                       Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
                       PropertiesItemWidget(
-                        title: name,
                         margin: EdgeInsets.zero,
+                        title: name,
                         onTap: () => _onTap(e.value, null),
                       ),
                     ],

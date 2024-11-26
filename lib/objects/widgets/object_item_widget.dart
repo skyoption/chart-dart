@@ -11,6 +11,7 @@ class ObjectItemWidget extends StatefulWidget {
   final Color? color;
   final bool hideArrow;
   final String? id;
+  final EdgeInsets? margin;
 
   const ObjectItemWidget({
     super.key,
@@ -21,6 +22,7 @@ class ObjectItemWidget extends StatefulWidget {
     this.subtitle,
     this.id,
     this.onDelete,
+    this.margin,
     required this.onTap,
     this.iconSize = 25.0,
     this.hideArrow = false,
@@ -92,36 +94,42 @@ class _ObjectItemWidgetState extends State<ObjectItemWidget> {
       ),
     );
     if (widget.id == null) {
-      return child.addPadding(bottom: 8.0);
+      return Padding(
+        padding: widget.margin ?? MPadding.set(bottom: 8.0),
+        child: child,
+      );
     }
-    return Dismissible(
-      key: Key(widget.id!),
-      onUpdate: (details) {
-        direction = details.direction;
-        setState(() {});
-      },
-      onDismissed: (value) {
-        if (widget.onDelete != null) widget.onDelete!();
-      },
-      background: Container(
-        color: Colors.red.withOpacity(0.1),
-        child: Padding(
-          padding: MPadding.set(horizontal: 21.0),
-          child: Row(
-            mainAxisAlignment: direction == DismissDirection.startToEnd
-                ? MainAxisAlignment.start
-                : MainAxisAlignment.end,
-            children: [
-              Icon(
-                Icons.delete_outline_outlined,
-                color: Colors.red,
-                size: 28.0,
-              ),
-            ],
+    return Padding(
+      padding: widget.margin ?? MPadding.set(bottom: 8.0),
+      child: Dismissible(
+        key: Key(widget.id!),
+        onUpdate: (details) {
+          direction = details.direction;
+          setState(() {});
+        },
+        onDismissed: (value) {
+          if (widget.onDelete != null) widget.onDelete!();
+        },
+        background: Container(
+          color: Colors.red.withOpacity(0.1),
+          child: Padding(
+            padding: MPadding.set(horizontal: 21.0),
+            child: Row(
+              mainAxisAlignment: direction == DismissDirection.startToEnd
+                  ? MainAxisAlignment.start
+                  : MainAxisAlignment.end,
+              children: [
+                Icon(
+                  Icons.delete_outline_outlined,
+                  color: Colors.red,
+                  size: 28.0,
+                ),
+              ],
+            ),
           ),
         ),
+        child: child,
       ),
-      child: child,
-    ).addPadding(bottom: 8.0);
+    );
   }
 }

@@ -93,7 +93,7 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
           children: [
             Padding(
               padding:
-              const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
               child: Text(
                 'Add Object',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -178,19 +178,25 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
               ),
             ...chartProperties.objects.asMap().entries.map((e) {
               final id = '${e.value.frame.name} ${e.value.name}';
-              return ObjectItemWidget(
-                iconSize: 30.0,
-                icon: _icon(e.value),
-                hideArrow: true,
-                id: id,
-                title: id,
-                subtitle: _name(e.value),
-                onTap: () {
-                  _onTap(e.value);
-                },
-                onDelete: () {
-                  _onDelete(e.value.type, e.value.id);
-                },
+              return Column(
+                children: [
+                  ObjectItemWidget(
+                    iconSize: 30.0,
+                    margin: EdgeInsets.zero,
+                    icon: _icon(e.value),
+                    hideArrow: true,
+                    id: id,
+                    title: id,
+                    subtitle: _name(e.value),
+                    onTap: () {
+                      _onTap(e.value);
+                    },
+                    onDelete: () {
+                      _onDelete(e.value.type, e.value.id);
+                    },
+                  ),
+                  Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+                ],
               );
             }),
           ],

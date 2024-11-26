@@ -68,7 +68,7 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
           children: [
             Padding(
               padding:
-              const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
               child: Text(
                 'Lines',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -80,24 +80,29 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
               iconSize: 35.0,
               icon: Svgs.horizontalLine,
               title: 'Horizontal Line',
+              margin: EdgeInsets.zero,
               onTap: () {
                 widget.onDone(ObjectType.Horizontal);
                 Navigator.of(context).pop();
               },
             ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             ObjectItemWidget(
               iconSize: 30.0,
               icon: Svgs.verticalLine,
               title: 'Vertical Line',
+              margin: EdgeInsets.zero,
               onTap: () {
                 widget.onDone(ObjectType.Vertical);
                 Navigator.of(context).pop();
               },
             ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             ObjectItemWidget(
               iconSize: 30.0,
               icon: Svgs.trendLine,
               title: 'Trend Line',
+              margin: EdgeInsets.zero,
               onTap: () {
                 widget.onDone(ObjectType.Trend);
                 Navigator.of(context).pop();
@@ -105,7 +110,7 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
             ),
             Padding(
               padding:
-              const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
               child: Text(
                 'Shapes',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
