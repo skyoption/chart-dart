@@ -51,9 +51,6 @@ class ChartPainter extends BaseChartPainter
         DrawRectangleLines,
         UpdatePointPosition,
         ChartCalc {
-  final bool isTrendLine; //For TrendLine
-  bool isrecordingCord = false; //For TrendLine
-  final double selectY; //For TrendLine
   static get maxScrollX => BaseChartPainter.maxScrollX;
   late BaseChartRenderer mMainRenderer;
   BaseChartRenderer? mVolRenderer;
@@ -84,17 +81,16 @@ class ChartPainter extends BaseChartPainter
   double mMainHighMaxValue = double.minPositive,
       mMainLowMinValue = double.maxFinite;
   final double scaleX;
-  double scaleY = 0;
+  final double scaleY;
 
   ChartPainter(
     this.chartStyle,
     this.chartColors, {
-    required this.screenHeight, //For TrendLine
-    required this.isTrendLine, //For TrendLine
-    required this.selectY, //For TrendLine
+    required this.screenHeight,
     required this.sink,
+    required this.scaleY,
     required this.scaleX,
-    required datas,
+    required data,
     required scrollX,
     required isLongPass,
     required selectX,
@@ -112,7 +108,7 @@ class ChartPainter extends BaseChartPainter
     this.fixedLength = 2,
   }) : super(
           chartStyle,
-          data: datas,
+          data: data,
           scaleX: scaleX,
           scrollX: scrollX,
           isLongPress: isLongPass,
@@ -178,10 +174,10 @@ class ChartPainter extends BaseChartPainter
       this.chartStyle,
       this.chartColors,
       this.scaleX,
+      this.scaleY,
       verticalTextAlignment,
       indicators,
     );
-
 
     if (mVolRect != null) {
       mVolRenderer = VolRenderer(
@@ -288,9 +284,9 @@ class ChartPainter extends BaseChartPainter
     canvas.scale(scaleX, 1.0);
 
     drawHorizontalLines(canvas, size, true);
-    drawVerticalLines(canvas, size,  true);
-    drawTrendLines(canvas, size, true);
-    drawRectangles(canvas, size, true);
+    drawVerticalLines(canvas, size, true, data ?? []);
+    drawTrendLines(canvas, size, true, data ?? []);
+    drawRectangles(canvas, size, true, data ?? []);
 
     for (int i = mStartIndex; data != null && i <= mStopIndex; i++) {
       KLineEntity? curPoint = data?[i];
@@ -309,7 +305,6 @@ class ChartPainter extends BaseChartPainter
         true,
         true,
       );
-
     }
 
     for (int i = mStartIndex; data != null && i <= mStopIndex; i++) {
@@ -325,22 +320,21 @@ class ChartPainter extends BaseChartPainter
       });
     }
 
-    if (this.chartStyle.isLongFocus &&
-        ((isLongPress == true || (isTapShowInfoDialog && longPressTriggered)) &&
-            isTrendLine == false)) {
-      drawCrossLine(canvas, size);
-    } else if (!this.chartStyle.isLongFocus &&
-        ((isLongPress == true || (isTapShowInfoDialog && isOnTap)) &&
-            isTrendLine == false)) {
-      drawCrossLine(canvas, size);
-    }
+    // if (this.chartStyle.isLongFocus &&
+    //     ((isLongPress == true || (isTapShowInfoDialog && longPressTriggered)) &&
+    //         isTrendLine == false)) {
+    //   drawCrossLine(canvas, size);
+    // } else if (!this.chartStyle.isLongFocus &&
+    //     ((isLongPress == true || (isTapShowInfoDialog && isOnTap)) &&
+    //         isTrendLine == false)) {
+    //   drawCrossLine(canvas, size);
+    // }
     // if (isTrendLine == true) drawTrendLines(canvas, size);
 
-
     drawHorizontalLines(canvas, size, false);
-    drawVerticalLines(canvas, size,  false);
-    drawTrendLines(canvas, size, false);
-    drawRectangles(canvas, size, false);
+    drawVerticalLines(canvas, size, false, data ?? []);
+    drawTrendLines(canvas, size, false, data ?? []);
+    drawRectangles(canvas, size, false, data ?? []);
 
     canvas.restore();
   }

@@ -1,8 +1,8 @@
 import 'dart:math';
 
+import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
-import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -15,35 +15,45 @@ mixin DrawTrendLines on ChartDetails {
   late Paint dot;
   late double scaleX;
 
-  ObjectEntity? setTrendLineOffset1(ObjectEntity item, Offset offset) {
+  ObjectEntity? setTrendLineOffset1(
+    ObjectEntity item,
+    Offset offset,
+    List<KLineEntity> data,
+  ) {
     final trendLines = chartProperties.trendLines;
     final i = trendLines.indexWhere((e) => e.id == item.id);
     if (i != -1) {
       trendLines[i].currentEditIndex = item.currentEditIndex;
       trendLines[i].dx1 = getX(mStartIndex) + (offset.dx / scaleX);
       trendLines[i].value = getYPositionValue(offset.dy);
+      trendLines[i].datetime = getXTime(trendLines[i].dx1, data);
       return trendLines[i];
     }
     return null;
   }
 
-  ObjectEntity? setTrendLineOffset2(ObjectEntity item, Offset offset) {
+  ObjectEntity? setTrendLineOffset2(
+    ObjectEntity item,
+    Offset offset,
+    List<KLineEntity> data,
+  ) {
     final trendLines = chartProperties.trendLines;
     final i = trendLines.indexWhere((e) => e.id == item.id);
     if (i != -1) {
       trendLines[i].currentEditIndex = item.currentEditIndex;
       trendLines[i].dx2 = getX(mStartIndex) + (offset.dx / scaleX);
       trendLines[i].value2 = getYPositionValue(offset.dy);
+      trendLines[i].datetime2 = getXTime(trendLines[i].dx2, data);
       return trendLines[i];
     }
     return null;
   }
 
-
   void drawTrendLines(
     Canvas canvas,
     Size size,
     bool isBackground,
+    List<KLineEntity> data,
   ) {
     final trendLines = chartProperties.trendLines;
     if (trendLines.isEmpty) {
@@ -54,8 +64,8 @@ mixin DrawTrendLines on ChartDetails {
       if (trendLines[i].drawAsBackground != isBackground) {
         continue;
       }
-      double x1 = trendLines[i].dx1;
-      double x2 = trendLines[i].dx2;
+      double x1 = getXFromTime(trendLines[i].datetime, data);
+      double x2 = getXFromTime(trendLines[i].datetime2, data);
       double y1 = getMainY(trendLines[i].value);
       double y2 = getMainY(trendLines[i].value2);
 

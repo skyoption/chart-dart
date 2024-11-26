@@ -13,6 +13,7 @@ mixin DrawVerticalLines on ChartDetails {
   late final ChartStyle chartStyle;
   late Paint dot;
   late double scaleX;
+  late int mGridColumns;
   double? fDisplayHeight;
 
   ObjectEntity? setVerticalLineOffset(
@@ -25,27 +26,24 @@ mixin DrawVerticalLines on ChartDetails {
     if (i != -1) {
       verticalLines[i].currentEditIndex = item.currentEditIndex;
       verticalLines[i].dx1 = getX(mStartIndex) + (offset.dx / scaleX);
-      // final index = calculateSelectedX(verticalLines[i].dx1);
-      // kPrint(mStartIndex);
-      // kPrint(index);
-      // final datetime = DateTime.fromMillisecondsSinceEpoch(data.first.time!)
-      //     .add(Duration(hours: index * 4));
-      // verticalLines[i].datetime = datetime.millisecondsSinceEpoch;
-      // kPrint(datetime.toIso8601String());
-      // final r = data.indexWhere((e) => e.time == verticalLines[i].datetime);
-      // verticalLines[i].dx1 = getX(r);
+      verticalLines[i].datetime = getXTime(verticalLines[i].dx1, data);
       return verticalLines[i];
     }
     return null;
   }
 
-  void drawVerticalLines(Canvas canvas, Size size, bool isBackground) {
+  void drawVerticalLines(
+    Canvas canvas,
+    Size size,
+    bool isBackground,
+    List<KLineEntity> data,
+  ) {
     final verticalLines = chartProperties.verticalLines;
     if (verticalLines.isEmpty) {
       return;
     }
     for (int i = 0; i < verticalLines.length; i++) {
-      double x = verticalLines[i].dx1;
+      double x = getXFromTime(verticalLines[i].datetime, data);
 
       final pricePaint = Paint()
         ..color = colorFromHex(verticalLines[i].color!)!
@@ -70,8 +68,8 @@ mixin DrawVerticalLines on ChartDetails {
           Offset(x, fDisplayHeight!),
           pricePaint,
         );
-
-      } if (verticalLines[i].currentEditIndex == i) {
+      }
+      if (verticalLines[i].currentEditIndex == i) {
         canvas.drawCircle(
           Offset(x, this.chartStyle.topPadding),
           2.5,

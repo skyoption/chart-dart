@@ -137,7 +137,7 @@ class _KChartWidgetState extends State<KChartWidget>
     with TickerProviderStateMixin {
   final StreamController<InfoWindowEntity?> mInfoWindowStream =
       StreamController<InfoWindowEntity?>.broadcast();
-  double mScaleX = 1.0, mScrollX = 0.0, mSelectX = 0.0;
+  double mScaleX = 1.0, mScaleY = 1.0, mScrollX = 0.0, mSelectX = 0.0;
   double mHeight = 0, mWidth = 0;
   AnimationController? _controller;
   Animation<double>? aniX;
@@ -158,7 +158,8 @@ class _KChartWidgetState extends State<KChartWidget>
 
   ObjectType? objectType;
   ObjectEntity? object;
-  double _lastScale = 1.0;
+  double _lastScaleX = 1.0;
+  double _lastScaleY = 0.01;
   bool isScale = false, isDrag = false, isLongPress = false, isOnTap = false;
 
   Random rand = Random();
@@ -258,11 +259,8 @@ class _KChartWidgetState extends State<KChartWidget>
       //For TrendLine
       sink: mInfoWindowStream.sink,
       xFrontPadding: widget.xFrontPadding,
-      isTrendLine: widget.isTrendLine,
-      //For TrendLine
-      selectY: mSelectY,
-      //For TrendLine
-      datas: widget.data,
+      scaleY: mScaleY,
+      data: widget.data,
       scaleX: mScaleX,
       scrollX: mScrollX,
       selectX: mSelectX,
@@ -423,7 +421,7 @@ class _KChartWidgetState extends State<KChartWidget>
     );
   }
 
-  void _objectSetOnUpdate( details) {
+  void _objectSetOnUpdate(details) {
     final nearObject = _painter!.findNearOffset(
       offset: details.localPosition,
     );
@@ -498,7 +496,11 @@ class _KChartWidgetState extends State<KChartWidget>
               dy2: details.localPosition.dy + 50,
             );
             chartProperties.addTrendLine(object!);
-            _painter!.setTrendLineOffset1(object!, details.localPosition);
+            _painter!.setTrendLineOffset1(
+              object!,
+              details.localPosition,
+              widget.data!,
+            );
             notifyChanged();
           } else if (objectType == ObjectType.Rectangle) {
             object = ObjectEntity(
@@ -510,7 +512,11 @@ class _KChartWidgetState extends State<KChartWidget>
               dy2: details.localPosition.dy + 50,
             );
             chartProperties.addRectangle(object!);
-            _painter!.setRectangleOffset1(object!, details.localPosition);
+            _painter!.setRectangleOffset1(
+              object!,
+              details.localPosition,
+              widget.data!,
+            );
             notifyChanged();
           }
         }
@@ -518,9 +524,17 @@ class _KChartWidgetState extends State<KChartWidget>
           if (object != null) {
             _tapPosition = details.localPosition;
             if (object!.type == ObjectType.Trend) {
-              _painter!.setTrendLineOffset2(object!, details.localPosition);
+              _painter!.setTrendLineOffset2(
+                object!,
+                details.localPosition,
+                widget.data!,
+              );
             } else if (object!.type == ObjectType.Rectangle) {
-              _painter!.setRectangleOffset2(object!, details.localPosition);
+              _painter!.setRectangleOffset2(
+                object!,
+                details.localPosition,
+                widget.data!,
+              );
             } else if (object!.type == ObjectType.Horizontal) {
               _painter!.setHorizontalLineOffset(object!, details.localPosition);
             } else if (object!.type == ObjectType.Vertical) {
@@ -539,10 +553,18 @@ class _KChartWidgetState extends State<KChartWidget>
             object!.dy2 = details.localPosition.dy;
             object!.currentEditIndex = -1;
             if (object!.type == ObjectType.Trend) {
-              _painter!.setTrendLineOffset2(object!, details.localPosition);
+              _painter!.setTrendLineOffset2(
+                object!,
+                details.localPosition,
+                widget.data!,
+              );
               chartProperties.updateTrendLine(object!);
             } else if (object!.type == ObjectType.Rectangle) {
-              _painter!.setRectangleOffset2(object!, details.localPosition);
+              _painter!.setRectangleOffset2(
+                object!,
+                details.localPosition,
+                widget.data!,
+              );
               chartProperties.updateRectangle(object!);
             } else if (object!.type == ObjectType.Horizontal) {
               _painter!.setHorizontalLineOffset(object!, details.localPosition);
@@ -574,15 +596,31 @@ class _KChartWidgetState extends State<KChartWidget>
             _tapPosition = details.localPosition;
             if (object!.type == ObjectType.Trend) {
               if (isSecondOffset) {
-                _painter!.setTrendLineOffset2(object!, details.localPosition);
+                _painter!.setTrendLineOffset2(
+                  object!,
+                  details.localPosition,
+                  widget.data!,
+                );
               } else {
-                _painter!.setTrendLineOffset1(object!, details.localPosition);
+                _painter!.setTrendLineOffset1(
+                  object!,
+                  details.localPosition,
+                  widget.data!,
+                );
               }
             } else if (object!.type == ObjectType.Rectangle) {
               if (isSecondOffset) {
-                _painter!.setRectangleOffset2(object!, details.localPosition);
+                _painter!.setRectangleOffset2(
+                  object!,
+                  details.localPosition,
+                  widget.data!,
+                );
               } else {
-                _painter!.setRectangleOffset1(object!, details.localPosition);
+                _painter!.setRectangleOffset1(
+                  object!,
+                  details.localPosition,
+                  widget.data!,
+                );
               }
             } else if (object!.type == ObjectType.Horizontal) {
               _painter!.setHorizontalLineOffset(object!, details.localPosition);
@@ -604,11 +642,13 @@ class _KChartWidgetState extends State<KChartWidget>
                 object = _painter!.setTrendLineOffset2(
                   object!,
                   details.localPosition,
+                  widget.data!,
                 );
               } else {
                 object = _painter!.setTrendLineOffset1(
                   object!,
                   details.localPosition,
+                  widget.data!,
                 );
               }
               chartProperties.updateTrendLine(object!);
@@ -617,11 +657,13 @@ class _KChartWidgetState extends State<KChartWidget>
                 object = _painter!.setRectangleOffset2(
                   object!,
                   details.localPosition,
+                  widget.data!,
                 );
               } else {
                 object = _painter!.setRectangleOffset1(
                   object!,
                   details.localPosition,
+                  widget.data!,
                 );
               }
               chartProperties.updateRectangle(object!);
@@ -663,13 +705,16 @@ class _KChartWidgetState extends State<KChartWidget>
             pointerCount = details.pointerCount;
             if (isDrag || isLongPress) return;
             if (isLongPress) return;
-            mScaleX = (_lastScale * details.scale).clamp(0.5, 2.2);
+
+            mScaleX = (_lastScaleX * details.scale).clamp(0.5, 2.0);
+            mScaleY = (_lastScaleY * details.scale).clamp(0.001, 1.0);
             notifyChanged();
           }
           ..onEnd = (details) {
             pointerCount = 1;
             isScale = false;
-            _lastScale = mScaleX;
+            _lastScaleX = mScaleX;
+            _lastScaleY = mScaleY;
           };
       },
     );

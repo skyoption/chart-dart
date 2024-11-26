@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/objects/bottom_sheets/datepicker.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/object_style_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_boolean_item_widget.dart';
@@ -33,18 +34,26 @@ class TrendLinePropertiesScreen extends StatefulWidget {
 
 class _TrendLinePropertiesScreenState extends State<TrendLinePropertiesScreen> {
   late final ObjectEntity object = widget.object ?? ObjectEntity();
-  late final point1 =
-      TextEditingController(text: object.value.toStringAsFixed(2));
-  late final point2 =
-      TextEditingController(text: object.value2.toStringAsFixed(2));
-  late final lastTime =
-      DateTime.fromMillisecondsSinceEpoch(widget.data.last.time!);
+  late final TextEditingController point1, point2;
+  late final DateTime firstTime, lastTime, current1, current2;
   final formats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn];
-  String date = '';
+  String date1 = '', date2 = '';
 
   @override
   void initState() {
-    date = dateFormat(lastTime, formats);
+    ///points
+    point1 = TextEditingController(text: object.value.toStringAsFixed(2));
+    point2 = TextEditingController(text: object.value2.toStringAsFixed(2));
+
+    ///datetime
+    lastTime = DateTime.fromMillisecondsSinceEpoch(widget.data.last.time!);
+    firstTime = DateTime.fromMillisecondsSinceEpoch(widget.data[0].time!);
+    current1 = DateTime.fromMillisecondsSinceEpoch(widget.object!.datetime);
+    current2 = DateTime.fromMillisecondsSinceEpoch(widget.object!.datetime2);
+
+    ///date
+    date1 = dateFormat(current1, formats);
+    date2 = dateFormat(current2, formats);
     super.initState();
   }
 
@@ -141,9 +150,9 @@ class _TrendLinePropertiesScreenState extends State<TrendLinePropertiesScreen> {
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: Colors.blueAccent,
-                      ),
+                    fontWeight: FontWeight.w400,
+                    color: Colors.blueAccent,
+                  ),
                   onChanged: (value) {
                     if (value.isNotEmpty) {
                       object.value = double.parse(value);
@@ -162,24 +171,26 @@ class _TrendLinePropertiesScreenState extends State<TrendLinePropertiesScreen> {
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
               title: 'Date',
-              onTap: () async {
-                final res = await showDatePicker(
-                  initialEntryMode: DatePickerEntryMode.calendarOnly,
+              onTap: () {
+                setDatePicker(
+                  maxDateTime: lastTime,
+                  minDateTime: firstTime,
+                  currentTime: current1,
                   context: context,
-                  firstDate: DateTime(1900),
-                  lastDate: lastTime,
+                  onChange: (value) {
+                    if (value != null) {
+                      date1 = dateFormat(value, formats);
+                      object.datetime = value.millisecondsSinceEpoch;
+                      setState(() {});
+                    }
+                  },
                 );
-                if (res != null) {
-                  date = dateFormat(res, formats);
-                  object.datetime = res.millisecondsSinceEpoch;
-                  setState(() {});
-                }
               },
               child: Text(
-                date,
+                date1,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w400,
-                    ),
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
             PropertiesItemWidget(
@@ -192,9 +203,9 @@ class _TrendLinePropertiesScreenState extends State<TrendLinePropertiesScreen> {
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: Colors.blueAccent,
-                      ),
+                    fontWeight: FontWeight.w400,
+                    color: Colors.blueAccent,
+                  ),
                   onChanged: (value) {
                     if (value.isNotEmpty) {
                       object.value2 = double.parse(value);
@@ -213,24 +224,26 @@ class _TrendLinePropertiesScreenState extends State<TrendLinePropertiesScreen> {
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
               title: 'Date',
-              onTap: () async {
-                final res = await showDatePicker(
-                  initialEntryMode: DatePickerEntryMode.calendarOnly,
+              onTap: () {
+                setDatePicker(
                   context: context,
-                  firstDate: DateTime(1900),
-                  lastDate: lastTime,
+                  maxDateTime: lastTime,
+                  minDateTime: firstTime,
+                  currentTime: current2,
+                  onChange: (value) {
+                    if (value != null) {
+                      date2 = dateFormat(value, formats);
+                      object.datetime2 = value.millisecondsSinceEpoch;
+                      setState(() {});
+                    }
+                  },
                 );
-                if (res != null) {
-                  date = dateFormat(res, formats);
-                  object.datetime = res.millisecondsSinceEpoch;
-                  setState(() {});
-                }
               },
               child: Text(
-                date,
+                date2,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w400,
-                    ),
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
             PropertiesTitleWidget(title: 'visualization'),

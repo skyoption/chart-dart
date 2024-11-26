@@ -78,22 +78,6 @@ abstract class BaseChartRenderer<T> {
     }
   }
 
-  // void main() {
-  //   double value1 = 0.0000000002010;
-  //   double value2 = 61210.543912929212;
-  //   double value3 = 0.000123456;
-  //   double value4 = 0.987654;
-  //
-  //   String formattedValue1 = formatValue(value1);
-  //   String formattedValue2 = formatValue(value2);
-  //   String formattedValue3 = formatValue(value3);
-  //   String formattedValue4 = formatValue(value4);
-  //
-  //   print('Formatted Value1: $formattedValue1');
-  //   print('Formatted Value2: $formattedValue2');
-  //   print('Formatted Value3: $formattedValue3');
-  //   print('Formatted Value4: $formattedValue4');
-  // }
 
   int getDecimalPlaces(double number) {
     String numberString = number.toString();

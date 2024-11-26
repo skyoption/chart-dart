@@ -190,6 +190,9 @@ mixin Objects {
     }
   }
 
+
+
+
   Future<void> _getVerticalLines() async {
     try {
       final res = await KChart.query.objectEntitys

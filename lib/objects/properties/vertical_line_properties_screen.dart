@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/objects/bottom_sheets/datepicker.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/object_style_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
@@ -31,18 +32,27 @@ class VerticalLinePropertiesScreen extends StatefulWidget {
 
 class _VerticalLinePropertiesScreenState
     extends State<VerticalLinePropertiesScreen> {
-
   late final ObjectEntity object = widget.object ?? ObjectEntity();
-  late final lastTime =
-      DateTime.fromMillisecondsSinceEpoch(widget.data.last.time!);
+  late final TextEditingController point;
+  late final DateTime firstTime, lastTime, currentTime;
   final formats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn];
   String date = '';
 
   @override
   void initState() {
-    date = dateFormat(lastTime, formats);
+    ///points
+    point = TextEditingController(text: object.value.toStringAsFixed(2));
+
+    ///datetime
+    lastTime = DateTime.fromMillisecondsSinceEpoch(widget.data.last.time!);
+    firstTime = DateTime.fromMillisecondsSinceEpoch(widget.data[0].time!);
+    currentTime = DateTime.fromMillisecondsSinceEpoch(widget.object!.datetime);
+
+    ///date
+    date = dateFormat(currentTime, formats);
     super.initState();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -114,17 +124,19 @@ class _VerticalLinePropertiesScreenState
             PropertiesItemWidget(
               title: 'Date',
               onTap: () async {
-                final res = await showDatePicker(
-                  initialEntryMode: DatePickerEntryMode.calendarOnly,
+                setDatePicker(
+                  maxDateTime: lastTime,
+                  minDateTime: firstTime,
+                  currentTime: currentTime,
                   context: context,
-                  firstDate: DateTime(1900),
-                  lastDate: lastTime,
+                  onChange: (value) {
+                    if (value != null) {
+                      date = dateFormat(value, formats);
+                      object.datetime = value.millisecondsSinceEpoch;
+                      setState(() {});
+                    }
+                  },
                 );
-                if (res != null) {
-                  date = dateFormat(res, formats);
-                  object.datetime = res.millisecondsSinceEpoch;
-                  setState(() {});
-                }
               },
               child: Text(
                 date,
@@ -149,7 +161,8 @@ class _VerticalLinePropertiesScreenState
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {},
             ),
-            ObjectStyleWidget(  style: object.style,
+            ObjectStyleWidget(
+              style: object.style,
               color: colorFromHex(object.color!),
               drawAsBackground: object.drawAsBackground,
               onChange: (color, drawAsBackground, lineHeight, style) {

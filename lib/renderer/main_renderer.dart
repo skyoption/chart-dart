@@ -20,7 +20,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   late double mCandleLineWidth;
   bool isLine;
 
-  //绘制的内容区域
   late Rect _contentRect;
   double _contentPadding = 5.0;
 
@@ -29,6 +28,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   final ChartColors chartColors;
   final double mLineStrokeWidth = 1.0;
   double scaleX;
+  double scaleY;
   late Paint mLinePaint;
   final VerticalTextAlignment verticalTextAlignment;
   final List<IndicatorEntity> indicators;
@@ -45,6 +45,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     this.chartStyle,
     this.chartColors,
     this.scaleX,
+    this.scaleY,
     this.verticalTextAlignment,
     this.indicators,
   ) : super(
@@ -86,6 +87,9 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       minValue /= 2;
     }
     scaleY = _contentRect.height / (maxValue - minValue);
+    // scaleY /= 2;
+    // maxValue *= scaleY;
+    // minValue /= scaleY;
   }
 
 
@@ -336,105 +340,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     // }
   }
 
-// void drawMaLine(CandleEntity lastPoint, CandleEntity curPoint, Canvas canvas,
-//     double lastX, double curX) {
-//   for (int i = 0; i < (curPoint.maValues?.length ?? 0); i++) {
-//     if (i == 3) {
-//       break;
-//     }
-//     if (lastPoint.maValues?[i] != 0) {
-//       drawLine(lastPoint.maValues?[i], curPoint.maValues?[i], canvas,
-//           lastX, curX, this.chartColors.getMAColor(i));
-//     }
-//   }
-// }
-
-//
-// List<InlineSpan> _createMATextSpan(CandleEntity data) {
-//   List<InlineSpan> result = [];
-//   for (int i = 0; i < (data.maValues?.length ?? 0); i++) {
-//     if (data.maValues?[i] != 0) {
-//       String value = '${format(data.maValues![i])}';
-//       //
-//       // var item = TextSpan(
-//       //     text: "MA${maDayList[i]}:$value    ",
-//       //     style: getTextStyle(this.chartColors.getMAColor(i)));
-//
-//       //科学计算 下标
-//       List<InlineSpan> children = [];
-//
-//       TextSpan span = TextSpan(
-//           text: "MA${maDayList[i]}:",
-//           style: getTextStyle(this.chartColors.getMAColor(i)));
-//       final spanS = formatValueSpan(
-//           (double.tryParse('${data.maValues![i]}') ?? 0.0),
-//           getTextStyle(this.chartColors.getMAColor(i)));
-//       children.add(span);
-//       children.add(spanS);
-//       TextSpan? item = TextSpan(children: children);
-//
-//       result.add(item);
-//       if (value.length > 13 && i > 0 && i % 1 == 0)
-//         result.add(TextSpan(text: '\n'));
-//     }
-//   }
-//   return result;
-// }
-
-// //EMA
-//   List<InlineSpan> _createEMATextSpan(CandleEntity data) {
-//     List<InlineSpan> result = [];
-//     for (int i = 0; i < (data.emaValues?.length ?? 0); i++) {
-//       if (data.emaValues?[i] != 0) {
-//         // String value = '${format(data.emaValues![i])}';
-//         String value = '${format(data.emaValues![i])}';
-//         // var item = TextSpan(
-//         //     text: "EMA${emaValues[i]}:$value    ",
-//         //     style: getTextStyle(this.chartColors.getEMAColor(i)));
-//
-//         //科学计算 下标
-//         List<InlineSpan> children = [];
-//
-//         TextSpan span = TextSpan(
-//             text: "EMA${emaValues[i]}:",
-//             style: getTextStyle(this.chartColors.getEMAColor(i)));
-//         final spanS = formatValueSpan(
-//             (double.tryParse('${data.emaValues![i]}') ?? 0.0),
-//             getTextStyle(this.chartColors.getEMAColor(i)));
-//         children.add(span);
-//         children.add(spanS);
-//         TextSpan? item = TextSpan(children: children);
-//
-//         if ((value.length > 13 && i > 0 && i % 2 == 0) ||
-//             (value.length <= 13 && i > 2)) result.add(TextSpan(text: '\n'));
-//         result.add(item);
-//         // if (i == 2) {
-//         //   result.add(TextSpan(text: '\n'));
-//         // }
-//       }
-//     }
-//     return result;
-//   }
-
-// // 添加EMA计算函数
-// //EMA
-// List<double> calculateEMA(List<double> prices, int period) {
-//   List<double> ema = [];
-//   double multiplier = 2 / (period + 1);
-//
-//   double sum = 0;
-//   for (int i = 0; i < period; i++) {
-//     sum += prices[i];
-//   }
-//   ema.add(sum / period);
-//
-//   for (int i = period; i < prices.length; i++) {
-//     double value = (prices[i] - ema.last) * multiplier + ema.last;
-//     ema.add(value);
-//   }
-//
-//   return ema;
-// }
 }
 
 class SubMainRenderer extends BaseChartRenderer<CandleEntity> {

@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
 import 'package:candle_chart/utils/kprint.dart';
@@ -15,25 +16,35 @@ mixin DrawRectangleLines on ChartDetails {
   late Paint dot;
   late double scaleX;
 
-  ObjectEntity? setRectangleOffset1(ObjectEntity item, Offset offset) {
+  ObjectEntity? setRectangleOffset1(
+    ObjectEntity item,
+    Offset offset,
+    List<KLineEntity> data,
+  ) {
     final rectangles = chartProperties.rectangles;
     final i = rectangles.indexWhere((e) => e.id == item.id);
     if (i != -1) {
       rectangles[i].currentEditIndex = item.currentEditIndex;
       rectangles[i].dx1 = getX(mStartIndex) + (offset.dx / scaleX);
       rectangles[i].value = getYPositionValue(offset.dy);
+      rectangles[i].datetime = getXTime(rectangles[i].dx1, data);
       return rectangles[i];
     }
     return null;
   }
 
-  ObjectEntity? setRectangleOffset2(ObjectEntity item, Offset offset) {
+  ObjectEntity? setRectangleOffset2(
+    ObjectEntity item,
+    Offset offset,
+    List<KLineEntity> data,
+  ) {
     final rectangles = chartProperties.rectangles;
     final i = rectangles.indexWhere((e) => e.id == item.id);
     if (i != -1) {
       rectangles[i].currentEditIndex = item.currentEditIndex;
       rectangles[i].dx2 = getX(mStartIndex) + (offset.dx / scaleX);
       rectangles[i].value2 = getYPositionValue(offset.dy);
+      rectangles[i].datetime2 = getXTime(rectangles[i].dx2, data);
       return rectangles[i];
     }
     return null;
@@ -43,6 +54,7 @@ mixin DrawRectangleLines on ChartDetails {
     Canvas canvas,
     Size size,
     bool isBackground,
+    List<KLineEntity> data,
   ) {
     final rectangles = chartProperties.rectangles;
     if (rectangles.isEmpty) {
@@ -51,11 +63,10 @@ mixin DrawRectangleLines on ChartDetails {
 
     for (int i = 0; i < rectangles.length; i++) {
       if (rectangles[i].drawAsBackground != isBackground) continue;
-      double x1 = rectangles[i].dx1;
-      double x2 = rectangles[i].dx2;
+      double x1 = getXFromTime(rectangles[i].datetime, data);
+      double x2 = getXFromTime(rectangles[i].datetime2, data);
       double y1 = getMainY(rectangles[i].value);
       double y2 = getMainY(rectangles[i].value2);
-
       final pricePaint = Paint()..strokeWidth = rectangles[i].height;
 
       if (rectangles[i].isFill) {
