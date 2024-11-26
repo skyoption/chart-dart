@@ -83,30 +83,40 @@ const ObjectEntitySchema = CollectionSchema(
       name: r'name',
       type: IsarType.string,
     ),
-    r'style': PropertySchema(
+    r'rayLift': PropertySchema(
       id: 13,
+      name: r'rayLift',
+      type: IsarType.bool,
+    ),
+    r'rayRight': PropertySchema(
+      id: 14,
+      name: r'rayRight',
+      type: IsarType.bool,
+    ),
+    r'style': PropertySchema(
+      id: 15,
       name: r'style',
       type: IsarType.byte,
       enumMap: _ObjectEntitystyleEnumValueMap,
     ),
     r'symbol': PropertySchema(
-      id: 14,
+      id: 16,
       name: r'symbol',
       type: IsarType.string,
     ),
     r'type': PropertySchema(
-      id: 15,
+      id: 17,
       name: r'type',
       type: IsarType.byte,
       enumMap: _ObjectEntitytypeEnumValueMap,
     ),
     r'value': PropertySchema(
-      id: 16,
+      id: 18,
       name: r'value',
       type: IsarType.double,
     ),
     r'value2': PropertySchema(
-      id: 17,
+      id: 19,
       name: r'value2',
       type: IsarType.double,
     )
@@ -161,11 +171,13 @@ void _objectEntitySerialize(
   writer.writeDouble(offsets[10], object.height);
   writer.writeBool(offsets[11], object.isFill);
   writer.writeString(offsets[12], object.name);
-  writer.writeByte(offsets[13], object.style.index);
-  writer.writeString(offsets[14], object.symbol);
-  writer.writeByte(offsets[15], object.type.index);
-  writer.writeDouble(offsets[16], object.value);
-  writer.writeDouble(offsets[17], object.value2);
+  writer.writeBool(offsets[13], object.rayLift);
+  writer.writeBool(offsets[14], object.rayRight);
+  writer.writeByte(offsets[15], object.style.index);
+  writer.writeString(offsets[16], object.symbol);
+  writer.writeByte(offsets[17], object.type.index);
+  writer.writeDouble(offsets[18], object.value);
+  writer.writeDouble(offsets[19], object.value2);
 }
 
 ObjectEntity _objectEntityDeserialize(
@@ -189,13 +201,15 @@ ObjectEntity _objectEntityDeserialize(
     height: reader.readDoubleOrNull(offsets[10]) ?? 0.8,
     isFill: reader.readBoolOrNull(offsets[11]) ?? false,
     name: reader.readStringOrNull(offsets[12]) ?? '',
-    style: _ObjectEntitystyleValueEnumMap[reader.readByteOrNull(offsets[13])] ??
+    rayLift: reader.readBoolOrNull(offsets[13]) ?? false,
+    rayRight: reader.readBoolOrNull(offsets[14]) ?? false,
+    style: _ObjectEntitystyleValueEnumMap[reader.readByteOrNull(offsets[15])] ??
         ObjectStyle.normal,
-    symbol: reader.readStringOrNull(offsets[14]) ?? '',
-    type: _ObjectEntitytypeValueEnumMap[reader.readByteOrNull(offsets[15])] ??
+    symbol: reader.readStringOrNull(offsets[16]) ?? '',
+    type: _ObjectEntitytypeValueEnumMap[reader.readByteOrNull(offsets[17])] ??
         ObjectType.Horizontal,
-    value: reader.readDoubleOrNull(offsets[16]) ?? 0,
-    value2: reader.readDoubleOrNull(offsets[17]) ?? 0,
+    value: reader.readDoubleOrNull(offsets[18]) ?? 0,
+    value2: reader.readDoubleOrNull(offsets[19]) ?? 0,
   );
   object.id = id;
   return object;
@@ -236,16 +250,20 @@ P _objectEntityDeserializeProp<P>(
     case 12:
       return (reader.readStringOrNull(offset) ?? '') as P;
     case 13:
+      return (reader.readBoolOrNull(offset) ?? false) as P;
+    case 14:
+      return (reader.readBoolOrNull(offset) ?? false) as P;
+    case 15:
       return (_ObjectEntitystyleValueEnumMap[reader.readByteOrNull(offset)] ??
           ObjectStyle.normal) as P;
-    case 14:
+    case 16:
       return (reader.readStringOrNull(offset) ?? '') as P;
-    case 15:
+    case 17:
       return (_ObjectEntitytypeValueEnumMap[reader.readByteOrNull(offset)] ??
           ObjectType.Horizontal) as P;
-    case 16:
+    case 18:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
-    case 17:
+    case 19:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1286,6 +1304,26 @@ extension ObjectEntityQueryFilter
     });
   }
 
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      rayLiftEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'rayLift',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      rayRightEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'rayRight',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> styleEqualTo(
       ObjectStyle value) {
     return QueryBuilder.apply(this, (query) {
@@ -1825,6 +1863,30 @@ extension ObjectEntityQuerySortBy
     });
   }
 
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByRayLift() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'rayLift', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByRayLiftDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'rayLift', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByRayRight() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'rayRight', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByRayRightDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'rayRight', Sort.desc);
+    });
+  }
+
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByStyle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'style', Sort.asc);
@@ -2060,6 +2122,30 @@ extension ObjectEntityQuerySortThenBy
     });
   }
 
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByRayLift() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'rayLift', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByRayLiftDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'rayLift', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByRayRight() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'rayRight', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByRayRightDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'rayRight', Sort.desc);
+    });
+  }
+
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByStyle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'style', Sort.asc);
@@ -2205,6 +2291,18 @@ extension ObjectEntityQueryWhereDistinct
     });
   }
 
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByRayLift() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'rayLift');
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByRayRight() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'rayRight');
+    });
+  }
+
   QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByStyle() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'style');
@@ -2322,6 +2420,18 @@ extension ObjectEntityQueryProperty
   QueryBuilder<ObjectEntity, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<ObjectEntity, bool, QQueryOperations> rayLiftProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'rayLift');
+    });
+  }
+
+  QueryBuilder<ObjectEntity, bool, QQueryOperations> rayRightProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'rayRight');
     });
   }
 

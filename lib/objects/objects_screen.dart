@@ -2,6 +2,8 @@ import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/objects/add_objects_screen.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
+import 'package:candle_chart/objects/properties/rectangle_line_properties_screen.dart';
+import 'package:candle_chart/objects/properties/trend_line_properties_screen.dart';
 import 'package:candle_chart/objects/properties/vertical_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/object_item_widget.dart';
 import 'package:candle_chart/objects/widgets/svg.dart';
@@ -239,6 +241,7 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
         MaterialPageRoute(
           builder: (context) => HorizontalLinePropertiesScreen(
             onDone: widget.onDone,
+            object: item,
           ),
         ),
       );
@@ -248,10 +251,30 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
           builder: (context) => VerticalLinePropertiesScreen(
             onDone: widget.onDone,
             data: widget.data,
+            object: item,
           ),
         ),
       );
     } else if (item.type == ObjectType.Rectangle) {
-    } else if (item.type == ObjectType.Trend) {}
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => RectangleLinePropertiesScreen(
+            onDone: widget.onDone,
+            data: widget.data,
+            object: item,
+          ),
+        ),
+      );
+    } else if (item.type == ObjectType.Trend) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => TrendLinePropertiesScreen(
+            onDone: widget.onDone,
+            data: widget.data,
+            object: item,
+          ),
+        ),
+      );
+    }
   }
 }

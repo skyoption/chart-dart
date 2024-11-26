@@ -1,6 +1,4 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/renderer/objects/draw_vertical_lines.dart';
-import 'package:candle_chart/renderer/objects/draw_vertical_lines.dart';
 import 'package:candle_chart/renderer/rects/render_rect.dart';
 import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +33,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   final VerticalTextAlignment verticalTextAlignment;
   final List<IndicatorEntity> indicators;
   late final SubMainRenderer subMainRenderer;
-  final Function(Canvas canvas, Size size, double lastX, double curX) drawLines;
 
   MainRenderer(
     Rect mainRect,
@@ -50,7 +47,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     this.scaleX,
     this.verticalTextAlignment,
     this.indicators,
-    this.drawLines,
   ) : super(
             chartRect: mainRect,
             maxValue: maxValue,
@@ -92,6 +88,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     scaleY = _contentRect.height / (maxValue - minValue);
   }
 
+
   @override
   void drawChart(
     CandleEntity lastPoint,
@@ -101,12 +98,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     Size size,
     Canvas canvas,
   ) {
-    drawLines(
-      canvas,
-      size,
-      lastX,
-      curX,
-    );
     if (isLine) {
       drawPolyline(
         lastPoint.close,

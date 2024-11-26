@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:candle_chart/entity/object_entity.dart';
@@ -38,28 +39,62 @@ mixin DrawRectangleLines on ChartDetails {
     return null;
   }
 
-  void drawRectangles(Canvas canvas, Size size, double lastX, double curX) {
+  void drawRectangles(
+    Canvas canvas,
+    Size size,
+    bool isBackground,
+  ) {
     final rectangles = chartProperties.rectangles;
     if (rectangles.isEmpty) {
       return;
     }
 
     for (int i = 0; i < rectangles.length; i++) {
+      if (rectangles[i].drawAsBackground != isBackground) continue;
       double x1 = rectangles[i].dx1;
       double x2 = rectangles[i].dx2;
       double y1 = getMainY(rectangles[i].value);
       double y2 = getMainY(rectangles[i].value2);
 
-      final pricePaint = Paint()
-        ..color = colorFromHex(rectangles[i].color!)!
-        ..strokeWidth = rectangles[i].height;
+      final pricePaint = Paint()..strokeWidth = rectangles[i].height;
 
-      if (rectangles[i].style == ObjectStyle.dash) {
+      if (rectangles[i].isFill) {
+        pricePaint.color = colorFromHex(rectangles[i].color!)!
+            .withOpacity(rectangles[i].drawAsBackground ? 1.0 : 0.8);
+        canvas.drawRect(
+          Rect.fromLTRB(x1, y1, x2, y2),
+          pricePaint,
+        );
       } else {
-        if (rectangles[i].isFill) {
-          canvas.drawRect(
-            Rect.fromLTRB(x1, y1, x2, y2),
+        pricePaint.color = colorFromHex(rectangles[i].color!)!;
+        if (rectangles[i].style == ObjectStyle.dash) {
+          dashLine(
+            canvas,
+            size,
             pricePaint,
+            Offset(x1, y1),
+            Offset(x2, y1),
+          );
+          dashVerticalLine(
+            canvas,
+            size,
+            pricePaint,
+            Offset(x2, y1),
+            Offset(x2, y2),
+          );
+          dashLine(
+            canvas,
+            size,
+            pricePaint,
+            Offset(x2, y2),
+            Offset(x1, y2),
+          );
+          dashVerticalLine(
+            canvas,
+            size,
+            pricePaint,
+            Offset(x1, y2),
+            Offset(x1, y1),
           );
         } else {
           canvas.drawPoints(
@@ -74,93 +109,77 @@ mixin DrawRectangleLines on ChartDetails {
             pricePaint,
           );
         }
-        if (rectangles[i].currentEditIndex == i) {
-          canvas.drawCircle(
-            Offset(x1, y1),
-            2.5,
-            dot,
-          );
-          canvas.drawCircle(
-            Offset(x2, y2),
-            2.5,
-            dot,
-          );
-        }
+      }
+      if (rectangles[i].currentEditIndex == i) {
+        canvas.drawCircle(
+          Offset(x1, y1),
+          2.5,
+          dot,
+        );
+        canvas.drawCircle(
+          Offset(x2, y2),
+          2.5,
+          dot,
+        );
       }
     }
   }
-}
 
-// void drawTrends(Canvas canvas, Size size) {
-//   var index = calculateSelectedX(selectX);
-//   Paint paintY = Paint()
-//     ..color = chartColors.trendLineColor
-//     ..strokeWidth = 1
-//     ..isAntiAlias = true;
-//   double x = getX(index);
-//   trendLineX = x;
-//
-//   double y = selectY;
-//
-//   drawDashedLine(canvas, Offset(x, mTopPadding),
-//       Offset(x, size.height - mBottomPadding), paintY);
-//
-//   Paint paintX = Paint()
-//     ..color = chartColors.trendLineColor
-//     ..strokeWidth = 1
-//     ..isAntiAlias = true;
-//
-//   drawDashedLine(canvas, Offset(-mTranslateX, y),
-//       Offset(-mTranslateX + mWidth / scaleX, y), paintX);
-//
-//   Paint paint = Paint()
-//     ..color = chartColors.trendLineColor
-//     ..strokeWidth = 1.0
-//     ..style = PaintingStyle.stroke
-//     ..strokeCap = StrokeCap.round;
-//
-//   if (scaleX >= 1) {
-//     canvas.drawOval(
-//       Rect.fromCenter(
-//           center: Offset(x, y), height: 15.0 * scaleX, width: 15.0),
-//       paint,
-//     );
-//   } else {
-//     canvas.drawOval(
-//       Rect.fromCenter(
-//           center: Offset(x, y), height: 10.0, width: 10.0 / scaleX),
-//       paint,
-//     );
-//   }
-//   // if (lines.isNotEmpty) {
-//   //   lines.forEach((element) {
-//   //     var y1 = -((element.p1.dy - 35) / element.scale) + element.maxHeight;
-//   //     var y2 = -((element.p2.dy - 35) / element.scale) + element.maxHeight;
-//   //     var a = (trendLineMax! - y1) * rectanglescale! + trendLineContentRec!;
-//   //     var b = (trendLineMax! - y2) * rectanglescale! + trendLineContentRec!;
-//   //     var p1 = Offset(element.p1.dx, a);
-//   //     var p2 = Offset(element.p2.dx, b);
-//   //     canvas.drawLine(
-//   //         p1,
-//   //         element.p2 == Offset(-1, -1) ? Offset(x, y) : p2,
-//   //         Paint()
-//   //           ..color = Colors.yellow
-//   //           ..strokeWidth = 2);
-//   //   });
-//   // }
-// }
-//
-// void drawDashedLine(Canvas canvas, Offset start, Offset end, Paint paint) {
-//   const double dashWidth = 3;
-//   const double dashSpace = 2;
-//   double distance = (end - start).distance;
-//   double dashCount = (distance / (dashWidth + dashSpace)).floorToDouble();
-//
-//   for (int i = 0; i < dashCount; ++i) {
-//     double startX = start.dx + (end.dx - start.dx) * (i / dashCount);
-//     double startY = start.dy + (end.dy - start.dy) * (i / dashCount);
-//     double endX = start.dx + (end.dx - start.dx) * ((i + 0.5) / dashCount);
-//     double endY = start.dy + (end.dy - start.dy) * ((i + 0.5) / dashCount);
-//     canvas.drawLine(Offset(startX, startY), Offset(endX, endY), paint);
-//   }
-// }
+  void dashLine(
+    Canvas canvas,
+    Size size,
+    Paint paint,
+    Offset offset1,
+    Offset offset2,
+  ) {
+    double dashWidth = 5.0;
+    double dashSpace = 4.0;
+    double dx = offset2.dx - offset1.dx;
+    double dy = offset2.dy - offset2.dy;
+    double distance = sqrt(dx * dx + dy * dy);
+    double dashCount = distance / (dashWidth + dashSpace);
+
+    double xStep = dx / dashCount;
+    double yStep = dy / dashCount;
+
+    double currentX = offset1.dx;
+    double currentY = offset1.dy;
+
+    for (int i = 0; i < dashCount; i++) {
+      final xEnd = currentX + xStep * (dashWidth / (dashWidth + dashSpace));
+      final yEnd = currentY + yStep * (dashWidth / (dashWidth + dashSpace));
+
+      canvas.drawLine(
+        Offset(currentX, currentY),
+        Offset(xEnd, yEnd),
+        paint,
+      );
+
+      currentX += xStep;
+      currentY += yStep;
+    }
+  }
+
+  void dashVerticalLine(
+    Canvas canvas,
+    Size size,
+    Paint paint,
+    Offset offset1,
+    Offset offset2,
+  ) {
+    Paint p = Paint();
+    p = paint;
+    p..strokeWidth = paint.strokeWidth * 1.05;
+    double startY = offset1.dy < offset2.dy ? offset1.dy : offset2.dy;
+    final max = offset1.dy > offset2.dy ? offset1.dy : offset2.dy;
+    double space = 4.0;
+    while (startY < max - 2) {
+      canvas.drawLine(
+        Offset(offset1.dx, startY),
+        Offset(offset2.dx, startY + space),
+        p,
+      );
+      startY += space * 2.0;
+    }
+  }
+}

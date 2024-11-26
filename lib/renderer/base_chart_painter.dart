@@ -159,7 +159,7 @@ abstract class BaseChartPainter extends CustomPainter
       drawText(canvas, data!.last, 5);
       drawMaxAndMin(canvas);
       drawNowPrice(canvas);
-      drawHorizontalLines(canvas, size);
+      drawHorizontalLinesTitles(canvas, size);
       if (this.chartStyle.isLongFocus &&
           (isLongPress == true ||
               (isTapShowInfoDialog && longPressTriggered))) {
@@ -200,7 +200,7 @@ abstract class BaseChartPainter extends CustomPainter
   void drawNowPrice(Canvas canvas);
 
   /// draw the line price
-  void drawHorizontalLines(Canvas canvas, Size size);
+  void drawHorizontalLines(Canvas canvas, Size size, bool isBackground);
 
   /// draw cross line
   void drawCrossLine(Canvas canvas, Size size);

@@ -9,6 +9,7 @@ import 'package:candle_chart/indicators/indicators_screen.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/renderer/base_dimension.dart';
 import 'package:candle_chart/utils/date_util.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:candle_chart/utils/icons.dart';
 import 'package:candle_chart/widgets/chart_loader.dart';
@@ -227,6 +228,7 @@ class _KChartWidgetState extends State<KChartWidget>
     if (objectType != null) {
       if (objectEditable) {
         gestures[PanGestureRecognizer] = panUpdateGestureRecognizer();
+        gestures[TapGestureRecognizer] = tapGestureRecognizer();
       } else {
         gestures[PanGestureRecognizer] = panFirstGestureRecognizer();
       }
@@ -399,7 +401,7 @@ class _KChartWidgetState extends State<KChartWidget>
                         margin: MPadding.set(horizontal: 6.0),
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: Theme.of(context).primaryColor,
+                            color: Colors.black,
                           ),
                         ),
                         child: RawMagnifier(
@@ -421,12 +423,13 @@ class _KChartWidgetState extends State<KChartWidget>
     );
   }
 
-  void _objectSetOnUpdate(LongPressDownDetails details) {
+  void _objectSetOnUpdate( details) {
     final nearObject = _painter!.findNearOffset(
-      offset: details.globalPosition,
+      offset: details.localPosition,
     );
     objectEditable = nearObject.object != null;
     if (objectEditable) {
+      _tapPosition = details.localPosition;
       object = nearObject.object;
       objectType = nearObject.object?.type;
       isSecondOffset = nearObject.isSecondPoint;
@@ -470,7 +473,11 @@ class _KChartWidgetState extends State<KChartWidget>
               dx2: details.localPosition.dx,
             );
             chartProperties.addVerticalLine(object!, widget.data!);
-            _painter!.setVerticalLineOffset(object!, details.localPosition);
+            _painter!.setVerticalLineOffset(
+              object!,
+              details.localPosition,
+              widget.data!,
+            );
             notifyChanged();
           } else if (objectType == ObjectType.Horizontal) {
             object = ObjectEntity(
@@ -517,7 +524,11 @@ class _KChartWidgetState extends State<KChartWidget>
             } else if (object!.type == ObjectType.Horizontal) {
               _painter!.setHorizontalLineOffset(object!, details.localPosition);
             } else if (object!.type == ObjectType.Vertical) {
-              _painter!.setVerticalLineOffset(object!, details.localPosition);
+              _painter!.setVerticalLineOffset(
+                object!,
+                details.localPosition,
+                widget.data!,
+              );
             }
           }
           notifyChanged();
@@ -537,7 +548,11 @@ class _KChartWidgetState extends State<KChartWidget>
               _painter!.setHorizontalLineOffset(object!, details.localPosition);
               chartProperties.updateHorizontalLine(object!);
             } else if (object!.type == ObjectType.Vertical) {
-              _painter!.setVerticalLineOffset(object!, details.localPosition);
+              _painter!.setVerticalLineOffset(
+                object!,
+                details.localPosition,
+                widget.data!,
+              );
               chartProperties.updateVerticalLine(object!);
             }
           }
@@ -572,7 +587,11 @@ class _KChartWidgetState extends State<KChartWidget>
             } else if (object!.type == ObjectType.Horizontal) {
               _painter!.setHorizontalLineOffset(object!, details.localPosition);
             } else if (object!.type == ObjectType.Vertical) {
-              _painter!.setVerticalLineOffset(object!, details.localPosition);
+              _painter!.setVerticalLineOffset(
+                object!,
+                details.localPosition,
+                widget.data!,
+              );
             }
             notifyChanged();
           }
@@ -616,6 +635,7 @@ class _KChartWidgetState extends State<KChartWidget>
               object = _painter!.setVerticalLineOffset(
                 object!,
                 details.localPosition,
+                widget.data!,
               );
               chartProperties.updateVerticalLine(object!);
             }
@@ -650,6 +670,27 @@ class _KChartWidgetState extends State<KChartWidget>
             pointerCount = 1;
             isScale = false;
             _lastScale = mScaleX;
+          };
+      },
+    );
+  }
+
+  GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>
+      tapGestureRecognizer() {
+    return GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+      () => TapGestureRecognizer(),
+      (TapGestureRecognizer instance) {
+        instance
+          ..onTap = () {
+            if (object != null) {
+              chartProperties.updateObject(object!..currentEditIndex = -1);
+            }
+            _tapPosition = null;
+            objectType = null;
+            object = null;
+            objectEditable = false;
+            isSecondOffset = false;
+            notifyChanged();
           };
       },
     );

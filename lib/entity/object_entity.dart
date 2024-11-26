@@ -17,7 +17,7 @@ enum ObjectType { Vertical, Horizontal, Trend, Rectangle }
 class ObjectEntity {
   Id id = Isar.autoIncrement;
   double value, value2;
-  String? color = Colors.black.toHexString();
+  String? color;
   @enumerated
   ObjectStyle style;
   @enumerated
@@ -31,6 +31,8 @@ class ObjectEntity {
   String symbol;
   bool drawAsBackground;
   bool isFill;
+  bool rayRight;
+  bool rayLift;
   int currentEditIndex;
 
   ObjectEntity({
@@ -52,7 +54,11 @@ class ObjectEntity {
     this.frame = CandleTimeFormat.H4,
     this.drawAsBackground = false,
     this.isFill = false,
+    this.rayRight = false,
+    this.rayLift = false,
   }) {
-    color = Colors.black.toHexString();
+    color ??= Colors.blue.toHexString();
   }
+
+
 }

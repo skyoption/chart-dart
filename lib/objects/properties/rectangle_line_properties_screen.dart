@@ -1,35 +1,53 @@
 import 'dart:math';
 
+import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/object_style_widget.dart';
+import 'package:candle_chart/objects/widgets/properties_boolean_item_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
+import 'package:candle_chart/utils/date_format_util.dart';
 import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
+import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-class HorizontalLinePropertiesScreen extends StatefulWidget {
-  static const id = 'HorizontalLinePropertiesScreen';
+class RectangleLinePropertiesScreen extends StatefulWidget {
+  static const id = 'RectangleLinePropertiesScreen';
   final Function(ObjectType? type) onDone;
   final ObjectEntity? object;
+  final List<KLineEntity> data;
 
-  const HorizontalLinePropertiesScreen({
+  const RectangleLinePropertiesScreen({
     super.key,
     required this.onDone,
+    this.data = const [],
     required this.object,
   });
 
   @override
-  State<HorizontalLinePropertiesScreen> createState() =>
-      _HorizontalLinePropertiesScreenState();
+  State<RectangleLinePropertiesScreen> createState() =>
+      _RectangleLinePropertiesScreenState();
 }
 
-class _HorizontalLinePropertiesScreenState
-    extends State<HorizontalLinePropertiesScreen> {
-  late final controller =
-      TextEditingController(text: object.value.toStringAsFixed(2));
-
+class _RectangleLinePropertiesScreenState
+    extends State<RectangleLinePropertiesScreen> {
   late final ObjectEntity object = widget.object ?? ObjectEntity();
+  late final point1 =
+      TextEditingController(text: object.value.toStringAsFixed(2));
+  late final point2 =
+      TextEditingController(text: object.value2.toStringAsFixed(2));
+  late final lastTime =
+      DateTime.fromMillisecondsSinceEpoch(widget.data.last.time!);
+  final formats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn];
+  String date = '';
+
+  @override
+  void initState() {
+    date = dateFormat(lastTime, formats);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +87,7 @@ class _HorizontalLinePropertiesScreenState
                   child: InkWell(
                     onTap: () async {
                       Navigator.of(context).pop();
-                      await chartProperties.updateHorizontalLine(object);
+                      await chartProperties.updateRectangle(object);
                       widget.onDone(null);
                     },
                     child: Text(
@@ -97,9 +115,18 @@ class _HorizontalLinePropertiesScreenState
               subTitle: object.name,
               margin: EdgeInsets.zero,
             ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesBooleanItemWidget(
+              value: object.isFill,
+              title: 'Fill',
+              onChange: (value) {
+                object.isFill = value;
+              },
+            ),
             PropertiesTitleWidget(title: 'Coordinates'),
             PropertiesItemWidget(
-              title: 'Point',
+              title: 'Point 1',
+              margin: MPadding.set(),
               child: SizedBox(
                 width: 60.0,
                 height: 20.0,
@@ -115,7 +142,7 @@ class _HorizontalLinePropertiesScreenState
                       object.value = double.parse(value);
                     }
                   },
-                  controller: controller,
+                  controller: point1,
                   textAlignVertical: TextAlignVertical.center,
                   keyboardType: TextInputType.numberWithOptions(signed: false),
                   decoration: InputDecoration(
@@ -123,6 +150,80 @@ class _HorizontalLinePropertiesScreenState
                     contentPadding: EdgeInsets.symmetric(vertical: 11.0),
                   ),
                 ),
+              ),
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
+              title: 'Date',
+              onTap: () async {
+                final res = await showDatePicker(
+                  initialEntryMode: DatePickerEntryMode.calendarOnly,
+                  context: context,
+                  firstDate: DateTime(1900),
+                  lastDate: lastTime,
+                );
+                if (res != null) {
+                  date = dateFormat(res, formats);
+                  object.datetime = res.millisecondsSinceEpoch;
+                  setState(() {});
+                }
+              },
+              child: Text(
+                date,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w400,
+                    ),
+              ),
+            ),
+            PropertiesItemWidget(
+              title: 'Point 2',
+              margin: MPadding.set(top: 6.0),
+              child: SizedBox(
+                width: 60.0,
+                height: 20.0,
+                child: TextField(
+                  cursorHeight: 12.0,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w400,
+                        color: Colors.blueAccent,
+                      ),
+                  onChanged: (value) {
+                    if (value.isNotEmpty) {
+                      object.value2 = double.parse(value);
+                    }
+                  },
+                  controller: point2,
+                  textAlignVertical: TextAlignVertical.center,
+                  keyboardType: TextInputType.numberWithOptions(signed: false),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(vertical: 11.0),
+                  ),
+                ),
+              ),
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
+              title: 'Date',
+              onTap: () async {
+                final res = await showDatePicker(
+                  initialEntryMode: DatePickerEntryMode.calendarOnly,
+                  context: context,
+                  firstDate: DateTime(1900),
+                  lastDate: lastTime,
+                );
+                if (res != null) {
+                  date = dateFormat(res, formats);
+                  object.datetime = res.millisecondsSinceEpoch;
+                  setState(() {});
+                }
+              },
+              child: Text(
+                date,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w400,
+                    ),
               ),
             ),
             PropertiesTitleWidget(title: 'visualization'),
@@ -160,29 +261,8 @@ class _HorizontalLinePropertiesScreenState
 
   @override
   void dispose() {
-    controller.dispose();
+    point1.dispose();
+    point2.dispose();
     super.dispose();
-  }
-}
-
-class PropertiesTitleWidget extends StatelessWidget {
-  final String title;
-
-  const PropertiesTitleWidget({
-    super.key,
-    required this.title,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 21.0),
-      child: Text(
-        title.toUpperCase(),
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w400,
-            ),
-      ),
-    );
   }
 }

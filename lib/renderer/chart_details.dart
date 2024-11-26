@@ -28,14 +28,21 @@ mixin ChartDetails on ChartCalc {
   late Rect mMainRect;
   late List<String> mFormats;
 
-  TextPainter getTextPainter(text, color, {addTextSpan, isLeft}) {
+  TextPainter getTextPainter(text, color,
+      {addTextSpan, isLeft, double? sizeText}) {
     if (color == null) {
       color = this.chartColors.defaultTextColor;
     }
 
     TextSpan? spanAll;
 
-    TextSpan span = TextSpan(text: "$text", style: getTextStyle(color));
+    TextSpan span = TextSpan(
+      text: "$text",
+      style: getTextStyle(
+        color,
+        sizeText: sizeText,
+      ),
+    );
     if (addTextSpan != null) {
       TextSpan spanS = addTextSpan();
       List<InlineSpan> children = [];
@@ -69,9 +76,9 @@ mixin ChartDetails on ChartCalc {
   }
 
   /// define text style
-  TextStyle getTextStyle(Color color) {
+  TextStyle getTextStyle(Color color, {double? sizeText}) {
     return TextStyle(
-      fontSize: chartStyle.sizeText,
+      fontSize: sizeText ?? chartStyle.sizeText,
       color: color,
     );
   }
@@ -175,6 +182,18 @@ mixin ChartCalc {
     }
     return mSelectedIndex;
   }
+
+  // int indexOfX(double x) {
+  //   double max = getX(mStopIndex);
+  //   double min = getX(mStartIndex);
+  //   if (mSelectedIndex < mStartIndex) {
+  //     mSelectedIndex = mStartIndex;
+  //   }
+  //   if (mSelectedIndex > mStopIndex) {
+  //     mSelectedIndex = mStopIndex;
+  //   }
+  //   return mSelectedIndex;
+  // }
 
   /// calculate the value of x after long pressing and convert to [index]
   int calculateReversedSelectedX(double selectX) {

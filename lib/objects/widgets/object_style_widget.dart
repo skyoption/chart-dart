@@ -130,7 +130,7 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                     flex: 8,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
-                      children: [1.0, 2.0, 3.0, 4.0].asMap().entries.map(
+                      children: [1.0, 1.5, 2.0, 2.5].asMap().entries.map(
                         (item) {
                           return Expanded(
                             child: Row(
@@ -196,7 +196,7 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                     child: Row(
                       children: [
                         Svgs.horizontalLine,
-                        Svgs.longDashLine,
+                        // Svgs.longDashLine,
                         Svgs.dashLine,
                       ].asMap().entries.map(
                         (item) {

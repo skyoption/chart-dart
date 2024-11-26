@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/renderer/base_chart_renderer.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 
 mixin UpdatePointPosition on ChartCalc {
@@ -11,6 +12,8 @@ mixin UpdatePointPosition on ChartCalc {
   late final BaseChartRenderer mMainRenderer;
   late final double screenHeight;
   late final Rect mMainRect;
+  late double scaleX;
+  late double scaleY;
 
   NearObject findNearOffset({required Offset offset}) {
     final nearObject = NearObject();
@@ -21,7 +24,7 @@ mixin UpdatePointPosition on ChartCalc {
     for (int i = 0; i < chartProperties.objects.length; i++) {
       var object = chartProperties.objects[i];
       if (object.type == ObjectType.Horizontal) {
-        final dy1 = offset.dy - 75.0 - (offset.dy < 150 ? 20 : 0);
+        final dy1 = offset.dy;
         final dy2 = getMainY(object.value);
         final disDy = dy2 - dy1;
         if (disDy.abs() <= 20) {
@@ -32,7 +35,7 @@ mixin UpdatePointPosition on ChartCalc {
         }
         horizontalCount++;
       } else if (object.type == ObjectType.Vertical) {
-        final dx1 = getX(mStartIndex) + offset.dx;
+        final dx1 = getX(mStartIndex) + (offset.dx / scaleX);
         final dx2 = object.dx1;
         final disDx = dx2 - dx1;
         if (disDx.abs() <= 20) {
@@ -44,8 +47,8 @@ mixin UpdatePointPosition on ChartCalc {
         verticalCount++;
       } else if (object.type == ObjectType.Rectangle ||
           object.type == ObjectType.Trend) {
-        final dx0 = getX(mStartIndex) + offset.dx;
-        final dy0 = offset.dy - 75.0 - (offset.dy < 150 ? 20 : 0);
+        final dx0 = getX(mStartIndex) + (offset.dx / scaleX);
+        final dy0 = offset.dy;
         final dy1 = getMainY(object.value);
         final dy2 = getMainY(object.value2);
         final dx1 = object.dx1;
@@ -56,7 +59,7 @@ mixin UpdatePointPosition on ChartCalc {
         final disDy1 = dy1 - dy0;
         final disDy2 = dy2 - dy0;
 
-        if (disDx1.abs() <= 20 && disDy1 <= 20) {
+        if (disDx1.abs() <= 20 && disDy1.abs() <= 20) {
           if (object.type == ObjectType.Rectangle) {
             object.currentEditIndex = rectangleCount;
           } else if (object.type == ObjectType.Trend) {
@@ -65,7 +68,7 @@ mixin UpdatePointPosition on ChartCalc {
           nearObject.object = object;
           nearObject.isSecondPoint = false;
           return nearObject;
-        } else if (disDx2.abs() <= 20 && disDy2 <= 20) {
+        } else if (disDx2.abs() <= 20 && disDy2.abs() <= 20) {
           if (object.type == ObjectType.Rectangle) {
             object.currentEditIndex = rectangleCount;
           } else if (object.type == ObjectType.Trend) {

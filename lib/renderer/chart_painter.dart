@@ -84,6 +84,7 @@ class ChartPainter extends BaseChartPainter
   double mMainHighMaxValue = double.minPositive,
       mMainLowMinValue = double.maxFinite;
   final double scaleX;
+  double scaleY = 0;
 
   ChartPainter(
     this.chartStyle,
@@ -179,12 +180,8 @@ class ChartPainter extends BaseChartPainter
       this.scaleX,
       verticalTextAlignment,
       indicators,
-      (canvas, size, lastX, curX) {
-        drawVerticalLines(canvas, size, lastX, curX);
-        drawTrendLines(canvas, size, lastX, curX);
-        drawRectangles(canvas, size, lastX, curX);
-      },
     );
+
 
     if (mVolRect != null) {
       mVolRenderer = VolRenderer(
@@ -230,6 +227,7 @@ class ChartPainter extends BaseChartPainter
     //   mMainRenderer: mMainRenderer,
     //   mMainRect: mMainRect,
     // );
+    scaleY = mMainRenderer.scaleY;
   }
 
   @override
@@ -289,12 +287,18 @@ class ChartPainter extends BaseChartPainter
     canvas.translate(mTranslateX * scaleX + this.chartStyle.leftPadding, 0.0);
     canvas.scale(scaleX, 1.0);
 
+    drawHorizontalLines(canvas, size, true);
+    drawVerticalLines(canvas, size,  true);
+    drawTrendLines(canvas, size, true);
+    drawRectangles(canvas, size, true);
+
     for (int i = mStartIndex; data != null && i <= mStopIndex; i++) {
       KLineEntity? curPoint = data?[i];
       if (curPoint == null) continue;
       KLineEntity lastPoint = i == 0 ? curPoint : data![i - 1];
       double curX = getX(i);
       double lastX = i == 0 ? curX : getX(i - 1);
+
       mMainRenderer.drawIndicators(
         lastPoint,
         curPoint,
@@ -305,6 +309,7 @@ class ChartPainter extends BaseChartPainter
         true,
         true,
       );
+
     }
 
     for (int i = mStartIndex; data != null && i <= mStopIndex; i++) {
@@ -330,6 +335,12 @@ class ChartPainter extends BaseChartPainter
       drawCrossLine(canvas, size);
     }
     // if (isTrendLine == true) drawTrendLines(canvas, size);
+
+
+    drawHorizontalLines(canvas, size, false);
+    drawVerticalLines(canvas, size,  false);
+    drawTrendLines(canvas, size, false);
+    drawRectangles(canvas, size, false);
 
     canvas.restore();
   }

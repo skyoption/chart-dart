@@ -30,12 +30,13 @@ mixin DrawHorizontalLines on ChartDetails {
     return null;
   }
 
-  void drawHorizontalLines(Canvas canvas, Size size) {
+  void drawHorizontalLines(Canvas canvas, Size size, bool isBackground) {
     final horizontalLines = chartProperties.horizontalLines;
     if (horizontalLines.isEmpty) {
       return;
     }
     for (int i = 0; i < horizontalLines.length; i++) {
+      if (horizontalLines[i].drawAsBackground != isBackground) continue;
       double value = horizontalLines[i].value;
 
       if (value <= this.chartPosition.topPrice &&
@@ -47,7 +48,7 @@ mixin DrawHorizontalLines on ChartDetails {
           ..strokeWidth = horizontalLines[i].height;
 
         double startX = 0;
-        final max = -mTranslateX + mWidth / scaleX;
+        final max = -mTranslateX + (mWidth + 20) / scaleX;
         double space =
             this.chartStyle.priceLineSpan + this.chartStyle.priceLineLength;
         if (horizontalLines[i].style == ObjectStyle.dash) {
@@ -61,34 +62,56 @@ mixin DrawHorizontalLines on ChartDetails {
         } else {
           canvas.drawLine(Offset(startX, y), Offset(max, y), pricePaint);
         }
-
-        if (horizontalLines[i].currentEditIndex == i) {
-          canvas.drawCircle(
-            Offset(startX, y),
-            2.5,
-            dot,
-          );
-          canvas.drawCircle(
-            Offset(max, y),
-            2.5,
-            dot,
-          );
-        }
-
-        TextPainter tp = getTextPainter(
-          value.toStringAsFixed(fixedLength),
-          this.chartColors.priceTextColor,
-        );
-
-        double offsetX = mWidth - tp.width + this.chartStyle.priceWidth + 4;
-
-        double top = y - tp.height / 2;
-        canvas.drawRect(
-            Rect.fromLTRB(
-                offsetX - 12, top - 2, offsetX + tp.width, top + tp.height + 3),
-            pricePaint);
-        tp.paint(canvas, Offset(offsetX - 6, top + 2));
       }
+    }
+  }
+
+  void drawHorizontalLinesTitles(Canvas canvas, Size size) {
+    final horizontalLines = chartProperties.horizontalLines;
+    if (horizontalLines.isEmpty) {
+      return;
+    }
+    for (int i = 0; i < horizontalLines.length; i++) {
+      double value = horizontalLines[i].value;
+      double y = getMainY(value);
+      final pricePaint = Paint()
+        ..color = colorFromHex(horizontalLines[i].color!)!
+        ..strokeWidth = horizontalLines[i].height;
+
+      double startX = 0;
+      final max = -mTranslateX + (mWidth + 20) / scaleX;
+
+      if (horizontalLines[i].currentEditIndex == i) {
+        canvas.drawCircle(
+          Offset(startX, y),
+          2.5,
+          dot,
+        );
+        canvas.drawCircle(
+          Offset(max, y),
+          2.5,
+          dot,
+        );
+      }
+
+      TextPainter tp = getTextPainter(
+        value.toStringAsFixed(fixedLength),
+        this.chartColors.priceTextColor,
+      );
+
+      double offsetX = mWidth - tp.width + this.chartStyle.priceWidth + 4;
+
+      double top = y - tp.height / 2;
+      canvas.drawRect(
+        Rect.fromLTRB(
+          offsetX - 12,
+          top - 2,
+          offsetX + tp.width,
+          top + tp.height + 3,
+        ),
+        pricePaint,
+      );
+      tp.paint(canvas, Offset(offsetX - 6, top + 2));
     }
   }
 }

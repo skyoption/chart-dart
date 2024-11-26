@@ -13,13 +13,15 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class VerticalLinePropertiesScreen extends StatefulWidget {
   static const id = 'VerticalLinePropertiesScreen';
-  final Function onDone;
+  final Function(ObjectType? type) onDone;
+  final ObjectEntity? object;
   final List<KLineEntity> data;
 
   const VerticalLinePropertiesScreen({
     super.key,
     required this.onDone,
     this.data = const [],
+    required this.object,
   });
 
   @override
@@ -29,8 +31,8 @@ class VerticalLinePropertiesScreen extends StatefulWidget {
 
 class _VerticalLinePropertiesScreenState
     extends State<VerticalLinePropertiesScreen> {
-  final rand = Random();
-  final ObjectEntity line = ObjectEntity();
+
+  late final ObjectEntity object = widget.object ?? ObjectEntity();
   late final lastTime =
       DateTime.fromMillisecondsSinceEpoch(widget.data.last.time!);
   final formats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn];
@@ -38,9 +40,7 @@ class _VerticalLinePropertiesScreenState
 
   @override
   void initState() {
-    line.name = 'Vertical Line ${rand.nextInt(10000)}';
     date = dateFormat(lastTime, formats);
-    line.datetime = widget.data.last.time!;
     super.initState();
   }
 
@@ -80,10 +80,10 @@ class _VerticalLinePropertiesScreenState
                 Align(
                   alignment: AlignmentDirectional.centerEnd,
                   child: InkWell(
-                    onTap: () {
-                      widget.onDone();
+                    onTap: () async {
                       Navigator.of(context).pop();
-                      chartProperties.addVerticalLine(line, widget.data);
+                      await chartProperties.updateVerticalLine(object);
+                      widget.onDone(null);
                     },
                     child: Text(
                       'Done',
@@ -107,7 +107,7 @@ class _VerticalLinePropertiesScreenState
             PropertiesTitleWidget(title: 'Parameters'),
             PropertiesItemWidget(
               title: 'Name',
-              subTitle: line.name,
+              subTitle: object.name,
               margin: EdgeInsets.zero,
             ),
             PropertiesTitleWidget(title: 'Coordinates'),
@@ -122,7 +122,7 @@ class _VerticalLinePropertiesScreenState
                 );
                 if (res != null) {
                   date = dateFormat(res, formats);
-                  line.datetime = res.millisecondsSinceEpoch;
+                  object.datetime = res.millisecondsSinceEpoch;
                   setState(() {});
                 }
               },
@@ -136,7 +136,7 @@ class _VerticalLinePropertiesScreenState
             PropertiesTitleWidget(title: 'visualization'),
             PropertiesItemWidget(
               title: 'Symbol',
-              subTitle: line.symbol,
+              subTitle: object.symbol.toUpperCase(),
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {},
@@ -144,17 +144,19 @@ class _VerticalLinePropertiesScreenState
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
               title: 'Timeframe',
-              subTitle: 'All timeframes',
+              subTitle: object.frame.name,
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {},
             ),
-            ObjectStyleWidget(
+            ObjectStyleWidget(  style: object.style,
+              color: colorFromHex(object.color!),
+              drawAsBackground: object.drawAsBackground,
               onChange: (color, drawAsBackground, lineHeight, style) {
-                line.color = color.toHexString();
-                line.drawAsBackground = drawAsBackground;
-                line.height = lineHeight;
-                line.style = style;
+                object.color = color.toHexString();
+                object.drawAsBackground = drawAsBackground;
+                object.height = lineHeight;
+                object.style = style;
               },
             ),
           ],

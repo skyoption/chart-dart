@@ -23,6 +23,17 @@ mixin Objects {
     await _getRectanglesLines();
   }
 
+  ObjectEntity setCopy(ObjectEntity item) {
+    if (objects.isEmpty) return item;
+    final lastItem = objects.last;
+    item.style = lastItem.style;
+    item.color = lastItem.color;
+    item.height = lastItem.height;
+    item.isFill = lastItem.isFill;
+    item.drawAsBackground = lastItem.drawAsBackground;
+    return item;
+  }
+
   void addVerticalLine(
     ObjectEntity value,
     List<KLineEntity> data,
@@ -31,6 +42,7 @@ mixin Objects {
     value.frame = frame;
     value.type = ObjectType.Vertical;
     value.currentEditIndex = verticalLines.length;
+    value = setCopy(value);
     verticalLines.add(value);
     KChart.write(query: (db) async {
       await db.objectEntitys.put(value);
@@ -43,6 +55,7 @@ mixin Objects {
     value.type = ObjectType.Trend;
     value.frame = frame;
     value.currentEditIndex = trendLines.length;
+    value = setCopy(value);
     trendLines.add(value);
     KChart.write(query: (db) async {
       await db.objectEntitys.put(value);
@@ -55,6 +68,7 @@ mixin Objects {
     value.type = ObjectType.Horizontal;
     value.frame = frame;
     value.currentEditIndex = horizontalLines.length;
+    value = setCopy(value);
     horizontalLines.add(value);
     KChart.write(query: (db) async {
       await db.objectEntitys.put(value);
@@ -67,6 +81,7 @@ mixin Objects {
     value.type = ObjectType.Rectangle;
     value.frame = frame;
     value.currentEditIndex = rectangles.length;
+    value = setCopy(value);
     rectangles.add(value);
     KChart.write(query: (db) async {
       await db.objectEntitys.put(value);
@@ -146,6 +161,28 @@ mixin Objects {
     final index = rectangles.indexWhere((e) => e.id == value.id);
     if (index != -1) {
       rectangles[index] = value;
+      await KChart.write(query: (db) async {
+        await db.objectEntitys.put(value);
+        _getObjects();
+      });
+    }
+  }
+
+  Future<void> updateObject(ObjectEntity value) async {
+    int index = trendLines.indexWhere((e) => e.id == value.id);
+    if (index != -1) {
+      trendLines[index] = value;
+    } else if (index == -1) {
+      index = horizontalLines.indexWhere((e) => e.id == value.id);
+      if (index != -1) horizontalLines[index] = value;
+    } else if (index == -1) {
+      index = verticalLines.indexWhere((e) => e.id == value.id);
+      if (index != -1) verticalLines[index] = value;
+    } else if (index == -1) {
+      index = rectangles.indexWhere((e) => e.id == value.id);
+      if (index != -1) rectangles[index] = value;
+    }
+    if (index != -1) {
       await KChart.write(query: (db) async {
         await db.objectEntitys.put(value);
         _getObjects();
