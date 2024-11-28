@@ -15,6 +15,7 @@ mixin DrawRectangleLines on ChartDetails {
   late final ChartStyle chartStyle;
   late Paint dot;
   late double scaleX;
+  late double mMainHighMaxValue, mMainLowMinValue;
 
   ObjectEntity? setRectangleOffset1(
     ObjectEntity item,
@@ -26,8 +27,18 @@ mixin DrawRectangleLines on ChartDetails {
     if (i != -1) {
       rectangles[i].currentEditIndex = item.currentEditIndex;
       rectangles[i].dx1 = getX(mStartIndex) + (offset.dx / scaleX);
-      rectangles[i].value = getYPositionValue(offset.dy);
       rectangles[i].datetime = getXTime(rectangles[i].dx1, data);
+      final value = getYPositionValue(offset.dy);
+      if (mMainLowMinValue >= value) {
+        rectangles[i].value = mMainLowMinValue;
+        rectangles[i].dy1 = getMainY(mMainLowMinValue);
+      } else if (mMainHighMaxValue <= value) {
+        rectangles[i].value = mMainHighMaxValue;
+        rectangles[i].dy1 = getMainY(mMainLowMinValue);
+      } else {
+        rectangles[i].dy1 = getMainY(rectangles[i].value);
+        rectangles[i].value = value;
+      }
       return rectangles[i];
     }
     return null;
@@ -43,8 +54,18 @@ mixin DrawRectangleLines on ChartDetails {
     if (i != -1) {
       rectangles[i].currentEditIndex = item.currentEditIndex;
       rectangles[i].dx2 = getX(mStartIndex) + (offset.dx / scaleX);
-      rectangles[i].value2 = getYPositionValue(offset.dy);
       rectangles[i].datetime2 = getXTime(rectangles[i].dx2, data);
+      final value = getYPositionValue(offset.dy);
+      if (mMainLowMinValue >= value) {
+        rectangles[i].value2 = mMainLowMinValue;
+        rectangles[i].dy2 = getMainY(mMainLowMinValue);
+      } else if (mMainHighMaxValue <= value) {
+        rectangles[i].value2 = mMainHighMaxValue;
+        rectangles[i].dy2 = getMainY(mMainLowMinValue);
+      } else {
+        rectangles[i].dy2 = getMainY(rectangles[i].value2);
+        rectangles[i].value2 = value;
+      }
       return rectangles[i];
     }
     return null;
@@ -62,11 +83,26 @@ mixin DrawRectangleLines on ChartDetails {
     }
 
     for (int i = 0; i < rectangles.length; i++) {
-      if (rectangles[i].drawAsBackground != isBackground) continue;
+      if (rectangles[i].drawAsBackground != isBackground ||
+          (mMainLowMinValue >= rectangles[i].value &&
+              mMainLowMinValue >= rectangles[i].value2)) continue;
       double x1 = getXFromTime(rectangles[i].datetime, data);
       double x2 = getXFromTime(rectangles[i].datetime2, data);
       double y1 = getMainY(rectangles[i].value);
       double y2 = getMainY(rectangles[i].value2);
+
+      if (mMainLowMinValue >= rectangles[i].value) {
+        y1 = getMainY(mMainLowMinValue);
+      } else if (mMainHighMaxValue <= rectangles[i].value) {
+        y1 = getMainY(mMainHighMaxValue);
+      }
+
+      if (mMainLowMinValue >= rectangles[i].value2) {
+        y2 = getMainY(mMainLowMinValue);
+      } else if (mMainHighMaxValue <= rectangles[i].value2) {
+        y2 = getMainY(mMainHighMaxValue);
+      }
+
       final pricePaint = Paint()..strokeWidth = rectangles[i].height;
 
       if (rectangles[i].isFill) {

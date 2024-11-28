@@ -14,6 +14,7 @@ mixin DrawTrendLines on ChartDetails {
   late final ChartStyle chartStyle;
   late Paint dot;
   late double scaleX;
+  late double mMainHighMaxValue, mMainLowMinValue;
 
   ObjectEntity? setTrendLineOffset1(
     ObjectEntity item,
@@ -25,8 +26,18 @@ mixin DrawTrendLines on ChartDetails {
     if (i != -1) {
       trendLines[i].currentEditIndex = item.currentEditIndex;
       trendLines[i].dx1 = getX(mStartIndex) + (offset.dx / scaleX);
-      trendLines[i].value = getYPositionValue(offset.dy);
       trendLines[i].datetime = getXTime(trendLines[i].dx1, data);
+      final value = getYPositionValue(offset.dy);
+      if (mMainLowMinValue >= value) {
+        trendLines[i].value = mMainLowMinValue;
+        trendLines[i].dy1 = getMainY(mMainLowMinValue);
+      } else if (mMainHighMaxValue <= value) {
+        trendLines[i].value = mMainHighMaxValue;
+        trendLines[i].dy1 = getMainY(mMainLowMinValue);
+      } else {
+        trendLines[i].dy1 = getMainY(trendLines[i].value);
+        trendLines[i].value = value;
+      }
       return trendLines[i];
     }
     return null;
@@ -44,6 +55,17 @@ mixin DrawTrendLines on ChartDetails {
       trendLines[i].dx2 = getX(mStartIndex) + (offset.dx / scaleX);
       trendLines[i].value2 = getYPositionValue(offset.dy);
       trendLines[i].datetime2 = getXTime(trendLines[i].dx2, data);
+      final value = getYPositionValue(offset.dy);
+      if (mMainLowMinValue >= value) {
+        trendLines[i].value2 = mMainLowMinValue;
+        trendLines[i].dy2 = getMainY(mMainLowMinValue);
+      } else if (mMainHighMaxValue <= value) {
+        trendLines[i].value2 = mMainHighMaxValue;
+        trendLines[i].dy2 = getMainY(mMainLowMinValue);
+      } else {
+        trendLines[i].dy2 = getMainY(trendLines[i].value2);
+        trendLines[i].value2 = value;
+      }
       return trendLines[i];
     }
     return null;
@@ -64,10 +86,23 @@ mixin DrawTrendLines on ChartDetails {
       if (trendLines[i].drawAsBackground != isBackground) {
         continue;
       }
+
       double x1 = getXFromTime(trendLines[i].datetime, data);
       double x2 = getXFromTime(trendLines[i].datetime2, data);
       double y1 = getMainY(trendLines[i].value);
       double y2 = getMainY(trendLines[i].value2);
+
+      if (mMainLowMinValue >= trendLines[i].value) {
+        y1 = getMainY(mMainLowMinValue);
+      } else if (mMainHighMaxValue <= trendLines[i].value) {
+        y1 = getMainY(mMainHighMaxValue);
+      }
+
+      if (mMainLowMinValue >= trendLines[i].value2) {
+        y2 = getMainY(mMainLowMinValue);
+      } else if (mMainHighMaxValue <= trendLines[i].value2) {
+        y2 = getMainY(mMainHighMaxValue);
+      }
 
       final pricePaint = Paint()
         ..color = colorFromHex(trendLines[i].color!)!

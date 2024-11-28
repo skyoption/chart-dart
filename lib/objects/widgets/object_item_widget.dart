@@ -9,6 +9,7 @@ class ObjectItemWidget extends StatefulWidget {
   final double? iconSize;
   final Widget? child;
   final Color? color;
+  final Color? backgroundColor;
   final bool hideArrow;
   final String? id;
   final EdgeInsets? margin;
@@ -19,6 +20,7 @@ class ObjectItemWidget extends StatefulWidget {
     this.title,
     this.child,
     this.color,
+    this.backgroundColor,
     this.subtitle,
     this.id,
     this.onDelete,
@@ -40,7 +42,7 @@ class _ObjectItemWidgetState extends State<ObjectItemWidget> {
     final child = GestureDetector(
       onTap: () => widget.onTap(),
       child: Container(
-        color: Colors.grey.withOpacity(0.2),
+        color: widget.backgroundColor ?? Colors.grey.withOpacity(0.2),
         padding: EdgeInsetsDirectional.symmetric(
           vertical: 16.0,
           horizontal: 21.0,

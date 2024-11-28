@@ -189,10 +189,11 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
                     title: id,
                     subtitle: _name(e.value),
                     onTap: () {
-                      _onTap(e.value);
+                      onTap(context, e.value, widget.data, widget.onDone);
                     },
-                    onDelete: () {
-                      _onDelete(e.value.type, e.value.id);
+                    onDelete: () async {
+                      await onDelete(e.value.type, e.value.id, widget.onDone);
+                      setState(() {});
                     },
                   ),
                   Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
@@ -228,61 +229,69 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
     }
     return '';
   }
+}
 
-  void _onDelete(ObjectType type, int id) async {
-    if (type == ObjectType.Horizontal) {
-      await chartProperties.removeHorizontalLine(id);
-    } else if (type == ObjectType.Vertical) {
-      await chartProperties.removeVerticalLine(id);
-    } else if (type == ObjectType.Rectangle) {
-      await chartProperties.removeRectangle(id);
-    } else if (type == ObjectType.Trend) {
-      await chartProperties.removeTrendLine(id);
-    }
-    setState(() {});
-    widget.onDone(null);
+Future<void> onDelete(
+  ObjectType type,
+  int id,
+  Function(ObjectType? type) onDone,
+) async {
+  if (type == ObjectType.Horizontal) {
+    await chartProperties.removeHorizontalLine(id);
+  } else if (type == ObjectType.Vertical) {
+    await chartProperties.removeVerticalLine(id);
+  } else if (type == ObjectType.Rectangle) {
+    await chartProperties.removeRectangle(id);
+  } else if (type == ObjectType.Trend) {
+    await chartProperties.removeTrendLine(id);
   }
+  onDone(null);
+}
 
-  void _onTap(ObjectEntity item) {
-    if (item.type == ObjectType.Horizontal) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => HorizontalLinePropertiesScreen(
-            onDone: widget.onDone,
-            object: item,
-          ),
+void onTap(
+  BuildContext context,
+  ObjectEntity item,
+  List<KLineEntity> data,
+  Function(ObjectType? type) onDone,
+) {
+  if (item.type == ObjectType.Horizontal) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => HorizontalLinePropertiesScreen(
+          onDone: onDone,
+          object: item,
         ),
-      );
-    } else if (item.type == ObjectType.Vertical) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => VerticalLinePropertiesScreen(
-            onDone: widget.onDone,
-            data: widget.data,
-            object: item,
-          ),
+      ),
+    );
+  } else if (item.type == ObjectType.Vertical) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => VerticalLinePropertiesScreen(
+          onDone: onDone,
+          data: data,
+          object: item,
         ),
-      );
-    } else if (item.type == ObjectType.Rectangle) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => RectangleLinePropertiesScreen(
-            onDone: widget.onDone,
-            data: widget.data,
-            object: item,
-          ),
+      ),
+    );
+  } else if (item.type == ObjectType.Rectangle) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => RectangleLinePropertiesScreen(
+          onDone: onDone,
+          data: data,
+          object: item,
         ),
-      );
-    } else if (item.type == ObjectType.Trend) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => TrendLinePropertiesScreen(
-            onDone: widget.onDone,
-            data: widget.data,
-            object: item,
-          ),
+      ),
+    );
+  } else if (item.type == ObjectType.Trend) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => TrendLinePropertiesScreen(
+          onDone: onDone,
+          data: data,
+          object: item,
         ),
-      );
-    }
+      ),
+    );
   }
 }

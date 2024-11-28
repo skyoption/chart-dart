@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:candle_chart/chart_translations.dart';
 import 'package:candle_chart/entity/k_line_entity.dart';
+import 'package:candle_chart/objects/bottom_sheets/properties_bottom_sheet.dart';
 import 'package:candle_chart/objects/widgets/svg.dart';
 import 'package:candle_chart/objects/objects_screen.dart';
 import 'package:candle_chart/indicators/indicators_screen.dart';
@@ -150,6 +151,7 @@ class _KChartWidgetState extends State<KChartWidget>
   bool waitingForOtherPairOfCords = false;
   bool isSecondOffset = false;
   bool objectEditable = false;
+  bool bottomSheetShown = false;
   bool openTimeframe = false;
 
   double getMinScrollX() {
@@ -227,17 +229,17 @@ class _KChartWidgetState extends State<KChartWidget>
   Widget build(BuildContext context) {
     Map<Type, GestureRecognizerFactory<GestureRecognizer>> gestures = {};
     if (objectType != null) {
-      if (objectEditable) {
-        gestures[PanGestureRecognizer] = panUpdateGestureRecognizer();
-        gestures[TapGestureRecognizer] = tapGestureRecognizer();
-      } else {
-        gestures[PanGestureRecognizer] = panFirstGestureRecognizer();
+      if (!bottomSheetShown) {
+        if (objectEditable) {
+          gestures[PanGestureRecognizer] = panUpdateGestureRecognizer();
+          gestures[TapGestureRecognizer] = tapGestureRecognizer();
+        } else {
+          gestures[PanGestureRecognizer] = panFirstGestureRecognizer();
+        }
       }
     } else {
       gestures[LongPressGestureRecognizer] = longPressRecognizer();
-
       gestures[ScaleGestureRecognizer] = scaleGestureRecognizer();
-
       gestures[HorizontalDragGestureRecognizer] = horizontalRecognizer();
     }
 
@@ -245,11 +247,13 @@ class _KChartWidgetState extends State<KChartWidget>
       mScrollX = mSelectX = 0.0;
       mScaleX = 1.0;
     }
+
     final BaseDimension baseDimension = BaseDimension(
       height: mBaseHeight,
       volHidden: widget.volHidden,
       indicators: chartProperties.secondaries,
     );
+
     _painter = ChartPainter(
       widget.chartStyle,
       widget.chartColors,
@@ -275,6 +279,7 @@ class _KChartWidgetState extends State<KChartWidget>
       fixedLength: widget.fixedLength,
       verticalTextAlignment: widget.verticalTextAlignment,
     );
+
     return SafeArea(
       child: Column(
         children: [
@@ -369,49 +374,54 @@ class _KChartWidgetState extends State<KChartWidget>
               mWidth = constraints.maxWidth;
               return RawGestureDetector(
                 gestures: gestures,
-                child: Stack(
-                  children: <Widget>[
-                    CustomPaint(
-                      size: Size(
-                        double.infinity,
-                        baseDimension.mDisplayHeight,
+                child: GestureDetector(
+                  onDoubleTapDown: (details) {
+                    _objectSetOnBottomSheet(details);
+                  },
+                  child: Stack(
+                    children: <Widget>[
+                      CustomPaint(
+                        size: Size(
+                          double.infinity,
+                          baseDimension.mDisplayHeight,
+                        ),
+                        painter: _painter,
                       ),
-                      painter: _painter,
-                    ),
-                    if (openTimeframe)
-                      TimeFrameWidget(
-                        frame: chartProperties.frame,
-                        onSelectTimeFrame: (value) async {
-                          if (value != chartProperties.frame) {
-                            _loadCandles(frame: value);
-                          }
-                        },
-                      ),
-                    if (loading)
-                      Positioned(
-                        bottom: 0.0,
-                        right: 0.0,
-                        left: 0.0,
-                        child: ChartLoader(),
-                      ),
-                    if (_tapPosition != null)
-                      Container(
-                        margin: MPadding.set(horizontal: 6.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black,
+                      if (openTimeframe)
+                        TimeFrameWidget(
+                          frame: chartProperties.frame,
+                          onSelectTimeFrame: (value) async {
+                            if (value != chartProperties.frame) {
+                              _loadCandles(frame: value);
+                            }
+                          },
+                        ),
+                      if (loading)
+                        Positioned(
+                          bottom: 0.0,
+                          right: 0.0,
+                          left: 0.0,
+                          child: ChartLoader(),
+                        ),
+                      if (_tapPosition != null)
+                        Container(
+                          margin: MPadding.set(horizontal: 6.0),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.black,
+                            ),
+                          ),
+                          child: RawMagnifier(
+                            focalPointOffset: Offset(
+                              _tapPosition!.dx - 25.0,
+                              _tapPosition!.dy - 25.0,
+                            ),
+                            size: const Size(50, 45),
+                            magnificationScale: 1.0,
                           ),
                         ),
-                        child: RawMagnifier(
-                          focalPointOffset: Offset(
-                            _tapPosition!.dx - 25.0,
-                            _tapPosition!.dy - 25.0,
-                          ),
-                          size: const Size(50, 45),
-                          magnificationScale: 1.0,
-                        ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },
@@ -421,12 +431,47 @@ class _KChartWidgetState extends State<KChartWidget>
     );
   }
 
-  void _objectSetOnUpdate(details) {
+  void _objectSetOnBottomSheet(details) {
     final nearObject = _painter!.findNearOffset(
       offset: details.localPosition,
     );
     objectEditable = nearObject.object != null;
     if (objectEditable) {
+      object = nearObject.object;
+      object!.currentEditIndex = -1;
+      if (objectType == ObjectType.Trend) {
+        chartProperties.updateTrendLine(object!);
+      } else if (objectType == ObjectType.Rectangle) {
+        chartProperties.updateRectangle(object!);
+      } else if (objectType == ObjectType.Horizontal) {
+        chartProperties.updateHorizontalLine(object!);
+      } else if (objectType == ObjectType.Vertical) {
+        chartProperties.updateVerticalLine(object!);
+      }
+      _tapPosition = null;
+      objectType = null;
+      objectEditable = false;
+      isSecondOffset = false;
+      bottomSheetShown = true;
+      notifyChanged();
+      showPropertiesBottomSheet(
+        context: context,
+        item: object!,
+        data: widget.data!,
+        onDone: (type) {
+          bottomSheetShown = false;
+          notifyChanged();
+        },
+      );
+    }
+  }
+
+  void _objectSetOnUpdate(details) {
+    final nearObject = _painter!.findNearOffset(
+      offset: details.localPosition,
+    );
+    objectEditable = nearObject.object != null;
+    if (objectEditable && !bottomSheetShown) {
       _tapPosition = details.localPosition;
       object = nearObject.object;
       objectType = nearObject.object?.type;

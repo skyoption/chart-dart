@@ -179,6 +179,7 @@ class ChartPainter extends BaseChartPainter
       indicators,
     );
 
+
     if (mVolRect != null) {
       mVolRenderer = VolRenderer(
         mVolRect!,
@@ -224,6 +225,8 @@ class ChartPainter extends BaseChartPainter
     //   mMainRect: mMainRect,
     // );
     scaleY = mMainRenderer.scaleY;
+    mMainHighMaxValue = mMainRenderer.maxValue;
+    mMainLowMinValue = mMainRenderer.minValue;
   }
 
   @override

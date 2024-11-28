@@ -10,6 +10,7 @@ import 'package:candle_chart/renderer/objects/update_point_position.dart';
 import 'package:candle_chart/renderer/rects/main_rect.dart';
 import 'package:candle_chart/renderer/rects/render_rect.dart';
 import 'package:candle_chart/renderer/rects/secondary_rect.dart';
+import 'package:candle_chart/utils/kprint.dart';
 
 import '../entity/k_line_entity.dart';
 import 'base_dimension.dart';

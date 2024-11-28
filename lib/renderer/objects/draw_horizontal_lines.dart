@@ -23,8 +23,17 @@ mixin DrawHorizontalLines on ChartDetails {
     final i = horizontalLines.indexWhere((e) => e.id == item.id);
     if (i != -1) {
       horizontalLines[i].currentEditIndex = item.currentEditIndex;
-      horizontalLines[i].value = getYPositionValue(offset.dy);
-      horizontalLines[i].dy1 = getMainY(horizontalLines[i].value);
+      final value = getYPositionValue(offset.dy);
+      if (mMainLowMinValue >= value) {
+        horizontalLines[i].value = mMainLowMinValue;
+        horizontalLines[i].dy1 = getMainY(mMainLowMinValue);
+      } else if (mMainHighMaxValue <= value) {
+        horizontalLines[i].value = mMainHighMaxValue;
+        horizontalLines[i].dy1 = getMainY(mMainLowMinValue);
+      } else {
+        horizontalLines[i].dy1 = getMainY(horizontalLines[i].value);
+        horizontalLines[i].value = value;
+      }
       return horizontalLines[i];
     }
     return null;
@@ -42,7 +51,11 @@ mixin DrawHorizontalLines on ChartDetails {
       if (value <= this.chartPosition.topPrice &&
           value >= this.chartPosition.bottomPrice) {
         double y = getMainY(value);
-
+        if (mMainLowMinValue >= value) {
+          y = getMainY(mMainLowMinValue);
+        } else if (mMainHighMaxValue <= value) {
+          y = getMainY(mMainHighMaxValue);
+        }
         final pricePaint = Paint()
           ..color = colorFromHex(horizontalLines[i].color!)!
           ..strokeWidth = horizontalLines[i].height;
@@ -73,6 +86,7 @@ mixin DrawHorizontalLines on ChartDetails {
     }
     for (int i = 0; i < horizontalLines.length; i++) {
       double value = horizontalLines[i].value;
+      if (mMainLowMinValue >= value) continue;
       double y = getMainY(value);
       final pricePaint = Paint()
         ..color = colorFromHex(horizontalLines[i].color!)!
