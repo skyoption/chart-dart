@@ -120,7 +120,6 @@ class ChartPainter extends BaseChartPainter
           volHidden: volHidden,
           secondaryIndicators: secondaryIndicators,
           xFrontPadding: xFrontPadding,
-          isLine: isLine,
         ) {
     chartPosition = ChartPosition();
     dot = Paint()..color = Colors.grey;
@@ -169,7 +168,6 @@ class ChartPainter extends BaseChartPainter
       mainRect!.mMainMinValue * scaleY,
       mTopPadding,
       chartPosition,
-      isLine,
       fixedLength,
       this.chartStyle,
       this.chartColors,
@@ -359,12 +357,15 @@ class ChartPainter extends BaseChartPainter
   void drawDate(Canvas canvas, Size size) {
     if (data == null) return;
 
+
     double columnSpace = size.rWidth / mGridColumns;
     double startX = getX(mStartIndex) - mPointWidth / 2;
     double stopX = getX(mStopIndex) + mPointWidth / 2;
     double x = 0.0;
     double y = 0.0;
     const candleSpace = 10.0;
+
+
     for (var i = 0; i < mGridColumns; ++i) {
       double translateX = xToTranslateX(columnSpace * i - candleSpace * i);
       if (translateX >= startX && translateX <= stopX) {
@@ -498,7 +499,7 @@ class ChartPainter extends BaseChartPainter
 
   @override
   void drawMaxAndMin(Canvas canvas) {
-    if (isLine == true) return;
+    // if (isLine == true) return;
     if (!this.chartStyle.isShowHighOrLowPoint) return;
     //plot maxima and minima
     double x = translateXtoX(getX(mainRect!.mMainMinIndex));

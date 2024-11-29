@@ -161,7 +161,7 @@ class _KChartWidgetState extends State<KChartWidget>
   ObjectType? objectType;
   ObjectEntity? object;
   double _lastScaleX = 1.0;
-  double _lastScaleY = 1;
+  double _lastScaleY = 1.0;
   bool isScale = false, isDrag = false, isLongPress = false, isOnTap = false;
 
   Random rand = Random();
@@ -418,6 +418,32 @@ class _KChartWidgetState extends State<KChartWidget>
                             ),
                             size: const Size(50, 45),
                             magnificationScale: 1.0,
+                          ),
+                        ),
+                      if (mScaleX != 1.0 || mScaleY != 1.0)
+                        Align(
+                          alignment: AlignmentDirectional.centerEnd,
+                          child: GestureDetector(
+                            onTap: () {
+                              mScaleX = 1.0;
+                              mScaleY = 1.0;
+                              _lastScaleX = 1.0;
+                              _lastScaleY = 1.0;
+                              notifyChanged();
+                            },
+                            child: Container(
+                              margin: MPadding.set(end: 65.0, top: 35.0),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              child: Icon(
+                                Icons.refresh_rounded,
+                                color: Colors.grey,
+                                size: 21.0,
+                              ),
+                            ),
                           ),
                         ),
                     ],
@@ -750,11 +776,9 @@ class _KChartWidgetState extends State<KChartWidget>
             pointerCount = details.pointerCount;
             if (isDrag || isLongPress) return;
             if (isLongPress) return;
-            if (mScaleY == 1.0 ) {
-              mScaleX = (_lastScaleX * details.scale).clamp(0.5, 2.0);
-            }
-            if (mScaleX == 0.5) {
-              mScaleY = (_lastScaleY * details.scale).clamp(0.5, 1.0);
+            if (pointerCount == 2) {
+              mScaleX = (_lastScaleX * details.horizontalScale).clamp(0.1, 2.0);
+              mScaleY = (_lastScaleY * details.verticalScale).clamp(0.5, 1.0);
             }
             notifyChanged();
           }

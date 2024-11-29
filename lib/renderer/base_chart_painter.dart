@@ -38,7 +38,6 @@ abstract class BaseChartPainter extends CustomPainter
   double scaleX = 1.0, scrollX = 0.0, selectX;
   bool isLongPress = false;
   bool isOnTap;
-  bool isLine;
 
   /// Rectangle box of main chart
   late Rect mMainRect;
@@ -94,7 +93,6 @@ abstract class BaseChartPainter extends CustomPainter
     this.volHidden = false,
     this.isTapShowInfoDialog = false,
     this.secondaryIndicators = const {},
-    this.isLine = false,
   }) {
     mItemCount = data?.length ?? 0;
     mPointWidth = this.chartStyle.pointWidth;
@@ -253,7 +251,6 @@ abstract class BaseChartPainter extends CustomPainter
     }
     mainRect = MainRect(
       indicators: indicators,
-      isLine: isLine,
       mMainHighMaxValue: mMainHighMaxValue,
       mMainLowMinValue: mMainLowMinValue,
     );
@@ -298,41 +295,6 @@ abstract class BaseChartPainter extends CustomPainter
     );
   }
 
-  // // translate x
-  // double xToTranslateX(double x) => -mTranslateX + x / scaleX;
-  //
-  // int indexOfTranslateX(double translateX) {
-  //   return _indexOfTranslateX(translateX, 0, mItemCount - 1);
-  // }
-  //
-  // /// Using binary search for the index of the current value
-  // int _indexOfTranslateX(double translateX, int start, int end) {
-  //   if (end == start || end == -1) {
-  //     return start;
-  //   }
-  //   if (end - start == 1) {
-  //     double startValue = getX(start);
-  //     double endValue = getX(end);
-  //     return (translateX - startValue).abs() < (translateX - endValue).abs()
-  //         ? start
-  //         : end;
-  //   }
-  //   int mid = start + (end - start) ~/ 2;
-  //   double midValue = getX(mid);
-  //   if (translateX < midValue) {
-  //     return _indexOfTranslateX(translateX, start, mid);
-  //   } else if (translateX > midValue) {
-  //     return _indexOfTranslateX(translateX, mid, end);
-  //   } else {
-  //     return mid;
-  //   }
-  // }
-  //
-  // /// Get x coordinate based on index
-  // /// + mPointWidth / 2 to prevent the first and last K-line from displaying incorrectly
-  // /// @param position index value
-  // double getX(int position) => position * mPointWidth + mPointWidth / 2;
-
   KLineEntity getItem(int position) {
     return data![position];
     // if (datas != null) {
@@ -353,23 +315,6 @@ abstract class BaseChartPainter extends CustomPainter
     return x >= 0 ? 0.0 : x;
   }
 
-  //
-  // /// calculate the value of x after long pressing and convert to [index]
-  // int calculateSelectedX(double selectX) {
-  //   int mSelectedIndex = indexOfTranslateX(xToTranslateX(selectX));
-  //   if (mSelectedIndex < mStartIndex) {
-  //     mSelectedIndex = mStartIndex;
-  //   }
-  //   if (mSelectedIndex > mStopIndex) {
-  //     mSelectedIndex = mStopIndex;
-  //   }
-  //   return mSelectedIndex;
-  // }
-  //
-  // /// translateX is converted to X in view
-  // double translateXtoX(double translateX) {
-  //   return (translateX + mTranslateX) * scaleX;
-  // }
 
   @override
   bool shouldRepaint(BaseChartPainter oldDelegate) {

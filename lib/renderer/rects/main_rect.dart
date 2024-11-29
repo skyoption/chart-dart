@@ -9,13 +9,11 @@ import 'package:candle_chart/utils/kprint.dart';
 class MainRect {
   double mMainMaxValue = double.minPositive, mMainMinValue = double.maxFinite;
   int mMainMaxIndex = 0, mMainMinIndex = 0;
-  final bool isLine;
   final List<IndicatorEntity> indicators;
   late double mMainHighMaxValue, mMainLowMinValue;
 
   MainRect({
     required this.indicators,
-    required this.isLine,
     required this.mMainHighMaxValue,
     required this.mMainLowMinValue,
   });
@@ -43,10 +41,10 @@ class MainRect {
       mMainMinIndex = i;
     }
 
-    if (isLine == true) {
-      mMainMaxValue = max(mMainMaxValue, item.close);
-      mMainMinValue = min(mMainMinValue, item.close);
-    }
+    // if (isLine == true) {
+    //   mMainMaxValue = max(mMainMaxValue, item.close);
+    //   mMainMinValue = min(mMainMinValue, item.close);
+    // }
   }
 
   void _setMaxAndMin(

@@ -18,7 +18,6 @@ double? trendLineContentRec;
 class MainRenderer extends BaseChartRenderer<CandleEntity> {
   late double mCandleWidth;
   late double mCandleLineWidth;
-  bool isLine;
 
   late Rect _contentRect;
   double _contentPadding = 5.0;
@@ -40,7 +39,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     double minValue,
     double topPadding,
     this.chartPositions,
-    this.isLine,
     int fixedLength,
     this.chartStyle,
     this.chartColors,
@@ -100,15 +98,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     Size size,
     Canvas canvas,
   ) {
-    if (isLine) {
-      drawPolyline(
-        lastPoint.close,
-        curPoint.close,
-        canvas,
-        lastX,
-        curX,
-      );
-    }
     drawCandle(curPoint, canvas, curX);
     drawIndicators(
       lastPoint,
@@ -145,50 +134,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     );
   }
 
-  Shader? mLineFillShader;
-  Path? mLinePath, mLineFillPath;
-  Paint mLineFillPaint = Paint()
-    ..style = PaintingStyle.fill
-    ..isAntiAlias = true;
-
-//画折线图
-  drawPolyline(double lastPrice, double curPrice, Canvas canvas, double lastX,
-      double curX) {
-    mLinePath ??= Path();
-    if (lastX == curX) lastX = 0;
-    mLinePath!.moveTo(lastX, getY(lastPrice));
-    mLinePath!.cubicTo((lastX + curX) / 2, getY(lastPrice), (lastX + curX) / 2,
-        getY(curPrice), curX, getY(curPrice));
-
-    mLineFillShader ??= LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      tileMode: TileMode.clamp,
-      colors: [
-        this.chartColors.lineFillColor,
-        this.chartColors.lineFillInsideColor
-      ],
-    ).createShader(Rect.fromLTRB(
-        chartRect.left, chartRect.top, chartRect.right, chartRect.bottom));
-    mLineFillPaint..shader = mLineFillShader;
-
-    mLineFillPath ??= Path();
-
-    mLineFillPath!.moveTo(lastX, chartRect.height + chartRect.top);
-    mLineFillPath!.lineTo(lastX, getY(lastPrice));
-    mLineFillPath!.cubicTo((lastX + curX) / 2, getY(lastPrice),
-        (lastX + curX) / 2, getY(curPrice), curX, getY(curPrice));
-    mLineFillPath!.lineTo(curX, chartRect.height + chartRect.top);
-    mLineFillPath!.close();
-
-    canvas.drawPath(mLineFillPath!, mLineFillPaint);
-    mLineFillPath!.reset();
-
-    canvas.drawPath(mLinePath!,
-        mLinePaint..strokeWidth = (mLineStrokeWidth / scaleX).clamp(0.1, 1.0));
-    mLinePath!.reset();
-  }
-
   void drawCandle(CandleEntity curPoint, Canvas canvas, double curX) {
     var high = getY(curPoint.high);
     var low = getY(curPoint.low);
@@ -220,6 +165,20 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   @override
   void drawVerticalText(canvas, textStyle, int gridRows) {
     double rowSpace = chartRect.height / gridRows;
+
+    Rect rect = Rect.fromLTWH(
+      chartRect.width,
+      topPadding,
+      100.0,
+      chartRect.height,
+    );
+
+    Paint paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+
+    canvas.drawRect(rect, paint);
+
     for (var i = 0; i <= gridRows; ++i) {
       double value = (gridRows - i) * rowSpace / scaleY + minValue;
 
