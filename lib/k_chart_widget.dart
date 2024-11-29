@@ -405,7 +405,7 @@ class _KChartWidgetState extends State<KChartWidget>
                         ),
                       if (_tapPosition != null)
                         Container(
-                          margin: MPadding.set(horizontal: 6.0),
+                          margin: MPadding.set(all: 6.0),
                           decoration: BoxDecoration(
                             border: Border.all(
                               color: Colors.black,
@@ -432,7 +432,7 @@ class _KChartWidgetState extends State<KChartWidget>
                               notifyChanged();
                             },
                             child: Container(
-                              margin: MPadding.set(end: 65.0, top: 35.0),
+                              margin: MPadding.set(end: 65.0, top: 6.0),
                               decoration: BoxDecoration(
                                 border: Border.all(
                                   color: Colors.grey,

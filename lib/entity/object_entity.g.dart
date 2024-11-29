@@ -198,7 +198,7 @@ ObjectEntity _objectEntityDeserialize(
     dy2: reader.readDoubleOrNull(offsets[8]) ?? 0,
     frame: _ObjectEntityframeValueEnumMap[reader.readByteOrNull(offsets[9])] ??
         CandleTimeFormat.H4,
-    height: reader.readDoubleOrNull(offsets[10]) ?? 0.8,
+    height: reader.readDoubleOrNull(offsets[10]) ?? 1.0,
     isFill: reader.readBoolOrNull(offsets[11]) ?? false,
     name: reader.readStringOrNull(offsets[12]) ?? '',
     rayLift: reader.readBoolOrNull(offsets[13]) ?? false,
@@ -244,7 +244,7 @@ P _objectEntityDeserializeProp<P>(
       return (_ObjectEntityframeValueEnumMap[reader.readByteOrNull(offset)] ??
           CandleTimeFormat.H4) as P;
     case 10:
-      return (reader.readDoubleOrNull(offset) ?? 0.8) as P;
+      return (reader.readDoubleOrNull(offset) ?? 1.0) as P;
     case 11:
       return (reader.readBoolOrNull(offset) ?? false) as P;
     case 12:
