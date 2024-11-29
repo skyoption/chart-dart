@@ -30,7 +30,7 @@ class _PropertiesBottomSheetState extends State<PropertiesBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 200.0,
+      height: 300.0,
       child: Column(
         children: [
           ObjectItemWidget(
