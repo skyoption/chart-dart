@@ -27,7 +27,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   final ChartPosition chartPositions;
   final ChartColors chartColors;
   final double mLineStrokeWidth = 1.0;
-  double scaleX;
+  final double scaleX;
   double scaleY;
   late Paint mLinePaint;
   final VerticalTextAlignment verticalTextAlignment;
@@ -87,11 +87,9 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       minValue /= 2;
     }
     scaleY = _contentRect.height / (maxValue - minValue);
-    // scaleY /= 2;
-    // maxValue *= scaleY;
-    // minValue /= scaleY;
+    maxValue *= scaleY;
+    minValue /= scaleY;
   }
-
 
   @override
   void drawChart(
@@ -339,7 +337,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     //   tp.paint(canvas, Offset(x, chartRect.top - topPadding));
     // }
   }
-
 }
 
 class SubMainRenderer extends BaseChartRenderer<CandleEntity> {

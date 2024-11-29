@@ -165,8 +165,8 @@ class ChartPainter extends BaseChartPainter
     }
     mMainRenderer = MainRenderer(
       mMainRect,
-      mainRect!.mMainMaxValue,
-      mainRect!.mMainMinValue,
+      mainRect!.mMainMaxValue / scaleY,
+      mainRect!.mMainMinValue * scaleY,
       mTopPadding,
       chartPosition,
       isLine,
@@ -178,7 +178,6 @@ class ChartPainter extends BaseChartPainter
       verticalTextAlignment,
       indicators,
     );
-
 
     if (mVolRect != null) {
       mVolRenderer = VolRenderer(

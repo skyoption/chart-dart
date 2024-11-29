@@ -138,7 +138,7 @@ class _KChartWidgetState extends State<KChartWidget>
     with TickerProviderStateMixin {
   final StreamController<InfoWindowEntity?> mInfoWindowStream =
       StreamController<InfoWindowEntity?>.broadcast();
-  double mScaleX = 1.0, mScaleY = 1.0, mScrollX = 0.0, mSelectX = 0.0;
+  double mScaleX = 1.0, mScaleY = 1, mScrollX = 0.0, mSelectX = 0.0;
   double mHeight = 0, mWidth = 0;
   AnimationController? _controller;
   Animation<double>? aniX;
@@ -161,7 +161,7 @@ class _KChartWidgetState extends State<KChartWidget>
   ObjectType? objectType;
   ObjectEntity? object;
   double _lastScaleX = 1.0;
-  double _lastScaleY = 0.01;
+  double _lastScaleY = 1;
   bool isScale = false, isDrag = false, isLongPress = false, isOnTap = false;
 
   Random rand = Random();
@@ -750,9 +750,12 @@ class _KChartWidgetState extends State<KChartWidget>
             pointerCount = details.pointerCount;
             if (isDrag || isLongPress) return;
             if (isLongPress) return;
-
-            mScaleX = (_lastScaleX * details.scale).clamp(0.5, 2.0);
-            mScaleY = (_lastScaleY * details.scale).clamp(0.001, 1.0);
+            if (mScaleY == 1.0 ) {
+              mScaleX = (_lastScaleX * details.scale).clamp(0.5, 2.0);
+            }
+            if (mScaleX == 0.5) {
+              mScaleY = (_lastScaleY * details.scale).clamp(0.5, 1.0);
+            }
             notifyChanged();
           }
           ..onEnd = (details) {
