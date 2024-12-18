@@ -45,7 +45,7 @@ class ObjectEntity {
     this.datetime = 0,
     this.datetime2 = 0,
     this.symbol = '',
-    this.height = 0.8,
+    this.height = 1.0,
     this.style = ObjectStyle.normal,
     this.type = ObjectType.Horizontal,
     this.frame = CandleTimeFormat.H4,
