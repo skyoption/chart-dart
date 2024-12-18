@@ -10,12 +10,11 @@ import 'package:candle_chart/renderer/objects/update_point_position.dart';
 import 'package:candle_chart/renderer/rects/main_rect.dart';
 import 'package:candle_chart/renderer/rects/render_rect.dart';
 import 'package:candle_chart/renderer/rects/secondary_rect.dart';
-import 'package:candle_chart/utils/kprint.dart';
 
 import '../entity/k_line_entity.dart';
 import 'base_dimension.dart';
 export 'package:flutter/material.dart'
-    show Color, required, TextStyle, Rect, Canvas, Size, CustomPainter;
+    show Color, TextStyle, Rect, Canvas, Size, CustomPainter;
 
 /// BaseChartPainter
 abstract class BaseChartPainter extends CustomPainter
@@ -38,6 +37,7 @@ abstract class BaseChartPainter extends CustomPainter
   double scaleX = 1.0, scrollX = 0.0, selectX;
   bool isLongPress = false;
   bool isOnTap;
+  bool hideGrid;
 
   /// Rectangle box of main chart
   late Rect mMainRect;
@@ -91,6 +91,7 @@ abstract class BaseChartPainter extends CustomPainter
     this.isOnTap = false,
     this.indicators = const [],
     this.volHidden = false,
+    this.hideGrid = false,
     this.isTapShowInfoDialog = false,
     this.secondaryIndicators = const {},
   }) {
@@ -149,7 +150,7 @@ abstract class BaseChartPainter extends CustomPainter
     canvas.save();
     canvas.scale(1, 1);
     drawBg(canvas, size);
-    drawGrid(canvas);
+    if (!hideGrid) drawGrid(canvas);
     if (data != null && data!.isNotEmpty) {
       drawChart(canvas, size);
       drawVerticalText(canvas);
@@ -314,7 +315,6 @@ abstract class BaseChartPainter extends CustomPainter
     var x = -mDataLen + mWidth / scaleX - mPointWidth / 2 - xFrontPadding;
     return x >= 0 ? 0.0 : x;
   }
-
 
   @override
   bool shouldRepaint(BaseChartPainter oldDelegate) {

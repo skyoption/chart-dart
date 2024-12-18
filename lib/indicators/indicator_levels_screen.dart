@@ -1,8 +1,5 @@
-import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/indicators/indicator_pixels_screen.dart';
 import 'package:candle_chart/indicators/widgets/indicator_color_widget.dart';
 import 'package:candle_chart/indicators/widgets/level_item_widget.dart';
-import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/material.dart';

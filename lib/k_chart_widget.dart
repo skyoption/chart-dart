@@ -1,21 +1,19 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:async';
 import 'dart:math';
 
 import 'package:candle_chart/chart_translations.dart';
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/objects/bottom_sheets/properties_bottom_sheet.dart';
-import 'package:candle_chart/objects/widgets/svg.dart';
 import 'package:candle_chart/objects/objects_screen.dart';
 import 'package:candle_chart/indicators/indicators_screen.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/renderer/base_dimension.dart';
 import 'package:candle_chart/utils/date_util.dart';
-import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
-import 'package:candle_chart/utils/icons.dart';
 import 'package:candle_chart/widgets/chart_loader.dart';
 import 'package:candle_chart/widgets/paddings.dart';
-import 'package:candle_chart/widgets/time_frame_widget.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -101,6 +99,9 @@ class KChartWidget extends StatefulWidget {
   final double xFrontPadding;
   final int isLongFocusDurationTime;
 
+  final GlobalKey<_KChartWidgetState> kChartKey =
+      GlobalKey<_KChartWidgetState>();
+
   KChartWidget(
     this.data,
     this.chartStyle,
@@ -128,6 +129,18 @@ class KChartWidget extends StatefulWidget {
     this.isLongFocusDurationTime = 500,
   });
 
+  void openObjects() {
+    kChartKey.currentState?.openObjects();
+  }
+
+  void openIndicators() {
+    kChartKey.currentState?.openIndicators();
+  }
+
+  Future<void> loadCandles({CandleTimeFormat? frame}) async {
+    kChartKey.currentState?.loadCandles(frame: frame);
+  }
+
   @override
   _KChartWidgetState createState() => _KChartWidgetState();
 }
@@ -152,7 +165,6 @@ class _KChartWidgetState extends State<KChartWidget>
   bool isSecondOffset = false;
   bool objectEditable = false;
   bool bottomSheetShown = false;
-  bool openTimeframe = false;
 
   double getMinScrollX() {
     return mScaleX;
@@ -171,19 +183,45 @@ class _KChartWidgetState extends State<KChartWidget>
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _loadCandles();
+      loadCandles();
     });
     super.initState();
   }
 
-  Future<void> _loadCandles({CandleTimeFormat? frame}) async {
+  void openObjects() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ObjectsScreen(
+          data: widget.data!,
+          onDone: (type) {
+            objectType = type;
+            notifyChanged();
+          },
+        ),
+      ),
+    );
+  }
+
+  void openIndicators() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => IndicatorsScreen(
+          onDone: () async {
+            _onFling(10);
+            _reload();
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<void> loadCandles({CandleTimeFormat? frame}) async {
     loading = true;
     widget.data = null;
     notifyChanged();
     if (KChart.isar == null) await Future.delayed(Duration(seconds: 1));
     if (frame != null) {
       await chartProperties.setTimeframe(frame);
-      openTimeframe = !openTimeframe;
       notifyChanged();
     }
     chartProperties.loadCandles(
@@ -280,180 +318,80 @@ class _KChartWidgetState extends State<KChartWidget>
       verticalTextAlignment: widget.verticalTextAlignment,
     );
 
-    return SafeArea(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsetsDirectional.only(
-              top: 12.0,
-              start: 12.0,
-              end: 12.0,
-            ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        mHeight = constraints.maxHeight;
+        mWidth = constraints.maxWidth;
+        return RawGestureDetector(
+          gestures: gestures,
+          child: GestureDetector(
+            onDoubleTapDown: (details) {
+              _objectSetOnBottomSheet(details);
+            },
             child: Stack(
-              children: [
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: InkWell(
-                    onTap: () {
-                      openTimeframe = !openTimeframe;
-                      setState(() {});
-                    },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          '${chartProperties.frame.name}',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                        ),
-                        Icon(
-                          Icons.arrow_drop_down,
-                          color: Colors.black,
-                          size: widget.chartStyle.iconSize,
-                        )
-                      ],
+              children: <Widget>[
+                CustomPaint(
+                  size: Size(
+                    double.infinity,
+                    baseDimension.mDisplayHeight,
+                  ),
+                  painter: _painter,
+                ),
+                if (loading)
+                  Positioned(
+                    bottom: 0.0,
+                    right: 0.0,
+                    left: 0.0,
+                    child: ChartLoader(),
+                  ),
+                if (_tapPosition != null)
+                  Container(
+                    margin: MPadding.set(horizontal: 6.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black,
+                      ),
+                    ),
+                    child: RawMagnifier(
+                      focalPointOffset: Offset(
+                        _tapPosition!.dx - 25.0,
+                        _tapPosition!.dy - 25.0,
+                      ),
+                      size: const Size(50, 45),
+                      magnificationScale: 1.0,
                     ),
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    InkWell(
+                if (mScaleX != 1.0 || mScaleY != 1.0)
+                  Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: GestureDetector(
                       onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => IndicatorsScreen(
-                              onDone: () async {
-                                _onFling(10);
-                                _reload();
-                              },
-                            ),
-                          ),
-                        );
+                        mScaleX = 1.0;
+                        mScaleY = 1.0;
+                        _lastScaleX = 1.0;
+                        _lastScaleY = 1.0;
+                        notifyChanged();
                       },
-                      child: MSvg(
-                        name: Svgs.chartSettings,
-                        width: widget.chartStyle.iconSize,
-                        height: widget.chartStyle.iconSize,
-                        color: Colors.black,
+                      child: Container(
+                        margin: MPadding.set(end: 65.0, top: 35.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.refresh_rounded,
+                          color: Colors.grey,
+                          size: 21.0,
+                        ),
                       ),
                     ),
-                    SizedBox(width: 20.0),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => ObjectsScreen(
-                              data: widget.data!,
-                              onDone: (type) {
-                                objectType = type;
-                                notifyChanged();
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                      child: MSvg(
-                        name: Svgs.objects,
-                        width: widget.chartStyle.iconSize,
-                        height: widget.chartStyle.iconSize,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
               ],
             ),
           ),
-          Divider(color: Colors.grey.withOpacity(0.2)),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              mHeight = constraints.maxHeight;
-              mWidth = constraints.maxWidth;
-              return RawGestureDetector(
-                gestures: gestures,
-                child: GestureDetector(
-                  onDoubleTapDown: (details) {
-                    _objectSetOnBottomSheet(details);
-                  },
-                  child: Stack(
-                    children: <Widget>[
-                      CustomPaint(
-                        size: Size(
-                          double.infinity,
-                          baseDimension.mDisplayHeight,
-                        ),
-                        painter: _painter,
-                      ),
-                      if (openTimeframe)
-                        TimeFrameWidget(
-                          frame: chartProperties.frame,
-                          onSelectTimeFrame: (value) async {
-                            if (value != chartProperties.frame) {
-                              _loadCandles(frame: value);
-                            }
-                          },
-                        ),
-                      if (loading)
-                        Positioned(
-                          bottom: 0.0,
-                          right: 0.0,
-                          left: 0.0,
-                          child: ChartLoader(),
-                        ),
-                      if (_tapPosition != null)
-                        Container(
-                          margin: MPadding.set(horizontal: 6.0),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.black,
-                            ),
-                          ),
-                          child: RawMagnifier(
-                            focalPointOffset: Offset(
-                              _tapPosition!.dx - 25.0,
-                              _tapPosition!.dy - 25.0,
-                            ),
-                            size: const Size(50, 45),
-                            magnificationScale: 1.0,
-                          ),
-                        ),
-                      if (mScaleX != 1.0 || mScaleY != 1.0)
-                        Align(
-                          alignment: AlignmentDirectional.centerEnd,
-                          child: GestureDetector(
-                            onTap: () {
-                              mScaleX = 1.0;
-                              mScaleY = 1.0;
-                              _lastScaleX = 1.0;
-                              _lastScaleY = 1.0;
-                              notifyChanged();
-                            },
-                            child: Container(
-                              margin: MPadding.set(end: 65.0, top: 35.0),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              child: Icon(
-                                Icons.refresh_rounded,
-                                color: Colors.grey,
-                                size: 21.0,
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -904,174 +842,3 @@ class _KChartWidgetState extends State<KChartWidget>
 
   void notifyChanged() => Future.delayed(Duration.zero, () => setState(() {}));
 }
-
-// void _onLongPressMoveUpdate(details) {
-//   var longPressTemp = (_longPressStartTime?.millisecondsSinceEpoch ?? 0);
-//   if (DateTime.now().millisecondsSinceEpoch - longPressTemp >= 500) {
-//     longPressTriggered = true;
-//     notifyChanged();
-//   } else {
-//     // longPressTriggered = false;
-//     // notifyChanged();
-//   }
-//
-//   if ((mSelectX != details.localPosition.dx ||
-//           mSelectY != details.globalPosition.dy) &&
-//       !widget.isTrendLine) {
-//     mSelectX = details.localPosition.dx;
-//     mSelectY = details.localPosition.dy;
-//     notifyChanged();
-//   }
-//   if (widget.isTrendLine) {
-//     mSelectX = mSelectX + (details.localPosition.dx - changeInXposition!);
-//     changeInXposition = details.localPosition.dx;
-//     mSelectY = mSelectY + (details.globalPosition.dy - changeInYposition!);
-//     changeInYposition = details.globalPosition.dy;
-//     notifyChanged();
-//   }
-// }
-//
-// void _longPressStart(details) {
-//   _timer?.cancel();
-//   _longPressStartTime = DateTime.now();
-//   longPressTriggered = false;
-//
-//   isOnTap = false;
-//   isLongPress = true;
-//   if ((mSelectX != details.localPosition.dx ||
-//           mSelectY != details.globalPosition.dy) &&
-//       !widget.isTrendLine) {
-//     mSelectX = details.localPosition.dx;
-//     notifyChanged();
-//   }
-//   //For TrendLine
-//   if (widget.isTrendLine && changeInXposition == null) {
-//     mSelectX = changeInXposition = details.localPosition.dx;
-//     mSelectY = changeInYposition = details.globalPosition.dy;
-//     notifyChanged();
-//   }
-//   //For TrendLine
-//   if (widget.isTrendLine && changeInXposition != null) {
-//     changeInXposition = details.localPosition.dx;
-//     changeInYposition = details.globalPosition.dy;
-//     notifyChanged();
-//   }
-// }
-//
-// void _onLongPressEnd() {
-//   // _timer?.cancel();
-//   isLongPress = false;
-//   enableCordRecord = true;
-//
-//   if (widget.isLongFocusDurationTime == 0) {
-//     mInfoWindowStream.sink.add(null);
-//     notifyChanged();
-//   }
-//
-//   if (!longPressTriggered) {
-//     notifyChanged();
-//     WidgetsBinding.instance.addPostFrameCallback((_) {
-//       mInfoWindowStream.sink.add(null);
-//     });
-//   }
-// }
-
-late List<String> infos;
-
-// void _onTapUp(details) {
-//   if (!widget.isTrendLine && _painter!.isInMainRect(details.localPosition)) {
-//     isOnTap = true;
-//
-//     if (mSelectX != details.localPosition.dx && widget.isTapShowInfoDialog) {
-//       mSelectX = details.localPosition.dx;
-//
-//       longPressTriggered = false;
-//       _timer?.cancel();
-//
-//       Future.delayed(Duration(milliseconds: 12500), () {
-//         notifyChanged();
-//       });
-//     }
-//   }
-//   if (widget.isTrendLine && !isLongPress && enableCordRecord) {
-//     enableCordRecord = false;
-//     Offset p1 = Offset(getTrendLineX(), mSelectY);
-//     if (!waitingForOtherPairOfCords) {
-//       chartProperties.addTrendLine(
-//           TrendLine(p1, Offset(-1, -1), trendLineMax!, trendLineScale!));
-//     }
-//
-//     if (waitingForOtherPairOfCords) {
-//       var a = chartProperties.trendLines.last;
-//       chartProperties.trendLines.removeLast();
-//       chartProperties
-//           .addTrendLine(TrendLine(a.p1, p1, trendLineMax!, trendLineScale!));
-//       waitingForOtherPairOfCords = false;
-//     } else {
-//       waitingForOtherPairOfCords = true;
-//     }
-//     notifyChanged();
-//   }
-// }
-// Widget _buildInfoDialog() {
-//   return StreamBuilder<InfoWindowEntity?>(
-//     stream: mInfoWindowStream.stream,
-//     builder: (context, snapshot) {
-//       if (widget.isLongFocusDurationTime == 0 &&
-//           ((!isLongPress && !isOnTap) ||
-//               widget.isLine == true ||
-//               !snapshot.hasData ||
-//               snapshot.data?.kLineEntity == null)) {
-//         return SizedBox();
-//       }
-//       if (widget.isLongFocusDurationTime != 0 &&
-//           (!longPressTriggered || widget.isLine == true
-//           // ||
-//           // !snapshot.hasData ||
-//           // snapshot.data?.kLineEntity == null
-//           )) return SizedBox();
-//       if (widget.isLongFocusDurationTime != 0 &&
-//           !longPressTriggered &&
-//           snapshot.data == null) {
-//         return SizedBox.shrink();
-//       }
-//       if (snapshot.data == null) return SizedBox.shrink();
-//
-//       KLineEntity entity = snapshot.data!.kLineEntity;
-//       final dialogWidth = mWidth / 3;
-//       if (snapshot.data!.isLeft) {
-//         return Positioned(
-//           top: 25,
-//           left: 10.0,
-//           child: PopupInfoView(
-//             entity: entity,
-//             width: dialogWidth,
-//             chartColors: widget.chartColors,
-//             chartTranslations: widget.chartTranslations,
-//             materialInfoDialog: widget.materialInfoDialog,
-//             timeFormat: widget.timeFormat,
-//             fixedLength: widget.fixedLength,
-//           ),
-//         );
-//       }
-//       return Positioned(
-//         top: 25,
-//         right: 10.0,
-//         child: PopupInfoView(
-//           entity: entity,
-//           width: dialogWidth,
-//           chartColors: widget.chartColors,
-//           chartTranslations: widget.chartTranslations,
-//           materialInfoDialog: widget.materialInfoDialog,
-//           timeFormat: widget.timeFormat,
-//           fixedLength: widget.fixedLength,
-//         ),
-//       );
-//     },
-//   );
-// }
-// //#十字光标长按0.5秒后才触发 -----------------------------------------------》》》》》 !! 关键 ！！ （isLongFocusDurationTime: 500/0 和 isLongFocus：true/false 切换）
-// if (widget.showInfoDialog &&
-//     (widget.isLongFocusDurationTime == 0 ||
-//         longPressTriggered))
-//   _buildInfoDialog(),

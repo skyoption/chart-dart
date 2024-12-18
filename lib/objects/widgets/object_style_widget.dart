@@ -1,4 +1,4 @@
-import 'package:candle_chart/utils/kprint.dart';
+
 import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/objects/bottom_sheets/color_picker.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
@@ -7,7 +7,6 @@ import 'package:candle_chart/objects/widgets/svg.dart';
 import 'package:candle_chart/utils/icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class ObjectStyleWidget extends StatefulWidget {
   final Function(

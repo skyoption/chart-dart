@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
+// ignore: must_be_immutable
 class PickerColorWidget extends StatefulWidget {
   Color pickerColor;
   final ValueChanged<Color> onColorChanged;

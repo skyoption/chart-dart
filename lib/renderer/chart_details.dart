@@ -1,21 +1,8 @@
-import 'dart:async' show StreamSink;
-
-import 'package:candle_chart/utils/kprint.dart';
-import 'package:candle_chart/entity/object_entity.dart';
-import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
-import 'package:candle_chart/utils/number_util.dart';
 import 'package:flutter/material.dart';
 
-import '../entity/info_window_entity.dart';
 import '../entity/k_line_entity.dart';
-import '../k_chart_widget.dart';
 import '../utils/date_format_util.dart';
-import 'base_chart_painter.dart';
 import 'base_chart_renderer.dart';
-import 'base_dimension.dart';
-import 'main_renderer.dart';
-import 'secondary_renderer.dart';
-import 'vol_renderer.dart';
 
 mixin ChartDetails on ChartCalc {
   late final ChartPosition chartPosition;

@@ -32,7 +32,6 @@ class VolRenderer extends BaseChartRenderer<VolumeEntity> {
       double right = curPoint.vol *
           (curPoint.close + curPoint.open - curPoint.open * 1.2) /
           (curPoint.close + curPoint.open);
-      double r = mVolWidth / 2;
       double topLeft = getVolY(left);
       double topRight = getVolY(right);
       double bottom = chartRect.bottom;
@@ -88,6 +87,7 @@ class VolRenderer extends BaseChartRenderer<VolumeEntity> {
   @override
   void drawText(Canvas canvas, VolumeEntity data, double x) {
     return;
+    // ignore: dead_code
     if (this.chartStyle.isShowStrategyTypeBottom) {
       TextSpan span = TextSpan(
         children: [

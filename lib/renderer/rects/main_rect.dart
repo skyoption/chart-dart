@@ -4,7 +4,6 @@ import 'package:candle_chart/entity/candle_indicator_entity.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/k_chart_widget.dart';
-import 'package:candle_chart/utils/kprint.dart';
 
 class MainRect {
   double mMainMaxValue = double.minPositive, mMainMinValue = double.maxFinite;

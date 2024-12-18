@@ -9,7 +9,7 @@ void setDatePicker({
   required Function(DateTime? value) onChange,
 }) {
   DateTimePickerLocale? _locale = DateTimePickerLocale.en_us;
-  DateTime? _dateTime;
+ 
   DatePicker.showDatePicker(
     context,
     minDateTime: minDateTime,
@@ -20,11 +20,9 @@ void setDatePicker({
     pickerMode: DateTimePickerMode.datetime,
     onCancel: () {},
     onChange: (dateTime, List<int> index) {
-      _dateTime = dateTime;
       onChange(dateTime);
     },
     onConfirm: (dateTime, List<int> index) {
-      _dateTime = dateTime;
       onChange(dateTime);
     },
   );

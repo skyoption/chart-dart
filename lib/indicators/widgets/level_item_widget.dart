@@ -1,4 +1,3 @@
-import 'package:candle_chart/indicators/properties/indicator_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

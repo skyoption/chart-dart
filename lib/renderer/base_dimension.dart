@@ -1,8 +1,5 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
-import 'package:candle_chart/utils/kprint.dart';
-
-import '../k_chart_widget.dart';
 
 /// Base Dimension
 class BaseDimension {

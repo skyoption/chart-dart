@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:candle_chart/utils/date_util.dart';
 import 'package:flutter/material.dart';
 

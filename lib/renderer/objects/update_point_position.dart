@@ -1,9 +1,7 @@
 import 'dart:ui';
-import 'dart:math';
 import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/renderer/base_chart_renderer.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
-import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 
 mixin UpdatePointPosition on ChartCalc {

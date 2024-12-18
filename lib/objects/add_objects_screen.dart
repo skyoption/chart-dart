@@ -1,7 +1,5 @@
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
-import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
-import 'package:candle_chart/objects/properties/vertical_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/object_item_widget.dart';
 import 'package:candle_chart/utils/icons.dart';
 import 'package:flutter/material.dart';

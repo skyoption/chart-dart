@@ -1,6 +1,5 @@
 import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
-import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';

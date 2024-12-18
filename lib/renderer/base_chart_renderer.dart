@@ -1,9 +1,7 @@
 import 'dart:ui';
 
 import 'package:candle_chart/chart_style.dart';
-import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
-import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/material.dart';
 
 export '../chart_style.dart';

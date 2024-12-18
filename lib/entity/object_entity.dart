@@ -1,7 +1,4 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:isar/isar.dart';
 
@@ -27,7 +24,7 @@ class ObjectEntity {
   double height;
   double dx1, dx2, dy1, dy2;
   String name;
-  int datetime,datetime2;
+  int datetime, datetime2;
   String symbol;
   bool drawAsBackground;
   bool isFill;
@@ -59,6 +56,4 @@ class ObjectEntity {
   }) {
     color ??= Colors.blue.toHexString();
   }
-
-
 }

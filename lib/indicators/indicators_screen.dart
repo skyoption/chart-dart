@@ -337,8 +337,8 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
         ),
       );
     } else {
-      final isENVELOPS = item.type.name.contains('ENVELOPS') ?? false;
-      final isMA = item.type.name.contains('MA') ?? false;
+      final isENVELOPS = item.type.name.contains('ENVELOPS');
+      final isMA = item.type.name.contains('MA');
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => IndicatorPropertiesScreen(

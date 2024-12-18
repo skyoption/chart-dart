@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/utils/date_util.dart';

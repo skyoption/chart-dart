@@ -4,20 +4,16 @@ import 'package:candle_chart/renderer/objects/draw_rectangle_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_trend_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_vertical_lines.dart';
 import 'package:candle_chart/renderer/rects/render_rect.dart';
-import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
 import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
 import 'package:candle_chart/renderer/objects/update_point_position.dart';
-import 'package:candle_chart/utils/indicator_utils.dart';
 import 'package:candle_chart/utils/number_util.dart';
 import 'package:flutter/material.dart';
 
 import '../entity/info_window_entity.dart';
 import '../entity/k_line_entity.dart';
 import '../k_chart_widget.dart';
-import '../utils/date_format_util.dart';
 import 'base_chart_painter.dart';
 import 'base_chart_renderer.dart';
 import 'base_dimension.dart';
@@ -118,6 +114,7 @@ class ChartPainter extends BaseChartPainter
           selectX: selectX,
           indicators: indicators,
           volHidden: volHidden,
+          hideGrid: hideGrid,
           secondaryIndicators: secondaryIndicators,
           xFrontPadding: xFrontPadding,
         ) {
@@ -215,12 +212,6 @@ class ChartPainter extends BaseChartPainter
         rectIndex++;
       }
     }
-    // updatePointPosition = UpdatePointPosition(
-    //   chartPosition: chartPosition,
-    //   screenHeight: screenHeight,
-    //   mMainRenderer: mMainRenderer,
-    //   mMainRect: mMainRect,
-    // );
     scaleY = mMainRenderer.scaleY;
     mMainHighMaxValue = mMainRenderer.maxValue;
     mMainLowMinValue = mMainRenderer.minValue;
@@ -357,14 +348,12 @@ class ChartPainter extends BaseChartPainter
   void drawDate(Canvas canvas, Size size) {
     if (data == null) return;
 
-
     double columnSpace = size.rWidth / mGridColumns;
     double startX = getX(mStartIndex) - mPointWidth / 2;
     double stopX = getX(mStopIndex) + mPointWidth / 2;
     double x = 0.0;
     double y = 0.0;
     const candleSpace = 10.0;
-
 
     for (var i = 0; i < mGridColumns; ++i) {
       double translateX = xToTranslateX(columnSpace * i - candleSpace * i);
