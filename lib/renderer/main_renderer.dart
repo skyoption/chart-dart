@@ -83,6 +83,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       chartRect.right,
       chartRect.bottom - _contentPadding,
     );
+
     if (maxValue == minValue) {
       maxValue *= 1.5;
       minValue /= 2;
@@ -220,7 +221,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     );
 
     Paint paint = Paint()
-      ..color = Colors.white
+      ..color = chartColors.bgColor
       ..style = PaintingStyle.fill;
 
     canvas.drawRect(rect, paint);
