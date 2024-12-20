@@ -120,7 +120,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   // kPrint(lastCandle?.time);
                 },
                 chartColors,
-                isTrendLine: false,
                 fixedLength: 2,
                 timeFormat: TimeFormat.YEAR_MONTH_DAY,
               ),
