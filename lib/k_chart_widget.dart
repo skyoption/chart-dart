@@ -17,6 +17,8 @@ import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+enum GraphStyle { line, candle, area }
+
 enum IndicatorType {
   MA_LINEAR,
   MA_SMMA,
@@ -94,18 +96,18 @@ class KChartWidget extends StatefulWidget {
   final Function(bool)? isOnDrag;
   final ChartColors chartColors;
   final ChartStyle chartStyle;
+  final GraphStyle graphStyle;
   final VerticalTextAlignment verticalTextAlignment;
   final bool isTrendLine;
   final double xFrontPadding;
   final int isLongFocusDurationTime;
 
-  final GlobalKey<_KChartWidgetState> kChartKey =
-      GlobalKey<_KChartWidgetState>();
-
   KChartWidget(
     this.data,
     this.chartStyle,
     this.chartColors, {
+    Key? key,
+    this.graphStyle = GraphStyle.line,
     required this.isTrendLine,
     required this.onLoaded,
     this.xFrontPadding = 100,
@@ -127,27 +129,15 @@ class KChartWidget extends StatefulWidget {
     this.isOnDrag,
     this.verticalTextAlignment = VerticalTextAlignment.right,
     this.isLongFocusDurationTime = 500,
-  });
-
-  void openObjects() {
-    kChartKey.currentState?.openObjects();
-  }
-
-  void openIndicators() {
-    kChartKey.currentState?.openIndicators();
-  }
-
-  Future<void> loadCandles({CandleTimeFormat? frame}) async {
-    kChartKey.currentState?.loadCandles(frame: frame);
-  }
+  }) : super(key: key);
 
   @override
-  _KChartWidgetState createState() => _KChartWidgetState();
+  KChartWidgetState createState() => KChartWidgetState();
 }
 
 bool longPressTriggered = false;
 
-class _KChartWidgetState extends State<KChartWidget>
+class KChartWidgetState extends State<KChartWidget>
     with TickerProviderStateMixin {
   final StreamController<InfoWindowEntity?> mInfoWindowStream =
       StreamController<InfoWindowEntity?>.broadcast();
@@ -295,6 +285,7 @@ class _KChartWidgetState extends State<KChartWidget>
     _painter = ChartPainter(
       widget.chartStyle,
       widget.chartColors,
+      graphStyle: widget.graphStyle,
       indicators: chartProperties.indicators,
       screenHeight: mBaseHeight,
       baseDimension: baseDimension,

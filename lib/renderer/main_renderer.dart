@@ -1,10 +1,11 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/renderer/rects/render_rect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 import '../entity/candle_entity.dart';
-import '../k_chart_widget.dart' show IndicatorType;
+import '../k_chart_widget.dart' show GraphStyle, IndicatorType;
 import 'base_chart_renderer.dart';
 
 enum VerticalTextAlignment { left, right }
@@ -21,6 +22,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   late Rect _contentRect;
   double _contentPadding = 5.0;
 
+  final bool hideGrid;
   final ChartStyle chartStyle;
   final ChartPosition chartPositions;
   final ChartColors chartColors;
@@ -31,7 +33,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   final VerticalTextAlignment verticalTextAlignment;
   final List<IndicatorEntity> indicators;
   late final SubMainRenderer subMainRenderer;
-
+  final GraphStyle graphStyle;
   MainRenderer(
     Rect mainRect,
     double maxValue,
@@ -43,8 +45,10 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     this.chartColors,
     this.scaleX,
     this.scaleY,
+    this.hideGrid,
     this.verticalTextAlignment,
     this.indicators,
+    this.graphStyle,
   ) : super(
             chartRect: mainRect,
             maxValue: maxValue,
@@ -97,7 +101,11 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     Size size,
     Canvas canvas,
   ) {
-    drawCandle(curPoint, canvas, curX);
+    if (graphStyle == GraphStyle.candle) {
+      drawCandle(curPoint, canvas, curX);
+    } else {
+      drawLineOrLineAreaChart(lastPoint, curPoint, canvas, lastX, curX);
+    }
     drawIndicators(
       lastPoint,
       curPoint,
@@ -131,6 +139,45 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       drawAsBackground,
       isMain,
     );
+  }
+
+  void drawLineOrLineAreaChart(
+    CandleEntity lastPoint,
+    CandleEntity curPoint,
+    Canvas canvas,
+    double lastX,
+    double curX,
+  ) {
+    drawLine(
+      lastPoint.close,
+      curPoint.close,
+      canvas,
+      lastX,
+      curX,
+      Colors.blue,
+      lineStyle: ObjectStyle.normal,
+      strokeWidth: 1.5,
+    );
+    if (graphStyle == GraphStyle.area) {
+      List<Offset> offsets1 = [], offsets2 = [];
+      if (curPoint.close != 0 && lastPoint.close != 0) {
+        double curClose = getY(curPoint.close);
+        double lastClose = getY(lastPoint.close);
+        offsets1.addAll([
+          Offset(curX, curClose),
+          Offset(lastX, lastClose),
+        ]);
+        offsets2.addAll([
+          Offset(lastX, chartRect.bottom),
+          Offset(curX, chartRect.bottom),
+        ]);
+        drawRect(
+          [...offsets1, ...offsets2],
+          Colors.blue.withOpacity(0.15),
+          canvas,
+        );
+      }
+    }
   }
 
   void drawCandle(CandleEntity curPoint, Canvas canvas, double curX) {
@@ -219,18 +266,20 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 
   @override
   void drawGrid(Canvas canvas, int gridRows, int gridColumns) {
-    double rowSpace = (chartRect.height / gridRows);
-    for (int i = 0; i <= gridRows; i++) {
-      canvas.drawLine(Offset(0, rowSpace * i + topPadding),
-          Offset(chartRect.rWidth, rowSpace * i + topPadding), gridPaint);
-    }
-    double columnSpace = chartRect.rWidth / gridColumns;
-    for (int i = 0; i <= columnSpace; i++) {
-      canvas.drawLine(
-        Offset(columnSpace * i, topPadding),
-        Offset(columnSpace * i, chartRect.bottom),
-        gridPaint,
-      );
+    if (!hideGrid) {
+      double rowSpace = (chartRect.height / gridRows);
+      for (int i = 0; i <= gridRows; i++) {
+        canvas.drawLine(Offset(0, rowSpace * i + topPadding),
+            Offset(chartRect.rWidth, rowSpace * i + topPadding), gridPaint);
+      }
+      double columnSpace = chartRect.rWidth / gridColumns;
+      for (int i = 0; i <= columnSpace; i++) {
+        canvas.drawLine(
+          Offset(columnSpace * i, topPadding),
+          Offset(columnSpace * i, chartRect.bottom),
+          gridPaint,
+        );
+      }
     }
   }
 

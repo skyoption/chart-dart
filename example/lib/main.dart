@@ -21,9 +21,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-      ),
+      theme: ThemeData.light(useMaterial3: true),
+      darkTheme: ThemeData.dark(useMaterial3: true),
+      themeMode: ThemeMode.dark,
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -87,43 +87,42 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {});
   }
 
+  final GlobalKey<KChartWidgetState> key = GlobalKey<KChartWidgetState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 2.0),
           child: Column(
             children: <Widget>[
-              Stack(
-                children: <Widget>[
-                  KChartWidget(
-                    datas,
-                    chartStyle,
-                    onLoaded: (frame, candles, first, last) async {
-                      if (candles.isEmpty) {
-                        await getData(_period(frame));
-                        return datas;
-                      } else {
-                        datas = candles;
-                      }
-                      // kPrint(firstCandle?.time);
-                      // kPrint(lastCandle?.time);
-                    },
-                    chartColors,
-                    isTrendLine: false,
-                    fixedLength: 2,
-                    timeFormat: TimeFormat.YEAR_MONTH_DAY,
-                  ),
-                  if (showLoading)
-                    Container(
-                      width: double.infinity,
-                      height: 450,
-                      alignment: Alignment.center,
-                      child: const CircularProgressIndicator(),
-                    ),
-                ],
+              InkWell(
+                child: const Icon(Icons.data_object),
+                onTap: () {
+                  key.currentState?.openObjects();
+                },
+              ),
+              KChartWidget(
+                datas,
+                chartStyle,
+                key: key,
+                hideGrid: true,
+                graphStyle: GraphStyle.line,
+                onLoaded: (frame, candles, first, last) async {
+                  if (candles.isEmpty) {
+                    await getData(_period(frame));
+                    return datas;
+                  } else {
+                    datas = candles;
+                  }
+                  // kPrint(firstCandle?.time);
+                  // kPrint(lastCandle?.time);
+                },
+                chartColors,
+                isTrendLine: false,
+                fixedLength: 2,
+                timeFormat: TimeFormat.YEAR_MONTH_DAY,
               ),
             ],
           ),

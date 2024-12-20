@@ -150,7 +150,7 @@ abstract class BaseChartPainter extends CustomPainter
     canvas.save();
     canvas.scale(1, 1);
     drawBg(canvas, size);
-    if (!hideGrid) drawGrid(canvas);
+    drawGrid(canvas);
     if (data != null && data!.isNotEmpty) {
       drawChart(canvas, size);
       drawVerticalText(canvas);

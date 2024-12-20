@@ -78,6 +78,7 @@ class ChartPainter extends BaseChartPainter
       mMainLowMinValue = double.maxFinite;
   final double scaleX;
   final double scaleY;
+  final GraphStyle graphStyle;
 
   ChartPainter(
     this.chartStyle,
@@ -94,6 +95,7 @@ class ChartPainter extends BaseChartPainter
     required this.baseDimension,
     required this.indicators,
     required this.secondaryIndicators,
+    required this.graphStyle,
     isOnTap,
     isTapShowInfoDialog,
     required this.verticalTextAlignment,
@@ -170,8 +172,10 @@ class ChartPainter extends BaseChartPainter
       this.chartColors,
       this.scaleX,
       this.scaleY,
+      this.hideGrid,
       verticalTextAlignment,
       indicators,
+      graphStyle,
     );
 
     if (mVolRect != null) {
@@ -259,13 +263,13 @@ class ChartPainter extends BaseChartPainter
 
   @override
   void drawGrid(canvas) {
-    if (!hideGrid) {
-      mMainRenderer.drawGrid(canvas, mGridRows, mGridColumns);
-      mVolRenderer?.drawGrid(canvas, mGridRows, mGridColumns);
-      mSecondaryRendererList.forEach((element) {
-        element.drawGrid(canvas, mGridRows, mGridColumns);
-      });
-    }
+    // if (!hideGrid) {
+    mMainRenderer.drawGrid(canvas, mGridRows, mGridColumns);
+    mVolRenderer?.drawGrid(canvas, mGridRows, mGridColumns);
+    mSecondaryRendererList.forEach((element) {
+      element.drawGrid(canvas, mGridRows, mGridColumns);
+    });
+    // }
   }
 
   @override
@@ -333,11 +337,7 @@ class ChartPainter extends BaseChartPainter
   @override
   void drawVerticalText(canvas) {
     var textStyle = getTextStyle(this.chartColors.black);
-    //EMA
-    // if (!hideGrid || this.chartStyle.isNotPoint) {
-    if (!hideGrid) {
-      mMainRenderer.drawVerticalText(canvas, textStyle, mGridRows);
-    }
+    mMainRenderer.drawVerticalText(canvas, textStyle, mGridRows);
     mVolRenderer?.drawVerticalText(canvas, textStyle, mGridRows);
     mSecondaryRendererList.forEach((element) {
       element.drawVerticalText(canvas, textStyle, mGridRows);
