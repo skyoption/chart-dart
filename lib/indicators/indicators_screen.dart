@@ -148,10 +148,10 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                     PropertiesItemWidget(
                       title: 'Window ${e.key}',
                       margin: EdgeInsets.zero,
-                      titleColor: Colors.blueAccent,
+                      titleColor: KChartWidget.colors!.primary,
                       child: Icon(
                         Icons.add_circle_outline_rounded,
-                        color: Colors.blueAccent,
+                        color: KChartWidget.colors!.primary,
                       ),
                       onTap: () {
                         Navigator.of(context).pushReplacement(

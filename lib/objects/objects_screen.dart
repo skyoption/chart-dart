@@ -1,5 +1,6 @@
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/add_objects_screen.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
 import 'package:candle_chart/objects/properties/rectangle_line_properties_screen.dart';
@@ -49,7 +50,7 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
                     child: Icon(
                       Icons.arrow_back_ios_new_rounded,
                       size: 26.0,
-                      color: Colors.black,
+                      color: KChartWidget.colors!.iconColor,
                     ),
                   ),
                 ),

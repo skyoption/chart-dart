@@ -1,4 +1,5 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -41,7 +42,7 @@ class _ApplyToScreenState extends State<ApplyToScreen> {
                     child: Icon(
                       Icons.arrow_back_ios_new_rounded,
                       size: 21.0,
-                      color: Colors.black,
+                      color: KChartWidget.colors!.iconColor,
                     ),
                   ),
                 ),
@@ -76,7 +77,10 @@ class _ApplyToScreenState extends State<ApplyToScreen> {
                       .replaceAll('__', '/'),
                   margin: EdgeInsets.zero,
                   child: item.value == applyTo
-                      ? Icon(Icons.check, color: Colors.blueAccent)
+                      ? Icon(
+                          Icons.check,
+                          color: KChartWidget.colors!.primary,
+                        )
                       : const SizedBox(height: 24.0),
                   onTap: () {
                     applyTo = item.value;

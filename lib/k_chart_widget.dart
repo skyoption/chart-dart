@@ -96,6 +96,7 @@ class KChartWidget extends StatefulWidget {
   final double xFrontPadding;
   final bool showNowPrice;
   final int isLongFocusDurationTime;
+  static ChartColors? colors;
 
   KChartWidget(
     this.data,
@@ -120,7 +121,9 @@ class KChartWidget extends StatefulWidget {
     this.isOnDrag,
     this.verticalTextAlignment = VerticalTextAlignment.right,
     this.isLongFocusDurationTime = 500,
-  }) : super(key: key);
+  }) : super(key: key) {
+    KChartWidget.colors = chartColors;
+  }
 
   @override
   KChartWidgetState createState() => KChartWidgetState();

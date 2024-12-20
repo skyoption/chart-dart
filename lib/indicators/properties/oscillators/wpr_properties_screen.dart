@@ -76,7 +76,7 @@ class _WPRPropertiesScreenState extends State<WPRPropertiesScreen> {
                     child: Icon(
                       Icons.arrow_back_ios_new_rounded,
                       size: 21.0,
-                      color: Colors.black,
+                      color: KChartWidget.colors!.iconColor,
                     ),
                   ),
                 ),
@@ -99,7 +99,7 @@ class _WPRPropertiesScreenState extends State<WPRPropertiesScreen> {
                       'Done',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w500,
-                            color: Colors.blueAccent,
+                            color: KChartWidget.colors!.primary,
                           ),
                     ),
                   ),
@@ -127,7 +127,7 @@ class _WPRPropertiesScreenState extends State<WPRPropertiesScreen> {
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w400,
-                        color: Colors.blueAccent,
+                        color: KChartWidget.colors!.primary,
                       ),
                   onChanged: (value) {
                     final res = int.tryParse(value);

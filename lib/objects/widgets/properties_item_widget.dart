@@ -1,11 +1,11 @@
-
+import 'package:candle_chart/k_chart_widget.dart';
 import 'package:flutter/material.dart';
 
 class PropertiesItemWidget extends StatelessWidget {
   final String? subTitle;
   final String title;
   final Function? onTap;
-  final Color subTitleColor, titleColor;
+  final Color? subTitleColor, titleColor;
   final EdgeInsetsGeometry? margin;
   final Widget? child;
   final double? height;
@@ -19,8 +19,8 @@ class PropertiesItemWidget extends StatelessWidget {
     this.margin,
     this.child,
     this.height,
-    this.subTitleColor = Colors.blueAccent,
-    this.titleColor = Colors.black,
+    this.subTitleColor,
+    this.titleColor,
     this.showArrow = true,
   });
 
@@ -47,7 +47,7 @@ class PropertiesItemWidget extends StatelessWidget {
               title,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w400,
-                    color: titleColor,
+                    color: titleColor ?? KChartWidget.colors!.optionsColor,
                   ),
             ),
             if (child != null)
@@ -62,15 +62,16 @@ class PropertiesItemWidget extends StatelessWidget {
                         subTitle!,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               fontWeight: FontWeight.w400,
-                              color: subTitleColor,
+                              color: subTitleColor ??
+                                  KChartWidget.colors!.optionsColor,
                             ),
                       ),
                     ),
-                  if (onTap != null&& showArrow)
+                  if (onTap != null && showArrow)
                     Icon(
                       Icons.arrow_forward_ios_sharp,
                       size: 16.0,
-                      color: Colors.black,
+                      color: KChartWidget.colors!.iconColor,
                     ),
                 ],
               )

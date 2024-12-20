@@ -1,3 +1,4 @@
+import 'package:candle_chart/k_chart_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
@@ -59,7 +60,7 @@ class _PickerColorWidgetState extends State<PickerColorWidget> {
                       'Done',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w500,
-                            color: Colors.blueAccent,
+                            color: KChartWidget.colors!.primary,
                           ),
                     ),
                   ),

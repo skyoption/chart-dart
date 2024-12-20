@@ -50,7 +50,7 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                     child: Icon(
                       Icons.arrow_back_ios_new_rounded,
                       size: 21.0,
-                      color: Colors.black,
+                      color: KChartWidget.colors!.iconColor,
                     ),
                   ),
                 ),

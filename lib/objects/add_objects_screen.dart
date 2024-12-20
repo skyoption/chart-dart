@@ -1,5 +1,6 @@
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/object_item_widget.dart';
 import 'package:candle_chart/utils/icons.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,7 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
                     child: Icon(
                       Icons.arrow_back_ios_new_rounded,
                       size: 21.0,
-                      color: Colors.black,
+                      color: KChartWidget.colors!.iconColor,
                     ),
                   ),
                 ),

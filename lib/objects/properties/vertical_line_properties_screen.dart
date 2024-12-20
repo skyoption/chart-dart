@@ -1,7 +1,6 @@
-
-
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/bottom_sheets/datepicker.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/object_style_widget.dart';
@@ -52,7 +51,6 @@ class _VerticalLinePropertiesScreenState
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,7 +71,7 @@ class _VerticalLinePropertiesScreenState
                     child: Icon(
                       Icons.arrow_back_ios_new_rounded,
                       size: 21.0,
-                      color: Colors.black,
+                      color: KChartWidget.colors!.iconColor,
                     ),
                   ),
                 ),
@@ -98,7 +96,7 @@ class _VerticalLinePropertiesScreenState
                       'Done',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w500,
-                            color: Colors.blueAccent,
+                            color: KChartWidget.colors!.primary,
                           ),
                     ),
                   ),

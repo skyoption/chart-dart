@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' show Color;
+import 'package:flutter/material.dart' show Color, Colors;
 
 /// ChartColors
 ///
@@ -14,6 +14,10 @@ class ChartColors {
   Color bgColor;
 
   Color kLineColor;
+
+  Color iconColor;
+  Color optionsColor;
+  Color primary;
 
   ///
   Color lineFillColor;
@@ -99,11 +103,13 @@ class ChartColors {
     }
   }
 
-
   /// constructor chart color
   ChartColors({
     this.bgColor = const Color(0xffffffff),
     this.kLineColor = const Color(0xff4C86CD),
+    this.iconColor = Colors.blue,
+    this.optionsColor = Colors.black,
+    this.primary = Colors.blue,
 
     ///
     this.lineFillColor = const Color(0x554C86CD),

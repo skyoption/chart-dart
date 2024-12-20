@@ -1,3 +1,4 @@
+import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -38,7 +39,7 @@ class _IndicatorPixelsScreenState extends State<IndicatorPixelsScreen> {
                     child: Icon(
                       Icons.arrow_back_ios_new_rounded,
                       size: 21.0,
-                      color: Colors.black,
+                      color: KChartWidget.colors!.iconColor,
                     ),
                   ),
                 ),
@@ -67,7 +68,10 @@ class _IndicatorPixelsScreenState extends State<IndicatorPixelsScreen> {
                   title: '${item.value.toInt()} Pixel',
                   margin: EdgeInsets.zero,
                   child: item.value == pixel
-                      ? Icon(Icons.check, color: Colors.blueAccent)
+                      ? Icon(
+                          Icons.check,
+                          color: KChartWidget.colors!.primary,
+                        )
                       : const SizedBox(height: 24.0),
                   onTap: () {
                     pixel = item.value;

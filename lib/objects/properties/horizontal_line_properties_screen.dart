@@ -1,6 +1,7 @@
 
 
 import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/object_style_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
@@ -50,7 +51,7 @@ class _HorizontalLinePropertiesScreenState
                     child: Icon(
                       Icons.arrow_back_ios_new_rounded,
                       size: 21.0,
-                      color: Colors.black,
+                      color: KChartWidget.colors!.iconColor,
                     ),
                   ),
                 ),
@@ -75,7 +76,7 @@ class _HorizontalLinePropertiesScreenState
                       'Done',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w500,
-                            color: Colors.blueAccent,
+                            color: KChartWidget.colors!.primary,
                           ),
                     ),
                   ),

@@ -1,3 +1,4 @@
+import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -40,7 +41,7 @@ class _IndicatorMethodsScreenState extends State<IndicatorMethodsScreen> {
                     child: Icon(
                       Icons.arrow_back_ios_new_rounded,
                       size: 21.0,
-                      color: Colors.black,
+                      color: KChartWidget.colors!.iconColor,
                     ),
                   ),
                 ),
@@ -69,7 +70,10 @@ class _IndicatorMethodsScreenState extends State<IndicatorMethodsScreen> {
                   title: item.value.name.replaceAll('_', ' '),
                   margin: EdgeInsets.zero,
                   child: item.value == method
-                      ? Icon(Icons.check, color: Colors.blueAccent)
+                      ? Icon(
+                          Icons.check,
+                          color: KChartWidget.colors!.primary,
+                        )
                       : const SizedBox(height: 24.0),
                   onTap: () {
                     method = item.value;
