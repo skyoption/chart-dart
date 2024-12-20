@@ -16,7 +16,7 @@ import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-enum GraphStyle { line, candle, area }
+enum GraphStyle { area, candles, line }
 
 enum IndicatorType {
   MA_LINEAR,

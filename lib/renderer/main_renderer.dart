@@ -101,7 +101,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     Size size,
     Canvas canvas,
   ) {
-    if (graphStyle == GraphStyle.candle) {
+    if (graphStyle == GraphStyle.candles) {
       drawCandle(curPoint, canvas, curX);
     } else {
       drawLineOrLineAreaChart(lastPoint, curPoint, canvas, lastX, curX);
