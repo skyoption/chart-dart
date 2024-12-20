@@ -33,7 +33,6 @@ class _PropertiesBottomSheetState extends State<PropertiesBottomSheet> {
             backgroundColor: Colors.white,
             margin: EdgeInsets.zero,
             title: 'Properties',
-            color: KChartWidget.colors!.primary,
             onTap: () {
               Navigator.of(context).pop();
               onTap(context, widget.item, widget.data, widget.onDone);
@@ -84,7 +83,6 @@ void showPropertiesBottomSheet({
 }) {
   showBottomSheet(
     context: context,
-    backgroundColor: Colors.white,
     elevation: 3.0,
     showDragHandle: true,
     shape: RoundedRectangleBorder(

@@ -330,20 +330,24 @@ class KChartWidgetState extends State<KChartWidget>
                     child: ChartLoader(),
                   ),
                 if (_tapPosition != null)
-                  Container(
-                    margin: MPadding.set(horizontal: 6.0),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black,
+                  PositionedDirectional(
+                    bottom: 0.0,
+                    start: 0.0,
+                    child: Container(
+                      margin: MPadding.set(horizontal: 6.0),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: KChartWidget.colors!.iconColor,
+                        ),
                       ),
-                    ),
-                    child: RawMagnifier(
-                      focalPointOffset: Offset(
-                        _tapPosition!.dx - 25.0,
-                        _tapPosition!.dy - 25.0,
+                      child: RawMagnifier(
+                        focalPointOffset: Offset(
+                          _tapPosition!.dx - 25.0,
+                          _tapPosition!.dy - 25.0,
+                        ),
+                        size: const Size(50, 45),
+                        magnificationScale: 1.0,
                       ),
-                      size: const Size(50, 45),
-                      magnificationScale: 1.0,
                     ),
                   ),
                 if (mScaleX != 1.0 || mScaleY != 1.0)
