@@ -1,5 +1,6 @@
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/objects_screen.dart';
 import 'package:candle_chart/objects/widgets/object_item_widget.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,7 @@ class _PropertiesBottomSheetState extends State<PropertiesBottomSheet> {
         children: [
           ObjectItemWidget(
             hideArrow: true,
-            backgroundColor: Colors.white,
+            backgroundColor: KChartWidget.colors!.bgColor,
             margin: EdgeInsets.zero,
             title: 'Properties',
             onTap: () {
@@ -41,7 +42,7 @@ class _PropertiesBottomSheetState extends State<PropertiesBottomSheet> {
           Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
           ObjectItemWidget(
             hideArrow: true,
-            backgroundColor: Colors.white,
+            backgroundColor: KChartWidget.colors!.bgColor,
             margin: EdgeInsets.zero,
             title: 'Delete',
             color: Colors.red,
@@ -54,7 +55,7 @@ class _PropertiesBottomSheetState extends State<PropertiesBottomSheet> {
           Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
           ObjectItemWidget(
             hideArrow: true,
-            backgroundColor: Colors.white,
+            backgroundColor: KChartWidget.colors!.bgColor,
             margin: EdgeInsets.zero,
             title: 'Cancel',
             onTap: () {
