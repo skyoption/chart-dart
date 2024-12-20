@@ -23,9 +23,9 @@ const SHIMMER_GRADIENT = LinearGradient(
 const DARK_SHIMMER_GRADIENT = LinearGradient(
   colors: [
     Color(0xFF222222),
-    Color(0xFF242424),
-    Color(0xFF2B2B2B),
-    Color(0xFF242424),
+    Color(0xFF4B4B4B),
+    Color(0xFF7D7D7D),
+    Color(0xFF4B4B4B),
     Color(0xFF222222),
   ],
   stops: [
