@@ -331,7 +331,7 @@ class KChartWidgetState extends State<KChartWidget>
                   ),
                 if (_tapPosition != null)
                   PositionedDirectional(
-                    bottom: 0.0,
+                    bottom: 50.0,
                     start: 0.0,
                     child: Container(
                       margin: MPadding.set(horizontal: 6.0),
