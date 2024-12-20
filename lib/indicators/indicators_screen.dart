@@ -54,7 +54,7 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                     child: Icon(
                       Icons.arrow_back_ios_new_rounded,
                       size: 21.0,
-                      color: Colors.black,
+                      color: KChartWidget.colors!.iconColor,
                     ),
                   ),
                 ),
@@ -80,10 +80,10 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
             PropertiesItemWidget(
               title: 'Main window',
               margin: EdgeInsets.zero,
-              titleColor: Colors.blueAccent,
+              titleColor: KChartWidget.colors!.primary,
               child: Icon(
                 Icons.add_circle_outline_rounded,
-                color: Colors.blueAccent,
+                color: KChartWidget.colors!.primary,
               ),
               onTap: () {
                 Navigator.of(context).pushReplacement(
