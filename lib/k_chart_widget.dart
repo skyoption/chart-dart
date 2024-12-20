@@ -3,7 +3,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:candle_chart/chart_translations.dart';
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/objects/bottom_sheets/properties_bottom_sheet.dart';
 import 'package:candle_chart/objects/objects_screen.dart';
@@ -75,10 +74,6 @@ class KChartWidget extends StatefulWidget {
   final bool isLine;
   final bool isTapShowInfoDialog;
   final bool hideGrid;
-  final bool showNowPrice;
-  final bool showInfoDialog;
-  final bool materialInfoDialog;
-  final ChartTranslations chartTranslations;
   final List<String> timeFormat;
 
   final Function(bool)? onLoadMore;
@@ -98,8 +93,8 @@ class KChartWidget extends StatefulWidget {
   final ChartStyle chartStyle;
   final GraphStyle graphStyle;
   final VerticalTextAlignment verticalTextAlignment;
-  final bool isTrendLine;
   final double xFrontPadding;
+  final bool showNowPrice;
   final int isLongFocusDurationTime;
 
   KChartWidget(
@@ -108,7 +103,6 @@ class KChartWidget extends StatefulWidget {
     this.chartColors, {
     Key? key,
     this.graphStyle = GraphStyle.line,
-    required this.isTrendLine,
     required this.onLoaded,
     this.xFrontPadding = 100,
     this.volHidden = true,
@@ -116,9 +110,6 @@ class KChartWidget extends StatefulWidget {
     this.isTapShowInfoDialog = false,
     this.hideGrid = false,
     this.showNowPrice = true,
-    this.showInfoDialog = true,
-    this.materialInfoDialog = true,
-    this.chartTranslations = const ChartTranslations(),
     this.timeFormat = TimeFormat.YEAR_MONTH_DAY,
     this.onLoadMore,
     this.fixedLength = 2,
