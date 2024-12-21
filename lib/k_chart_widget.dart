@@ -243,6 +243,18 @@ class KChartWidgetState extends State<KChartWidget>
     super.dispose();
   }
 
+  void zoomIn() {
+    mScaleX = (_lastScaleX * 1.1).clamp(0.1, 2.0);
+    mScaleY = (_lastScaleY * 1.1).clamp(0.5, 1.0);
+    notifyChanged();
+  }
+
+  void zoomOut() {
+    mScaleX = (_lastScaleX * 1.1).clamp(0.1, 2.0);
+    mScaleY = (_lastScaleY * 1.1).clamp(0.5, 1.0);
+    notifyChanged();
+  }
+
   late final height = MediaQuery.of(context).size.height;
   ChartPainter? _painter;
   late double mBaseHeight = height * 0.7;
