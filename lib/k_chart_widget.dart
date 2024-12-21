@@ -250,8 +250,8 @@ class KChartWidgetState extends State<KChartWidget>
   }
 
   void zoomOut() {
-    mScaleX = (_lastScaleX * 1.1).clamp(0.1, 2.0);
-    mScaleY = (_lastScaleY * 1.1).clamp(0.5, 1.0);
+    mScaleX = (_lastScaleX * 0.9).clamp(0.1, 2.0);
+    mScaleY = (_lastScaleY * 0.9).clamp(0.5, 1.0);
     notifyChanged();
   }
 
