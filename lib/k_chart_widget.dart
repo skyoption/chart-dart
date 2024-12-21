@@ -263,10 +263,10 @@ class KChartWidgetState extends State<KChartWidget>
 
   late final height = MediaQuery.of(context).size.height;
   ChartPainter? _painter;
-  late double mBaseHeight = widget.mBaseHeight ?? height * 0.7;
 
   @override
   Widget build(BuildContext context) {
+    double mBaseHeight = widget.mBaseHeight ?? height * 0.7;
     Map<Type, GestureRecognizerFactory<GestureRecognizer>> gestures = {};
     if (objectType != null) {
       if (!bottomSheetShown) {
