@@ -138,11 +138,11 @@ class ChartPainter extends BaseChartPainter
       ..isAntiAlias = true;
     askPaint = Paint()
       ..strokeWidth = this.chartStyle.nowPriceLineWidth
-      ..color = Colors.red
+      ..color = chartColors.ask
       ..isAntiAlias = true;
     bidPaint = Paint()
       ..strokeWidth = this.chartStyle.nowPriceLineWidth
-      ..color = Colors.black
+      ..color = chartColors.bid
       ..isAntiAlias = true;
     pricePaint = Paint()
       ..strokeWidth = this.chartStyle.priceLineWidth

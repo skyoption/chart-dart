@@ -155,7 +155,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       canvas,
       lastX,
       curX,
-      Colors.blue,
+      chartColors.chartColor,
       lineStyle: ObjectStyle.normal,
       strokeWidth: 1.5,
     );
@@ -174,7 +174,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         ]);
         drawRect(
           [...offsets1, ...offsets2],
-          Colors.blue.withOpacity(0.15),
+          chartColors.chartColor.withOpacity(0.15),
           canvas,
         );
       }

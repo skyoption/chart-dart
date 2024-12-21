@@ -18,6 +18,11 @@ class ChartColors {
   Color iconColor;
   Color optionsColor;
   Color primary;
+  Color ask;
+  Color bid;
+  Color chartColor;
+  Color stopLoss;
+  Color takeProfit;
 
   ///
   Color lineFillColor;
@@ -33,15 +38,6 @@ class ChartColors {
   Color dnColor;
   Color volColor;
 
-  Color macdColor;
-  Color difColor;
-  Color deaColor;
-
-  Color kColor;
-  Color dColor;
-  Color jColor;
-  Color rsiColor;
-
   /// default text color: apply for text at grid
   Color defaultTextColor;
 
@@ -50,15 +46,6 @@ class ChartColors {
   Color nowPriceDnColor;
   Color nowPriceTextColor;
   Color priceTextColor;
-
-  /// trend color
-  Color trendLineColor;
-
-  /// depth color
-  Color depthBuyColor; //upColor
-  Color depthBuyPathColor;
-  Color depthSellColor; //dnColor
-  Color depthSellPathColor;
 
   ///value border color after selection
   Color selectBorderColor;
@@ -106,6 +93,11 @@ class ChartColors {
   /// constructor chart color
   ChartColors({
     this.bgColor = const Color(0xffffffff),
+    this.chartColor = Colors.blue,
+    this.ask = Colors.red,
+    this.bid = Colors.black,
+    this.takeProfit = Colors.blue,
+    this.stopLoss = Colors.blue,
     this.kLineColor = const Color(0xff4C86CD),
     this.iconColor = Colors.blue,
     this.optionsColor = Colors.black,
@@ -124,27 +116,11 @@ class ChartColors {
     this.upColor = const Color(0xFF14AD8F),
     this.dnColor = const Color(0xFFD5405D),
     this.volColor = const Color(0xff2f8fd5),
-    this.macdColor = const Color(0xff2f8fd5),
-    this.difColor = const Color(0xffE5B767),
-    this.deaColor = const Color(0xff1FD1AC),
-    this.kColor = const Color(0xffE5B767),
-    this.dColor = const Color(0xff1FD1AC),
-    this.jColor = const Color(0xffB48CE3),
-    this.rsiColor = const Color(0xffE5B767),
     this.defaultTextColor = const Color(0xFF909196),
     this.nowPriceUpColor = const Color(0xFF14AD8F),
     this.nowPriceDnColor = const Color(0xFFD5405D),
     this.nowPriceTextColor = const Color(0xffffffff),
     this.priceTextColor = const Color(0xffffffff),
-
-    /// trend color
-    this.trendLineColor = const Color(0xFFF89215),
-
-    ///depth color
-    this.depthBuyColor = const Color(0xFF14AD8F),
-    this.depthBuyPathColor = const Color(0x3314AD8F),
-    this.depthSellColor = const Color(0xFFD5405D),
-    this.depthSellPathColor = const Color(0x33D5405D),
 
     ///value border color after selection
     this.selectBorderColor = const Color(0xFF222223),
