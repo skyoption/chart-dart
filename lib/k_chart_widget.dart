@@ -97,6 +97,7 @@ class KChartWidget extends StatefulWidget {
   final bool showNowPrice;
   final int isLongFocusDurationTime;
   static ChartColors? colors;
+  final double? mBaseHeight;
 
   KChartWidget(
     this.data,
@@ -110,6 +111,7 @@ class KChartWidget extends StatefulWidget {
     this.isLine = false,
     this.isTapShowInfoDialog = false,
     this.hideGrid = false,
+    this.mBaseHeight,
     this.showNowPrice = true,
     this.timeFormat = TimeFormat.YEAR_MONTH_DAY,
     this.onLoadMore,
@@ -246,18 +248,22 @@ class KChartWidgetState extends State<KChartWidget>
   void zoomIn() {
     mScaleX = (_lastScaleX * 1.1).clamp(0.1, 2.0);
     mScaleY = (_lastScaleY * 1.1).clamp(0.5, 1.0);
+    _lastScaleX = mScaleX;
+    _lastScaleY = mScaleY;
     notifyChanged();
   }
 
   void zoomOut() {
     mScaleX = (_lastScaleX * 0.9).clamp(0.1, 2.0);
     mScaleY = (_lastScaleY * 0.9).clamp(0.5, 1.0);
+    _lastScaleX = mScaleX;
+    _lastScaleY = mScaleY;
     notifyChanged();
   }
 
   late final height = MediaQuery.of(context).size.height;
   ChartPainter? _painter;
-  late double mBaseHeight = height * 0.7;
+  late double mBaseHeight = widget.mBaseHeight ?? height * 0.7;
 
   @override
   Widget build(BuildContext context) {
@@ -360,7 +366,7 @@ class KChartWidgetState extends State<KChartWidget>
                   ),
                 if (mScaleX != 1.0 || mScaleY != 1.0)
                   Align(
-                    alignment: AlignmentDirectional.centerEnd,
+                    alignment: AlignmentDirectional.topEnd,
                     child: GestureDetector(
                       onTap: () {
                         mScaleX = 1.0;
