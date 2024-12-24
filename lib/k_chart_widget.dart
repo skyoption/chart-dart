@@ -366,7 +366,7 @@ class KChartWidgetState extends State<KChartWidget>
                   ),
                 if (mScaleX != 1.0 || mScaleY != 1.0)
                   Align(
-                    alignment: AlignmentDirectional.topEnd,
+                    alignment: Alignment.topRight,
                     child: GestureDetector(
                       onTap: () {
                         mScaleX = 1.0;
