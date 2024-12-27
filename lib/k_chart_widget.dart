@@ -77,6 +77,7 @@ class KChartWidget extends StatefulWidget {
   final List<String> timeFormat;
 
   final Function(bool)? onLoadMore;
+  final Function? onZooomingStart;
   final Function(
     CandleTimeFormat frame,
     List<KLineEntity> candles,
@@ -121,6 +122,7 @@ class KChartWidget extends StatefulWidget {
     this.flingRatio = 0.5,
     this.flingCurve = Curves.decelerate,
     this.isOnDrag,
+    this.onZooomingStart,
     this.verticalTextAlignment = VerticalTextAlignment.right,
     this.isLongFocusDurationTime = 500,
   }) : super(key: key) {
@@ -201,6 +203,14 @@ class KChartWidgetState extends State<KChartWidget>
     );
   }
 
+  void resetZoom() {
+    mScaleX = 1.0;
+    mScaleY = 1.0;
+    _lastScaleX = 1.0;
+    _lastScaleY = 1.0;
+    notifyChanged();
+  }
+
   Future<void> loadCandles({CandleTimeFormat? frame}) async {
     loading = true;
     widget.data = null;
@@ -279,7 +289,7 @@ class KChartWidgetState extends State<KChartWidget>
       }
     } else {
       gestures[LongPressGestureRecognizer] = longPressRecognizer();
-      gestures[ScaleGestureRecognizer] = scaleGestureRecognizer();
+      gestures[ScaleGestureRecognizer] = horizontalScaleRecognizer();
       gestures[HorizontalDragGestureRecognizer] = horizontalRecognizer();
     }
 
@@ -340,6 +350,12 @@ class KChartWidgetState extends State<KChartWidget>
                   ),
                   painter: _painter,
                 ),
+                Positioned(
+                  bottom: 0.0,
+                  right: 0.0,
+                  width: 100,
+                  child: ChartLoader(),
+                ),
                 if (loading)
                   Positioned(
                     bottom: 0.0,
@@ -362,32 +378,6 @@ class KChartWidgetState extends State<KChartWidget>
                       ),
                       size: const Size(50, 45),
                       magnificationScale: 1.0,
-                    ),
-                  ),
-                if (mScaleX != 1.0 || mScaleY != 1.0)
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: GestureDetector(
-                      onTap: () {
-                        mScaleX = 1.0;
-                        mScaleY = 1.0;
-                        _lastScaleX = 1.0;
-                        _lastScaleY = 1.0;
-                        notifyChanged();
-                      },
-                      child: Container(
-                        margin: MPadding.set(end: 65.0, top: 35.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey,
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.refresh_rounded,
-                          color: Colors.grey,
-                          size: 21.0,
-                        ),
-                      ),
                     ),
                   ),
               ],
@@ -704,7 +694,36 @@ class KChartWidgetState extends State<KChartWidget>
   }
 
   GestureRecognizerFactoryWithHandlers<ScaleGestureRecognizer>
-      scaleGestureRecognizer() {
+      verticalScaleGestureRecognizer() {
+    return GestureRecognizerFactoryWithHandlers<ScaleGestureRecognizer>(
+      () => ScaleGestureRecognizer(),
+      (ScaleGestureRecognizer instance) {
+        instance
+          ..onStart = (_) {
+            pointerCount = _.pointerCount;
+            isScale = true;
+          }
+          ..onUpdate = (details) {
+            pointerCount = details.pointerCount;
+            if (isDrag || isLongPress) return;
+            if (isLongPress) return;
+            if (pointerCount == 2) {
+              mScaleY = (_lastScaleY * details.verticalScale).clamp(0.5, 1.0);
+            }
+            if (widget.onZooomingStart != null) widget.onZooomingStart!();
+            notifyChanged();
+          }
+          ..onEnd = (details) {
+            pointerCount = 1;
+            isScale = false;
+            _lastScaleY = mScaleY;
+          };
+      },
+    );
+  }
+
+  GestureRecognizerFactoryWithHandlers<ScaleGestureRecognizer>
+      horizontalScaleRecognizer() {
     return GestureRecognizerFactoryWithHandlers<ScaleGestureRecognizer>(
       () => ScaleGestureRecognizer(),
       (ScaleGestureRecognizer instance) {
@@ -719,15 +738,15 @@ class KChartWidgetState extends State<KChartWidget>
             if (isLongPress) return;
             if (pointerCount == 2) {
               mScaleX = (_lastScaleX * details.horizontalScale).clamp(0.1, 2.0);
-              mScaleY = (_lastScaleY * details.verticalScale).clamp(0.5, 1.0);
             }
+            if (widget.onZooomingStart != null) widget.onZooomingStart!();
+
             notifyChanged();
           }
           ..onEnd = (details) {
             pointerCount = 1;
             isScale = false;
             _lastScaleX = mScaleX;
-            _lastScaleY = mScaleY;
           };
       },
     );
