@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/utils/date_util.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData.light(useMaterial3: true),
       darkTheme: ThemeData.dark(useMaterial3: true),
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.light,
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -108,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 chartStyle,
                 key: key,
                 hideGrid: true,
-                graphStyle: GraphStyle.line,
+                graphStyle: GraphStyle.area,
                 onLoaded: (frame, candles, first, last) async {
                   if (candles.isEmpty) {
                     await getData(_period(frame));
@@ -119,6 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   // kPrint(firstCandle?.time);
                   // kPrint(lastCandle?.time);
                 },
+                onZooomingStart: (bool value) {},
                 chartColors,
                 fixedLength: 2,
                 timeFormat: TimeFormat.YEAR_MONTH_DAY,

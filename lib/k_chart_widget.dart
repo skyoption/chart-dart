@@ -10,6 +10,7 @@ import 'package:candle_chart/indicators/indicators_screen.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/renderer/base_dimension.dart';
 import 'package:candle_chart/utils/date_util.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:candle_chart/widgets/chart_loader.dart';
 import 'package:candle_chart/widgets/paddings.dart';
@@ -77,13 +78,13 @@ class KChartWidget extends StatefulWidget {
   final List<String> timeFormat;
 
   final Function(bool)? onLoadMore;
-  final Function? onZooomingStart;
+  final Function(bool value)? onZooomingStart;
   final Function(
-    CandleTimeFormat frame,
-    List<KLineEntity> candles,
-    KLineEntity? firstCandle,
-    KLineEntity? lastCandle,
-  ) onLoaded;
+      CandleTimeFormat frame,
+      List<KLineEntity> candles,
+      KLineEntity? firstCandle,
+      KLineEntity? lastCandle,
+      ) onLoaded;
   final int fixedLength;
   final List<int> maDayList;
   final int flingTime;
@@ -100,32 +101,31 @@ class KChartWidget extends StatefulWidget {
   static ChartColors? colors;
   final double? mBaseHeight;
 
-  KChartWidget(
-    this.data,
-    this.chartStyle,
-    this.chartColors, {
-    Key? key,
-    this.graphStyle = GraphStyle.line,
-    required this.onLoaded,
-    this.xFrontPadding = 100,
-    this.volHidden = true,
-    this.isLine = false,
-    this.isTapShowInfoDialog = false,
-    this.hideGrid = false,
-    this.mBaseHeight,
-    this.showNowPrice = true,
-    this.timeFormat = TimeFormat.YEAR_MONTH_DAY,
-    this.onLoadMore,
-    this.fixedLength = 2,
-    this.maDayList = const [5, 10, 20],
-    this.flingTime = 600,
-    this.flingRatio = 0.5,
-    this.flingCurve = Curves.decelerate,
-    this.isOnDrag,
-    this.onZooomingStart,
-    this.verticalTextAlignment = VerticalTextAlignment.right,
-    this.isLongFocusDurationTime = 500,
-  }) : super(key: key) {
+  KChartWidget(this.data,
+      this.chartStyle,
+      this.chartColors, {
+        Key? key,
+        this.graphStyle = GraphStyle.line,
+        required this.onLoaded,
+        this.xFrontPadding = 100,
+        this.volHidden = true,
+        this.isLine = false,
+        this.isTapShowInfoDialog = false,
+        this.hideGrid = false,
+        this.mBaseHeight,
+        this.showNowPrice = true,
+        this.timeFormat = TimeFormat.YEAR_MONTH_DAY,
+        this.onLoadMore,
+        this.fixedLength = 2,
+        this.maDayList = const [5, 10, 20],
+        this.flingTime = 600,
+        this.flingRatio = 0.5,
+        this.flingCurve = Curves.decelerate,
+        this.isOnDrag,
+        this.onZooomingStart,
+        this.verticalTextAlignment = VerticalTextAlignment.right,
+        this.isLongFocusDurationTime = 500,
+      }) : super(key: key) {
     KChartWidget.colors = chartColors;
   }
 
@@ -138,9 +138,13 @@ bool longPressTriggered = false;
 class KChartWidgetState extends State<KChartWidget>
     with TickerProviderStateMixin {
   final StreamController<InfoWindowEntity?> mInfoWindowStream =
-      StreamController<InfoWindowEntity?>.broadcast();
-  double mScaleX = 1.0, mScaleY = 1, mScrollX = 0.0, mSelectX = 0.0;
-  double mHeight = 0, mWidth = 0;
+  StreamController<InfoWindowEntity?>.broadcast();
+  double mScaleX = 1.0,
+      mScaleY = 1,
+      mScrollX = 0.0,
+      mSelectX = 0.0;
+  double mHeight = 0,
+      mWidth = 0;
   AnimationController? _controller;
   Animation<double>? aniX;
   bool loading = true;
@@ -162,7 +166,10 @@ class KChartWidgetState extends State<KChartWidget>
   ObjectEntity? object;
   double _lastScaleX = 1.0;
   double _lastScaleY = 1.0;
-  bool isScale = false, isDrag = false, isLongPress = false, isOnTap = false;
+  bool isScale = false,
+      isDrag = false,
+      isLongPress = false,
+      isOnTap = false;
 
   Random rand = Random();
   int pointerCount = 0;
@@ -179,13 +186,14 @@ class KChartWidgetState extends State<KChartWidget>
   void openObjects() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ObjectsScreen(
-          data: widget.data!,
-          onDone: (type) {
-            objectType = type;
-            notifyChanged();
-          },
-        ),
+        builder: (context) =>
+            ObjectsScreen(
+              data: widget.data!,
+              onDone: (type) {
+                objectType = type;
+                notifyChanged();
+              },
+            ),
       ),
     );
   }
@@ -193,12 +201,13 @@ class KChartWidgetState extends State<KChartWidget>
   void openIndicators() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => IndicatorsScreen(
-          onDone: () async {
-            _onFling(10);
-            _reload();
-          },
-        ),
+        builder: (context) =>
+            IndicatorsScreen(
+              onDone: () async {
+                _onFling(10);
+                _reload();
+              },
+            ),
       ),
     );
   }
@@ -271,8 +280,12 @@ class KChartWidgetState extends State<KChartWidget>
     notifyChanged();
   }
 
-  late final height = MediaQuery.of(context).size.height;
+  late final height = MediaQuery
+      .of(context)
+      .size
+      .height;
   ChartPainter? _painter;
+  double _lastDy = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -351,10 +364,49 @@ class KChartWidgetState extends State<KChartWidget>
                   painter: _painter,
                 ),
                 Positioned(
+                  top: 0.0,
                   bottom: 0.0,
                   right: 0.0,
-                  width: 100,
-                  child: ChartLoader(),
+                  width: 40.0,
+                  child: GestureDetector(
+                    onVerticalDragStart: (details) {
+                      if (!objectEditable) {
+                        isScale = true;
+                        pointerCount = 2;
+                      }
+                    },
+                    onVerticalDragEnd: (details) {
+                      if (!objectEditable) {
+                        pointerCount = 1;
+                        isScale = false;
+                        _lastScaleY = mScaleY;
+                      }
+                    },
+                    onVerticalDragUpdate: (details) {
+                      if (!objectEditable) {
+                        if (_lastDy != 0) {
+                          if (!isScale) return;
+                          if (pointerCount == 2) {
+                            final verticalScale =
+                            _lastDy < details.localPosition.dy
+                                ? 0.996
+                                : 1.006;
+                            mScaleY =
+                                (_lastScaleY * verticalScale).clamp(0.5, 1.0);
+                            _lastScaleY = mScaleY;
+                          }
+                          if (widget.onZooomingStart != null)
+                            widget.onZooomingStart!(mScaleX == 1 && mScaleY == 1);
+                          notifyChanged();
+                        }
+                        _lastDy = details.localPosition.dy;
+                      }
+                    },
+                    child: Container(
+                      width: 40.0,
+                      color: Colors.transparent,
+                    ),
+                  ),
                 ),
                 if (loading)
                   Positioned(
@@ -447,21 +499,21 @@ class KChartWidgetState extends State<KChartWidget>
   }
 
   GestureRecognizerFactoryWithHandlers<LongPressGestureRecognizer>
-      longPressRecognizer() {
+  longPressRecognizer() {
     return GestureRecognizerFactoryWithHandlers<LongPressGestureRecognizer>(
-        () => LongPressGestureRecognizer(),
-        (LongPressGestureRecognizer instance) {
-      instance
-        ..onLongPressDown = (details) {
-          _objectSetOnUpdate(details);
-        };
-    });
+            () => LongPressGestureRecognizer(),
+            (LongPressGestureRecognizer instance) {
+          instance
+            ..onLongPressDown = (details) {
+              _objectSetOnUpdate(details);
+            };
+        });
   }
 
   GestureRecognizerFactoryWithHandlers<PanGestureRecognizer>
-      panFirstGestureRecognizer() {
+  panFirstGestureRecognizer() {
     return GestureRecognizerFactoryWithHandlers<PanGestureRecognizer>(
-        () => PanGestureRecognizer(), (PanGestureRecognizer instance) {
+            () => PanGestureRecognizer(), (PanGestureRecognizer instance) {
       instance
         ..onDown = (details) {
           _tapPosition = details.localPosition;
@@ -589,9 +641,9 @@ class KChartWidgetState extends State<KChartWidget>
   }
 
   GestureRecognizerFactoryWithHandlers<PanGestureRecognizer>
-      panUpdateGestureRecognizer() {
+  panUpdateGestureRecognizer() {
     return GestureRecognizerFactoryWithHandlers<PanGestureRecognizer>(
-        () => PanGestureRecognizer(), (PanGestureRecognizer instance) {
+            () => PanGestureRecognizer(), (PanGestureRecognizer instance) {
       instance
         ..onUpdate = (details) {
           if (object != null) {
@@ -694,39 +746,10 @@ class KChartWidgetState extends State<KChartWidget>
   }
 
   GestureRecognizerFactoryWithHandlers<ScaleGestureRecognizer>
-      verticalScaleGestureRecognizer() {
+  horizontalScaleRecognizer() {
     return GestureRecognizerFactoryWithHandlers<ScaleGestureRecognizer>(
-      () => ScaleGestureRecognizer(),
-      (ScaleGestureRecognizer instance) {
-        instance
-          ..onStart = (_) {
-            pointerCount = _.pointerCount;
-            isScale = true;
-          }
-          ..onUpdate = (details) {
-            pointerCount = details.pointerCount;
-            if (isDrag || isLongPress) return;
-            if (isLongPress) return;
-            if (pointerCount == 2) {
-              mScaleY = (_lastScaleY * details.verticalScale).clamp(0.5, 1.0);
-            }
-            if (widget.onZooomingStart != null) widget.onZooomingStart!();
-            notifyChanged();
-          }
-          ..onEnd = (details) {
-            pointerCount = 1;
-            isScale = false;
-            _lastScaleY = mScaleY;
-          };
-      },
-    );
-  }
-
-  GestureRecognizerFactoryWithHandlers<ScaleGestureRecognizer>
-      horizontalScaleRecognizer() {
-    return GestureRecognizerFactoryWithHandlers<ScaleGestureRecognizer>(
-      () => ScaleGestureRecognizer(),
-      (ScaleGestureRecognizer instance) {
+          () => ScaleGestureRecognizer(),
+          (ScaleGestureRecognizer instance) {
         instance
           ..onStart = (_) {
             pointerCount = _.pointerCount;
@@ -739,8 +762,9 @@ class KChartWidgetState extends State<KChartWidget>
             if (pointerCount == 2) {
               mScaleX = (_lastScaleX * details.horizontalScale).clamp(0.1, 2.0);
             }
-            if (widget.onZooomingStart != null) widget.onZooomingStart!();
-
+            if (widget.onZooomingStart != null) {
+              widget.onZooomingStart!(mScaleX == 1 && mScaleY == 1);
+            }
             notifyChanged();
           }
           ..onEnd = (details) {
@@ -753,14 +777,15 @@ class KChartWidgetState extends State<KChartWidget>
   }
 
   GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>
-      tapGestureRecognizer() {
+  tapGestureRecognizer() {
     return GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-      () => TapGestureRecognizer(),
-      (TapGestureRecognizer instance) {
+          () => TapGestureRecognizer(),
+          (TapGestureRecognizer instance) {
         instance
           ..onTap = () {
             if (object != null) {
-              chartProperties.updateObject(object!..currentEditIndex = -1);
+              chartProperties.updateObject(object!
+                ..currentEditIndex = -1);
             }
             _tapPosition = null;
             objectType = null;
@@ -774,11 +799,11 @@ class KChartWidgetState extends State<KChartWidget>
   }
 
   GestureRecognizerFactoryWithHandlers<HorizontalDragGestureRecognizer>
-      horizontalRecognizer() {
+  horizontalRecognizer() {
     return GestureRecognizerFactoryWithHandlers<
         HorizontalDragGestureRecognizer>(
-      () => HorizontalDragGestureRecognizer(),
-      (HorizontalDragGestureRecognizer instance) {
+          () => HorizontalDragGestureRecognizer(),
+          (HorizontalDragGestureRecognizer instance) {
         instance
           ..onDown = (details) {
             if (pointerCount > 1) {
@@ -833,7 +858,7 @@ class KChartWidgetState extends State<KChartWidget>
     aniX = null;
     aniX = Tween<double>(begin: mScrollX, end: x * widget.flingRatio + mScrollX)
         .animate(CurvedAnimation(
-            parent: _controller!.view, curve: widget.flingCurve));
+        parent: _controller!.view, curve: widget.flingCurve));
     print(_controller!.view);
     aniX!.addListener(() {
       mScrollX = aniX!.value;

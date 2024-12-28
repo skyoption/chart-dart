@@ -1,6 +1,7 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/renderer/rects/render_rect.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
@@ -34,6 +35,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   final List<IndicatorEntity> indicators;
   late final SubMainRenderer subMainRenderer;
   final GraphStyle graphStyle;
+
   MainRenderer(
     Rect mainRect,
     double maxValue,
@@ -105,7 +107,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     if (graphStyle == GraphStyle.candles) {
       drawCandle(curPoint, canvas, curX);
     } else {
-      drawLineOrLineAreaChart(lastPoint, curPoint, canvas, lastX, curX);
+      drawPolyline(lastPoint.close, curPoint.close, canvas, lastX, curX);
     }
     drawIndicators(
       lastPoint,
@@ -178,6 +180,79 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas,
         );
       }
+    }
+  }
+
+  Shader? mLineFillShader;
+  Path? mLinePath, mLineFillPath;
+  Paint mLineFillPaint = Paint()
+    ..style = PaintingStyle.fill
+    ..isAntiAlias = true;
+
+  void drawPolyline(
+    double lastPrice,
+    double curPrice,
+    Canvas canvas,
+    double lastX,
+    double curX,
+  ) {
+    if (graphStyle == GraphStyle.area) {
+      mLinePath ??= Path();
+      if (lastX == curX) lastX = 0;
+      mLinePath!.moveTo(lastX, getY(lastPrice));
+      mLinePath!.cubicTo((lastX + curX) / 2, getY(lastPrice),
+          (lastX + curX) / 2, getY(curPrice), curX, getY(curPrice));
+
+      mLineFillShader ??= LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        tileMode: TileMode.clamp,
+        colors: [
+          this.chartColors.chartColor.withAlpha(90),
+          this.chartColors.chartColor.withAlpha(1),
+        ],
+      ).createShader(Rect.fromLTRB(
+          chartRect.left, chartRect.top, chartRect.right, chartRect.bottom));
+      mLineFillPaint..shader = mLineFillShader;
+
+      mLineFillPath ??= Path();
+
+      mLineFillPath!.moveTo(lastX, chartRect.height + chartRect.top);
+      mLineFillPath!.lineTo(lastX, getY(lastPrice));
+      mLineFillPath!.cubicTo((lastX + curX) / 2, getY(lastPrice),
+          (lastX + curX) / 2, getY(curPrice), curX, getY(curPrice));
+      mLineFillPath!.lineTo(curX, chartRect.height + chartRect.top);
+      mLineFillPath!.close();
+
+      canvas.drawPath(mLineFillPath!, mLineFillPaint);
+      mLineFillPath!.reset();
+
+      canvas.drawPath(
+        mLinePath!,
+        mLinePaint..strokeWidth = (mLineStrokeWidth / scaleX).clamp(0.1, 1.0),
+      );
+      mLinePath!.reset();
+    } else {
+      mLinePath ??= Path();
+      if (lastX == curX) lastX = 0;
+      mLinePath!.moveTo(lastX, getY(lastPrice));
+      mLinePath!.cubicTo((lastX + curX) / 2, getY(lastPrice),
+          (lastX + curX) / 2, getY(curPrice), curX, getY(curPrice));
+
+      mLineFillPath ??= Path();
+
+      mLineFillPath!.moveTo(lastX, chartRect.height + chartRect.top);
+      mLineFillPath!.lineTo(curX, chartRect.height + chartRect.top);
+      mLineFillPath!.close();
+
+      canvas.drawPath(mLineFillPath!, mLineFillPaint);
+      mLineFillPath!.reset();
+
+      canvas.drawPath(
+          mLinePath!,
+          mLinePaint
+            ..strokeWidth = (mLineStrokeWidth / scaleX).clamp(0.1, 1.0));
+      mLinePath!.reset();
     }
   }
 

@@ -54,6 +54,7 @@ abstract class BaseChartRenderer<T> {
     double div = maxValue - minValue;
     scaleY = chartRect.height / div;
     gridPaint.color = gridColor;
+    darkPaint.color = gridColor;
   }
 
   double getY(double y) => (maxValue - y) * scaleY + chartRect.top;

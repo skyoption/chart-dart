@@ -211,6 +211,7 @@ class ChartPainter extends BaseChartPainter
             chartStyle,
             chartColors,
             this.scaleX,
+            this.hideGrid,
           ),
         );
         rectIndex++;

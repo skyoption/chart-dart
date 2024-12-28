@@ -16,7 +16,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
   final ChartStyle chartStyle;
   final ChartColors chartColors;
   int index = -1;
-  late final bool isMain, isLast;
+  late final bool isMain, isLast,hideGrid;
   final List<RenderRect> mSecondaryRectList;
   double scaleX;
   late final SubMainRenderer subMainRenderer;
@@ -35,6 +35,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     this.chartStyle,
     this.chartColors,
     this.scaleX,
+    this.hideGrid,
   ) : super(
           chartRect: mainRect,
           maxValue: maxValue,
@@ -118,14 +119,14 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
       TextPainter maxTp = TextPainter(
         text: TextSpan(
             text: "${format(maxValue)}",
-            style: textStyle.copyWith(color: Colors.black)),
+            style: textStyle.copyWith(color: chartColors.maxColor)),
         textDirection: TextDirection.ltr,
       );
       maxTp.layout();
       TextPainter minTp = TextPainter(
         text: TextSpan(
             text: "${format(minValue)}",
-            style: textStyle.copyWith(color: Colors.black)),
+            style: textStyle.copyWith(color: chartColors.maxColor)),
         textDirection: TextDirection.ltr,
       );
       minTp.layout();
@@ -153,7 +154,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     Canvas canvas,
     int gridRows,
     int gridColumns,
-  ) {
+  ) { if (!hideGrid) {
     canvas.drawLine(
       Offset(0, chartRect.top),
       Offset(chartRect.rWidth, chartRect.top),
@@ -173,6 +174,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         gridPaint,
       );
     }
+  }
   }
 
   @override
@@ -564,7 +566,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
           TextPainter tp = TextPainter(
             text: TextSpan(
               text: "${format(item.toDouble())}",
-              style: textStyle.copyWith(color: Colors.black),
+              style: textStyle.copyWith(color: chartColors.maxColor),
             ),
             textDirection: TextDirection.ltr,
           );
