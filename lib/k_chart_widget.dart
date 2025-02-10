@@ -77,8 +77,8 @@ class KChartWidget extends StatefulWidget {
   final List<String> timeFormat;
 
   final Function(CandleTimeFormat frame, String symbol) onGettingSettings;
-  final Function(bool)? onLoadMore;
-  final Function(bool value)? onZooomingStart;
+  final Function(bool value)? onLoadMore;
+  final Function(bool value)? onZoomingStart;
   final int fixedLength;
   final List<int> maDayList;
   final int flingTime;
@@ -114,7 +114,7 @@ class KChartWidget extends StatefulWidget {
     this.flingRatio = 0.5,
     this.flingCurve = Curves.decelerate,
     this.isOnDrag,
-    this.onZooomingStart,
+    this.onZoomingStart,
     this.verticalTextAlignment = VerticalTextAlignment.right,
     this.isLongFocusDurationTime = 500,
   }) : super(key: key) {
@@ -364,9 +364,9 @@ class KChartWidgetState extends State<KChartWidget>
                                 (_lastScaleY * verticalScale).clamp(0.5, 1.0);
                             _lastScaleY = mScaleY;
                           }
-                          if (widget.onZooomingStart != null)
+                          if (widget.onZoomingStart != null)
                             widget
-                                .onZooomingStart!(mScaleX == 1 && mScaleY == 1);
+                                .onZoomingStart!(mScaleX == 1 && mScaleY == 1);
                           notifyChanged();
                         }
                         _lastDy = details.localPosition.dy;
@@ -725,8 +725,8 @@ class KChartWidgetState extends State<KChartWidget>
             if (pointerCount == 2) {
               mScaleX = (_lastScaleX * details.horizontalScale).clamp(0.1, 2.0);
             }
-            if (widget.onZooomingStart != null) {
-              widget.onZooomingStart!(mScaleX == 1 && mScaleY == 1);
+            if (widget.onZoomingStart != null) {
+              widget.onZoomingStart!(mScaleX == 1 && mScaleY == 1);
             }
             notifyChanged();
           }
@@ -832,8 +832,9 @@ class KChartWidgetState extends State<KChartWidget>
         _stopAnimation();
       } else if (mScrollX >= ChartPainter.maxScrollX) {
         mScrollX = ChartPainter.maxScrollX;
+
         if (widget.onLoadMore != null) {
-          widget.onLoadMore!(false);
+          widget.onLoadMore!(true);
         }
         _stopAnimation();
       }

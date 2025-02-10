@@ -126,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 chartColors: chartColors,
                 graphStyle: GraphStyle.area,
                 onGettingSettings: (frame, symbol) {},
-                onZooomingStart: (bool value) {},
+                onZoomingStart: (bool value) {},
                 fixedLength: 2,
                 timeFormat: TimeFormat.YEAR_MONTH_DAY,
               ),
