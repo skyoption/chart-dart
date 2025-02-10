@@ -1,7 +1,6 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/renderer/rects/render_rect.dart';
-import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
@@ -342,17 +341,32 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 
   @override
   void drawGrid(Canvas canvas, int gridRows, int gridColumns) {
+    const int gridSize = 10; // Set both rows and columns to 10
+
     if (!hideGrid) {
-      double rowSpace = (chartRect.height / gridRows);
-      for (int i = 0; i <= gridRows; i++) {
-        canvas.drawLine(Offset(0, rowSpace * i + topPadding),
-            Offset(chartRect.rWidth, rowSpace * i + topPadding), gridPaint);
-      }
-      double columnSpace = chartRect.rWidth / gridColumns;
-      for (int i = 0; i <= columnSpace; i++) {
+      // Ensure the grid is square by using the minimum of width and height
+      double gridSizeValue = chartRect.rWidth < chartRect.height
+          ? chartRect.rWidth
+          : chartRect.height;
+
+      double cellSize = gridSizeValue / gridSize;
+
+      // Draw horizontal grid lines
+      for (int i = 0; i <= gridSize; i++) {
+        double y = cellSize * i + topPadding;
         canvas.drawLine(
-          Offset(columnSpace * i, topPadding),
-          Offset(columnSpace * i, chartRect.bottom),
+          Offset(0, y),
+          Offset(gridSizeValue, y),
+          gridPaint,
+        );
+      }
+
+      // Draw vertical grid lines
+      for (int i = 0; i <= gridSize; i++) {
+        double x = cellSize * i;
+        canvas.drawLine(
+          Offset(x, topPadding),
+          Offset(x, topPadding + gridSizeValue),
           gridPaint,
         );
       }
