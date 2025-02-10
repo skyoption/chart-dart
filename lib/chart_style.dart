@@ -227,7 +227,7 @@ class ChartStyle {
   double nowPriceLineWidth = 1;
   double priceLineWidth = 1;
 
-  int gridRows = 18;
+  int gridRows = 12;
   int gridColumns = 4;
 
   double sizeText = 9.0;

@@ -1,4 +1,4 @@
-import 'package:candle_chart/utils/date_util.dart';
+import 'package:candle_chart/k_chart_widget.dart';
 import 'package:isar/isar.dart';
 
 part 'symbol_enity.g.dart';

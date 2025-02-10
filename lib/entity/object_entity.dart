@@ -1,8 +1,7 @@
+import 'package:candle_chart/k_chart_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:isar/isar.dart';
-
-import '../utils/date_util.dart';
 
 part 'object_entity.g.dart';
 

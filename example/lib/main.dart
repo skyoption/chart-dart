@@ -1,16 +1,15 @@
 import 'dart:convert';
 
 import 'package:candle_chart/entity/k_line_entity.dart';
+import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
-import 'package:candle_chart/utils/date_util.dart';
-import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  KChart.openDB();
+  await KChart.openDB();
   runApp(const MyApp());
 }
 
@@ -64,6 +63,22 @@ class _MyHomePageState extends State<MyHomePage> {
     //       .toList();
     //   initDepth(bids, asks);
     // });
+    getData(_period(CandleTimeFormat.H1)).then(
+      (value) {
+        key.currentState!.setLoadedCandles(
+          candles: datas!,
+          frame: CandleTimeFormat.H1,
+          symbol: 'btcusdt',
+        );
+        key.currentState!.updateAskOrBid(
+          LineEntity(
+            id: -10,
+            color: Colors.red,
+            value: 96880.50,
+          ),
+        );
+      },
+    );
   }
 
   void initDepth(List<DepthEntity>? bids, List<DepthEntity>? asks) {
@@ -105,23 +120,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
               KChartWidget(
-                datas,
-                chartStyle,
                 key: key,
-                hideGrid: true,
+                hideGrid: false,
+                chartStyle: chartStyle,
+                chartColors: chartColors,
                 graphStyle: GraphStyle.area,
-                onLoaded: (frame, candles, first, last) async {
-                  if (candles.isEmpty) {
-                    await getData(_period(frame));
-                    return datas;
-                  } else {
-                    datas = candles;
-                  }
-                  // kPrint(firstCandle?.time);
-                  // kPrint(lastCandle?.time);
-                },
+                onGettingSettings: (frame, symbol) {},
                 onZooomingStart: (bool value) {},
-                chartColors,
                 fixedLength: 2,
                 timeFormat: TimeFormat.YEAR_MONTH_DAY,
               ),

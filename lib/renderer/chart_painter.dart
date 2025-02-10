@@ -1,13 +1,14 @@
 import 'dart:async' show StreamSink;
 
+import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/entity/line_entity.dart';
+import 'package:candle_chart/renderer/chart_details.dart';
+import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_rectangle_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_trend_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_vertical_lines.dart';
-import 'package:candle_chart/renderer/rects/render_rect.dart';
-import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/renderer/chart_details.dart';
-import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
 import 'package:candle_chart/renderer/objects/update_point_position.dart';
+import 'package:candle_chart/renderer/rects/render_rect.dart';
 import 'package:candle_chart/utils/number_util.dart';
 import 'package:flutter/material.dart';
 
@@ -58,16 +59,9 @@ class ChartPainter extends BaseChartPainter
   Color? macdColor, difColor, deaColor, jColor;
   int fixedLength;
   final ChartColors chartColors;
-  late Paint selectPointPaint,
-      selectorBorderPaint,
-      nowPricePaint,
-      pricePaint,
-      dot,
-      askPaint,
-      bidPaint;
+  late Paint selectPointPaint, selectorBorderPaint, pricePaint, dot;
   final ChartStyle chartStyle;
   final bool hideGrid;
-  final bool showNowPrice;
   final VerticalTextAlignment verticalTextAlignment;
   final BaseDimension baseDimension;
   final List<IndicatorEntity> indicators;
@@ -79,11 +73,13 @@ class ChartPainter extends BaseChartPainter
   final double scaleX;
   final double scaleY;
   final GraphStyle graphStyle;
+  final List<LineEntity> askAndBid;
 
   ChartPainter(
     this.chartStyle,
     this.chartColors, {
     required this.screenHeight,
+    required this.askAndBid,
     required this.sink,
     required this.scaleY,
     required this.scaleX,
@@ -102,7 +98,6 @@ class ChartPainter extends BaseChartPainter
     volHidden,
     bool isLine = false,
     this.hideGrid = false,
-    this.showNowPrice = true,
     this.fixedLength = 2,
   }) : super(
           chartStyle,
@@ -133,17 +128,7 @@ class ChartPainter extends BaseChartPainter
       ..strokeWidth = 0.21
       ..style = PaintingStyle.stroke
       ..color = this.chartColors.selectBorderColor;
-    nowPricePaint = Paint()
-      ..strokeWidth = this.chartStyle.nowPriceLineWidth
-      ..isAntiAlias = true;
-    askPaint = Paint()
-      ..strokeWidth = this.chartStyle.nowPriceLineWidth
-      ..color = chartColors.ask
-      ..isAntiAlias = true;
-    bidPaint = Paint()
-      ..strokeWidth = this.chartStyle.nowPriceLineWidth
-      ..color = chartColors.bid
-      ..isAntiAlias = true;
+
     pricePaint = Paint()
       ..strokeWidth = this.chartStyle.priceLineWidth
       ..isAntiAlias = true;
@@ -265,10 +250,10 @@ class ChartPainter extends BaseChartPainter
   @override
   void drawGrid(canvas) {
     // if (!hideGrid) {
-    mMainRenderer.drawGrid(canvas, mGridRows, mGridColumns);
-    mVolRenderer?.drawGrid(canvas, mGridRows, mGridColumns);
+    mMainRenderer.drawGrid(canvas, mGridRows ~/ 2, mGridColumns);
+    mVolRenderer?.drawGrid(canvas, mGridRows ~/ 2, mGridColumns);
     mSecondaryRendererList.forEach((element) {
-      element.drawGrid(canvas, mGridRows, mGridColumns);
+      element.drawGrid(canvas, mGridRows ~/ 2, mGridColumns);
     });
     // }
   }
@@ -355,7 +340,6 @@ class ChartPainter extends BaseChartPainter
     double x = 0.0;
     double y = 0.0;
     const candleSpace = 10.0;
-
     for (var i = 0; i < mGridColumns; ++i) {
       double translateX = xToTranslateX(columnSpace * i - candleSpace * i);
       if (translateX >= startX && translateX <= stopX) {
@@ -567,22 +551,22 @@ class ChartPainter extends BaseChartPainter
     }
   }
 
-  @override
-  void drawNowPrice(Canvas canvas) {
-    if (!this.showNowPrice) {
-      return;
-    }
+  void _lineForm(Canvas canvas, Color color, double value) {
+    final linePaint = Paint()
+      ..strokeWidth = this.chartStyle.nowPriceLineWidth
+      ..color = color
+      ..isAntiAlias = true;
+    drawLine(canvas, linePaint, value);
+  }
 
+  @override
+  void drawPositionsAndAskBidLines(Canvas canvas) {
     if (data == null) {
       return;
     }
-
-    double value = data!.last.close;
-    // double y = getMainY(value);
-
-    drawLine(canvas, askPaint, value - 10);
-    drawLine(canvas, bidPaint, value - 30);
-
+    for (var item in askAndBid) {
+      _lineForm(canvas, item.color, item.value);
+    }
     return;
     //view display area boundary value drawing
     // if (y > getMainY(mMainLowMinValue)) {

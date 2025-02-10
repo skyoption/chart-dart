@@ -1,9 +1,9 @@
 import 'package:candle_chart/chart_style.dart';
 import 'package:candle_chart/chart_translations.dart';
+import 'package:candle_chart/renderer/rects/render_rect.dart';
 import 'package:flutter/material.dart';
 
 import '../entity/k_line_entity.dart';
-import 'package:candle_chart/renderer/rects/render_rect.dart';
 import '../utils/date_format_util.dart';
 // import '../utils/number_util.dart';
 
@@ -47,45 +47,31 @@ class PopupInfoView extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context) {
-    double upDown = entity.change ?? entity.close - entity.open;
-    double upDownPercent = entity.ratio ?? (upDown / entity.open) * 100;
-    final double? entityAmount = entity.amount;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildItem(chartTranslations.date, getDate(entity.time)),
-        //# 手指按压显示的图层数值，Change、Change% 拿掉，Open、High、Low、Close、Volume 也按照数据格式规则来显示，Date可以先不动
-        //科学运算 下标
         _buildItem(
-            chartTranslations.open, formatNumber(entity.open.toString())),
-        // chartTranslations.open, entity.open.toStringAsFixed(fixedLength)),
-        //# 手指按压显示的图层数值，Change、Change% 拿掉，Open、High、Low、Close、Volume 也按照数据格式规则来显示，Date可以先不动
-        //科学运算 下标
+          chartTranslations.date,
+          getDate(entity.time),
+        ),
         _buildItem(
-            chartTranslations.high, formatNumber(entity.high.toString())),
-        // chartTranslations.high, entity.high.toStringAsFixed(fixedLength)),
-        //# 手指按压显示的图层数值，Change、Change% 拿掉，Open、High、Low、Close、Volume 也按照数据格式规则来显示，Date可以先不动
-        //科学运算 下标
-        _buildItem(chartTranslations.low, formatNumber(entity.low.toString())),
-        // chartTranslations.low, entity.low.toStringAsFixed(fixedLength)),
-        //# 手指按压显示的图层数值，Change、Change% 拿掉，Open、High、Low、Close、Volume 也按照数据格式规则来显示，Date可以先不动
-        //科学运算 下标
+          chartTranslations.open,
+          formatNumber(entity.open.toString()),
+        ),
         _buildItem(
-            chartTranslations.close, formatNumber(entity.close.toString())),
-        // chartTranslations.close, entity.close.toStringAsFixed(fixedLength)),
-        if (chartTranslations.changeAmount.isNotEmpty)
-          _buildColorItem(chartTranslations.changeAmount,
-              upDown.toStringAsFixed(fixedLength), upDown > 0),
-        if (chartTranslations.change.isNotEmpty)
-          _buildColorItem(chartTranslations.change,
-              '${upDownPercent.toStringAsFixed(2)}%', upDownPercent > 0),
-        //# 手指按压显示的图层数值，Change、Change% 拿掉，Open、High、Low、Close、Volume 也按照数据格式规则来显示，Date可以先不动
-        _buildItem(chartTranslations.vol, formatNumber(entity.vol.toString())),
-        // _buildItem(chartTranslations.vol, NumberUtil.format(entity.vol)),
-        if (entityAmount != null)
-          _buildItem(chartTranslations.amount, entityAmount.toInt().toString()),
+          chartTranslations.high,
+          formatNumber(entity.high.toString()),
+        ),
+        _buildItem(
+          chartTranslations.low,
+          formatNumber(entity.low.toString()),
+        ),
+        _buildItem(
+          chartTranslations.close,
+          formatNumber(entity.close.toString()),
+        ),
       ],
     );
   }

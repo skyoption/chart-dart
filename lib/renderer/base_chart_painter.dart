@@ -13,6 +13,7 @@ import 'package:candle_chart/renderer/rects/secondary_rect.dart';
 
 import '../entity/k_line_entity.dart';
 import 'base_dimension.dart';
+
 export 'package:flutter/material.dart'
     show Color, TextStyle, Rect, Canvas, Size, CustomPainter;
 
@@ -57,7 +58,7 @@ abstract class BaseChartPainter extends CustomPainter
       mSecondaryTopPadding = 28.0;
 
   // grid: rows - columns
-  int mGridRows = 12, mGridColumns = 4;
+  int mGridRows = 12, mGridColumns = 12;
   int mStartIndex = 0, mStopIndex = 0;
   double mVolMaxValue = double.minPositive, mVolMinValue = double.maxFinite;
   double mTranslateX = double.minPositive;
@@ -158,7 +159,7 @@ abstract class BaseChartPainter extends CustomPainter
 
       drawText(canvas, data!.last, 5);
       drawMaxAndMin(canvas);
-      drawNowPrice(canvas);
+      drawPositionsAndAskBidLines(canvas);
       drawHorizontalLinesTitles(canvas, size);
       if (this.chartStyle.isLongFocus &&
           (isLongPress == true ||
@@ -197,7 +198,7 @@ abstract class BaseChartPainter extends CustomPainter
   void drawMaxAndMin(Canvas canvas);
 
   /// draw the current price
-  void drawNowPrice(Canvas canvas);
+  void drawPositionsAndAskBidLines(Canvas canvas);
 
   /// draw the line price
   void drawHorizontalLines(Canvas canvas, Size size, bool isBackground);

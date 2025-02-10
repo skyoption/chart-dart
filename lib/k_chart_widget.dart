@@ -4,14 +4,13 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:candle_chart/entity/k_line_entity.dart';
+import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/indicators/indicators_screen.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/bottom_sheets/properties_bottom_sheet.dart';
 import 'package:candle_chart/objects/objects_screen.dart';
 import 'package:candle_chart/renderer/base_dimension.dart';
-import 'package:candle_chart/utils/date_util.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
-import 'package:candle_chart/widgets/chart_loader.dart';
 import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +43,8 @@ enum IndicatorType {
   MFI,
 }
 
+enum CandleTimeFormat { M1, M5, M15, M30, H1, H4, D1, W1, MN }
+
 class TimeFormat {
   static const List<String> YEAR_MONTH_DAY = [yyyy, '-', mm, '-', dd];
   static const List<String> YEAR_MONTH_DAY_WITH_HOUR = [
@@ -69,21 +70,15 @@ class TimeFormat {
 }
 
 class KChartWidget extends StatefulWidget {
-  List<KLineEntity>? data;
   bool volHidden;
   final bool isLine;
   final bool isTapShowInfoDialog;
   final bool hideGrid;
   final List<String> timeFormat;
 
+  final Function(CandleTimeFormat frame, String symbol) onGettingSettings;
   final Function(bool)? onLoadMore;
   final Function(bool value)? onZooomingStart;
-  final Function(
-    CandleTimeFormat frame,
-    List<KLineEntity> candles,
-    KLineEntity? firstCandle,
-    KLineEntity? lastCandle,
-  ) onLoaded;
   final int fixedLength;
   final List<int> maDayList;
   final int flingTime;
@@ -95,25 +90,22 @@ class KChartWidget extends StatefulWidget {
   final GraphStyle graphStyle;
   final VerticalTextAlignment verticalTextAlignment;
   final double xFrontPadding;
-  final bool showNowPrice;
   final int isLongFocusDurationTime;
   static ChartColors? colors;
   final double? mBaseHeight;
 
-  KChartWidget(
-    this.data,
-    this.chartStyle,
-    this.chartColors, {
+  KChartWidget({
     Key? key,
+    required this.chartStyle,
+    required this.chartColors,
+    required this.onGettingSettings,
     this.graphStyle = GraphStyle.line,
-    required this.onLoaded,
     this.xFrontPadding = 100,
     this.volHidden = true,
     this.isLine = false,
     this.isTapShowInfoDialog = false,
     this.hideGrid = false,
     this.mBaseHeight,
-    this.showNowPrice = true,
     this.timeFormat = TimeFormat.YEAR_MONTH_DAY,
     this.onLoadMore,
     this.fixedLength = 2,
@@ -139,17 +131,14 @@ class KChartWidgetState extends State<KChartWidget>
     with TickerProviderStateMixin {
   final StreamController<InfoWindowEntity?> mInfoWindowStream =
       StreamController<InfoWindowEntity?>.broadcast();
+  List<KLineEntity> lineCandles = [];
+  List<LineEntity> askAndBid = [];
   double mScaleX = 1.0, mScaleY = 1, mScrollX = 0.0, mSelectX = 0.0;
   double mHeight = 0, mWidth = 0;
   AnimationController? _controller;
   Animation<double>? aniX;
-  bool loading = true;
   Offset? _tapPosition;
-
-  double? changeInXposition;
-  double? changeInYposition;
   double mSelectY = 0.0;
-  bool waitingForOtherPairOfCords = false;
   bool isSecondOffset = false;
   bool objectEditable = false;
   bool bottomSheetShown = false;
@@ -166,13 +155,10 @@ class KChartWidgetState extends State<KChartWidget>
 
   Random rand = Random();
   int pointerCount = 0;
-  String currentLineName = '';
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      loadCandles();
-    });
+    chartProperties.getDefaultSettings(onGetting: widget.onGettingSettings);
     super.initState();
   }
 
@@ -180,7 +166,7 @@ class KChartWidgetState extends State<KChartWidget>
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ObjectsScreen(
-          data: widget.data!,
+          data: lineCandles,
           onDone: (type) {
             objectType = type;
             notifyChanged();
@@ -190,13 +176,44 @@ class KChartWidgetState extends State<KChartWidget>
     );
   }
 
+  Future<void> setLoadedCandles({
+    required List<KLineEntity> candles,
+    required CandleTimeFormat frame,
+    required String symbol,
+  }) async {
+    lineCandles = candles;
+    await chartProperties.updateDefaultSettings(frame: frame, symbol: symbol);
+    await _resetIndicators();
+  }
+
+  Future<void> _resetIndicators() async {
+    await Future.delayed(Duration(milliseconds: 200));
+    await IndicatorUtils.calculate(lineCandles);
+    notifyChanged();
+  }
+
+  void updateAskOrBid(LineEntity line) {
+    final index = askAndBid.indexWhere((e) => e.id == line.id);
+    if (index == -1) {
+      askAndBid.add(line);
+    } else {
+      askAndBid[index] = line;
+    }
+    notifyChanged();
+  }
+
+  void removeAskBid(int id) {
+    askAndBid.removeWhere((e) => e.id == id);
+    notifyChanged();
+  }
+
   void openIndicators() {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => IndicatorsScreen(
           onDone: () async {
             _onFling(10);
-            _reload();
+            _resetIndicators();
           },
         ),
       ),
@@ -209,43 +226,6 @@ class KChartWidgetState extends State<KChartWidget>
     _lastScaleX = 1.0;
     _lastScaleY = 1.0;
     notifyChanged();
-  }
-
-  Future<void> loadCandles({CandleTimeFormat? frame}) async {
-    loading = true;
-    widget.data = null;
-    notifyChanged();
-    if (KChart.isar == null) await Future.delayed(Duration(seconds: 1));
-    if (frame != null) {
-      await chartProperties.setTimeframe(frame);
-      notifyChanged();
-    }
-    chartProperties.loadCandles(
-      onLoaded: (timeframe, symbol, candles, firstCandle, lastCandle) async {
-        List<KLineEntity>? data;
-        data = await widget.onLoaded(
-          frame != null ? frame : timeframe,
-          candles,
-          firstCandle,
-          lastCandle,
-        );
-        if (data != null) {
-          chartProperties.setCandles(data);
-        } else {
-          widget.data = candles;
-        }
-        _reload();
-      },
-    );
-  }
-
-  void _reload() {
-    Future.delayed(Duration(milliseconds: 200), () async {
-      loading = false;
-      notifyChanged();
-      await IndicatorUtils.calculate(widget.data!);
-      notifyChanged();
-    });
   }
 
   @override
@@ -295,7 +275,7 @@ class KChartWidgetState extends State<KChartWidget>
       gestures[HorizontalDragGestureRecognizer] = horizontalRecognizer();
     }
 
-    if (widget.data != null && widget.data!.isEmpty) {
+    if (lineCandles.isEmpty) {
       mScrollX = mSelectX = 0.0;
       mScaleX = 1.0;
     }
@@ -309,6 +289,7 @@ class KChartWidgetState extends State<KChartWidget>
     _painter = ChartPainter(
       widget.chartStyle,
       widget.chartColors,
+      askAndBid: askAndBid,
       graphStyle: widget.graphStyle,
       indicators: chartProperties.indicators,
       screenHeight: mBaseHeight,
@@ -317,7 +298,7 @@ class KChartWidgetState extends State<KChartWidget>
       sink: mInfoWindowStream.sink,
       xFrontPadding: widget.xFrontPadding,
       scaleY: mScaleY,
-      data: widget.data,
+      data: lineCandles,
       scaleX: mScaleX,
       scrollX: mScrollX,
       selectX: mSelectX,
@@ -328,7 +309,6 @@ class KChartWidgetState extends State<KChartWidget>
       isLine: widget.isLine,
       hideGrid: widget.hideGrid,
       secondaryIndicators: chartProperties.secondaries,
-      showNowPrice: widget.showNowPrice,
       fixedLength: widget.fixedLength,
       verticalTextAlignment: widget.verticalTextAlignment,
     );
@@ -398,13 +378,6 @@ class KChartWidgetState extends State<KChartWidget>
                     ),
                   ),
                 ),
-                if (loading)
-                  Positioned(
-                    bottom: 0.0,
-                    right: 0.0,
-                    left: 0.0,
-                    child: ChartLoader(),
-                  ),
                 if (_tapPosition != null)
                   Container(
                     margin: MPadding.set(horizontal: 6.0),
@@ -456,7 +429,7 @@ class KChartWidgetState extends State<KChartWidget>
       showPropertiesBottomSheet(
         context: context,
         item: object!,
-        data: widget.data!,
+        data: lineCandles,
         onDone: (type) {
           bottomSheetShown = false;
           notifyChanged();
@@ -514,11 +487,11 @@ class KChartWidgetState extends State<KChartWidget>
               dx1: details.localPosition.dx,
               dx2: details.localPosition.dx,
             );
-            chartProperties.addVerticalLine(object!, widget.data!);
+            chartProperties.addVerticalLine(object!, lineCandles);
             _painter!.setVerticalLineOffset(
               object!,
               details.localPosition,
-              widget.data!,
+              lineCandles,
             );
             notifyChanged();
           } else if (objectType == ObjectType.Horizontal) {
@@ -543,7 +516,7 @@ class KChartWidgetState extends State<KChartWidget>
             _painter!.setTrendLineOffset1(
               object!,
               details.localPosition,
-              widget.data!,
+              lineCandles,
             );
             notifyChanged();
           } else if (objectType == ObjectType.Rectangle) {
@@ -559,7 +532,7 @@ class KChartWidgetState extends State<KChartWidget>
             _painter!.setRectangleOffset1(
               object!,
               details.localPosition,
-              widget.data!,
+              lineCandles,
             );
             notifyChanged();
           }
@@ -571,13 +544,13 @@ class KChartWidgetState extends State<KChartWidget>
               _painter!.setTrendLineOffset2(
                 object!,
                 details.localPosition,
-                widget.data!,
+                lineCandles,
               );
             } else if (object!.type == ObjectType.Rectangle) {
               _painter!.setRectangleOffset2(
                 object!,
                 details.localPosition,
-                widget.data!,
+                lineCandles,
               );
             } else if (object!.type == ObjectType.Horizontal) {
               _painter!.setHorizontalLineOffset(object!, details.localPosition);
@@ -585,7 +558,7 @@ class KChartWidgetState extends State<KChartWidget>
               _painter!.setVerticalLineOffset(
                 object!,
                 details.localPosition,
-                widget.data!,
+                lineCandles,
               );
             }
           }
@@ -600,14 +573,14 @@ class KChartWidgetState extends State<KChartWidget>
               _painter!.setTrendLineOffset2(
                 object!,
                 details.localPosition,
-                widget.data!,
+                lineCandles,
               );
               chartProperties.updateTrendLine(object!);
             } else if (object!.type == ObjectType.Rectangle) {
               _painter!.setRectangleOffset2(
                 object!,
                 details.localPosition,
-                widget.data!,
+                lineCandles,
               );
               chartProperties.updateRectangle(object!);
             } else if (object!.type == ObjectType.Horizontal) {
@@ -617,7 +590,7 @@ class KChartWidgetState extends State<KChartWidget>
               _painter!.setVerticalLineOffset(
                 object!,
                 details.localPosition,
-                widget.data!,
+                lineCandles,
               );
               chartProperties.updateVerticalLine(object!);
             }
@@ -643,13 +616,13 @@ class KChartWidgetState extends State<KChartWidget>
                 _painter!.setTrendLineOffset2(
                   object!,
                   details.localPosition,
-                  widget.data!,
+                  lineCandles,
                 );
               } else {
                 _painter!.setTrendLineOffset1(
                   object!,
                   details.localPosition,
-                  widget.data!,
+                  lineCandles,
                 );
               }
             } else if (object!.type == ObjectType.Rectangle) {
@@ -657,13 +630,13 @@ class KChartWidgetState extends State<KChartWidget>
                 _painter!.setRectangleOffset2(
                   object!,
                   details.localPosition,
-                  widget.data!,
+                  lineCandles,
                 );
               } else {
                 _painter!.setRectangleOffset1(
                   object!,
                   details.localPosition,
-                  widget.data!,
+                  lineCandles,
                 );
               }
             } else if (object!.type == ObjectType.Horizontal) {
@@ -672,7 +645,7 @@ class KChartWidgetState extends State<KChartWidget>
               _painter!.setVerticalLineOffset(
                 object!,
                 details.localPosition,
-                widget.data!,
+                lineCandles,
               );
             }
             notifyChanged();
@@ -686,13 +659,13 @@ class KChartWidgetState extends State<KChartWidget>
                 object = _painter!.setTrendLineOffset2(
                   object!,
                   details.localPosition,
-                  widget.data!,
+                  lineCandles,
                 );
               } else {
                 object = _painter!.setTrendLineOffset1(
                   object!,
                   details.localPosition,
-                  widget.data!,
+                  lineCandles,
                 );
               }
               chartProperties.updateTrendLine(object!);
@@ -701,13 +674,13 @@ class KChartWidgetState extends State<KChartWidget>
                 object = _painter!.setRectangleOffset2(
                   object!,
                   details.localPosition,
-                  widget.data!,
+                  lineCandles,
                 );
               } else {
                 object = _painter!.setRectangleOffset1(
                   object!,
                   details.localPosition,
-                  widget.data!,
+                  lineCandles,
                 );
               }
               chartProperties.updateRectangle(object!);
@@ -721,7 +694,7 @@ class KChartWidgetState extends State<KChartWidget>
               object = _painter!.setVerticalLineOffset(
                 object!,
                 details.localPosition,
-                widget.data!,
+                lineCandles,
               );
               chartProperties.updateVerticalLine(object!);
             }
