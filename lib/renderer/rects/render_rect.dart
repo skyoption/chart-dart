@@ -1,4 +1,3 @@
-
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -94,8 +93,14 @@ TextSpan formatValueSpan(double? value, TextStyle style) {
     } else if (value >= 1000) {
       realValueStr = value.toStringAsFixed(2);
     } else {
-      realValueStr = _dollarValue(value, 2);
+      realValueStr = _dollarValue(value, getDecimalPlaces('$value'));
     }
   }
   return TextSpan(text: realValueStr, style: style);
+}
+
+int getDecimalPlaces(String number) {
+  if (!number.contains('.')) return 0;
+
+  return number.split('.')[1].length;
 }
