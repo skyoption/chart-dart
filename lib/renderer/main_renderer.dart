@@ -346,13 +346,10 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       double rowSpace = cellSize;
       double columnSpace = cellSize;
 
-// Calculate the number of full columns that fit
-      int gridColumns = (chartRect.rWidth / cellSize).floor();
+      int gridColumns = (chartRect.rWidth / cellSize).floor() + 1;
 
-// Calculate the starting X position to align to the right
       double startX = chartRect.rWidth - (gridColumns * cellSize);
 
-// Draw horizontal grid lines
       for (int i = 0; i <= gridRows; i++) {
         canvas.drawLine(
           Offset(startX, rowSpace * i + topPadding),
@@ -361,7 +358,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         );
       }
 
-// Draw vertical grid lines aligned to the right
       for (int i = 0; i <= gridColumns; i++) {
         double xPos = startX + (columnSpace * i);
         canvas.drawLine(
