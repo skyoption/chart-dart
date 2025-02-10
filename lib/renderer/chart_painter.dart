@@ -250,10 +250,10 @@ class ChartPainter extends BaseChartPainter
   @override
   void drawGrid(canvas) {
     // if (!hideGrid) {
-    mMainRenderer.drawGrid(canvas, mGridRows, (mGridColumns * 2.2).toInt());
-    mVolRenderer?.drawGrid(canvas, mGridRows, (mGridColumns * 2.2).toInt());
+    mMainRenderer.drawGrid(canvas, mGridRows, (mGridColumns * 2.3).toInt());
+    mVolRenderer?.drawGrid(canvas, mGridRows, (mGridColumns * 2.3).toInt());
     mSecondaryRendererList.forEach((element) {
-      element.drawGrid(canvas, mGridRows, (mGridColumns * 2.2).toInt());
+      element.drawGrid(canvas, mGridRows, (mGridColumns * 2.3).toInt());
     });
     // }
   }
