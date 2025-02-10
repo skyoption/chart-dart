@@ -341,13 +341,11 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 
   @override
   void drawGrid(Canvas canvas, int gridRows, int gridColumns) {
-    const int gridSize = 10; // Set both rows and columns to 10
+    const int gridSize = 12; // Set both rows and columns to 10
 
     if (!hideGrid) {
       // Ensure the grid is square by using the minimum of width and height
-      double gridSizeValue = chartRect.rWidth < chartRect.height
-          ? chartRect.rWidth
-          : chartRect.height;
+      double gridSizeValue = chartRect.height;
 
       double cellSize = gridSizeValue / gridSize;
 
