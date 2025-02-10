@@ -93,7 +93,8 @@ TextSpan formatValueSpan(double? value, TextStyle style) {
     } else if (value >= 1000) {
       realValueStr = value.toStringAsFixed(2);
     } else {
-      realValueStr = _dollarValue(value, getDecimalPlaces('$value'));
+      final num = getDecimalPlaces('$value');
+      realValueStr = _dollarValue(value, num < 5 ? num : 5);
     }
   }
   return TextSpan(text: realValueStr, style: style);
