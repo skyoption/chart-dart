@@ -155,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
         return '1day';
       case CandleTimeFormat.W1:
         return '1week';
-      case CandleTimeFormat.MN:
+      case CandleTimeFormat.MN1:
         return '1mon';
       default:
         return '4hour';

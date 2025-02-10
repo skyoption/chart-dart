@@ -20,14 +20,15 @@ class KLineEntity extends KEntity {
     required this.time,
   });
 
-  KLineEntity.fromCustom({
-    required this.open,
-    required this.close,
-    required this.time,
-    required this.high,
-    required this.low,
-    required this.vol,
-  });
+  KLineEntity.fromString(String data) {
+    final values = data.split(',');
+    this.time = int.tryParse(values[0]) ?? 0;
+    this.open = double.tryParse(values[1]) ?? 0;
+    this.high = double.tryParse(values[2]) ?? 0;
+    this.low = double.tryParse(values[3]) ?? 0;
+    this.close = double.tryParse(values[4]) ?? 0;
+    this.vol = double.tryParse(values[5]) ?? 0;
+  }
 
   KLineEntity.fromJson(Map<String, dynamic> json) {
     open = json['open']?.toDouble() ?? 0;

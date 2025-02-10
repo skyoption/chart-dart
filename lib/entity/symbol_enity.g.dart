@@ -115,7 +115,7 @@ const _SymbolframeValueEnumMap = {
   5: CandleTimeFormat.H4,
   6: CandleTimeFormat.D1,
   7: CandleTimeFormat.W1,
-  8: CandleTimeFormat.MN,
+  8: CandleTimeFormat.MN1,
 };
 
 Id _symbolGetId(Symbol object) {

@@ -290,7 +290,7 @@ const _ObjectEntityframeValueEnumMap = {
   5: CandleTimeFormat.H4,
   6: CandleTimeFormat.D1,
   7: CandleTimeFormat.W1,
-  8: CandleTimeFormat.MN,
+  8: CandleTimeFormat.MN1,
 };
 const _ObjectEntitystyleEnumValueMap = {
   'dash': 0,

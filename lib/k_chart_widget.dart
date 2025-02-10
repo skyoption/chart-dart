@@ -43,7 +43,7 @@ enum IndicatorType {
   MFI,
 }
 
-enum CandleTimeFormat { M1, M5, M15, M30, H1, H4, D1, W1, MN }
+enum CandleTimeFormat { M1, M5, M15, M30, H1, H4, D1, W1, MN1 }
 
 class TimeFormat {
   static const List<String> YEAR_MONTH_DAY = [yyyy, '-', mm, '-', dd];
