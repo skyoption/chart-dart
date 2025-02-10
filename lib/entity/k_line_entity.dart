@@ -1,4 +1,3 @@
-import 'package:candle_chart/k_chart_widget.dart';
 import 'package:isar/isar.dart';
 
 import '../entity/k_entity.dart';
@@ -11,8 +10,6 @@ class KLineEntity extends KEntity {
   double close = 0;
   double vol = 0;
   int time = 0;
-  String symbol = '';
-  CandleTimeFormat frame = CandleTimeFormat.H4;
 
   KLineEntity({
     required this.open,
@@ -20,13 +17,12 @@ class KLineEntity extends KEntity {
     required this.low,
     required this.close,
     required this.vol,
-    this.frame = CandleTimeFormat.H4,
+    required this.time,
   });
 
   KLineEntity.fromCustom({
     required this.open,
     required this.close,
-    required this.symbol,
     required this.time,
     required this.high,
     required this.low,
@@ -34,7 +30,6 @@ class KLineEntity extends KEntity {
   });
 
   KLineEntity.fromJson(Map<String, dynamic> json) {
-    symbol = json['symbol']?.toString() ?? "";
     open = json['open']?.toDouble() ?? 0;
     high = json['high']?.toDouble() ?? 0;
     low = json['low']?.toDouble() ?? 0;
@@ -51,12 +46,11 @@ class KLineEntity extends KEntity {
     data['high'] = this.high;
     data['low'] = this.low;
     data['vol'] = this.vol;
-    data['symbol'] = this.symbol;
     return data;
   }
 
   @override
   String toString() {
-    return 'MarketModel{open: $open, high: $high, low: $low, close: $close, vol: $vol, time: $time, symbol: $symbol}';
+    return 'MarketModel{open: $open, high: $high, low: $low, close: $close, vol: $vol, time: $time}';
   }
 }
