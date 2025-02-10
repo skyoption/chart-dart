@@ -341,30 +341,32 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 
   @override
   void drawGrid(Canvas canvas, int gridRows, int gridColumns) {
-    const int gridSize = 12; // Set both rows and columns to 10
-
     if (!hideGrid) {
-      // Ensure the grid is square by using the minimum of width and height
-      double gridSizeValue = chartRect.height;
+      double cellSize = chartRect.height / gridRows;
+      double rowSpace = cellSize;
+      double columnSpace = cellSize;
 
-      double cellSize = gridSizeValue / gridSize;
+// Calculate the number of full columns that fit
+      int gridColumns = (chartRect.rWidth / cellSize).floor();
 
-      // Draw horizontal grid lines
-      for (int i = 0; i <= gridSize; i++) {
-        double y = cellSize * i + topPadding;
+// Calculate the starting X position to align to the right
+      double startX = chartRect.rWidth - (gridColumns * cellSize);
+
+// Draw horizontal grid lines
+      for (int i = 0; i <= gridRows; i++) {
         canvas.drawLine(
-          Offset(0, y),
-          Offset(gridSizeValue, y),
+          Offset(startX, rowSpace * i + topPadding),
+          Offset(chartRect.rWidth, rowSpace * i + topPadding),
           gridPaint,
         );
       }
 
-      // Draw vertical grid lines
-      for (int i = 0; i <= gridSize; i++) {
-        double x = cellSize * i;
+// Draw vertical grid lines aligned to the right
+      for (int i = 0; i <= gridColumns; i++) {
+        double xPos = startX + (columnSpace * i);
         canvas.drawLine(
-          Offset(x, topPadding),
-          Offset(x, topPadding + gridSizeValue),
+          Offset(xPos, topPadding),
+          Offset(xPos, chartRect.bottom),
           gridPaint,
         );
       }
