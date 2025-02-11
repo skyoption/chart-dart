@@ -65,6 +65,8 @@ class SecondaryRect {
     onSet(max(maxPrice, mMaxValue) + 2, min(minPrice, mMinValue) - 2);
   }
 
+  double maxMacd = 0, minMacd = 0;
+
   void _setMaxMin(
     indicator,
     KLineEntity item,
@@ -74,13 +76,19 @@ class SecondaryRect {
   ) {
     switch (indicator.type) {
       case IndicatorType.MACD:
-        double max = _findMaxUP(item.macdValues ?? [], indicator.windowId);
-        final min = _findMinDN(item.macdValues ?? [], indicator.windowId);
-        if (-min > max) {
-          max = -min;
+        maxMacd = max(
+          _findMaxUP(item.macdValues ?? [], indicator.windowId),
+          maxMacd,
+        );
+        minMacd = min(
+          _findMinDN(item.macdValues ?? [], indicator.windowId),
+          minMacd,
+        );
+        if (-minMacd > maxMacd) {
+          maxMacd = -minMacd;
         }
-        mMaxValue = max;
-        mMinValue = min;
+        mMaxValue = maxMacd;
+        mMinValue = minMacd;
         break;
       case IndicatorType.RSI ||
             IndicatorType.SO_LINEAR ||

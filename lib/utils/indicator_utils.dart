@@ -120,7 +120,7 @@ class IndicatorUtils {
     if (SO.isNotEmpty) calcStochasticOscillator(data, SO);
     if (WPR.isNotEmpty) calcWilliamsPercentRange(data, WPR);
     if (MFI.isNotEmpty) calcMoneyFlowIndex(data, MFI);
-    await Future.delayed(Duration(milliseconds: 300));
+    await Future.delayed(Duration(milliseconds: 150));
     if (MA_SMA.isNotEmpty) calc_SMA_MA(data, MA_SMA);
     if (MA_EMA.isNotEmpty) calc_EMA_MA(data, MA_EMA);
     if (MA_LINEAR.isNotEmpty) calc_Linear_MA(data, MA_LINEAR);
