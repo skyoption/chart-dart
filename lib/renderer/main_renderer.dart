@@ -360,12 +360,10 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         );
       }
 
-      double yPos = chartRect.bottom - (rowSpace * gridRows - 1);
-
       for (int i = 0; i <= gridColumns; i++) {
         double xPos = startX + (columnSpace * i);
         canvas.drawLine(
-          Offset(xPos, yPos),
+          Offset(xPos, chartRect.top),
           Offset(xPos, chartRect.bottom),
           gridPaint,
         );

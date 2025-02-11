@@ -236,7 +236,6 @@ class KChartWidgetState extends State<KChartWidget>
 
   late final height = MediaQuery.of(context).size.height;
   ChartPainter? _painter;
-  double _lastDy = 0;
 
   @override
   Widget build(BuildContext context) {
