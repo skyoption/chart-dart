@@ -384,7 +384,8 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
       );
     }
 
-    if (lastPoint.macdSignalValues?[index].value != 0) {
+    if (lastPoint.macdSignalValues != null &&
+        lastPoint.macdSignalValues?[index].value != 0) {
       drawLine(
         lastPoint.macdSignalValues?[index].value,
         curPoint.macdSignalValues?[index].value,
