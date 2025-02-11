@@ -351,18 +351,21 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 
       double startX = width - (gridColumns * cellSize);
 
-      for (int i = 0; i <= gridRows; i++) {
+      for (int i = 0; i < gridRows; i++) {
+        double yPos = chartRect.bottom - (rowSpace * i);
         canvas.drawLine(
-          Offset(startX, rowSpace * i + topPadding),
-          Offset(width, rowSpace * i + topPadding),
+          Offset(startX, yPos),
+          Offset(width, yPos),
           gridPaint,
         );
       }
 
+      double yPos = chartRect.bottom - (rowSpace * gridRows - 1);
+
       for (int i = 0; i <= gridColumns; i++) {
         double xPos = startX + (columnSpace * i);
         canvas.drawLine(
-          Offset(xPos, topPadding),
+          Offset(xPos, yPos),
           Offset(xPos, chartRect.bottom),
           gridPaint,
         );

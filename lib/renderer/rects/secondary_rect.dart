@@ -74,9 +74,13 @@ class SecondaryRect {
   ) {
     switch (indicator.type) {
       case IndicatorType.MACD:
-        final max = _findMaxUP(item.macdValues ?? [], indicator.windowId);
+        double max = _findMaxUP(item.macdValues ?? [], indicator.windowId);
+        final min = _findMinDN(item.macdValues ?? [], indicator.windowId);
+        if (-min > max) {
+          max = -min;
+        }
         mMaxValue = max;
-        mMinValue = -max;
+        mMinValue = min;
         break;
       case IndicatorType.RSI ||
             IndicatorType.SO_LINEAR ||

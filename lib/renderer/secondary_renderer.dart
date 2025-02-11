@@ -340,6 +340,12 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
             ];
             break;
           default:
+            children = [
+              TextSpan(
+                text: "${indicator.type.name}(${indicator.period}) $values",
+                style: getTextStyle(colorFromHex(indicator.color!)!),
+              ),
+            ];
             break;
         }
       }
