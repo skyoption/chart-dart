@@ -370,23 +370,25 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     double macdY = getY(macd);
     double r = mMACDWidth / 2;
     double zeroy = getY(0);
-    if (macd > 0) {
-      canvas.drawRect(
-        Rect.fromLTRB(curX - r, macdY, curX + r, zeroy),
-        chartPaint
-          ..color = colorFromHex(curPoint.macdValues![index].macd!.mainColor!)!,
-      );
-    } else {
-      canvas.drawRect(
-        Rect.fromLTRB(curX - r, zeroy, curX + r, macdY),
-        chartPaint
-          ..color = colorFromHex(curPoint.macdValues![index].macd!.mainColor!)!,
-      );
+    if (curPoint.macdValues![index].macd != null) {
+      if (macd > 0) {
+        canvas.drawRect(
+          Rect.fromLTRB(curX - r, macdY, curX + r, zeroy),
+          chartPaint
+            ..color =
+                colorFromHex(curPoint.macdValues![index].macd!.mainColor!)!,
+        );
+      } else {
+        canvas.drawRect(
+          Rect.fromLTRB(curX - r, zeroy, curX + r, macdY),
+          chartPaint
+            ..color =
+                colorFromHex(curPoint.macdValues![index].macd!.mainColor!)!,
+        );
+      }
     }
-
-    if (lastPoint.macdSignalValues != null &&
-        curPoint.macdSignalValues != null &&
-        lastPoint.macdSignalValues?[index].value != 0) {
+    if (curPoint.macdSignalValues == null) return;
+    if (lastPoint.macdSignalValues?[index].value != 0) {
       drawLine(
         lastPoint.macdSignalValues?[index].value,
         curPoint.macdSignalValues?[index].value,
