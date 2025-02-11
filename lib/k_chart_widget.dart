@@ -366,7 +366,7 @@ class KChartWidgetState extends State<KChartWidget>
                       if (!objectEditable) {
                         if (!isScale) return;
                         if (pointerCount == 2) {
-                          const double step = 0.0003;
+                          const double step = 0.00015;
 
                           if (details.verticalScale > 1) {
                             mScaleY = (mScaleY + step).clamp(0.9, 1.0);
