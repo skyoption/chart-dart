@@ -151,7 +151,6 @@ class KChartWidgetState extends State<KChartWidget>
   ObjectType? objectType;
   ObjectEntity? object;
   double _lastScaleX = 1.0;
-  double _lastScaleY = 1.0;
   bool isScale = false, isDrag = false, isLongPress = false, isOnTap = false;
 
   Random rand = Random();
@@ -224,7 +223,6 @@ class KChartWidgetState extends State<KChartWidget>
     mScaleX = 1.0;
     mScaleY = 1.0;
     _lastScaleX = 1.0;
-    _lastScaleY = 1.0;
     notifyChanged();
   }
 
@@ -363,16 +361,19 @@ class KChartWidgetState extends State<KChartWidget>
                       if (!objectEditable) {
                         pointerCount = details.pointerCount;
                         isScale = false;
-                        _lastScaleY = mScaleY;
                       }
                     },
                     onScaleUpdate: (details) {
                       if (!objectEditable) {
                         if (!isScale) return;
                         if (pointerCount == 2) {
-                          mScaleY = (_lastScaleY * details.verticalScale)
-                              .clamp(1.0, 1.5);
-                          _lastScaleY = mScaleY;
+                          const double step = 0.0005;
+
+                          if (details.verticalScale > 1) {
+                            mScaleY = (mScaleY + step).clamp(0.9, 1.0);
+                          } else if (details.verticalScale < 1) {
+                            mScaleY = (mScaleY - step).clamp(0.9, 1.0);
+                          }
                         }
                         if (widget.onZoomingStart != null)
                           widget.onZoomingStart!(mScaleX == 1 && mScaleY == 1);
