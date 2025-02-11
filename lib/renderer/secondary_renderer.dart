@@ -365,7 +365,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     CandleEntity lastPoint,
     double lastX,
   ) {
-    if (lastPoint.macdValues == null) return;
+    if (curPoint.macdValues == null) return;
     final macd = curPoint.macdValues?[index].value ?? 0;
     double macdY = getY(macd);
     double r = mMACDWidth / 2;
