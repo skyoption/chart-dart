@@ -371,7 +371,7 @@ class KChartWidgetState extends State<KChartWidget>
                         if (!isScale) return;
                         if (pointerCount == 2) {
                           mScaleY = (_lastScaleY * details.verticalScale)
-                              .clamp(0.9, 1.0);
+                              .clamp(1.0, 1.5);
                           _lastScaleY = mScaleY;
                         }
                         if (widget.onZoomingStart != null)
