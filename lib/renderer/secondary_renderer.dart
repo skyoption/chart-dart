@@ -385,7 +385,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     }
 
     if (lastPoint.macdSignalValues != null &&
-        curPoint.macdValues != null &&
+        curPoint.macdSignalValues != null &&
         lastPoint.macdSignalValues?[index].value != 0) {
       drawLine(
         lastPoint.macdSignalValues?[index].value,
@@ -393,7 +393,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         canvas,
         lastX,
         curX,
-        colorFromHex(curPoint.macdValues![index].macd!.signalColor!)!,
+        colorFromHex(curPoint.macdSignalValues![index].macd!.signalColor!)!,
       );
     }
   }
