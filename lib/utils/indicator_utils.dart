@@ -8,7 +8,11 @@ import 'package:candle_chart/renderer/rects/secondary_rect.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 
 class IndicatorUtils {
-  static calculate(List<KLineEntity> data) async {
+  static calculate(
+    List<KLineEntity> data,
+    List<IndicatorEntity> indicators,
+    Map<int, List<IndicatorEntity>> secondaries,
+  ) async {
     List<IndicatorEntity> MA_SMA = [],
         MA_EMA = [],
         MA_LINEAR = [],
@@ -30,13 +34,11 @@ class IndicatorUtils {
         WPR = [],
         MFI = [];
 
-    await chartProperties.loadIndicators();
-
     /// reset candles
-    // _resetCandles(data);
+    _resetCandles(data);
 
     /// Group the indicators by type
-    for (var indicator in chartProperties.indicators) {
+    for (var indicator in indicators) {
       if (indicator.type == IndicatorType.MA_SMA) {
         MA_SMA.add(indicator);
       } else if (indicator.type == IndicatorType.MA_EMA) {
@@ -62,7 +64,7 @@ class IndicatorUtils {
       }
     }
 
-    for (var item in chartProperties.secondaries.entries) {
+    for (var item in secondaries.entries) {
       for (var indicator in item.value) {
         if (indicator.type == IndicatorType.RSI) {
           RSI.add(indicator);

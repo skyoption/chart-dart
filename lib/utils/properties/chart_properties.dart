@@ -21,9 +21,11 @@ class ChartProperties with Indicators, Objects {
   Future<void> updateDefaultSettings({
     required CandleTimeFormat frame,
     required String symbol,
+    required List<KLineEntity> values,
   }) async {
     this.frame = frame;
     this.symbol = symbol;
+    this.candles = values;
     try {
       await KChart.write(query: (db) async {
         await db.symbols.put(
@@ -35,6 +37,7 @@ class ChartProperties with Indicators, Objects {
         );
       });
       await loadObjects();
+      await loadIndicators();
     } catch (e) {
       kPrint(e.toString());
     }

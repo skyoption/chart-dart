@@ -1,12 +1,12 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/indicators/indicator_levels_screen.dart';
 import 'package:candle_chart/indicators/indicator_pixels_screen.dart';
+import 'package:candle_chart/indicators/indicators_methods_screen.dart';
 import 'package:candle_chart/indicators/price_field_screen.dart';
 import 'package:candle_chart/indicators/widgets/indicator_color_widget.dart';
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
-import 'package:candle_chart/indicators/indicators_methods_screen.dart';
-import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:flutter/material.dart';
@@ -347,11 +347,16 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
                 : IndicatorType.SO_SMMA;
   }
 
-  void _onDone() {
+  void _onDone() async {
     if (widget.indicator == null) {
-      chartProperties.addSecondaryIndicator(indicator!, widget.windowId);
+      await chartProperties.addSecondaryIndicator(
+        indicator!,
+        widget.windowId,
+      );
     } else {
-      chartProperties.updateSecondaryIndicator(indicator!);
+      await chartProperties.updateSecondaryIndicator(
+        indicator!,
+      );
     }
     widget.onDone();
     Navigator.of(context).pop();

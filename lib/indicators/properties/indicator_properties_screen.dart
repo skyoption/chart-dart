@@ -1,11 +1,11 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/indicators/apply_to_screen.dart';
 import 'package:candle_chart/indicators/indicator_pixels_screen.dart';
+import 'package:candle_chart/indicators/indicators_methods_screen.dart';
 import 'package:candle_chart/indicators/widgets/indicator_color_widget.dart';
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
-import 'package:candle_chart/indicators/apply_to_screen.dart';
-import 'package:candle_chart/indicators/indicators_methods_screen.dart';
-import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -385,18 +385,27 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
     }
   }
 
-  void _onDone() {
+  void _onDone() async {
     if (indicator!.isSecondary) {
       if (widget.indicator == null) {
-        chartProperties.addSecondaryIndicator(indicator!, widget.windowId);
+        await chartProperties.addSecondaryIndicator(
+          indicator!,
+          widget.windowId,
+        );
       } else {
-        chartProperties.updateSecondaryIndicator(indicator!);
+        await chartProperties.updateSecondaryIndicator(
+          indicator!,
+        );
       }
     } else {
       if (widget.indicator == null) {
-        chartProperties.addIndicator(indicator!);
+        await chartProperties.addIndicator(
+          indicator!,
+        );
       } else {
-        chartProperties.updateIndicator(indicator!);
+        await chartProperties.updateIndicator(
+          indicator!,
+        );
       }
     }
     widget.onDone();

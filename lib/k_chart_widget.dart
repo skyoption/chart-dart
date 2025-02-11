@@ -182,12 +182,11 @@ class KChartWidgetState extends State<KChartWidget>
     required String symbol,
   }) async {
     lineCandles = candles;
-    await chartProperties.updateDefaultSettings(frame: frame, symbol: symbol);
-    _resetIndicators();
-  }
-
-  void _resetIndicators() async {
-    await IndicatorUtils.calculate(lineCandles);
+    await chartProperties.updateDefaultSettings(
+      frame: frame,
+      symbol: symbol,
+      values: candles,
+    );
     notifyChanged();
   }
 
@@ -212,7 +211,7 @@ class KChartWidgetState extends State<KChartWidget>
         builder: (context) => IndicatorsScreen(
           onDone: () async {
             _onFling(10);
-            _resetIndicators();
+            notifyChanged();
           },
         ),
       ),

@@ -214,7 +214,6 @@ class _MyHomePageState extends State<MyHomePage> {
         .reversed
         .toList()
         .cast<KLineEntity>();
-    if (datas != null) await IndicatorUtils.calculate(datas!);
     showLoading = false;
     setState(() {});
   }

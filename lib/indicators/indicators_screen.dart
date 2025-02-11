@@ -1,18 +1,18 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/indicators/new_indicator_screen.dart';
+import 'package:candle_chart/indicators/properties/indicator_properties_screen.dart';
 import 'package:candle_chart/indicators/properties/oscillators/atr_properties_screen.dart';
 import 'package:candle_chart/indicators/properties/oscillators/cci_properties_screen.dart';
 import 'package:candle_chart/indicators/properties/oscillators/dem_properties_screen.dart';
 import 'package:candle_chart/indicators/properties/oscillators/macd_properties_screen.dart';
 import 'package:candle_chart/indicators/properties/oscillators/mom_properties_screen.dart';
+import 'package:candle_chart/indicators/properties/oscillators/rsi_properties_screen.dart';
 import 'package:candle_chart/indicators/properties/oscillators/so_properties_screen.dart';
 import 'package:candle_chart/indicators/properties/oscillators/wpr_properties_screen.dart';
 import 'package:candle_chart/indicators/properties/parabolic_properties_screen.dart';
-import 'package:candle_chart/indicators/properties/oscillators/rsi_properties_screen.dart';
 import 'package:candle_chart/indicators/properties/volumes/mfi_properties_screen.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
-import 'package:candle_chart/indicators/properties/indicator_properties_screen.dart';
-import 'package:candle_chart/indicators/new_indicator_screen.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/material.dart';
@@ -104,8 +104,8 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                     direction = details.direction;
                     setState(() {});
                   },
-                  onDismissed: (value) {
-                    chartProperties.removeIndicator(e.key);
+                  onDismissed: (value) async {
+                    await chartProperties.removeIndicator(e.key);
                     widget.onDone();
                   },
                   background: Container(
@@ -173,8 +173,9 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                           direction = details.direction;
                           setState(() {});
                         },
-                        onDismissed: (value) {
-                          chartProperties.removeSecondaryIndicator(item.value);
+                        onDismissed: (value) async {
+                          await chartProperties
+                              .removeSecondaryIndicator(item.value);
                           widget.onDone();
                           setState(() {});
                         },

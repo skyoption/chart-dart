@@ -1,7 +1,9 @@
-import 'package:candle_chart/k_chart_widget.dart';
-import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/entity/k_line_entity.dart';
+import 'package:candle_chart/k_chart_widget.dart';
+import 'package:candle_chart/utils/indicator_utils.dart';
 import 'package:candle_chart/utils/isar.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:isar/isar.dart';
 
 mixin Indicators {
@@ -12,6 +14,8 @@ mixin Indicators {
 
   //For secondaryIndicators
   List<IndicatorEntity> _secondaryIndicators = [];
+
+  List<KLineEntity> candles = [];
 
   int get maxWindowId {
     int id = 0;
@@ -36,8 +40,7 @@ mixin Indicators {
   }
 
   Future<void> loadIndicators() async {
-    await _getIndicators();
-    await _getSecondaryIndicators();
+    await _reset();
   }
 
   Future<void> _getIndicators() async {
@@ -52,30 +55,33 @@ mixin Indicators {
     }
   }
 
-  void addIndicator(IndicatorEntity value) {
+  Future<void> addIndicator(IndicatorEntity value) async {
     value.isMain = true;
     value.isSecondary = false;
     indicators.add(value);
-    KChart.write(query: (db) async {
+    await KChart.write(query: (db) async {
       await db.indicatorEntitys.put(value);
     });
+    await _reset();
   }
 
-  void removeIndicator(int index) {
+  Future<void> removeIndicator(int index) async {
     final id = indicators[index].id;
     indicators.removeAt(index);
-    KChart.write(query: (db) async {
+    await KChart.write(query: (db) async {
       await db.indicatorEntitys.delete(id);
     });
+    await _reset();
   }
 
-  void updateIndicator(IndicatorEntity value) {
+  Future<void> updateIndicator(IndicatorEntity value) async {
     final index = indicators.indexWhere((e) => e.id == value.id);
     if (index != -1) {
       indicators[index] = value;
-      KChart.write(query: (db) async {
+      await KChart.write(query: (db) async {
         await db.indicatorEntitys.put(value);
       });
+      await _reset();
     }
   }
 
@@ -91,19 +97,20 @@ mixin Indicators {
     }
   }
 
-  void addSecondaryIndicator(IndicatorEntity value, int? windowId) {
+  Future<void> addSecondaryIndicator(
+      IndicatorEntity value, int? windowId) async {
     windowId ??= newWindowId;
     value.windowId = windowId;
     value.isMain = false;
     value.isSecondary = true;
     indicators.add(value);
-    KChart.write(query: (db) async {
+    await KChart.write(query: (db) async {
       await db.indicatorEntitys.put(value);
     });
+    await _reset();
   }
 
-
-  void removeSecondaryIndicator(IndicatorEntity item) {
+  Future<void> removeSecondaryIndicator(IndicatorEntity item) async {
     //when remove last secondary return trend indicators to get value from apply to close
     if (item.windowId != 0) {
       final items = secondaries[item.windowId] ?? [];
@@ -121,9 +128,10 @@ mixin Indicators {
       }
     }
     _secondaryIndicators.removeWhere((e) => e.id == item.id);
-    KChart.write(query: (db) async {
+    await KChart.write(query: (db) async {
       await db.indicatorEntitys.delete(item.id);
     });
+    await _reset();
   }
 
   bool isSecondary(IndicatorEntity indicator) {
@@ -141,15 +149,24 @@ mixin Indicators {
         indicator.type == IndicatorType.MOM);
   }
 
-
-
-  void updateSecondaryIndicator(IndicatorEntity value) {
+  Future<void> updateSecondaryIndicator(IndicatorEntity value) async {
     final index = _secondaryIndicators.indexWhere((e) => e.id == value.id);
     if (index != -1) {
       _secondaryIndicators[index] = value;
-      KChart.write(query: (db) async {
+      await KChart.write(query: (db) async {
         await db.indicatorEntitys.put(value);
       });
+      await _reset();
     }
+  }
+
+  Future<void> _reset() async {
+    await _getIndicators();
+    await _getSecondaryIndicators();
+    await IndicatorUtils.calculate(
+      candles,
+      indicators,
+      secondaries,
+    );
   }
 }
