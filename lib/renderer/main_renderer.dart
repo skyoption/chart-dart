@@ -340,20 +340,21 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   }
 
   @override
-  void drawGrid(Canvas canvas, int gridRows, int gridColumns) {
+  void drawGrid(Canvas canvas, int gridRows, int gridColumns, double width,
+      double height) {
     if (!hideGrid) {
-      double cellSize = chartRect.height / gridRows;
+      double cellSize = height / gridRows;
       double rowSpace = cellSize;
       double columnSpace = cellSize;
 
-      int gridColumns = (chartRect.rWidth / cellSize).floor() + 1;
+      int gridColumns = (width / cellSize).floor() + 1;
 
-      double startX = chartRect.rWidth - (gridColumns * cellSize);
+      double startX = width - (gridColumns * cellSize);
 
       for (int i = 0; i <= gridRows; i++) {
         canvas.drawLine(
           Offset(startX, rowSpace * i + topPadding),
-          Offset(chartRect.rWidth, rowSpace * i + topPadding),
+          Offset(width, rowSpace * i + topPadding),
           gridPaint,
         );
       }
@@ -1107,7 +1108,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
   void drawVerticalText(canvas, textStyle, int gridRows) {}
 
   @override
-  void drawGrid(Canvas canvas, int gridRows, int gridColumns) {}
+  void drawGrid(Canvas canvas, int gridRows, int gridColumns, double width,
+      double height) {}
 
   @override
   void drawText(Canvas canvas, CandleEntity data, double x) {}

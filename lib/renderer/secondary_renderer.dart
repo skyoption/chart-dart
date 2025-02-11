@@ -150,23 +150,28 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
   }
 
   @override
-  void drawGrid(
-    Canvas canvas,
-    int gridRows,
-    int gridColumns,
-  ) {
+  void drawGrid(Canvas canvas, int gridRows, int gridColumns, double width,
+      double height) {
     if (!hideGrid) {
-      double cellSize = chartRect.height / gridRows;
+      double cellSize = height / gridRows;
       double columnSpace = cellSize;
+      int gridColumns = (width / cellSize).floor() + 1;
+      double startX = width - (gridColumns * cellSize);
 
-      int gridColumns = (chartRect.rWidth / cellSize).floor() + 1;
-
-      double startX = chartRect.rWidth - (gridColumns * cellSize);
-
+      canvas.drawLine(
+        Offset(0, chartRect.top),
+        Offset(chartRect.rWidth, chartRect.top),
+        darkPaint,
+      ); //hidden line
+      canvas.drawLine(
+        Offset(0, chartRect.bottom),
+        Offset(chartRect.rWidth, chartRect.bottom),
+        darkPaint,
+      );
       for (int i = 0; i <= gridColumns; i++) {
         double xPos = startX + (columnSpace * i);
         canvas.drawLine(
-          Offset(xPos, topPadding),
+          Offset(xPos, chartRect.top),
           Offset(xPos, chartRect.bottom),
           gridPaint,
         );

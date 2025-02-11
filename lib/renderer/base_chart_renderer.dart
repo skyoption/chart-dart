@@ -77,7 +77,6 @@ abstract class BaseChartRenderer<T> {
     }
   }
 
-
   int getDecimalPlaces(double number) {
     String numberString = number.toString();
     int decimalIndex = numberString.indexOf('.');
@@ -87,7 +86,8 @@ abstract class BaseChartRenderer<T> {
     return numberString.length - decimalIndex - 1;
   }
 
-  void drawGrid(Canvas canvas, int gridRows, int gridColumns);
+  void drawGrid(Canvas canvas, int gridRows, int gridColumns, double width,
+      double height);
 
   void drawText(Canvas canvas, T data, double x);
 

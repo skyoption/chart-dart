@@ -113,11 +113,23 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: const EdgeInsets.symmetric(horizontal: 2.0),
           child: Column(
             children: <Widget>[
-              InkWell(
-                child: const Icon(Icons.data_object),
-                onTap: () {
-                  key.currentState?.openObjects();
-                },
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    child: const Icon(Icons.data_object),
+                    onTap: () {
+                      key.currentState?.openObjects();
+                    },
+                  ),
+                  const SizedBox(width: 21.0),
+                  InkWell(
+                    child: const Icon(Icons.format_indent_decrease),
+                    onTap: () {
+                      key.currentState?.openIndicators();
+                    },
+                  ),
+                ],
               ),
               KChartWidget(
                 key: key,

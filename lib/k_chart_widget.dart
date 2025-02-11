@@ -14,6 +14,7 @@ import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:gesture_x_detector/gesture_x_detector.dart';
 
 enum GraphStyle { area, candles, line }
 
@@ -235,22 +236,6 @@ class KChartWidgetState extends State<KChartWidget>
     super.dispose();
   }
 
-  void zoomIn() {
-    mScaleX = (_lastScaleX * 1.1).clamp(0.1, 2.0);
-    mScaleY = (_lastScaleY * 1.1).clamp(0.5, 1.0);
-    _lastScaleX = mScaleX;
-    _lastScaleY = mScaleY;
-    notifyChanged();
-  }
-
-  void zoomOut() {
-    mScaleX = (_lastScaleX * 0.9).clamp(0.1, 2.0);
-    mScaleY = (_lastScaleY * 0.9).clamp(0.5, 1.0);
-    _lastScaleX = mScaleX;
-    _lastScaleY = mScaleY;
-    notifyChanged();
-  }
-
   late final height = MediaQuery.of(context).size.height;
   ChartPainter? _painter;
   double _lastDy = 0;
@@ -270,7 +255,7 @@ class KChartWidgetState extends State<KChartWidget>
       }
     } else {
       gestures[LongPressGestureRecognizer] = longPressRecognizer();
-      gestures[ScaleGestureRecognizer] = horizontalScaleRecognizer();
+      // gestures[ScaleGestureRecognizer] = horizontalScaleRecognizer();
       gestures[HorizontalDragGestureRecognizer] = horizontalRecognizer();
     }
 
@@ -324,12 +309,43 @@ class KChartWidgetState extends State<KChartWidget>
             },
             child: Stack(
               children: <Widget>[
-                CustomPaint(
-                  size: Size(
-                    double.infinity,
-                    baseDimension.mDisplayHeight,
+                XGestureDetector(
+                  onScaleUpdate: (event) {
+                    if (!objectEditable) {
+                      pointerCount = 2;
+                      if (isDrag || isLongPress) return;
+                      if (isLongPress) return;
+                      if (pointerCount == 2) {
+                        mScaleX = (_lastScaleX * event.scale).clamp(0.1, 2.0);
+                      }
+                      if (widget.onZoomingStart != null) {
+                        widget.onZoomingStart!(mScaleX == 1 && mScaleY == 1);
+                      }
+                      notifyChanged();
+                    }
+                  },
+                  onScaleEnd: () {
+                    if (!objectEditable) {
+                      pointerCount = 1;
+                      isScale = false;
+                      _lastScaleX = mScaleX;
+                    }
+                  },
+                  onScaleStart: (initialFocusPoint) {
+                    if (!objectEditable) {
+                      pointerCount = 2;
+                      isScale = true;
+                      isDrag = false;
+                      isLongPress = false;
+                    }
+                  },
+                  child: CustomPaint(
+                    size: Size(
+                      double.infinity,
+                      baseDimension.mDisplayHeight,
+                    ),
+                    painter: _painter,
                   ),
-                  painter: _painter,
                 ),
                 Positioned(
                   top: 0.0,
@@ -337,38 +353,30 @@ class KChartWidgetState extends State<KChartWidget>
                   right: 0.0,
                   width: 40.0,
                   child: GestureDetector(
-                    onVerticalDragStart: (details) {
+                    onScaleStart: (details) {
                       if (!objectEditable) {
                         isScale = true;
-                        pointerCount = 2;
+                        pointerCount = details.pointerCount;
                       }
                     },
-                    onVerticalDragEnd: (details) {
+                    onScaleEnd: (details) {
                       if (!objectEditable) {
-                        pointerCount = 1;
+                        pointerCount = details.pointerCount;
                         isScale = false;
                         _lastScaleY = mScaleY;
                       }
                     },
-                    onVerticalDragUpdate: (details) {
+                    onScaleUpdate: (details) {
                       if (!objectEditable) {
-                        if (_lastDy != 0) {
-                          if (!isScale) return;
-                          if (pointerCount == 2) {
-                            final verticalScale =
-                                _lastDy < details.localPosition.dy
-                                    ? 0.996
-                                    : 1.006;
-                            mScaleY =
-                                (_lastScaleY * verticalScale).clamp(0.5, 1.0);
-                            _lastScaleY = mScaleY;
-                          }
-                          if (widget.onZoomingStart != null)
-                            widget
-                                .onZoomingStart!(mScaleX == 1 && mScaleY == 1);
-                          notifyChanged();
+                        if (!isScale) return;
+                        if (pointerCount == 2) {
+                          mScaleY = (_lastScaleY * details.verticalScale)
+                              .clamp(0.9, 1.0);
+                          _lastScaleY = mScaleY;
                         }
-                        _lastDy = details.localPosition.dy;
+                        if (widget.onZoomingStart != null)
+                          widget.onZoomingStart!(mScaleX == 1 && mScaleY == 1);
+                        notifyChanged();
                       }
                     },
                     child: Container(
