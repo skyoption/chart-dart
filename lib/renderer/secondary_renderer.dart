@@ -1,8 +1,8 @@
 import 'package:candle_chart/entity/candle_entity.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/k_chart_widget.dart';
-import 'package:candle_chart/renderer/rects/render_rect.dart';
 import 'package:candle_chart/renderer/main_renderer.dart';
+import 'package:candle_chart/renderer/rects/render_rect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
@@ -16,7 +16,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
   final ChartStyle chartStyle;
   final ChartColors chartColors;
   int index = -1;
-  late final bool isMain, isLast,hideGrid;
+  late final bool isMain, isLast, hideGrid;
   final List<RenderRect> mSecondaryRectList;
   double scaleX;
   late final SubMainRenderer subMainRenderer;
@@ -154,27 +154,24 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
     Canvas canvas,
     int gridRows,
     int gridColumns,
-  ) { if (!hideGrid) {
-    canvas.drawLine(
-      Offset(0, chartRect.top),
-      Offset(chartRect.rWidth, chartRect.top),
-      darkPaint,
-    ); //hidden line
-    canvas.drawLine(
-      Offset(0, chartRect.bottom),
-      Offset(chartRect.rWidth, chartRect.bottom),
-      darkPaint,
-    );
-    double columnSpace = chartRect.rWidth / gridColumns;
-    for (int i = 0; i <= columnSpace; i++) {
-      //mSecondaryRect
-      canvas.drawLine(
-        Offset(columnSpace * i, chartRect.top - topPadding - 60),
-        Offset(columnSpace * i, chartRect.bottom),
-        gridPaint,
-      );
+  ) {
+    if (!hideGrid) {
+      double cellSize = chartRect.height / gridRows;
+      double columnSpace = cellSize;
+
+      int gridColumns = (chartRect.rWidth / cellSize).floor() + 1;
+
+      double startX = chartRect.rWidth - (gridColumns * cellSize);
+
+      for (int i = 0; i <= gridColumns; i++) {
+        double xPos = startX + (columnSpace * i);
+        canvas.drawLine(
+          Offset(xPos, topPadding),
+          Offset(xPos, chartRect.bottom),
+          gridPaint,
+        );
+      }
     }
-  }
   }
 
   @override

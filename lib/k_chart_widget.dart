@@ -183,11 +183,10 @@ class KChartWidgetState extends State<KChartWidget>
   }) async {
     lineCandles = candles;
     await chartProperties.updateDefaultSettings(frame: frame, symbol: symbol);
-    await _resetIndicators();
+    _resetIndicators();
   }
 
-  Future<void> _resetIndicators() async {
-    await Future.delayed(Duration(milliseconds: 200));
+  void _resetIndicators() async {
     await IndicatorUtils.calculate(lineCandles);
     notifyChanged();
   }
