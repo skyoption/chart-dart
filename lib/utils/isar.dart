@@ -18,7 +18,7 @@ class KChart {
         IndicatorEntitySchema,
         SymbolSchema,
       ],
-      name: 'candle-chart-v1',
+      name: 'candle-chart-v2',
       directory: baseUrl,
     );
   }
