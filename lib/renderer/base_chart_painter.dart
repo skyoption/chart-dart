@@ -4,6 +4,7 @@ import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_rectangle_lines.dart';
+import 'package:candle_chart/renderer/objects/draw_tp_and_sl_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_trend_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_vertical_lines.dart';
 import 'package:candle_chart/renderer/objects/update_point_position.dart';
@@ -24,7 +25,8 @@ abstract class BaseChartPainter extends CustomPainter
         UpdatePointPosition,
         DrawTrendLines,
         DrawRectangleLines,
-        DrawVerticalLines {
+        DrawVerticalLines,
+        DrawTPAndSLLines {
   static double maxScrollX = 0.0;
   List<KLineEntity>? data; // data of chart
   List<ObjectEntity> horizontalLines; // data of chart
@@ -156,11 +158,11 @@ abstract class BaseChartPainter extends CustomPainter
       drawChart(canvas, size);
       drawVerticalText(canvas);
       drawDate(canvas, size);
-
       drawText(canvas, data!.last, 5);
       drawMaxAndMin(canvas);
-      drawPositionsAndAskBidLines(canvas);
       drawHorizontalLinesTitles(canvas, size);
+      drawTPAndSLTitles(canvas, size);
+      drawPositionsAndAskBidLines(canvas);
       if (this.chartStyle.isLongFocus &&
           (isLongPress == true ||
               (isTapShowInfoDialog && longPressTriggered))) {

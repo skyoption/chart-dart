@@ -11,7 +11,7 @@ mixin Objects {
 
   List<ObjectEntity> objects = [];
   List<ObjectEntity> horizontalLines = [];
-  List<ObjectEntity> positionLines = [];
+  List<ObjectEntity> tPAndSLLines = [];
   List<ObjectEntity> verticalLines = [];
   List<ObjectEntity> trendLines = [];
   List<ObjectEntity> rectangles = [];
@@ -20,7 +20,7 @@ mixin Objects {
     await _getObjects();
     await _getVerticalLines();
     await _getHorizontalLines();
-    await _getPositionLines();
+    // await _getPositionLines();
     await _getTrendLines();
     await _getRectanglesLines();
   }
@@ -78,17 +78,15 @@ mixin Objects {
     });
   }
 
-  void addPositionLine(ObjectEntity value) {
+  Future<void> addTPAndSLLine(ObjectEntity value) async {
     value.symbol = symbol;
-    value.type = ObjectType.Position;
     value.frame = frame;
-    value.currentEditIndex = positionLines.length;
-    value = setCopy(value);
-    positionLines.add(value);
-    KChart.write(query: (db) async {
-      await db.objectEntitys.put(value);
-      _getObjects();
-    });
+    value.currentEditIndex = tPAndSLLines.length;
+    tPAndSLLines.add(value);
+    // await KChart.write(query: (db) async {
+    //   await db.objectEntitys.put(value);
+    //   _getObjects();
+    // });
   }
 
   void addRectangle(ObjectEntity value) {
@@ -141,12 +139,12 @@ mixin Objects {
   }
 
   Future<void> removePosition(int id) async {
-    final index = positionLines.indexWhere((e) => e.id == id);
-    positionLines.removeAt(index);
-    await KChart.write(query: (db) async {
-      await db.objectEntitys.delete(id);
-    });
-    await _getObjects();
+    final index = tPAndSLLines.indexWhere((e) => e.id == id);
+    tPAndSLLines.removeAt(index);
+    // await KChart.write(query: (db) async {
+    //   await db.objectEntitys.delete(id);
+    // });
+    // await _getObjects();
   }
 
   Future<void> updateVerticalLine(ObjectEntity value) async {
@@ -182,12 +180,12 @@ mixin Objects {
   }
 
   Future<void> updatePositionLine(ObjectEntity value) async {
-    final index = positionLines.indexWhere((e) => e.id == value.id);
+    final index = tPAndSLLines.indexWhere((e) => e.id == value.id);
     if (index != -1) {
-      positionLines[index] = value;
-      await KChart.write(query: (db) async {
-        await db.objectEntitys.put(value);
-      });
+      tPAndSLLines[index] = value;
+      //   await KChart.write(query: (db) async {
+      //     await db.objectEntitys.put(value);
+      //   });
     }
   }
 
@@ -210,8 +208,8 @@ mixin Objects {
       index = horizontalLines.indexWhere((e) => e.id == value.id);
       if (index != -1) horizontalLines[index] = value;
     } else if (index == -1) {
-      index = positionLines.indexWhere((e) => e.id == value.id);
-      if (index != -1) positionLines[index] = value;
+      index = tPAndSLLines.indexWhere((e) => e.id == value.id);
+      if (index != -1) tPAndSLLines[index] = value;
     } else if (index == -1) {
       index = verticalLines.indexWhere((e) => e.id == value.id);
       if (index != -1) verticalLines[index] = value;
@@ -253,18 +251,18 @@ mixin Objects {
     }
   }
 
-  Future<void> _getPositionLines() async {
-    try {
-      final res = await KChart.query.objectEntitys
-          .filter()
-          .typeEqualTo(ObjectType.Position)
-          .symbolEqualTo(symbol)
-          .findAll();
-      positionLines = res;
-    } catch (e) {
-      return kPrint(e.toString());
-    }
-  }
+  // Future<void> _getPositionLines() async {
+  //   try {
+  //     final res = await KChart.query.objectEntitys
+  //         .filter()
+  //         .typeEqualTo(ObjectType.Position)
+  //         .symbolEqualTo(symbol)
+  //         .findAll();
+  //     positionLines = res;
+  //   } catch (e) {
+  //     return kPrint(e.toString());
+  //   }
+  // }
 
   Future<void> _getTrendLines() async {
     try {

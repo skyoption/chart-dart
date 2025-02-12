@@ -5,6 +5,7 @@ import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
 import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_rectangle_lines.dart';
+import 'package:candle_chart/renderer/objects/draw_tp_and_sl_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_trend_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_vertical_lines.dart';
 import 'package:candle_chart/renderer/objects/update_point_position.dart';
@@ -47,6 +48,7 @@ class ChartPainter extends BaseChartPainter
         DrawTrendLines,
         DrawRectangleLines,
         UpdatePointPosition,
+        DrawTPAndSLLines,
         ChartCalc {
   static get maxScrollX => BaseChartPainter.maxScrollX;
   late BaseChartRenderer mMainRenderer;
@@ -266,6 +268,7 @@ class ChartPainter extends BaseChartPainter
     canvas.scale(scaleX, 1.0);
 
     drawHorizontalLines(canvas, size, true);
+    drawTPAndSLLines(canvas, size, true);
     drawVerticalLines(canvas, size, true, data ?? []);
     drawTrendLines(canvas, size, true, data ?? []);
     drawRectangles(canvas, size, true, data ?? []);
@@ -314,6 +317,7 @@ class ChartPainter extends BaseChartPainter
     // if (isTrendLine == true) drawTrendLines(canvas, size);
 
     drawHorizontalLines(canvas, size, false);
+    drawTPAndSLLines(canvas, size, false);
     drawVerticalLines(canvas, size, false, data ?? []);
     drawTrendLines(canvas, size, false, data ?? []);
     drawRectangles(canvas, size, false, data ?? []);

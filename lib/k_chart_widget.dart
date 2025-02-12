@@ -14,6 +14,7 @@ import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:gesture_x_detector/gesture_x_detector.dart';
 
 enum GraphStyle { area, candles, line }
@@ -80,6 +81,7 @@ class KChartWidget extends StatefulWidget {
   final Function(CandleTimeFormat frame, String symbol) onGettingSettings;
   final Function(bool value)? onLoadMore;
   final Function(bool value)? onZoomingStart;
+  final Function(LineEntity position, double newValue) onUpdatePosition;
   final int fixedLength;
   final List<int> maDayList;
   final int flingTime;
@@ -100,6 +102,7 @@ class KChartWidget extends StatefulWidget {
     required this.chartStyle,
     required this.chartColors,
     required this.onGettingSettings,
+    required this.onUpdatePosition,
     this.graphStyle = GraphStyle.line,
     this.xFrontPadding = 100,
     this.volHidden = true,
@@ -133,7 +136,8 @@ class KChartWidgetState extends State<KChartWidget>
   final StreamController<InfoWindowEntity?> mInfoWindowStream =
       StreamController<InfoWindowEntity?>.broadcast();
   List<KLineEntity> lineCandles = [];
-  List<LineEntity> askAndBid = [];
+  List<LineEntity> ask_bid = [];
+  List<LineEntity> tp_sl_positions = [];
   double mScaleX = 1.0, mScaleY = 1, mScrollX = 0.0, mSelectX = 0.0;
   double mHeight = 0, mWidth = 0;
   AnimationController? _controller;
@@ -190,18 +194,42 @@ class KChartWidgetState extends State<KChartWidget>
     notifyChanged();
   }
 
-  void updateAskOrBid(LineEntity line) {
-    final index = askAndBid.indexWhere((e) => e.id == line.id);
+  void updateAskAndBid(LineEntity line) {
+    final index = ask_bid.indexWhere((e) => e.id == line.id);
     if (index == -1) {
-      askAndBid.add(line);
+      ask_bid.add(line);
     } else {
-      askAndBid[index] = line;
+      ask_bid[index] = line;
     }
     notifyChanged();
   }
 
+  Future<void> addOrUpdateSLOrTPOrPosition(LineEntity item) async {
+    final index = tp_sl_positions.indexWhere((e) => e.id == item.id);
+    if (index == -1) {
+      tp_sl_positions.add(item);
+    } else {
+      tp_sl_positions[index] = item;
+    }
+    final object = ObjectEntity(
+      id: item.id,
+      name: item.type,
+      title: item.title,
+      value: item.value,
+      style: ObjectStyle.dash,
+      type: ObjectType.Position,
+      editable: item.editable,
+      color: colorToHex(item.color),
+    );
+    if (index == -1) {
+      await chartProperties.addTPAndSLLine(object);
+    }
+    _painter!.setTPAndSLLineValue(object, item.value);
+    notifyChanged();
+  }
+
   void removeAskBid(int id) {
-    askAndBid.removeWhere((e) => e.id == id);
+    ask_bid.removeWhere((e) => e.id == id);
     notifyChanged();
   }
 
@@ -269,7 +297,7 @@ class KChartWidgetState extends State<KChartWidget>
     _painter = ChartPainter(
       widget.chartStyle,
       widget.chartColors,
-      askAndBid: askAndBid,
+      askAndBid: ask_bid,
       graphStyle: widget.graphStyle,
       indicators: chartProperties.indicators,
       baseDimension: baseDimension,
@@ -431,15 +459,17 @@ class KChartWidgetState extends State<KChartWidget>
       isSecondOffset = false;
       bottomSheetShown = true;
       notifyChanged();
-      showPropertiesBottomSheet(
-        context: context,
-        item: object!,
-        data: lineCandles,
-        onDone: (type) {
-          bottomSheetShown = false;
-          notifyChanged();
-        },
-      );
+      if (object!.type != ObjectType.Position) {
+        showPropertiesBottomSheet(
+          context: context,
+          item: object!,
+          data: lineCandles,
+          onDone: (type) {
+            bottomSheetShown = false;
+            notifyChanged();
+          },
+        );
+      }
     }
   }
 
@@ -459,10 +489,16 @@ class KChartWidgetState extends State<KChartWidget>
         chartProperties.updateRectangle(object!);
       } else if (objectType == ObjectType.Horizontal) {
         chartProperties.updateHorizontalLine(object!);
-      } else if (objectType == ObjectType.Position) {
-        chartProperties.updatePositionLine(object!);
       } else if (objectType == ObjectType.Vertical) {
         chartProperties.updateVerticalLine(object!);
+      } else if (objectType == ObjectType.Position && object!.editable) {
+        chartProperties.updatePositionLine(object!);
+      } else if (objectType == ObjectType.Position && !object!.editable) {
+        _tapPosition = null;
+        object = null;
+        objectType = null;
+        isSecondOffset = false;
+        objectEditable = false;
       }
     }
     notifyChanged();
@@ -648,8 +684,9 @@ class KChartWidgetState extends State<KChartWidget>
               }
             } else if (object!.type == ObjectType.Horizontal) {
               _painter!.setHorizontalLineOffset(object!, details.localPosition);
-            } else if (object!.type == ObjectType.Position) {
-              _painter!.setHorizontalLineOffset(object!, details.localPosition);
+            } else if (object!.type == ObjectType.Position &&
+                object!.editable) {
+              _painter!.setTPAndSLLineOffset(object!, details.localPosition);
             } else if (object!.type == ObjectType.Vertical) {
               _painter!.setVerticalLineOffset(
                 object!,
@@ -699,6 +736,21 @@ class KChartWidgetState extends State<KChartWidget>
                 details.localPosition,
               );
               chartProperties.updateHorizontalLine(object!);
+            } else if (object!.type == ObjectType.Position &&
+                object!.editable) {
+              object = _painter!.setTPAndSLLineOffset(
+                object!,
+                details.localPosition,
+              );
+              chartProperties.updatePositionLine(object!);
+              final index =
+                  tp_sl_positions.indexWhere((e) => e.id == object?.id);
+              if (index != -1) {
+                widget.onUpdatePosition(
+                  tp_sl_positions[index],
+                  object!.value,
+                );
+              }
             } else if (object!.type == ObjectType.Vertical) {
               object = _painter!.setVerticalLineOffset(
                 object!,

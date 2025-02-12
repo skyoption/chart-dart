@@ -14,8 +14,14 @@ mixin ChartDetails on ChartCalc {
   late Rect mMainRect;
   late List<String> mFormats;
 
-  TextPainter getTextPainter(text, color,
-      {addTextSpan, isLeft, double? sizeText}) {
+  TextPainter getTextPainter(
+    text,
+    color, {
+    addTextSpan,
+    isLeft,
+    double? sizeText,
+    FontWeight? fontWeight,
+  }) {
     if (color == null) {
       color = this.chartColors.defaultTextColor;
     }
@@ -27,6 +33,7 @@ mixin ChartDetails on ChartCalc {
       style: getTextStyle(
         color,
         sizeText: sizeText,
+        fontWeight: fontWeight,
       ),
     );
     if (addTextSpan != null) {
@@ -62,10 +69,15 @@ mixin ChartDetails on ChartCalc {
   }
 
   /// define text style
-  TextStyle getTextStyle(Color color, {double? sizeText}) {
+  TextStyle getTextStyle(
+    Color color, {
+    double? sizeText,
+    FontWeight? fontWeight,
+  }) {
     return TextStyle(
       fontSize: sizeText ?? chartStyle.sizeText,
       color: color,
+      fontWeight: fontWeight,
     );
   }
 }

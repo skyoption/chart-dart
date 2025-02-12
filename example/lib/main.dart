@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -70,11 +71,41 @@ class _MyHomePageState extends State<MyHomePage> {
           frame: CandleTimeFormat.H1,
           symbol: 'btcusdt',
         );
-        key.currentState!.updateAskOrBid(
+        // key.currentState!.updateAskAndBid(
+        //   LineEntity(
+        //     id: -10,
+        //     color: Colors.red,
+        //     value: 96880.50,
+        //   ),
+        // );
+        key.currentState!.addOrUpdateSLOrTPOrPosition(
           LineEntity(
-            id: -10,
+            id: 1000,
+            type: 'SL',
             color: Colors.red,
-            value: 96880.50,
+            value: 95214.50,
+            title: 'SL',
+            editable: true,
+          ),
+        );
+        key.currentState!.addOrUpdateSLOrTPOrPosition(
+          LineEntity(
+            id: 10001,
+            type: 'TP',
+            color: Colors.red,
+            value: 96446.50,
+            title: 'TP',
+            editable: true,
+          ),
+        );
+        key.currentState!.addOrUpdateSLOrTPOrPosition(
+          LineEntity(
+            id: 10002,
+            type: 'Position',
+            color: Colors.blue,
+            value: 95446.50,
+            title: 'Buy 0.1',
+            editable: true,
           ),
         );
       },
@@ -138,6 +169,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 chartColors: chartColors,
                 graphStyle: GraphStyle.area,
                 onGettingSettings: (frame, symbol) {},
+                onUpdatePosition: (position, newValue) {
+                  kPrint(
+                      '${position.id} ${position.type} OldValue : ${position.value} NewValue : $newValue');
+                },
                 onZoomingStart: (bool value) {},
                 fixedLength: 2,
                 timeFormat: TimeFormat.YEAR_MONTH_DAY,

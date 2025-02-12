@@ -6,7 +6,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 import '../base_chart_renderer.dart';
 
-mixin DrawHorizontalLines on ChartDetails {
+mixin DrawTPAndSLLines on ChartDetails {
   late final ChartPosition chartPosition;
   late final ChartStyle chartStyle;
   late Paint dot;
@@ -17,36 +17,47 @@ mixin DrawHorizontalLines on ChartDetails {
   late double mMainHighMaxValue, mMainLowMinValue;
   late int fixedLength;
 
-  ObjectEntity? setHorizontalLineOffset(ObjectEntity item, Offset offset) {
-    final horizontalLines = chartProperties.horizontalLines;
-    final i = horizontalLines.indexWhere((e) => e.id == item.id);
+  ObjectEntity? setTPAndSLLineValue(ObjectEntity item, double value) {
+    final tPAndSLLines = chartProperties.tPAndSLLines;
+    final i = tPAndSLLines.indexWhere((e) => e.id == item.id);
     if (i != -1) {
-      horizontalLines[i].currentEditIndex = item.currentEditIndex;
-      final value = getYPositionValue(offset.dy);
-      if (mMainLowMinValue >= value) {
-        horizontalLines[i].value = mMainLowMinValue;
-        horizontalLines[i].dy1 = getMainY(mMainLowMinValue);
-      } else if (mMainHighMaxValue <= value) {
-        horizontalLines[i].value = mMainHighMaxValue;
-        horizontalLines[i].dy1 = getMainY(mMainLowMinValue);
-      } else {
-        horizontalLines[i].dy1 = getMainY(horizontalLines[i].value);
-        horizontalLines[i].value = value;
-      }
-      return horizontalLines[i];
+      tPAndSLLines[i].currentEditIndex = -1;
+      tPAndSLLines[i].dy1 = getMainY(value);
+      tPAndSLLines[i].value = value;
+      return tPAndSLLines[i];
     }
     return null;
   }
 
-  void drawHorizontalLines(Canvas canvas, Size size, bool isBackground) {
-    final horizontalLines = chartProperties.horizontalLines;
-    if (horizontalLines.isEmpty) {
+  ObjectEntity? setTPAndSLLineOffset(ObjectEntity item, Offset offset) {
+    final tPAndSLLines = chartProperties.tPAndSLLines;
+    final i = tPAndSLLines.indexWhere((e) => e.id == item.id);
+    if (i != -1) {
+      tPAndSLLines[i].currentEditIndex = item.currentEditIndex;
+      final value = getYPositionValue(offset.dy);
+      if (mMainLowMinValue >= value) {
+        tPAndSLLines[i].value = mMainLowMinValue;
+        tPAndSLLines[i].dy1 = getMainY(mMainLowMinValue);
+      } else if (mMainHighMaxValue <= value) {
+        tPAndSLLines[i].value = mMainHighMaxValue;
+        tPAndSLLines[i].dy1 = getMainY(mMainLowMinValue);
+      } else {
+        tPAndSLLines[i].dy1 = getMainY(tPAndSLLines[i].value);
+        tPAndSLLines[i].value = value;
+      }
+      return tPAndSLLines[i];
+    }
+    return null;
+  }
+
+  void drawTPAndSLLines(Canvas canvas, Size size, bool isBackground) {
+    final tPAndSLLines = chartProperties.tPAndSLLines;
+    if (tPAndSLLines.isEmpty) {
       return;
     }
-    for (int i = 0; i < horizontalLines.length; i++) {
-      if (horizontalLines[i].drawAsBackground != isBackground) continue;
-      double value = horizontalLines[i].value;
-
+    for (int i = 0; i < tPAndSLLines.length; i++) {
+      if (tPAndSLLines[i].drawAsBackground != isBackground) continue;
+      double value = tPAndSLLines[i].value;
       if (value <= this.chartPosition.topPrice &&
           value >= this.chartPosition.bottomPrice) {
         double y = getMainY(value);
@@ -56,14 +67,14 @@ mixin DrawHorizontalLines on ChartDetails {
           y = getMainY(mMainHighMaxValue);
         }
         final pricePaint = Paint()
-          ..color = colorFromHex(horizontalLines[i].color!)!
-          ..strokeWidth = horizontalLines[i].height;
+          ..color = colorFromHex(tPAndSLLines[i].color!)!
+          ..strokeWidth = tPAndSLLines[i].height;
 
         double startX = 0;
         final max = -mTranslateX + (mWidth + 20) / scaleX;
         double space =
             this.chartStyle.priceLineSpan + this.chartStyle.priceLineLength;
-        if (horizontalLines[i].style == ObjectStyle.dash) {
+        if (tPAndSLLines[i].style == ObjectStyle.dash) {
           while (startX < max) {
             canvas.drawLine(
                 Offset(startX, y),
@@ -78,23 +89,24 @@ mixin DrawHorizontalLines on ChartDetails {
     }
   }
 
-  void drawHorizontalLinesTitles(Canvas canvas, Size size) {
-    final horizontalLines = chartProperties.horizontalLines;
-    if (horizontalLines.isEmpty) {
+  void drawTPAndSLTitles(Canvas canvas, Size size) {
+    final tPAndSLLines = chartProperties.tPAndSLLines;
+    if (tPAndSLLines.isEmpty) {
       return;
     }
-    for (int i = 0; i < horizontalLines.length; i++) {
-      double value = horizontalLines[i].value;
+    for (int i = 0; i < tPAndSLLines.length; i++) {
+      double value = tPAndSLLines[i].value;
       if (mMainLowMinValue >= value) continue;
       double y = getMainY(value);
-      final pricePaint = Paint()
-        ..color = colorFromHex(horizontalLines[i].color!)!
-        ..strokeWidth = horizontalLines[i].height;
 
       double startX = 0;
       final max = -mTranslateX + (mWidth + 20) / scaleX;
 
-      if (horizontalLines[i].currentEditIndex == i) {
+      final pricePaint = Paint()
+        ..color = colorFromHex(tPAndSLLines[i].color!)!
+        ..strokeWidth = tPAndSLLines[i].height;
+
+      if (tPAndSLLines[i].currentEditIndex == i) {
         canvas.drawCircle(
           Offset(startX, y),
           2.5,
@@ -106,11 +118,10 @@ mixin DrawHorizontalLines on ChartDetails {
           dot,
         );
       }
-
-      if (horizontalLines[i].title.isNotEmpty) {
+      if (tPAndSLLines[i].title.isNotEmpty) {
         TextPainter title = getTextPainter(
-          horizontalLines[i].title,
-          colorFromHex(horizontalLines[i].color!)!,
+          tPAndSLLines[i].title,
+          colorFromHex(tPAndSLLines[i].color!)!,
           fontWeight: FontWeight.w600,
         );
 

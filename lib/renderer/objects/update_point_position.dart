@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/renderer/base_chart_renderer.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
@@ -17,10 +18,17 @@ mixin UpdatePointPosition on ChartCalc {
     final nearObject = NearObject();
     int horizontalCount = 0,
         verticalCount = 0,
+        positionCount = 0,
         rectangleCount = 0,
         trendCount = 0;
-    for (int i = 0; i < chartProperties.objects.length; i++) {
-      var object = chartProperties.objects[i];
+
+    final objects = [
+      ...chartProperties.objects,
+      ...chartProperties.tPAndSLLines
+    ];
+
+    for (int i = 0; i < objects.length; i++) {
+      var object = objects[i];
       if (object.type == ObjectType.Horizontal) {
         final dy1 = offset.dy;
         final dy2 = getMainY(object.value);
@@ -32,6 +40,17 @@ mixin UpdatePointPosition on ChartCalc {
           return nearObject;
         }
         horizontalCount++;
+      } else if (object.type == ObjectType.Position) {
+        final dy1 = offset.dy;
+        final dy2 = getMainY(object.value);
+        final disDy = dy2 - dy1;
+        if (disDy.abs() <= 20) {
+          object.currentEditIndex = positionCount;
+          nearObject.object = object;
+          nearObject.isSecondPoint = false;
+          return nearObject;
+        }
+        positionCount++;
       } else if (object.type == ObjectType.Vertical) {
         final dx1 = getX(mStartIndex) + (offset.dx / scaleX);
         final dx2 = object.dx1;

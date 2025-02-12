@@ -11,7 +11,7 @@ enum ObjectType { Vertical, Horizontal, Position, Trend, Rectangle }
 
 @collection
 class ObjectEntity {
-  Id id = Isar.autoIncrement;
+  Id id;
   double value, value2;
   String? color;
   @enumerated
@@ -23,15 +23,18 @@ class ObjectEntity {
   double height;
   double dx1, dx2, dy1, dy2;
   String name;
+  String title;
   int datetime, datetime2;
   String symbol;
   bool drawAsBackground;
   bool isFill;
+  bool editable;
   bool rayRight;
   bool rayLift;
   int currentEditIndex;
 
   ObjectEntity({
+    this.id = Isar.autoIncrement,
     this.value = 0,
     this.value2 = 0,
     this.dx1 = 0,
@@ -44,6 +47,7 @@ class ObjectEntity {
     this.datetime = 0,
     this.datetime2 = 0,
     this.symbol = '',
+    this.title = '',
     this.height = 1.0,
     this.style = ObjectStyle.normal,
     this.type = ObjectType.Horizontal,
@@ -51,6 +55,7 @@ class ObjectEntity {
     this.drawAsBackground = false,
     this.isFill = false,
     this.rayRight = false,
+    this.editable = false,
     this.rayLift = false,
   }) {
     color ??= Colors.blue.toHexString();
