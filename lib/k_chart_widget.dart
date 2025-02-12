@@ -180,7 +180,13 @@ class KChartWidgetState extends State<KChartWidget>
     );
   }
 
-  Future<void> setLoadedCandles({
+  Future<void> setLoadedCandles({required List<KLineEntity> candles}) async {
+    lineCandles = candles;
+    await chartProperties.updateIndicators(candles);
+    notifyChanged();
+  }
+
+  Future<void> updateDefaultSettings({
     required List<KLineEntity> candles,
     required CandleTimeFormat frame,
     required String symbol,
