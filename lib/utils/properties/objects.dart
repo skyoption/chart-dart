@@ -9,30 +9,35 @@ mixin Objects {
   late String symbol;
   late CandleTimeFormat frame;
 
-  List<ObjectEntity> objects = [];
+  List<ObjectEntity> get objects {
+    return [
+      ...horizontalLines,
+      ...tPAndSLLines,
+      ...verticalLines,
+      ...trendLines,
+      ...rectangles,
+    ];
+  }
+
   List<ObjectEntity> horizontalLines = [];
   List<ObjectEntity> tPAndSLLines = [];
   List<ObjectEntity> verticalLines = [];
   List<ObjectEntity> trendLines = [];
   List<ObjectEntity> rectangles = [];
+  ObjectEntity? lastItem;
 
   Future<void> loadObjects() async {
     await _getObjects();
-    await _getVerticalLines();
-    await _getHorizontalLines();
-    // await _getPositionLines();
-    await _getTrendLines();
-    await _getRectanglesLines();
   }
 
   ObjectEntity setCopy(ObjectEntity item) {
-    if (objects.isEmpty) return item;
-    final lastItem = objects.last;
-    item.style = lastItem.style;
-    item.color = lastItem.color;
-    item.height = lastItem.height;
-    item.isFill = lastItem.isFill;
-    item.drawAsBackground = lastItem.drawAsBackground;
+    if (lastItem != null) {
+      item.style = lastItem!.style;
+      item.color = lastItem!.color;
+      item.height = lastItem!.height;
+      item.isFill = lastItem!.isFill;
+      item.drawAsBackground = lastItem!.drawAsBackground;
+    }
     return item;
   }
 
@@ -40,6 +45,7 @@ mixin Objects {
     ObjectEntity value,
     List<KLineEntity> data,
   ) async {
+    lastItem = value;
     value.symbol = symbol;
     value.frame = frame;
     value.type = ObjectType.Vertical;
@@ -53,6 +59,7 @@ mixin Objects {
   }
 
   Future<void> addTrendLine(ObjectEntity value) async {
+    lastItem = value;
     value.symbol = symbol;
     value.type = ObjectType.Trend;
     value.frame = frame;
@@ -62,10 +69,10 @@ mixin Objects {
     KChart.write(query: (db) async {
       await db.objectEntitys.put(value);
     });
-    _getObjects();
   }
 
   Future<void> addHorizontalLine(ObjectEntity value) async {
+    lastItem = value;
     value.symbol = symbol;
     value.type = ObjectType.Horizontal;
     value.frame = frame;
@@ -75,7 +82,6 @@ mixin Objects {
     KChart.write(query: (db) async {
       await db.objectEntitys.put(value);
     });
-    _getObjects();
   }
 
   Future<void> addTPAndSLLine(ObjectEntity value) async {
@@ -83,13 +89,10 @@ mixin Objects {
     value.frame = frame;
     value.currentEditIndex = tPAndSLLines.length;
     tPAndSLLines.add(value);
-    // await KChart.write(query: (db) async {
-    //   await db.objectEntitys.put(value);
-    //   _getObjects();
-    // });
   }
 
   Future<void> addRectangle(ObjectEntity value) async {
+    lastItem = value;
     value.symbol = symbol;
     value.type = ObjectType.Rectangle;
     value.frame = frame;
@@ -99,7 +102,6 @@ mixin Objects {
     KChart.write(query: (db) async {
       await db.objectEntitys.put(value);
     });
-    _getObjects();
   }
 
   Future<void> removeVerticalLine(int id) async {
@@ -108,7 +110,6 @@ mixin Objects {
     KChart.write(query: (db) async {
       await db.objectEntitys.delete(id);
     });
-    _getObjects();
   }
 
   Future<void> removeTrendLine(int id) async {
@@ -117,7 +118,6 @@ mixin Objects {
     KChart.write(query: (db) async {
       await db.objectEntitys.delete(id);
     });
-    _getObjects();
   }
 
   Future<void> removeHorizontalLine(int id) async {
@@ -126,7 +126,6 @@ mixin Objects {
     KChart.write(query: (db) async {
       await db.objectEntitys.delete(id);
     });
-    _getObjects();
   }
 
   Future<void> removeRectangle(int id) async {
@@ -135,16 +134,11 @@ mixin Objects {
     KChart.write(query: (db) async {
       await db.objectEntitys.delete(id);
     });
-    _getObjects();
   }
 
   Future<void> removePosition(int id) async {
     final index = tPAndSLLines.indexWhere((e) => e.id == id);
     tPAndSLLines.removeAt(index);
-    // await KChart.write(query: (db) async {
-    //   await db.objectEntitys.delete(id);
-    // });
-    // await _getObjects();
   }
 
   Future<void> updateVerticalLine(ObjectEntity value) async {
@@ -154,7 +148,6 @@ mixin Objects {
       KChart.write(query: (db) async {
         await db.objectEntitys.put(value);
       });
-      _getObjects();
     }
   }
 
@@ -165,7 +158,6 @@ mixin Objects {
       KChart.write(query: (db) async {
         await db.objectEntitys.put(value);
       });
-      _getObjects();
     }
   }
 
@@ -176,7 +168,6 @@ mixin Objects {
       KChart.write(query: (db) async {
         await db.objectEntitys.put(value);
       });
-      _getObjects();
     }
   }
 
@@ -184,9 +175,6 @@ mixin Objects {
     final index = tPAndSLLines.indexWhere((e) => e.id == value.id);
     if (index != -1) {
       tPAndSLLines[index] = value;
-      //   await KChart.write(query: (db) async {
-      //     await db.objectEntitys.put(value);
-      //   });
     }
   }
 
@@ -197,7 +185,6 @@ mixin Objects {
       KChart.write(query: (db) async {
         await db.objectEntitys.put(value);
       });
-      _getObjects();
     }
   }
 
@@ -222,69 +209,30 @@ mixin Objects {
       KChart.write(query: (db) async {
         await db.objectEntitys.put(value);
       });
-      _getObjects();
-    }
-  }
-
-  Future<void> _getVerticalLines() async {
-    try {
-      final res = await KChart.query.objectEntitys
-          .filter()
-          .typeEqualTo(ObjectType.Vertical)
-          .symbolEqualTo(symbol)
-          .findAll();
-      verticalLines = res;
-    } catch (e) {
-      return kPrint(e.toString());
-    }
-  }
-
-  Future<void> _getHorizontalLines() async {
-    try {
-      final res = await KChart.query.objectEntitys
-          .filter()
-          .typeEqualTo(ObjectType.Horizontal)
-          .symbolEqualTo(symbol)
-          .findAll();
-      horizontalLines = res;
-    } catch (e) {
-      return kPrint(e.toString());
-    }
-  }
-
-  Future<void> _getTrendLines() async {
-    try {
-      final res = await KChart.query.objectEntitys
-          .filter()
-          .typeEqualTo(ObjectType.Trend)
-          .symbolEqualTo(symbol)
-          .findAll();
-      trendLines = res;
-    } catch (e) {
-      return kPrint(e.toString());
-    }
-  }
-
-  Future<void> _getRectanglesLines() async {
-    try {
-      final res = await KChart.query.objectEntitys
-          .filter()
-          .typeEqualTo(ObjectType.Rectangle)
-          .symbolEqualTo(symbol)
-          .findAll();
-      rectangles = res;
-    } catch (e) {
-      return kPrint(e.toString());
     }
   }
 
   Future<void> _getObjects() async {
     try {
-      final res = await KChart.query.objectEntitys
+      final objects = await KChart.query.objectEntitys
           .filter()
           .symbolEqualTo(symbol)
           .findAll();
-      objects = res;
+      rectangles.clear();
+      trendLines.clear();
+      verticalLines.clear();
+      horizontalLines.clear();
+      for (var item in objects) {
+        if (item.type == ObjectType.Rectangle) {
+          rectangles.add(item);
+        } else if (item.type == ObjectType.Trend) {
+          trendLines.add(item);
+        } else if (item.type == ObjectType.Horizontal) {
+          horizontalLines.add(item);
+        } else if (item.type == ObjectType.Vertical) {
+          verticalLines.add(item);
+        }
+      }
     } catch (e) {
       return kPrint(e.toString());
     }
