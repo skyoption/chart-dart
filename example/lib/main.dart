@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
             color: Colors.blue,
             value: 95446.50,
             title: 'Buy 0.1',
-            editable: true,
+            editable: false,
           ),
         );
       },

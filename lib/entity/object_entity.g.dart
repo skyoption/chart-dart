@@ -62,61 +62,71 @@ const ObjectEntitySchema = CollectionSchema(
       name: r'dy2',
       type: IsarType.double,
     ),
-    r'frame': PropertySchema(
+    r'editable': PropertySchema(
       id: 9,
+      name: r'editable',
+      type: IsarType.bool,
+    ),
+    r'frame': PropertySchema(
+      id: 10,
       name: r'frame',
       type: IsarType.byte,
       enumMap: _ObjectEntityframeEnumValueMap,
     ),
     r'height': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'height',
       type: IsarType.double,
     ),
     r'isFill': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'isFill',
       type: IsarType.bool,
     ),
     r'name': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'name',
       type: IsarType.string,
     ),
     r'rayLift': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'rayLift',
       type: IsarType.bool,
     ),
     r'rayRight': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'rayRight',
       type: IsarType.bool,
     ),
     r'style': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'style',
       type: IsarType.byte,
       enumMap: _ObjectEntitystyleEnumValueMap,
     ),
     r'symbol': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'symbol',
       type: IsarType.string,
     ),
+    r'title': PropertySchema(
+      id: 18,
+      name: r'title',
+      type: IsarType.string,
+    ),
     r'type': PropertySchema(
-      id: 17,
+      id: 19,
       name: r'type',
       type: IsarType.byte,
       enumMap: _ObjectEntitytypeEnumValueMap,
     ),
     r'value': PropertySchema(
-      id: 18,
+      id: 20,
       name: r'value',
       type: IsarType.double,
     ),
     r'value2': PropertySchema(
-      id: 19,
+      id: 21,
       name: r'value2',
       type: IsarType.double,
     )
@@ -149,6 +159,7 @@ int _objectEntityEstimateSize(
   }
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.symbol.length * 3;
+  bytesCount += 3 + object.title.length * 3;
   return bytesCount;
 }
 
@@ -167,17 +178,19 @@ void _objectEntitySerialize(
   writer.writeDouble(offsets[6], object.dx2);
   writer.writeDouble(offsets[7], object.dy1);
   writer.writeDouble(offsets[8], object.dy2);
-  writer.writeByte(offsets[9], object.frame.index);
-  writer.writeDouble(offsets[10], object.height);
-  writer.writeBool(offsets[11], object.isFill);
-  writer.writeString(offsets[12], object.name);
-  writer.writeBool(offsets[13], object.rayLift);
-  writer.writeBool(offsets[14], object.rayRight);
-  writer.writeByte(offsets[15], object.style.index);
-  writer.writeString(offsets[16], object.symbol);
-  writer.writeByte(offsets[17], object.type.index);
-  writer.writeDouble(offsets[18], object.value);
-  writer.writeDouble(offsets[19], object.value2);
+  writer.writeBool(offsets[9], object.editable);
+  writer.writeByte(offsets[10], object.frame.index);
+  writer.writeDouble(offsets[11], object.height);
+  writer.writeBool(offsets[12], object.isFill);
+  writer.writeString(offsets[13], object.name);
+  writer.writeBool(offsets[14], object.rayLift);
+  writer.writeBool(offsets[15], object.rayRight);
+  writer.writeByte(offsets[16], object.style.index);
+  writer.writeString(offsets[17], object.symbol);
+  writer.writeString(offsets[18], object.title);
+  writer.writeByte(offsets[19], object.type.index);
+  writer.writeDouble(offsets[20], object.value);
+  writer.writeDouble(offsets[21], object.value2);
 }
 
 ObjectEntity _objectEntityDeserialize(
@@ -196,22 +209,24 @@ ObjectEntity _objectEntityDeserialize(
     dx2: reader.readDoubleOrNull(offsets[6]) ?? 0,
     dy1: reader.readDoubleOrNull(offsets[7]) ?? 0,
     dy2: reader.readDoubleOrNull(offsets[8]) ?? 0,
-    frame: _ObjectEntityframeValueEnumMap[reader.readByteOrNull(offsets[9])] ??
+    editable: reader.readBoolOrNull(offsets[9]) ?? false,
+    frame: _ObjectEntityframeValueEnumMap[reader.readByteOrNull(offsets[10])] ??
         CandleTimeFormat.H4,
-    height: reader.readDoubleOrNull(offsets[10]) ?? 1.0,
-    isFill: reader.readBoolOrNull(offsets[11]) ?? false,
-    name: reader.readStringOrNull(offsets[12]) ?? '',
-    rayLift: reader.readBoolOrNull(offsets[13]) ?? false,
-    rayRight: reader.readBoolOrNull(offsets[14]) ?? false,
-    style: _ObjectEntitystyleValueEnumMap[reader.readByteOrNull(offsets[15])] ??
+    height: reader.readDoubleOrNull(offsets[11]) ?? 1.0,
+    id: id,
+    isFill: reader.readBoolOrNull(offsets[12]) ?? false,
+    name: reader.readStringOrNull(offsets[13]) ?? '',
+    rayLift: reader.readBoolOrNull(offsets[14]) ?? false,
+    rayRight: reader.readBoolOrNull(offsets[15]) ?? false,
+    style: _ObjectEntitystyleValueEnumMap[reader.readByteOrNull(offsets[16])] ??
         ObjectStyle.normal,
-    symbol: reader.readStringOrNull(offsets[16]) ?? '',
-    type: _ObjectEntitytypeValueEnumMap[reader.readByteOrNull(offsets[17])] ??
+    symbol: reader.readStringOrNull(offsets[17]) ?? '',
+    title: reader.readStringOrNull(offsets[18]) ?? '',
+    type: _ObjectEntitytypeValueEnumMap[reader.readByteOrNull(offsets[19])] ??
         ObjectType.Horizontal,
-    value: reader.readDoubleOrNull(offsets[18]) ?? 0,
-    value2: reader.readDoubleOrNull(offsets[19]) ?? 0,
+    value: reader.readDoubleOrNull(offsets[20]) ?? 0,
+    value2: reader.readDoubleOrNull(offsets[21]) ?? 0,
   );
-  object.id = id;
   return object;
 }
 
@@ -241,29 +256,33 @@ P _objectEntityDeserializeProp<P>(
     case 8:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
     case 9:
+      return (reader.readBoolOrNull(offset) ?? false) as P;
+    case 10:
       return (_ObjectEntityframeValueEnumMap[reader.readByteOrNull(offset)] ??
           CandleTimeFormat.H4) as P;
-    case 10:
-      return (reader.readDoubleOrNull(offset) ?? 1.0) as P;
     case 11:
-      return (reader.readBoolOrNull(offset) ?? false) as P;
+      return (reader.readDoubleOrNull(offset) ?? 1.0) as P;
     case 12:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 13:
       return (reader.readBoolOrNull(offset) ?? false) as P;
+    case 13:
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 14:
       return (reader.readBoolOrNull(offset) ?? false) as P;
     case 15:
+      return (reader.readBoolOrNull(offset) ?? false) as P;
+    case 16:
       return (_ObjectEntitystyleValueEnumMap[reader.readByteOrNull(offset)] ??
           ObjectStyle.normal) as P;
-    case 16:
-      return (reader.readStringOrNull(offset) ?? '') as P;
     case 17:
+      return (reader.readStringOrNull(offset) ?? '') as P;
+    case 18:
+      return (reader.readStringOrNull(offset) ?? '') as P;
+    case 19:
       return (_ObjectEntitytypeValueEnumMap[reader.readByteOrNull(offset)] ??
           ObjectType.Horizontal) as P;
-    case 18:
+    case 20:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
-    case 19:
+    case 21:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -279,7 +298,7 @@ const _ObjectEntityframeEnumValueMap = {
   'H4': 5,
   'D1': 6,
   'W1': 7,
-  'MN': 8,
+  'MN1': 8,
 };
 const _ObjectEntityframeValueEnumMap = {
   0: CandleTimeFormat.M1,
@@ -303,14 +322,16 @@ const _ObjectEntitystyleValueEnumMap = {
 const _ObjectEntitytypeEnumValueMap = {
   'Vertical': 0,
   'Horizontal': 1,
-  'Trend': 2,
-  'Rectangle': 3,
+  'Position': 2,
+  'Trend': 3,
+  'Rectangle': 4,
 };
 const _ObjectEntitytypeValueEnumMap = {
   0: ObjectType.Vertical,
   1: ObjectType.Horizontal,
-  2: ObjectType.Trend,
-  3: ObjectType.Rectangle,
+  2: ObjectType.Position,
+  3: ObjectType.Trend,
+  4: ObjectType.Rectangle,
 };
 
 Id _objectEntityGetId(ObjectEntity object) {
@@ -989,6 +1010,16 @@ extension ObjectEntityQueryFilter
     });
   }
 
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      editableEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'editable',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> frameEqualTo(
       CandleTimeFormat value) {
     return QueryBuilder.apply(this, (query) {
@@ -1513,6 +1544,140 @@ extension ObjectEntityQueryFilter
     });
   }
 
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> titleEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'title',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      titleGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'title',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> titleLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'title',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> titleBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'title',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      titleStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'title',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> titleEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'title',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> titleContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'title',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> titleMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'title',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      titleIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'title',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      titleIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'title',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> typeEqualTo(
       ObjectType value) {
     return QueryBuilder.apply(this, (query) {
@@ -1815,6 +1980,18 @@ extension ObjectEntityQuerySortBy
     });
   }
 
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByEditable() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'editable', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByEditableDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'editable', Sort.desc);
+    });
+  }
+
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByFrame() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'frame', Sort.asc);
@@ -1908,6 +2085,18 @@ extension ObjectEntityQuerySortBy
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortBySymbolDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'symbol', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByTitle() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'title', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByTitleDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'title', Sort.desc);
     });
   }
 
@@ -2062,6 +2251,18 @@ extension ObjectEntityQuerySortThenBy
     });
   }
 
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByEditable() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'editable', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByEditableDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'editable', Sort.desc);
+    });
+  }
+
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByFrame() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'frame', Sort.asc);
@@ -2170,6 +2371,18 @@ extension ObjectEntityQuerySortThenBy
     });
   }
 
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByTitle() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'title', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByTitleDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'title', Sort.desc);
+    });
+  }
+
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.asc);
@@ -2266,6 +2479,12 @@ extension ObjectEntityQueryWhereDistinct
     });
   }
 
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByEditable() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'editable');
+    });
+  }
+
   QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByFrame() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'frame');
@@ -2313,6 +2532,13 @@ extension ObjectEntityQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'symbol', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByTitle(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'title', caseSensitive: caseSensitive);
     });
   }
 
@@ -2398,6 +2624,12 @@ extension ObjectEntityQueryProperty
     });
   }
 
+  QueryBuilder<ObjectEntity, bool, QQueryOperations> editableProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'editable');
+    });
+  }
+
   QueryBuilder<ObjectEntity, CandleTimeFormat, QQueryOperations>
       frameProperty() {
     return QueryBuilder.apply(this, (query) {
@@ -2444,6 +2676,12 @@ extension ObjectEntityQueryProperty
   QueryBuilder<ObjectEntity, String, QQueryOperations> symbolProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'symbol');
+    });
+  }
+
+  QueryBuilder<ObjectEntity, String, QQueryOperations> titleProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'title');
     });
   }
 

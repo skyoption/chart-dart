@@ -104,7 +104,7 @@ const _SymbolframeEnumValueMap = {
   'H4': 5,
   'D1': 6,
   'W1': 7,
-  'MN': 8,
+  'MN1': 8,
 };
 const _SymbolframeValueEnumMap = {
   0: CandleTimeFormat.M1,
