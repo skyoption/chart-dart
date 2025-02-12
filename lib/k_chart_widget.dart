@@ -494,6 +494,13 @@ class KChartWidgetState extends State<KChartWidget>
       } else if (objectType == ObjectType.Position && object!.editable) {
         chartProperties.updatePositionLine(object!);
       } else if (objectType == ObjectType.Position && !object!.editable) {
+        final index = tp_sl_positions.indexWhere((e) => e.id == object?.id);
+        if (index != -1) {
+          widget.onUpdatePosition(
+            tp_sl_positions[index],
+            object!.value,
+          );
+        }
         _tapPosition = null;
         object = null;
         objectType = null;

@@ -27,7 +27,7 @@ class ChartProperties with Indicators, Objects {
     this.symbol = symbol;
     this.candles = values;
     try {
-      KChart.write(query: (db) async {
+      await KChart.write(query: (db) async {
         await db.symbols.put(
           Symbol(
             id: 0,
