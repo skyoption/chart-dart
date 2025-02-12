@@ -204,8 +204,13 @@ class KChartWidgetState extends State<KChartWidget>
     notifyChanged();
   }
 
-  void clearSLOrTPOrPosition(LineEntity item) {
+  void clearSLOrTPOrPosition() {
     tp_sl_positions.clear();
+    notifyChanged();
+  }
+
+  void removeSLOrTPOrPosition(LineEntity item) {
+    tp_sl_positions.removeWhere((e) => e.id == item.id);
     notifyChanged();
   }
 
