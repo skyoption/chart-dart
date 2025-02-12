@@ -204,6 +204,11 @@ class KChartWidgetState extends State<KChartWidget>
     notifyChanged();
   }
 
+  void clearSLOrTPOrPosition(LineEntity item) {
+    tp_sl_positions.clear();
+    notifyChanged();
+  }
+
   Future<void> addOrUpdateSLOrTPOrPosition(LineEntity item) async {
     final index = tp_sl_positions.indexWhere((e) => e.id == item.id);
     if (index == -1) {
