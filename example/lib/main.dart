@@ -67,7 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
     getData(_period(CandleTimeFormat.H1)).then(
       (value) {
         key.currentState!.updateDefaultSettings(
-          candles: datas!,
           frame: CandleTimeFormat.H1,
           symbol: 'btcusdt',
         );

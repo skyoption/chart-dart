@@ -171,6 +171,7 @@ mixin Indicators {
   }
 
   Future<void> updateIndicators(List<KLineEntity> candles) async {
+    this.candles = candles;
     await IndicatorUtils.calculate(
       candles,
       indicators,

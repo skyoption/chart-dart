@@ -1,4 +1,3 @@
-import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/symbol_enity.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/utils/isar.dart';
@@ -16,16 +15,12 @@ class ChartProperties with Indicators, Objects {
   //For properties
   Map<String, dynamic> properties = {};
 
-  List<KLineEntity> candles = [];
-
   Future<void> updateDefaultSettings({
     required CandleTimeFormat frame,
     required String symbol,
-    required List<KLineEntity> values,
   }) async {
     this.frame = frame;
     this.symbol = symbol;
-    this.candles = values;
     try {
       await KChart.write(query: (db) async {
         await db.symbols.put(
