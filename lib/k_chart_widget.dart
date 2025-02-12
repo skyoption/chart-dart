@@ -213,9 +213,9 @@ class KChartWidgetState extends State<KChartWidget>
     notifyChanged();
   }
 
-  void removeSLOrTPOrPosition(LineEntity item) {
-    tp_sl_positions.removeWhere((e) => e.id == item.id);
-    chartProperties.removePosition(item.id);
+  void removeSLOrTPOrPosition(int id) {
+    tp_sl_positions.removeWhere((e) => e.id == id);
+    chartProperties.removePosition(id);
     notifyChanged();
   }
 
