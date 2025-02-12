@@ -105,7 +105,7 @@ mixin Objects {
   Future<void> removeVerticalLine(int id) async {
     final index = verticalLines.indexWhere((e) => e.id == id);
     verticalLines.removeAt(index);
-    await KChart.write(query: (db) async {
+    KChart.write(query: (db) async {
       await db.objectEntitys.delete(id);
     });
     await _getObjects();
@@ -114,7 +114,7 @@ mixin Objects {
   Future<void> removeTrendLine(int id) async {
     final index = trendLines.indexWhere((e) => e.id == id);
     trendLines.removeAt(index);
-    await KChart.write(query: (db) async {
+    KChart.write(query: (db) async {
       await db.objectEntitys.delete(id);
     });
     await _getObjects();
@@ -123,7 +123,7 @@ mixin Objects {
   Future<void> removeHorizontalLine(int id) async {
     final index = horizontalLines.indexWhere((e) => e.id == id);
     horizontalLines.removeAt(index);
-    await KChart.write(query: (db) async {
+    KChart.write(query: (db) async {
       await db.objectEntitys.delete(id);
     });
     await _getObjects();
@@ -132,7 +132,7 @@ mixin Objects {
   Future<void> removeRectangle(int id) async {
     final index = rectangles.indexWhere((e) => e.id == id);
     rectangles.removeAt(index);
-    await KChart.write(query: (db) async {
+    KChart.write(query: (db) async {
       await db.objectEntitys.delete(id);
     });
     await _getObjects();
@@ -151,7 +151,7 @@ mixin Objects {
     final index = verticalLines.indexWhere((e) => e.id == value.id);
     if (index != -1) {
       verticalLines[index] = value;
-      await KChart.write(query: (db) async {
+      KChart.write(query: (db) async {
         await db.objectEntitys.put(value);
       });
       await _getObjects();
@@ -162,7 +162,7 @@ mixin Objects {
     final index = trendLines.indexWhere((e) => e.id == value.id);
     if (index != -1) {
       trendLines[index] = value;
-      await KChart.write(query: (db) async {
+      KChart.write(query: (db) async {
         await db.objectEntitys.put(value);
         _getObjects();
       });
@@ -173,7 +173,7 @@ mixin Objects {
     final index = horizontalLines.indexWhere((e) => e.id == value.id);
     if (index != -1) {
       horizontalLines[index] = value;
-      await KChart.write(query: (db) async {
+      KChart.write(query: (db) async {
         await db.objectEntitys.put(value);
       });
     }
@@ -193,7 +193,7 @@ mixin Objects {
     final index = rectangles.indexWhere((e) => e.id == value.id);
     if (index != -1) {
       rectangles[index] = value;
-      await KChart.write(query: (db) async {
+      KChart.write(query: (db) async {
         await db.objectEntitys.put(value);
         _getObjects();
       });
@@ -218,7 +218,7 @@ mixin Objects {
       if (index != -1) rectangles[index] = value;
     }
     if (index != -1) {
-      await KChart.write(query: (db) async {
+      KChart.write(query: (db) async {
         await db.objectEntitys.put(value);
         _getObjects();
       });

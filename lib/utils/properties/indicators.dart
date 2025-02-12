@@ -59,7 +59,7 @@ mixin Indicators {
     value.isMain = true;
     value.isSecondary = false;
     indicators.add(value);
-    await KChart.write(query: (db) async {
+    KChart.write(query: (db) async {
       await db.indicatorEntitys.put(value);
     });
     await _reset();
@@ -68,7 +68,7 @@ mixin Indicators {
   Future<void> removeIndicator(int index) async {
     final id = indicators[index].id;
     indicators.removeAt(index);
-    await KChart.write(query: (db) async {
+    KChart.write(query: (db) async {
       await db.indicatorEntitys.delete(id);
     });
     await _reset();
@@ -78,7 +78,7 @@ mixin Indicators {
     final index = indicators.indexWhere((e) => e.id == value.id);
     if (index != -1) {
       indicators[index] = value;
-      await KChart.write(query: (db) async {
+      KChart.write(query: (db) async {
         await db.indicatorEntitys.put(value);
       });
       await _reset();
@@ -104,7 +104,7 @@ mixin Indicators {
     value.isMain = false;
     value.isSecondary = true;
     indicators.add(value);
-    await KChart.write(query: (db) async {
+    KChart.write(query: (db) async {
       await db.indicatorEntitys.put(value);
     });
     await _reset();
@@ -128,7 +128,7 @@ mixin Indicators {
       }
     }
     _secondaryIndicators.removeWhere((e) => e.id == item.id);
-    await KChart.write(query: (db) async {
+    KChart.write(query: (db) async {
       await db.indicatorEntitys.delete(item.id);
     });
     await _reset();
@@ -153,7 +153,7 @@ mixin Indicators {
     final index = _secondaryIndicators.indexWhere((e) => e.id == value.id);
     if (index != -1) {
       _secondaryIndicators[index] = value;
-      await KChart.write(query: (db) async {
+      KChart.write(query: (db) async {
         await db.indicatorEntitys.put(value);
       });
       await _reset();
