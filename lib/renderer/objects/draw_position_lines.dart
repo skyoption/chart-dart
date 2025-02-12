@@ -6,7 +6,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 import '../base_chart_renderer.dart';
 
-mixin DrawHorizontalLines on ChartDetails {
+mixin DrawPositionLines on ChartDetails {
   late final ChartPosition chartPosition;
   late final ChartStyle chartStyle;
   late Paint dot;
@@ -17,35 +17,35 @@ mixin DrawHorizontalLines on ChartDetails {
   late double mMainHighMaxValue, mMainLowMinValue;
   late int fixedLength;
 
-  ObjectEntity? setHorizontalLineOffset(ObjectEntity item, Offset offset) {
-    final horizontalLines = chartProperties.horizontalLines;
-    final i = horizontalLines.indexWhere((e) => e.id == item.id);
+  ObjectEntity? setPositionLineOffset(ObjectEntity item, Offset offset) {
+    final positionLines = chartProperties.positionLines;
+    final i = positionLines.indexWhere((e) => e.id == item.id);
     if (i != -1) {
-      horizontalLines[i].currentEditIndex = item.currentEditIndex;
+      positionLines[i].currentEditIndex = item.currentEditIndex;
       final value = getYPositionValue(offset.dy);
       if (mMainLowMinValue >= value) {
-        horizontalLines[i].value = mMainLowMinValue;
-        horizontalLines[i].dy1 = getMainY(mMainLowMinValue);
+        positionLines[i].value = mMainLowMinValue;
+        positionLines[i].dy1 = getMainY(mMainLowMinValue);
       } else if (mMainHighMaxValue <= value) {
-        horizontalLines[i].value = mMainHighMaxValue;
-        horizontalLines[i].dy1 = getMainY(mMainLowMinValue);
+        positionLines[i].value = mMainHighMaxValue;
+        positionLines[i].dy1 = getMainY(mMainLowMinValue);
       } else {
-        horizontalLines[i].dy1 = getMainY(horizontalLines[i].value);
-        horizontalLines[i].value = value;
+        positionLines[i].dy1 = getMainY(positionLines[i].value);
+        positionLines[i].value = value;
       }
-      return horizontalLines[i];
+      return positionLines[i];
     }
     return null;
   }
 
-  void drawHorizontalLines(Canvas canvas, Size size, bool isBackground) {
-    final horizontalLines = chartProperties.horizontalLines;
-    if (horizontalLines.isEmpty) {
+  void drawPositionLines(Canvas canvas, Size size, bool isBackground) {
+    final positionLines = chartProperties.positionLines;
+    if (positionLines.isEmpty) {
       return;
     }
-    for (int i = 0; i < horizontalLines.length; i++) {
-      if (horizontalLines[i].drawAsBackground != isBackground) continue;
-      double value = horizontalLines[i].value;
+    for (int i = 0; i < positionLines.length; i++) {
+      if (positionLines[i].drawAsBackground != isBackground) continue;
+      double value = positionLines[i].value;
 
       if (value <= this.chartPosition.topPrice &&
           value >= this.chartPosition.bottomPrice) {
@@ -56,14 +56,14 @@ mixin DrawHorizontalLines on ChartDetails {
           y = getMainY(mMainHighMaxValue);
         }
         final pricePaint = Paint()
-          ..color = colorFromHex(horizontalLines[i].color!)!
-          ..strokeWidth = horizontalLines[i].height;
+          ..color = colorFromHex(positionLines[i].color!)!
+          ..strokeWidth = positionLines[i].height;
 
         double startX = 0;
         final max = -mTranslateX + (mWidth + 20) / scaleX;
         double space =
             this.chartStyle.priceLineSpan + this.chartStyle.priceLineLength;
-        if (horizontalLines[i].style == ObjectStyle.dash) {
+        if (positionLines[i].style == ObjectStyle.dash) {
           while (startX < max) {
             canvas.drawLine(
                 Offset(startX, y),
@@ -78,23 +78,23 @@ mixin DrawHorizontalLines on ChartDetails {
     }
   }
 
-  void drawHorizontalLinesTitles(Canvas canvas, Size size) {
-    final horizontalLines = chartProperties.horizontalLines;
-    if (horizontalLines.isEmpty) {
+  void drawPositionTitles(Canvas canvas, Size size) {
+    final positionLines = chartProperties.positionLines;
+    if (positionLines.isEmpty) {
       return;
     }
-    for (int i = 0; i < horizontalLines.length; i++) {
-      double value = horizontalLines[i].value;
+    for (int i = 0; i < positionLines.length; i++) {
+      double value = positionLines[i].value;
       if (mMainLowMinValue >= value) continue;
       double y = getMainY(value);
       final pricePaint = Paint()
-        ..color = colorFromHex(horizontalLines[i].color!)!
-        ..strokeWidth = horizontalLines[i].height;
+        ..color = colorFromHex(positionLines[i].color!)!
+        ..strokeWidth = positionLines[i].height;
 
       double startX = 0;
       final max = -mTranslateX + (mWidth + 20) / scaleX;
 
-      if (horizontalLines[i].currentEditIndex == i) {
+      if (positionLines[i].currentEditIndex == i) {
         canvas.drawCircle(
           Offset(startX, y),
           2.5,
@@ -112,22 +112,19 @@ mixin DrawHorizontalLines on ChartDetails {
         this.chartColors.priceTextColor,
       );
 
-      double offsetX = mWidth -
-          tp.width +
-          this.chartStyle.priceWidth -
-          this.chartStyle.leftPadding * 2;
+      double offsetX = mWidth - tp.width + this.chartStyle.priceWidth + 4;
 
       double top = y - tp.height / 2;
       canvas.drawRect(
         Rect.fromLTRB(
           offsetX - 12,
           top - 2,
-          offsetX + tp.width * 1.5,
+          offsetX + tp.width,
           top + tp.height + 3,
         ),
         pricePaint,
       );
-      tp.paint(canvas, Offset(offsetX, top + 2));
+      tp.paint(canvas, Offset(offsetX - 6, top + 2));
     }
   }
 }

@@ -36,7 +36,12 @@ class KLineEntity extends KEntity {
     low = json['low']?.toDouble() ?? 0;
     close = json['close']?.toDouble() ?? 0;
     vol = json['vol']?.toDouble() ?? 0;
-    time = json['time']?.toInt() ?? 0;
+    int? tempTime = json['time']?.toInt();
+    if (tempTime == null) {
+      tempTime = json['id']?.toInt() ?? 0;
+      tempTime = tempTime! * 1000;
+    }
+    time = tempTime;
   }
 
   Map<String, dynamic> toJson() {

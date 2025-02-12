@@ -272,7 +272,6 @@ class KChartWidgetState extends State<KChartWidget>
       askAndBid: askAndBid,
       graphStyle: widget.graphStyle,
       indicators: chartProperties.indicators,
-      screenHeight: mBaseHeight,
       baseDimension: baseDimension,
       //For TrendLine
       sink: mInfoWindowStream.sink,
@@ -394,8 +393,8 @@ class KChartWidgetState extends State<KChartWidget>
                     ),
                     child: RawMagnifier(
                       focalPointOffset: Offset(
-                        _tapPosition!.dx - 25.0,
-                        _tapPosition!.dy - 25.0,
+                        _tapPosition!.dx - 25,
+                        _tapPosition!.dy,
                       ),
                       size: const Size(50, 45),
                       magnificationScale: 1.0,
@@ -460,6 +459,8 @@ class KChartWidgetState extends State<KChartWidget>
         chartProperties.updateRectangle(object!);
       } else if (objectType == ObjectType.Horizontal) {
         chartProperties.updateHorizontalLine(object!);
+      } else if (objectType == ObjectType.Position) {
+        chartProperties.updatePositionLine(object!);
       } else if (objectType == ObjectType.Vertical) {
         chartProperties.updateVerticalLine(object!);
       }
@@ -646,6 +647,8 @@ class KChartWidgetState extends State<KChartWidget>
                 );
               }
             } else if (object!.type == ObjectType.Horizontal) {
+              _painter!.setHorizontalLineOffset(object!, details.localPosition);
+            } else if (object!.type == ObjectType.Position) {
               _painter!.setHorizontalLineOffset(object!, details.localPosition);
             } else if (object!.type == ObjectType.Vertical) {
               _painter!.setVerticalLineOffset(

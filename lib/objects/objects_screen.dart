@@ -182,6 +182,7 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
                 ),
               ),
             ...chartProperties.objects.asMap().entries.map((e) {
+              if (e.value.type == ObjectType.Position) return SizedBox();
               final id = '${e.value.frame.name} ${e.value.name}';
               return Column(
                 children: [

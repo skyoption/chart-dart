@@ -67,7 +67,6 @@ class ChartPainter extends BaseChartPainter
   final List<IndicatorEntity> indicators;
   final Map<int, List<IndicatorEntity>> secondaryIndicators;
   late final ChartPosition chartPosition;
-  final double screenHeight;
   double mMainHighMaxValue = double.minPositive,
       mMainLowMinValue = double.maxFinite;
   final double scaleX;
@@ -78,7 +77,6 @@ class ChartPainter extends BaseChartPainter
   ChartPainter(
     this.chartStyle,
     this.chartColors, {
-    required this.screenHeight,
     required this.askAndBid,
     required this.sink,
     required this.scaleY,

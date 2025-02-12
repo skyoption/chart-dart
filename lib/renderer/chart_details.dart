@@ -9,7 +9,6 @@ mixin ChartDetails on ChartCalc {
   late final ChartStyle chartStyle;
   late final ChartColors chartColors;
   late BaseChartRenderer mMainRenderer;
-  late final double screenHeight;
 
   /// Rectangle box of main chart
   late Rect mMainRect;
@@ -74,7 +73,6 @@ mixin ChartDetails on ChartCalc {
 mixin ChartCalc {
   late final ChartPosition chartPosition;
   late BaseChartRenderer mMainRenderer;
-  late final double screenHeight;
   late Rect mMainRect;
   late double mTranslateX;
   late int mStartIndex, mStopIndex;
@@ -101,14 +99,14 @@ mixin ChartCalc {
 
   double getYPositionValue(double dy) {
     final scope = this.chartPosition.topPrice - this.chartPosition.bottomPrice;
-    double perPixel = scope / screenHeight;
+    double perPixel = scope / mMainRect.height;
     final value = this.chartPosition.topPrice - (dy * perPixel);
     return value;
   }
 
   double getYValue(double d) {
     final scope = this.chartPosition.topPrice - this.chartPosition.bottomPrice;
-    double perValue = (screenHeight / scope);
+    double perValue = (mMainRect.height / scope);
 
     final value = (perValue * d) / 1000;
     return value;

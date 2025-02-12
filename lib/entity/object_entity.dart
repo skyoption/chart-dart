@@ -7,7 +7,7 @@ part 'object_entity.g.dart';
 
 enum ObjectStyle { dash, normal }
 
-enum ObjectType { Vertical, Horizontal, Trend, Rectangle }
+enum ObjectType { Vertical, Horizontal, Position, Trend, Rectangle }
 
 @collection
 class ObjectEntity {
