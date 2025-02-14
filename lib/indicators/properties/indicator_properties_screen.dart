@@ -67,7 +67,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
         name: widget.name!,
         applyTo: ApplyTo.Close,
         type: widget.type,
-        deviations: widget.haveDeviations ? 2.000 : null,
+        deviations: widget.haveDeviations ? 0.1 : null,
         windowId: widget.windowId ?? 0,
         isSecondary: (widget.windowId ?? 0) != 0,
       );

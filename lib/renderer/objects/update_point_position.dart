@@ -21,7 +21,8 @@ mixin UpdatePointPosition on ChartCalc {
         positionCount = 0,
         rectangleCount = 0,
         trendCount = 0;
-
+    for (var item in chartProperties.tPAndSLLines) item.currentEditIndex = -1;
+    for (var item in chartProperties.objects) item.currentEditIndex = -1;
     final objects = [
       ...chartProperties.objects,
       ...chartProperties.tPAndSLLines

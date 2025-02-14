@@ -489,38 +489,49 @@ class KChartWidgetState extends State<KChartWidget>
   }
 
   void _objectSetOnUpdate(details) {
-    final nearObject = _painter!.findNearOffset(
-      offset: details.localPosition,
-    );
-    objectEditable = nearObject.object != null;
-    if (objectEditable && !bottomSheetShown) {
-      _tapPosition = details.localPosition;
-      object = nearObject.object;
-      objectType = nearObject.object?.type;
-      isSecondOffset = nearObject.isSecondPoint;
-      if (objectType == ObjectType.Trend) {
-        chartProperties.updateTrendLine(object!);
-      } else if (objectType == ObjectType.Rectangle) {
-        chartProperties.updateRectangle(object!);
-      } else if (objectType == ObjectType.Horizontal) {
-        chartProperties.updateHorizontalLine(object!);
-      } else if (objectType == ObjectType.Vertical) {
-        chartProperties.updateVerticalLine(object!);
-      } else if (objectType == ObjectType.Position && object!.editable) {
-        chartProperties.updatePositionLine(object!);
-      } else if (objectType == ObjectType.Position && !object!.editable) {
-        final index = tp_sl_positions.indexWhere((e) => e.id == object?.id);
-        if (index != -1) {
-          widget.onUpdatePosition(
-            tp_sl_positions[index],
-            object!.value,
-          );
+    if (objectEditable) {
+      object?.currentEditIndex = -1;
+      object = null;
+      objectType = null;
+      _tapPosition = null;
+      isSecondOffset = false;
+      objectEditable = false;
+      bottomSheetShown = false;
+    } else {
+      final nearObject = _painter!.findNearOffset(
+        offset: details.localPosition,
+      );
+      objectEditable = nearObject.object != null;
+      if (objectEditable && !bottomSheetShown) {
+        _tapPosition = details.localPosition;
+        object = nearObject.object;
+        objectType = nearObject.object?.type;
+        isSecondOffset = nearObject.isSecondPoint;
+        if (objectType == ObjectType.Trend) {
+          chartProperties.updateTrendLine(object!);
+        } else if (objectType == ObjectType.Rectangle) {
+          chartProperties.updateRectangle(object!);
+        } else if (objectType == ObjectType.Horizontal) {
+          chartProperties.updateHorizontalLine(object!);
+        } else if (objectType == ObjectType.Vertical) {
+          chartProperties.updateVerticalLine(object!);
+        } else if (objectType == ObjectType.Position && object!.editable) {
+          chartProperties.updatePositionLine(object!);
+        } else if (objectType == ObjectType.Position && !object!.editable) {
+          chartProperties.disUpdatePositionLine(object!);
+          final index = tp_sl_positions.indexWhere((e) => e.id == object?.id);
+          if (index != -1) {
+            widget.onUpdatePosition(
+              tp_sl_positions[index],
+              object!.value,
+            );
+          }
+          _tapPosition = null;
+          object = null;
+          objectType = null;
+          isSecondOffset = false;
+          objectEditable = false;
         }
-        _tapPosition = null;
-        object = null;
-        objectType = null;
-        isSecondOffset = false;
-        objectEditable = false;
       }
     }
     notifyChanged();

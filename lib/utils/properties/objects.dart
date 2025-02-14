@@ -178,6 +178,14 @@ mixin Objects {
     }
   }
 
+  Future<void> disUpdatePositionLine(ObjectEntity value) async {
+    final index = tPAndSLLines.indexWhere((e) => e.id == value.id);
+    if (index != -1) {
+      tPAndSLLines[index] = value;
+      tPAndSLLines[index].currentEditIndex = -1;
+    }
+  }
+
   Future<void> updateRectangle(ObjectEntity value) async {
     final index = rectangles.indexWhere((e) => e.id == value.id);
     if (index != -1) {

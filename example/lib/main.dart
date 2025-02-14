@@ -80,10 +80,10 @@ class _MyHomePageState extends State<MyHomePage> {
         // );
         key.currentState!.addOrUpdateSLOrTPOrPosition(
           LineEntity(
-            id: 1000,
+            id: 10000,
             type: 'SL',
             color: Colors.red,
-            value: 95214.50,
+            value: 96780.50,
             title: 'SL',
             editable: true,
           ),
@@ -103,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
             id: 10002,
             type: 'Position',
             color: Colors.blue,
-            value: 95446.50,
+            value: 95430.50,
             title: 'Buy 0.1',
             editable: false,
           ),
