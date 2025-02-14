@@ -35,7 +35,7 @@ class IndicatorUtils {
         MFI = [];
 
     /// reset candles
-    _resetCandles(data);
+    // _resetCandles(data);
 
     /// Group the indicators by type
     for (var indicator in indicators) {
