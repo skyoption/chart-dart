@@ -944,5 +944,9 @@ class KChartWidgetState extends State<KChartWidget>
     _controller!.forward();
   }
 
-  void notifyChanged() => Future.delayed(Duration.zero, () => setState(() {}));
+  void notifyChanged() {
+    try {
+      Future.delayed(Duration.zero, () => setState(() {}));
+    } catch (e) {}
+  }
 }
