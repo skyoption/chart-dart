@@ -10,7 +10,7 @@ final chartProperties = ChartProperties._set();
 
 class ChartProperties with Indicators, Objects {
   String symbol = 'btcusdt';
-  CandleTimeFormat frame = CandleTimeFormat.H4;
+  CandleTimeFormat frame = CandleTimeFormat.M15;
 
   //For properties
   Map<String, dynamic> properties = {};
