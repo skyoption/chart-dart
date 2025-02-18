@@ -1,5 +1,4 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/renderer/rects/render_rect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -77,7 +76,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       ..isAntiAlias = true
       ..style = PaintingStyle.stroke
       ..strokeWidth = mLineStrokeWidth
-      ..color = this.chartColors.kLineColor;
+      ..color = this.chartColors.lineChartColor;
     _contentRect = Rect.fromLTRB(
       chartRect.left,
       chartRect.top + _contentPadding,
@@ -143,45 +142,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     );
   }
 
-  void drawLineOrLineAreaChart(
-    CandleEntity lastPoint,
-    CandleEntity curPoint,
-    Canvas canvas,
-    double lastX,
-    double curX,
-  ) {
-    drawLine(
-      lastPoint.close,
-      curPoint.close,
-      canvas,
-      lastX,
-      curX,
-      chartColors.chartColor,
-      lineStyle: ObjectStyle.normal,
-      strokeWidth: 1.5,
-    );
-    if (graphStyle == GraphStyle.area) {
-      List<Offset> offsets1 = [], offsets2 = [];
-      if (curPoint.close != 0 && lastPoint.close != 0) {
-        double curClose = getY(curPoint.close);
-        double lastClose = getY(lastPoint.close);
-        offsets1.addAll([
-          Offset(curX, curClose),
-          Offset(lastX, lastClose),
-        ]);
-        offsets2.addAll([
-          Offset(lastX, chartRect.bottom),
-          Offset(curX, chartRect.bottom),
-        ]);
-        drawRect(
-          [...offsets1, ...offsets2],
-          chartColors.chartColor.withOpacity(0.15),
-          canvas,
-        );
-      }
-    }
-  }
-
   Shader? mLineFillShader;
   Path? mLinePath, mLineFillPath;
   Paint mLineFillPaint = Paint()
@@ -207,8 +167,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         end: Alignment.bottomCenter,
         tileMode: TileMode.clamp,
         colors: [
-          this.chartColors.chartColor.withAlpha(90),
-          this.chartColors.chartColor.withAlpha(1),
+          this.chartColors.areaColor.withAlpha(95),
+          this.chartColors.areaColor.withAlpha(1),
         ],
       ).createShader(Rect.fromLTRB(
           chartRect.left, chartRect.top, chartRect.right, chartRect.bottom));

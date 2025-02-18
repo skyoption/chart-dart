@@ -20,7 +20,8 @@ class ChartColors {
   Color primary;
   Color ask;
   Color bid;
-  Color chartColor;
+  Color lineChartColor;
+  Color areaColor;
   Color stopLoss;
   Color takeProfit;
 
@@ -93,7 +94,8 @@ class ChartColors {
   /// constructor chart color
   ChartColors({
     this.bgColor = const Color(0xffffffff),
-    this.chartColor = Colors.blue,
+    this.lineChartColor = Colors.blue,
+    this.areaColor = Colors.blue,
     this.ask = Colors.red,
     this.bid = Colors.black,
     this.takeProfit = Colors.blue,
