@@ -25,7 +25,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   final ChartStyle chartStyle;
   final ChartPosition chartPositions;
   final ChartColors chartColors;
-  final double mLineStrokeWidth = 1.0;
   final double scaleX;
   double scaleY;
   late Paint mLinePaint;
@@ -75,7 +74,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     mLinePaint = Paint()
       ..isAntiAlias = true
       ..style = PaintingStyle.stroke
-      ..strokeWidth = mLineStrokeWidth
       ..color = this.chartColors.lineChartColor;
     _contentRect = Rect.fromLTRB(
       chartRect.left,
@@ -188,7 +186,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 
       canvas.drawPath(
         mLinePath!,
-        mLinePaint..strokeWidth = (mLineStrokeWidth / scaleX).clamp(0.1, 1.0),
+        mLinePaint
+          ..strokeWidth = (chartStyle.areaLineWidth / scaleX).clamp(0.1, 5.0),
       );
       mLinePath!.reset();
     } else {
@@ -210,7 +209,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       canvas.drawPath(
           mLinePath!,
           mLinePaint
-            ..strokeWidth = (mLineStrokeWidth / scaleX).clamp(0.1, 1.0));
+            ..strokeWidth =
+                (chartStyle.areaLineWidth / scaleX).clamp(0.1, 5.0));
       mLinePath!.reset();
     }
   }

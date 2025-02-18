@@ -52,11 +52,11 @@ mixin DrawVerticalLines on ChartDetails {
         double startY = this.chartStyle.topPadding;
         final max = fDisplayHeight!;
         double space =
-            this.chartStyle.priceLineSpan + this.chartStyle.priceLineLength;
+            this.chartStyle.priceLineSpan + this.chartStyle.lineLength;
         while (startY < max) {
           canvas.drawLine(
             Offset(x, startY),
-            Offset(x, startY + this.chartStyle.priceLineLength),
+            Offset(x, startY + this.chartStyle.lineLength),
             pricePaint,
           );
           startY += space;

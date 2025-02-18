@@ -45,7 +45,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<DepthEntity>? _bids, _asks;
 
-  ChartStyle chartStyle = ChartStyle();
   ChartColors chartColors = ChartColors();
 
   @override
@@ -165,9 +164,9 @@ class _MyHomePageState extends State<MyHomePage> {
               KChartWidget(
                 key: key,
                 hideGrid: false,
-                chartStyle: chartStyle,
+                chartStyle: ChartStyle(areaLineWidth: 1),
                 chartColors: chartColors,
-                graphStyle: GraphStyle.area,
+                graphStyle: GraphStyle.candles,
                 onGettingSettings: (frame, symbol) {},
                 onUpdatePosition: (position, newValue) {
                   kPrint(

@@ -294,7 +294,6 @@ class KChartWidgetState extends State<KChartWidget>
       }
     } else {
       gestures[LongPressGestureRecognizer] = longPressRecognizer();
-      // gestures[ScaleGestureRecognizer] = horizontalScaleRecognizer();
       gestures[HorizontalDragGestureRecognizer] = horizontalRecognizer();
     }
 
@@ -354,7 +353,7 @@ class KChartWidgetState extends State<KChartWidget>
                       if (isDrag || isLongPress) return;
                       if (isLongPress) return;
                       if (pointerCount == 2) {
-                        mScaleX = (_lastScaleX * event.scale).clamp(0.1, 2.0);
+                        mScaleX = (_lastScaleX * event.scale).clamp(0.1, 5.0);
                       }
                       if (widget.onZoomingStart != null) {
                         widget.onZoomingStart!(mScaleX == 1 && mScaleY == 1);
@@ -800,37 +799,6 @@ class KChartWidgetState extends State<KChartWidget>
           notifyChanged();
         };
     });
-  }
-
-  GestureRecognizerFactoryWithHandlers<ScaleGestureRecognizer>
-      horizontalScaleRecognizer() {
-    return GestureRecognizerFactoryWithHandlers<ScaleGestureRecognizer>(
-      () => ScaleGestureRecognizer(),
-      (ScaleGestureRecognizer instance) {
-        instance
-          ..onStart = (_) {
-            pointerCount = _.pointerCount;
-            isScale = true;
-          }
-          ..onUpdate = (details) {
-            pointerCount = details.pointerCount;
-            if (isDrag || isLongPress) return;
-            if (isLongPress) return;
-            if (pointerCount == 2) {
-              mScaleX = (_lastScaleX * details.horizontalScale).clamp(0.1, 2.0);
-            }
-            if (widget.onZoomingStart != null) {
-              widget.onZoomingStart!(mScaleX == 1 && mScaleY == 1);
-            }
-            notifyChanged();
-          }
-          ..onEnd = (details) {
-            pointerCount = 1;
-            isScale = false;
-            _lastScaleX = mScaleX;
-          };
-      },
-    );
   }
 
   GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>

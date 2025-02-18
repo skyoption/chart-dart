@@ -161,85 +161,81 @@ class ChartPosition {
 }
 
 class ChartStyle {
-  double topPadding = 30.0;
-
-  double leftPadding = 5.0;
-
-  double rightPadding = 5.0;
-
-  double priceWidth = 60.0;
-
-  // 是否保留小数点 - 左侧刻度
-  bool isNotPoint = false;
-
-  // 是否显示最高最低点
-  bool isShowHighOrLowPoint = false;
-
-  // 是否显示左侧顶部最大刻度
-  bool isShowLeftTopicPoint = true;
-
-  // 是否显示策略类型顶部
-  bool isShowStrategyTypeTop = true;
-
-  // 是否显示策略类型底部
-  bool isShowStrategyTypeBottom = true;
-
-  // 是否显示策略类型底部最大成交量
-  bool isShowStrategyTypeBottomForMaxVol = true;
-
-  // 是否显示策略类型EMA
-  // bool isShowEma = true;
-
-  // 是否显示策略类型底部的MA标题
-  bool isShowBottomMa = true;
-
-  // 是否显示策略类型底部的MA柱状图线段
-  bool showMAVolume = true;
-
-  double bottomPadding = 20.0;
-
-  double childPadding = 12.0;
-
-  ///point-to-point distance
-  double pointWidth = 11.0;
-
-  ///candle width
-  double candleWidth = 8.5;
-  double candleLineWidth = 1.0;
-
-  ///vol column width
-  double volWidth = 8.5;
-
-  ///vol column is double
-  bool volisDouble = false;
-
-  ///macd column width
-  double macdWidth = 1.2;
-
-  ///vertical-horizontal cross line width
-  double vCrossWidth = 8.5;
-  double hCrossWidth = 0.5;
-
-  ///(line length - space line - thickness) of the current price
-  double nowPriceLineLength = 4.5;
-  double priceLineLength = 4.5;
-  double nowPriceLineSpan = 3.5;
-  double priceLineSpan = 2.5;
-  double priceLineLongSpan = 4.5;
-  double nowPriceLineWidth = 1;
-  double priceLineWidth = 1;
-
-  int gridRows = 12;
-  int gridColumns = 4;
-
-  double sizeText = 9.0;
-  double iconSize = 21.0;
-
-  bool isFocusCloseText = true;
-
-  ///customize the time below
+  double topPadding;
+  double leftPadding;
+  double rightPadding;
+  double priceWidth;
+  bool isNotPoint;
+  bool isShowHighOrLowPoint;
+  bool isShowLeftTopicPoint;
+  bool isShowStrategyTypeTop;
+  bool isShowStrategyTypeBottom;
+  bool isShowStrategyTypeBottomForMaxVol;
+  bool isShowBottomMa;
+  bool showMAVolume;
+  double bottomPadding;
+  double childPadding;
+  double pointWidth;
+  double candleWidth;
+  double candleLineWidth;
+  double volWidth;
+  bool volisDouble;
+  double macdWidth;
+  double vCrossWidth;
+  double hCrossWidth;
+  double nowPriceLineLength;
+  double lineLength;
+  double areaLineWidth;
+  double lineSpan;
+  double priceLineSpan;
+  double priceLineLongSpan;
+  double nowPriceLineWidth;
+  double priceLineWidth;
+  int gridRows;
+  int gridColumns;
+  double sizeText;
+  double iconSize;
+  bool isFocusCloseText;
   List<String>? dateTimeFormat;
+  bool isLongFocus;
 
-  //# 十字光标长按 / 短按切换 0.5秒后才触发
-  bool isLongFocus = false;
+  ChartStyle({
+    this.topPadding = 30.0,
+    this.leftPadding = 5.0,
+    this.rightPadding = 5.0,
+    this.priceWidth = 60.0,
+    this.isNotPoint = false,
+    this.isShowHighOrLowPoint = false,
+    this.isShowLeftTopicPoint = true,
+    this.isShowStrategyTypeTop = true,
+    this.isShowStrategyTypeBottom = true,
+    this.isShowStrategyTypeBottomForMaxVol = true,
+    this.isShowBottomMa = true,
+    this.showMAVolume = true,
+    this.bottomPadding = 20.0,
+    this.childPadding = 12.0,
+    this.pointWidth = 11.0,
+    this.candleWidth = 8.5,
+    this.candleLineWidth = 1.0,
+    this.areaLineWidth = 1.0,
+    this.volWidth = 8.5,
+    this.volisDouble = false,
+    this.macdWidth = 1.2,
+    this.vCrossWidth = 8.5,
+    this.hCrossWidth = 0.5,
+    this.nowPriceLineLength = 4.5,
+    this.lineLength = 4.5,
+    this.lineSpan = 3.5,
+    this.priceLineSpan = 2.5,
+    this.priceLineLongSpan = 4.5,
+    this.nowPriceLineWidth = 1,
+    this.priceLineWidth = 1,
+    this.gridRows = 12,
+    this.gridColumns = 4,
+    this.sizeText = 9.0,
+    this.iconSize = 21.0,
+    this.isFocusCloseText = true,
+    this.dateTimeFormat,
+    this.isLongFocus = false,
+  });
 }

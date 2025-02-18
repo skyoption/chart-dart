@@ -62,13 +62,11 @@ mixin DrawHorizontalLines on ChartDetails {
         double startX = 0;
         final max = -mTranslateX + (mWidth + 20) / scaleX;
         double space =
-            this.chartStyle.priceLineSpan + this.chartStyle.priceLineLength;
+            this.chartStyle.priceLineSpan + this.chartStyle.lineLength;
         if (horizontalLines[i].style == ObjectStyle.dash) {
           while (startX < max) {
-            canvas.drawLine(
-                Offset(startX, y),
-                Offset(startX + this.chartStyle.priceLineLength, y),
-                pricePaint);
+            canvas.drawLine(Offset(startX, y),
+                Offset(startX + this.chartStyle.lineLength, y), pricePaint);
             startX += space;
           }
         } else {
