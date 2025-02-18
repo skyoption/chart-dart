@@ -9,7 +9,7 @@ import 'package:isar/isar.dart';
 final chartProperties = ChartProperties._set();
 
 class ChartProperties with Indicators, Objects {
-  String symbol = 'btcusdt';
+  String symbol = '';
   CandleTimeFormat frame = CandleTimeFormat.M15;
 
   //For properties
