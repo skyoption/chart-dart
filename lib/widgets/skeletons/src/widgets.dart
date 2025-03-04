@@ -83,7 +83,7 @@ class SkeletonLine extends StatelessWidget {
             //     ? EdgeInsetsDirectional.only(
             //         end: 0.0 +
             //             Random().nextInt(
-            //                 (MediaQuery.of(context).size.width / 2).round()))
+            //                 (MediaQuery.of(context.dart).size.width / 2).round()))
             padding: style.padding,
             child: LayoutBuilder(
               builder: (context, constraints) {

@@ -353,7 +353,7 @@ class KChartWidgetState extends State<KChartWidget>
                       if (isDrag || isLongPress) return;
                       if (isLongPress) return;
                       if (pointerCount == 2) {
-                        mScaleX = (_lastScaleX * event.scale).clamp(0.1, 5.0);
+                        mScaleX = (_lastScaleX * event.scale).clamp(0.1, 8.0);
                       }
                       if (widget.onZoomingStart != null) {
                         widget.onZoomingStart!(mScaleX == 1 && mScaleY == 1);

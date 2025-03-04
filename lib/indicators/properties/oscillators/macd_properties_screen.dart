@@ -54,7 +54,6 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
     }
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,10 +81,10 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
                 Align(
                   alignment: AlignmentDirectional.center,
                   child: Text(
-                    'Properties',
+                    context.tr.properties,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
                 Align(
@@ -95,11 +94,11 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
                       _onDone();
                     },
                     child: Text(
-                      'Done',
+                      context.tr.done,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: KChartWidget.colors!.primary,
-                          ),
+                        fontWeight: FontWeight.w500,
+                        color: KChartWidget.colors!.primary,
+                      ),
                     ),
                   ),
                 ),
@@ -109,15 +108,14 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        // padding: EdgeInsets.symmetric(vertical: 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PropertiesTitleWidget(
-              title: '${name.toUpperCase()}',
+              title: name.toUpperCase(),
             ),
             PropertiesItemWidget(
-              title: 'Fast EMA',
+              title: context.tr.fast_ema,
               child: SizedBox(
                 width: 60.0,
                 height: 20.0,
@@ -125,9 +123,9 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: KChartWidget.colors!.primary,
-                      ),
+                    fontWeight: FontWeight.w400,
+                    color: KChartWidget.colors!.primary,
+                  ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
                     if (res != null) indicator!.macd!.fastEma = res;
@@ -150,7 +148,7 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'Slow EMA',
+              title: context.tr.slow_ema,
               margin: EdgeInsets.zero,
               child: SizedBox(
                 width: 60.0,
@@ -160,9 +158,9 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
                   autofocus: false,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: KChartWidget.colors!.primary,
-                      ),
+                    fontWeight: FontWeight.w400,
+                    color: KChartWidget.colors!.primary,
+                  ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
                     if (res != null) indicator!.macd!.slowEma = res;
@@ -184,7 +182,7 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'MACD SMA',
+              title: context.tr.macd_sma,
               margin: EdgeInsets.zero,
               child: SizedBox(
                 width: 60.0,
@@ -194,9 +192,9 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
                   autofocus: false,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: KChartWidget.colors!.primary,
-                      ),
+                    fontWeight: FontWeight.w400,
+                    color: KChartWidget.colors!.primary,
+                  ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
                     if (res != null) indicator!.macd!.macdSma = res;
@@ -216,17 +214,17 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
               ),
               onTap: () {},
             ),
-            PropertiesTitleWidget(title: 'visualization'),
+            PropertiesTitleWidget(title: context.tr.visualization),
             PropertiesItemWidget(
-              title: 'Timeframe',
-              subTitle: 'All timeframes',
+              title: context.tr.timeframe,
+              subTitle: context.tr.all_timeframes,
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {},
             ),
-            PropertiesTitleWidget(title: 'style'),
+            PropertiesTitleWidget(title: context.tr.style),
             IndicatorColorWidget(
-              title: 'Main',
+              title: context.tr.main,
               color: colorFromHex(indicator?.macd?.mainColor ?? ''),
               onChange: (color, drawAsBackground) {
                 indicator!.macd!.mainColor = color.toHexString();
@@ -234,7 +232,7 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
-              title: 'Signal',
+              title: context.tr.signal,
               color: colorFromHex(indicator?.macd?.signalColor ?? ''),
               onChange: (color, drawAsBackground) {
                 indicator!.macd!.signalColor = color.toHexString();
@@ -245,6 +243,7 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
       ),
     );
   }
+
 
   void _onDone() async {
     if (widget.indicator == null) {

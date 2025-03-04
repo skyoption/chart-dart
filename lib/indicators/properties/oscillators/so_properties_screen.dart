@@ -61,7 +61,6 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
     }
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,10 +88,10 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
                 Align(
                   alignment: AlignmentDirectional.center,
                   child: Text(
-                    'Properties',
+                    context.tr.properties,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
                 Align(
@@ -102,11 +101,11 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
                       _onDone();
                     },
                     child: Text(
-                      'Done',
+                      context.tr.done,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: KChartWidget.colors!.primary,
-                          ),
+                        fontWeight: FontWeight.w500,
+                        color: KChartWidget.colors!.primary,
+                      ),
                     ),
                   ),
                 ),
@@ -116,15 +115,14 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        // padding: EdgeInsets.symmetric(vertical: 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PropertiesTitleWidget(
-              title: '${name.toUpperCase()}',
+              title: name.toUpperCase(),
             ),
             PropertiesItemWidget(
-              title: '%K Period',
+              title: context.tr.k_period,
               child: SizedBox(
                 width: 60.0,
                 height: 20.0,
@@ -132,9 +130,9 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: KChartWidget.colors!.primary,
-                      ),
+                    fontWeight: FontWeight.w400,
+                    color: KChartWidget.colors!.primary,
+                  ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
                     if (res != null) indicator!.stochastic!.kPeriod = res;
@@ -157,7 +155,7 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: '%D Period',
+              title: context.tr.d_period,
               child: SizedBox(
                 width: 60.0,
                 height: 20.0,
@@ -165,9 +163,9 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: KChartWidget.colors!.primary,
-                      ),
+                    fontWeight: FontWeight.w400,
+                    color: KChartWidget.colors!.primary,
+                  ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
                     if (res != null) indicator!.stochastic!.dPeriod = res;
@@ -190,7 +188,7 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'Slowing',
+              title: context.tr.slowing,
               child: SizedBox(
                 width: 60.0,
                 height: 20.0,
@@ -198,9 +196,9 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: KChartWidget.colors!.primary,
-                      ),
+                    fontWeight: FontWeight.w400,
+                    color: KChartWidget.colors!.primary,
+                  ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
                     if (res != null) indicator!.stochastic!.slowing = res;
@@ -221,121 +219,12 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
               ),
               margin: EdgeInsets.zero,
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: 'Price Field',
-              subTitle:
-                  indicator?.stochastic?.priceField.name.replaceAll('_', '/'),
-              margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => PriceFieldScreen(
-                      field: indicator?.stochastic?.priceField,
-                      onApply: (field) {
-                        indicator?.stochastic?.priceField = field;
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: 'Method',
-              subTitle:
-                  (setMethod(indicator)?.name ?? 'Sample').replaceAll('_', ' '),
-              margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => IndicatorMethodsScreen(
-                      method: setMethod(indicator),
-                      onMethod: (method) {
-                        setType(method);
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: 'Levels',
-              margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
-              subTitle: indicator!.levels.join(', '),
-              onTap: () {
-                kPrint(widget.indicator?.levelsColor);
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => IndicatorLevelsScreen(
-                      color: indicator!.levelsColor ?? '',
-                      setLevels: (color, levels) {
-                        indicator!.levels = levels;
-                        indicator!.levelsColor = color;
-                        setState(() {});
-                        kPrint(widget.indicator?.levelsColor);
-                      },
-                      levels: indicator!.levels,
-                    ),
-                  ),
-                );
-              },
-            ),
-            PropertiesTitleWidget(title: 'visualization'),
-            PropertiesItemWidget(
-              title: 'Timeframe',
-              subTitle: 'All timeframes',
-              margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
-              onTap: () {},
-            ),
-            PropertiesTitleWidget(title: 'style'),
-            PropertiesItemWidget(
-              title: 'Pixel',
-              subTitle: '${widget.indicator?.strokeWidth ?? 1} Pixel',
-              margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => IndicatorPixelsScreen(
-                      pixel: indicator!.strokeWidth,
-                      onConfirm: (pixel) {
-                        indicator!.strokeWidth = pixel;
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            IndicatorColorWidget(
-              title: 'Main',
-              color: colorFromHex(indicator?.stochastic?.mainColor ?? ''),
-              onChange: (color, drawAsBackground) {
-                indicator?.stochastic?.mainColor = color.toHexString();
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            IndicatorColorWidget(
-              title: 'Signal',
-              color: colorFromHex(indicator?.stochastic?.signalColor ?? ''),
-              onChange: (color, drawAsBackground) {
-                indicator?.stochastic?.signalColor = color.toHexString();
-              },
-            ),
           ],
         ),
       ),
     );
   }
+
 
   void setType(method) {
     indicator?.type = method == Methods.Exponential

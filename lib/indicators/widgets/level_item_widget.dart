@@ -1,3 +1,4 @@
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,13 +20,12 @@ class LevelItemWidget extends StatefulWidget {
 class _LevelItemWidgetState extends State<LevelItemWidget> {
   late final levelController =
       TextEditingController(text: widget.level.toString());
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         PropertiesItemWidget(
-          title: 'Description',
+          title: context.tr.description,
           child: SizedBox(
             width: 60.0,
             height: 20.0,
@@ -33,9 +33,9 @@ class _LevelItemWidgetState extends State<LevelItemWidget> {
               cursorHeight: 12.0,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w400,
-                    color: Colors.blueAccent,
-                  ),
+                fontWeight: FontWeight.w400,
+                color: Colors.blueAccent,
+              ),
               onChanged: (value) {
                 Future.delayed(Duration.zero, () {
                   final res = double.tryParse(value) ?? 0;
@@ -61,6 +61,7 @@ class _LevelItemWidgetState extends State<LevelItemWidget> {
       ],
     );
   }
+
 
   @override
   void dispose() {

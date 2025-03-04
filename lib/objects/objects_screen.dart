@@ -1,5 +1,6 @@
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/add_objects_screen.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
@@ -57,10 +58,10 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
                 Align(
                   alignment: AlignmentDirectional.center,
                   child: Text(
-                    'Objects',
+                    context.tr.objects,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
                 Align(
@@ -88,18 +89,16 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        // padding: EdgeInsets.symmetric(vertical: 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
               child: Text(
-                'Add Object',
+                context.tr.addObject,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w400,
-                    ),
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
             Row(
@@ -172,13 +171,12 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
             ).addPadding(horizontal: 21.0, vertical: 8.0),
             if (chartProperties.objects.isNotEmpty)
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                 child: Text(
-                  'Objects',
+                  context.tr.objects,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w400,
-                      ),
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
             ...chartProperties.objects.asMap().entries.map((e) {
@@ -211,6 +209,7 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
       ),
     );
   }
+
 
   String _icon(ObjectEntity item) {
     if (item.type == ObjectType.Horizontal) {

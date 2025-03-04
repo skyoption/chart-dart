@@ -1,5 +1,6 @@
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/object_item_widget.dart';
 import 'package:candle_chart/utils/icons.dart';
@@ -49,10 +50,10 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
                 Align(
                   alignment: AlignmentDirectional.center,
                   child: Text(
-                    'Add Object',
+                    context.tr.addObject,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ],
@@ -61,24 +62,22 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        // padding: EdgeInsets.symmetric(vertical: 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
               child: Text(
-                'Lines',
+                context.tr.lines,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w400,
-                    ),
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
             ObjectItemWidget(
               iconSize: 35.0,
               icon: Svgs.horizontalLine,
-              title: 'Horizontal Line',
+              title: context.tr.horizontalLine,
               margin: EdgeInsets.zero,
               onTap: () {
                 widget.onDone(ObjectType.Horizontal);
@@ -89,7 +88,7 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
             ObjectItemWidget(
               iconSize: 30.0,
               icon: Svgs.verticalLine,
-              title: 'Vertical Line',
+              title: context.tr.verticalLine,
               margin: EdgeInsets.zero,
               onTap: () {
                 widget.onDone(ObjectType.Vertical);
@@ -100,7 +99,7 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
             ObjectItemWidget(
               iconSize: 30.0,
               icon: Svgs.trendLine,
-              title: 'Trend Line',
+              title: context.tr.trendLine,
               margin: EdgeInsets.zero,
               onTap: () {
                 widget.onDone(ObjectType.Trend);
@@ -108,19 +107,18 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
               },
             ),
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
               child: Text(
-                'Shapes',
+                context.tr.shapes,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w400,
-                    ),
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
             ObjectItemWidget(
               iconSize: 30.0,
               icon: Svgs.rectangle,
-              title: 'Rectangle',
+              title: context.tr.rectangle,
               onTap: () {
                 widget.onDone(ObjectType.Rectangle);
                 Navigator.of(context).pop();
@@ -131,4 +129,5 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
       ),
     );
   }
+
 }

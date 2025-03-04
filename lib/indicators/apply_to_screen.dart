@@ -1,4 +1,5 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,6 @@ class ApplyToScreen extends StatefulWidget {
 
 class _ApplyToScreenState extends State<ApplyToScreen> {
   late ApplyTo applyTo = widget.apply ?? ApplyTo.Close;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,10 +49,10 @@ class _ApplyToScreenState extends State<ApplyToScreen> {
                 Align(
                   alignment: AlignmentDirectional.center,
                   child: Text(
-                    'Method',
+                    context.tr.method,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ],
@@ -78,9 +78,9 @@ class _ApplyToScreenState extends State<ApplyToScreen> {
                   margin: EdgeInsets.zero,
                   child: item.value == applyTo
                       ? Icon(
-                          Icons.check,
-                          color: KChartWidget.colors!.primary,
-                        )
+                    Icons.check,
+                    color: KChartWidget.colors!.primary,
+                  )
                       : const SizedBox(height: 24.0),
                   onTap: () {
                     applyTo = item.value;
@@ -97,4 +97,5 @@ class _ApplyToScreenState extends State<ApplyToScreen> {
       ),
     );
   }
+
 }

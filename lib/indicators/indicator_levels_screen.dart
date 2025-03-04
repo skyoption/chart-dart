@@ -1,5 +1,6 @@
 import 'package:candle_chart/indicators/widgets/indicator_color_widget.dart';
 import 'package:candle_chart/indicators/widgets/level_item_widget.dart';
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/widgets/paddings.dart';
@@ -24,9 +25,7 @@ class IndicatorLevelsScreen extends StatefulWidget {
 
 class _IndicatorLevelsScreenState extends State<IndicatorLevelsScreen> {
   late List<double> levels = widget.levels ?? [];
-  late String color = widget.color;
-
-  @override
+  late String color = widget.color;@override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
@@ -53,10 +52,10 @@ class _IndicatorLevelsScreenState extends State<IndicatorLevelsScreen> {
                 Align(
                   alignment: AlignmentDirectional.center,
                   child: Text(
-                    'Levels',
+                    context.tr.levels,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ],
@@ -82,7 +81,7 @@ class _IndicatorLevelsScreenState extends State<IndicatorLevelsScreen> {
               );
             }),
             PropertiesItemWidget(
-              title: 'Add Level',
+              title: context.tr.addLevel,
               showArrow: false,
               onTap: () {
                 levels = [...levels, 0];
@@ -91,7 +90,7 @@ class _IndicatorLevelsScreenState extends State<IndicatorLevelsScreen> {
               },
             ),
             IndicatorColorWidget(
-              title: 'Style ',
+              title: context.tr.style,
               color: colorFromHex(color),
               onChange: (value, drawAsBackground) {
                 color = value.toHexString();
@@ -103,4 +102,5 @@ class _IndicatorLevelsScreenState extends State<IndicatorLevelsScreen> {
       ),
     );
   }
+
 }

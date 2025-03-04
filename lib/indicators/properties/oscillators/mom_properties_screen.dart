@@ -57,7 +57,6 @@ class _MOMPropertiesScreenState extends State<MOMPropertiesScreen> {
     }
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,10 +84,10 @@ class _MOMPropertiesScreenState extends State<MOMPropertiesScreen> {
                 Align(
                   alignment: AlignmentDirectional.center,
                   child: Text(
-                    'Properties',
+                    context.tr.properties,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
                 Align(
@@ -98,11 +97,11 @@ class _MOMPropertiesScreenState extends State<MOMPropertiesScreen> {
                       _onDone();
                     },
                     child: Text(
-                      'Done',
+                      context.tr.done,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: KChartWidget.colors!.primary,
-                          ),
+                        fontWeight: FontWeight.w500,
+                        color: KChartWidget.colors!.primary,
+                      ),
                     ),
                   ),
                 ),
@@ -112,15 +111,14 @@ class _MOMPropertiesScreenState extends State<MOMPropertiesScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        // padding: EdgeInsets.symmetric(vertical: 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PropertiesTitleWidget(
-              title: '${name.toUpperCase()}',
+              title: name.toUpperCase(),
             ),
             PropertiesItemWidget(
-              title: 'Period',
+              title: context.tr.period,
               child: SizedBox(
                 width: 60.0,
                 height: 20.0,
@@ -128,9 +126,9 @@ class _MOMPropertiesScreenState extends State<MOMPropertiesScreen> {
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: KChartWidget.colors!.primary,
-                      ),
+                    fontWeight: FontWeight.w400,
+                    color: KChartWidget.colors!.primary,
+                  ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
                     if (res != null) indicator!.period = res;
@@ -153,10 +151,8 @@ class _MOMPropertiesScreenState extends State<MOMPropertiesScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'Apply To',
-              subTitle: indicator!.applyTo.name
-                  .replaceAll('__', '/')
-                  .replaceAll('_', ' '),
+              title: context.tr.applyTo,
+              subTitle: indicator!.applyTo.name.replaceAll('__', '/').replaceAll('_', ' '),
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {
@@ -175,12 +171,11 @@ class _MOMPropertiesScreenState extends State<MOMPropertiesScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'Levels',
+              title: context.tr.levels,
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               subTitle: indicator!.levels.join(', '),
               onTap: () {
-                kPrint(widget.indicator?.levelsColor);
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => IndicatorLevelsScreen(
@@ -189,7 +184,6 @@ class _MOMPropertiesScreenState extends State<MOMPropertiesScreen> {
                         indicator!.levels = levels;
                         indicator!.levelsColor = color;
                         setState(() {});
-                        kPrint(widget.indicator?.levelsColor);
                       },
                       levels: indicator!.levels,
                     ),
@@ -197,18 +191,18 @@ class _MOMPropertiesScreenState extends State<MOMPropertiesScreen> {
                 );
               },
             ),
-            PropertiesTitleWidget(title: 'visualization'),
+            PropertiesTitleWidget(title: context.tr.visualization),
             PropertiesItemWidget(
-              title: 'Timeframe',
-              subTitle: 'All timeframes',
+              title: context.tr.timeframe,
+              subTitle: context.tr.all_timeframes,
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {},
             ),
-            PropertiesTitleWidget(title: 'style'),
+            PropertiesTitleWidget(title: context.tr.style),
             PropertiesItemWidget(
-              title: 'Pixel',
-              subTitle: '${widget.indicator?.strokeWidth ?? 1} Pixel',
+              title: context.tr.pixel,
+              subTitle: '${widget.indicator?.strokeWidth ?? 1} ${context.tr.pixel}',
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {
@@ -227,7 +221,7 @@ class _MOMPropertiesScreenState extends State<MOMPropertiesScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
-              title: 'Style ',
+              title: context.tr.style,
               color: colorFromHex(indicator?.color ?? ''),
               onChange: (color, drawAsBackground) {
                 indicator!.color = color.toHexString();

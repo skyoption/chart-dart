@@ -8,8 +8,8 @@ import 'stylings.dart';
 import 'theme.dart';
 
 class ShimmerWidget extends StatefulWidget {
-  // static ShimmerState? of(BuildContext context) {
-  //   return context.findAncestorStateOfType<ShimmerState>();
+  // static ShimmerState? of(BuildContext context.dart) {
+  //   return context.dart.findAncestorStateOfType<ShimmerState>();
   // }
 
   const ShimmerWidget({
@@ -49,7 +49,7 @@ class ShimmerState extends State<ShimmerWidget>
 
   // _setGradient() {
   //   _linearGradient = widget.linearGradient ??
-  //       SkeletonTheme.of(context)?.shimmerGradient ??
+  //       SkeletonTheme.of(context.dart)?.shimmerGradient ??
   //       shimmerGradient;
   // }
 

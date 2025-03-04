@@ -54,7 +54,6 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
     }
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,10 +81,10 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
                 Align(
                   alignment: AlignmentDirectional.center,
                   child: Text(
-                    'Properties',
+                    context.tr.properties,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
                 Align(
@@ -95,11 +94,11 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
                       _onDone();
                     },
                     child: Text(
-                      'Done',
+                      context.tr.done,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: KChartWidget.colors!.primary,
-                          ),
+                        fontWeight: FontWeight.w500,
+                        color: KChartWidget.colors!.primary,
+                      ),
                     ),
                   ),
                 ),
@@ -109,15 +108,14 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        // padding: EdgeInsets.symmetric(vertical: 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PropertiesTitleWidget(
-              title: '${name.toUpperCase()}',
+              title: name.toUpperCase(),
             ),
             PropertiesItemWidget(
-              title: 'Steps',
+              title: context.tr.steps,
               child: SizedBox(
                 width: 60.0,
                 height: 20.0,
@@ -125,9 +123,9 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: KChartWidget.colors!.primary,
-                      ),
+                    fontWeight: FontWeight.w400,
+                    color: KChartWidget.colors!.primary,
+                  ),
                   onChanged: (value) {
                     final res = double.tryParse(value);
                     if (res != null) indicator?.steps = res;
@@ -150,7 +148,7 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'Maximum',
+              title: context.tr.maximum,
               margin: EdgeInsets.zero,
               child: SizedBox(
                 width: 60.0,
@@ -160,9 +158,9 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
                   autofocus: false,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: KChartWidget.colors!.primary,
-                      ),
+                    fontWeight: FontWeight.w400,
+                    color: KChartWidget.colors!.primary,
+                  ),
                   onChanged: (value) {
                     final res = double.tryParse(value);
                     if (res != null) indicator?.maximum = res;
@@ -182,9 +180,9 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
               ),
               onTap: () {},
             ),
-            PropertiesTitleWidget(title: 'style'),
+            PropertiesTitleWidget(title: context.tr.style),
             IndicatorColorWidget(
-              title: 'Style :',
+              title: '${context.tr.style} :',
               color: colorFromHex(indicator!.color!),
               hideDrawAsBackground: false,
               drawAsBackground: indicator!.drawAsBackground,
@@ -198,6 +196,7 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
       ),
     );
   }
+
 
   @override
   void dispose() {

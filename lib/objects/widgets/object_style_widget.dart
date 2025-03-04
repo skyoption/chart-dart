@@ -1,5 +1,6 @@
 
 import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/bottom_sheets/color_picker.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
@@ -57,13 +58,12 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
     );
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        PropertiesTitleWidget(title: 'style'),
+        PropertiesTitleWidget(title: context.tr.style),
         Container(
           color: Colors.grey.withOpacity(0.2),
           padding: EdgeInsetsDirectional.symmetric(
@@ -76,10 +76,10 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Style',
+                    context.tr.style,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w400,
-                        ),
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                   MSvg(
                     name: [
@@ -130,7 +130,7 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [1.0, 1.5, 2.0, 2.5].asMap().entries.map(
-                        (item) {
+                            (item) {
                           return Expanded(
                             child: Row(
                               children: [
@@ -198,7 +198,7 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                         // Svgs.longDashLine,
                         Svgs.dashLine,
                       ].asMap().entries.map(
-                        (item) {
+                            (item) {
                           return Expanded(
                             child: GestureDetector(
                               onTap: () {
@@ -237,7 +237,7 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
           Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
         if (!widget.hideDrawAsBackground)
           PropertiesItemWidget(
-            title: 'Draw as background',
+            title: context.tr.drawAsBackground,
             child: SizedBox(
               height: 18.0,
               child: Transform.scale(
@@ -262,6 +262,7 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
       ],
     );
   }
+
 
   void _setStyle(index) {
     switch (index) {

@@ -32,7 +32,7 @@ class _PropertiesBottomSheetState extends State<PropertiesBottomSheet> {
             hideArrow: true,
             backgroundColor: KChartWidget.colors!.bgColor,
             margin: EdgeInsets.zero,
-            title: 'Properties',
+            title: context.tr.properties,
             onTap: () {
               Navigator.of(context).pop();
               onTap(context, widget.item, widget.data, widget.onDone);
@@ -44,7 +44,7 @@ class _PropertiesBottomSheetState extends State<PropertiesBottomSheet> {
             hideArrow: true,
             backgroundColor: KChartWidget.colors!.bgColor,
             margin: EdgeInsets.zero,
-            title: 'Delete',
+            title: context.tr.delete,
             color: Colors.red,
             onTap: () {
               onDelete(widget.item.type, widget.item.id, widget.onDone);
@@ -57,7 +57,7 @@ class _PropertiesBottomSheetState extends State<PropertiesBottomSheet> {
             hideArrow: true,
             backgroundColor: KChartWidget.colors!.bgColor,
             margin: EdgeInsets.zero,
-            title: 'Cancel',
+            title: context.tr.cancel,
             onTap: () {
               widget.onDone(null);
               Navigator.of(context).pop();

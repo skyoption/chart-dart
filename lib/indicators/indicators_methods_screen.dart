@@ -1,3 +1,4 @@
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,6 @@ class IndicatorMethodsScreen extends StatefulWidget {
 
 class _IndicatorMethodsScreenState extends State<IndicatorMethodsScreen> {
   late Methods method = widget.method ?? Methods.Simple;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,10 +48,10 @@ class _IndicatorMethodsScreenState extends State<IndicatorMethodsScreen> {
                 Align(
                   alignment: AlignmentDirectional.center,
                   child: Text(
-                    'Method',
+                    context.tr.method,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ],

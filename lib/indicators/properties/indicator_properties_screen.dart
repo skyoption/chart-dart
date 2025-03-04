@@ -74,7 +74,6 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
     }
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,10 +101,10 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                 Align(
                   alignment: AlignmentDirectional.center,
                   child: Text(
-                    'Properties',
+                    context.tr.properties,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
                 Align(
@@ -115,11 +114,11 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                       _onDone();
                     },
                     child: Text(
-                      'Done',
+                      context.tr.done,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: KChartWidget.colors!.primary,
-                          ),
+                        fontWeight: FontWeight.w500,
+                        color: KChartWidget.colors!.primary,
+                      ),
                     ),
                   ),
                 ),
@@ -129,15 +128,14 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        // padding: EdgeInsets.symmetric(vertical: 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PropertiesTitleWidget(
-              title: '${name.toUpperCase()}',
+              title: name.toUpperCase(),
             ),
             PropertiesItemWidget(
-              title: 'Period',
+              title: context.tr.period,
               child: SizedBox(
                 width: 60.0,
                 height: 20.0,
@@ -145,9 +143,9 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: KChartWidget.colors!.primary,
-                      ),
+                    fontWeight: FontWeight.w400,
+                    color: KChartWidget.colors!.primary,
+                  ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
                     if (res != null) indicator?.period = res;
@@ -170,7 +168,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'Shift',
+              title: context.tr.shift,
               margin: EdgeInsets.zero,
               child: SizedBox(
                 width: 60.0,
@@ -180,9 +178,9 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                   autofocus: false,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: KChartWidget.colors!.primary,
-                      ),
+                    fontWeight: FontWeight.w400,
+                    color: KChartWidget.colors!.primary,
+                  ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
                     if (res != null) indicator?.shift = res;
@@ -206,7 +204,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
               Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             if (widget.haveDeviations)
               PropertiesItemWidget(
-                title: 'Deviations',
+                title: context.tr.deviations,
                 margin: EdgeInsets.zero,
                 child: SizedBox(
                   width: 60.0,
@@ -216,9 +214,9 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                     autofocus: false,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontWeight: FontWeight.w400,
-                          color: KChartWidget.colors!.primary,
-                        ),
+                      fontWeight: FontWeight.w400,
+                      color: KChartWidget.colors!.primary,
+                    ),
                     onChanged: (value) {
                       final res = double.tryParse(value);
                       if (res != null) indicator?.deviations = res;
@@ -226,7 +224,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                     controller: deviationsController,
                     textAlignVertical: TextAlignVertical.center,
                     keyboardType:
-                        TextInputType.numberWithOptions(signed: false),
+                    TextInputType.numberWithOptions(signed: false),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(vertical: 11.0),
@@ -239,95 +237,9 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                 ),
                 onTap: () {},
               ),
-            if (widget.haveMethods)
-              Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            if (widget.haveMethods)
-              PropertiesItemWidget(
-                title: 'Method',
-                subTitle: (setMethod(indicator)?.name ?? 'Sample')
-                    .replaceAll('_', ' '),
-                margin: EdgeInsets.zero,
-                subTitleColor: Colors.grey.withOpacity(0.8),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => IndicatorMethodsScreen(
-                        method: setMethod(indicator),
-                        onMethod: (method) {
-                          _setType(method);
-                          setState(() {});
-                        },
-                      ),
-                    ),
-                  );
-                },
-              ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: 'Apply To',
-              subTitle: indicator!.applyTo.name
-                  .replaceAll('__', '/')
-                  .replaceAll('_', ' '),
-              margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => ApplyToScreen(
-                      apply: indicator?.applyTo,
-                      showIndicatorsOption: indicator?.isSecondary == true,
-                      onApply: (apply) {
-                        indicator?.applyTo = apply;
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
-            if (widget.haveLevels) PropertiesTitleWidget(title: 'LEVELS'),
-            if (widget.haveLevels)
-              PropertiesItemWidget(
-                title: 'Levels',
-                margin: EdgeInsets.zero,
-                subTitleColor: Colors.grey.withOpacity(0.8),
-                onTap: () {},
-              ),
-            if (widget.haveTimeframe)
-              PropertiesTitleWidget(title: 'visualization'),
-            if (widget.haveTimeframe)
-              PropertiesItemWidget(
-                title: 'Timeframe',
-                subTitle: 'All timeframes',
-                margin: EdgeInsets.zero,
-                subTitleColor: Colors.grey.withOpacity(0.8),
-                onTap: () {},
-              ),
-            PropertiesTitleWidget(title: 'style'),
-            if (widget.havePixels)
-              PropertiesItemWidget(
-                title: 'Pixel',
-                subTitle: '${indicator?.strokeWidth ?? 1} Pixel',
-                margin: EdgeInsets.zero,
-                subTitleColor: Colors.grey.withOpacity(0.8),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => IndicatorPixelsScreen(
-                        pixel: indicator?.strokeWidth,
-                        onConfirm: (pixel) {
-                          indicator?.strokeWidth = pixel;
-                          setState(() {});
-                        },
-                      ),
-                    ),
-                  );
-                },
-              ),
-            if (widget.havePixels)
-              Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesTitleWidget(title: context.tr.style),
             IndicatorColorWidget(
-              title: widget.haveTwoBands ? 'Upper Band ' : 'Style ',
+              title: widget.haveTwoBands ? context.tr.upper_band : context.tr.style,
               color: colorFromHex(indicator?.color ?? ''),
               hideDrawAsBackground: widget.haveTwoBands,
               drawAsBackground: indicator?.drawAsBackground,
@@ -337,20 +249,12 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                   indicator?.drawAsBackground = drawAsBackground;
                 }
               },
-              // hideStyle: true,
-              // strokeWidth: indicator?.strokeWidth,
-              // style: indicator?.style,
-              // onChange: (color, drawAsBackground, strokeWidth, style) {
-              //   indicator?.style = style;
-              //   indicator?.strokeWidth = strokeWidth;
-              //   indicator?.color = color;
-              // },
             ),
             if (widget.haveTwoBands)
               Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             if (widget.haveTwoBands)
               IndicatorColorWidget(
-                title: 'Lower Band ',
+                title: context.tr.lower_band,
                 hideDrawAsBackground: false,
                 drawAsBackground: indicator?.drawAsBackground,
                 color: colorFromHex(indicator?.secondColor ?? ''),

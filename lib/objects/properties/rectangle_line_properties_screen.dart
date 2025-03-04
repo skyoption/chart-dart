@@ -2,6 +2,7 @@
 
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/bottom_sheets/datepicker.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
@@ -57,7 +58,6 @@ class _RectangleLinePropertiesScreenState
     date2 = dateFormat(current2, formats);
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,10 +85,10 @@ class _RectangleLinePropertiesScreenState
                 Align(
                   alignment: AlignmentDirectional.center,
                   child: Text(
-                    'Properties',
+                    context.tr.properties,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
                 Align(
@@ -100,11 +100,11 @@ class _RectangleLinePropertiesScreenState
                       widget.onDone(null);
                     },
                     child: Text(
-                      'Done',
+                      context.tr.done,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: KChartWidget.colors!.primary,
-                          ),
+                        fontWeight: FontWeight.w500,
+                        color: KChartWidget.colors!.primary,
+                      ),
                     ),
                   ),
                 ),
@@ -114,27 +114,26 @@ class _RectangleLinePropertiesScreenState
         ),
       ),
       body: SingleChildScrollView(
-        // padding: EdgeInsets.symmetric(vertical: 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            PropertiesTitleWidget(title: 'Parameters'),
+            PropertiesTitleWidget(title: context.tr.parameters),
             PropertiesItemWidget(
-              title: 'Name',
+              title: context.tr.name,
               subTitle: object.name,
               margin: EdgeInsets.zero,
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesBooleanItemWidget(
               value: object.isFill,
-              title: 'Fill',
+              title: context.tr.fill,
               onChange: (value) {
                 object.isFill = value;
               },
             ),
-            PropertiesTitleWidget(title: 'Coordinates'),
+            PropertiesTitleWidget(title: context.tr.coordinates),
             PropertiesItemWidget(
-              title: 'Point 1',
+              title: context.tr.point1,
               margin: MPadding.set(),
               child: SizedBox(
                 width: 60.0,
@@ -143,9 +142,9 @@ class _RectangleLinePropertiesScreenState
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: Colors.blueAccent,
-                      ),
+                    fontWeight: FontWeight.w400,
+                    color: Colors.blueAccent,
+                  ),
                   onChanged: (value) {
                     if (value.isNotEmpty) {
                       object.value = double.parse(value);
@@ -163,7 +162,7 @@ class _RectangleLinePropertiesScreenState
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'Date',
+              title: context.tr.date,
               onTap: () {
                 setDatePicker(
                   maxDateTime: lastTime,
@@ -182,12 +181,12 @@ class _RectangleLinePropertiesScreenState
               child: Text(
                 date1,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w400,
-                    ),
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
             PropertiesItemWidget(
-              title: 'Point 2',
+              title: context.tr.point2,
               margin: MPadding.set(top: 6.0),
               child: SizedBox(
                 width: 60.0,
@@ -196,9 +195,9 @@ class _RectangleLinePropertiesScreenState
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: Colors.blueAccent,
-                      ),
+                    fontWeight: FontWeight.w400,
+                    color: Colors.blueAccent,
+                  ),
                   onChanged: (value) {
                     if (value.isNotEmpty) {
                       object.value2 = double.parse(value);
@@ -216,7 +215,7 @@ class _RectangleLinePropertiesScreenState
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'Date',
+              title: context.tr.date,
               onTap: () {
                 setDatePicker(
                   context: context,
@@ -235,13 +234,13 @@ class _RectangleLinePropertiesScreenState
               child: Text(
                 date2,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w400,
-                    ),
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
-            PropertiesTitleWidget(title: 'visualization'),
+            PropertiesTitleWidget(title: context.tr.visualization),
             PropertiesItemWidget(
-              title: 'Symbol',
+              title: context.tr.symbol,
               subTitle: object.symbol.toUpperCase(),
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
@@ -249,7 +248,7 @@ class _RectangleLinePropertiesScreenState
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'Timeframe',
+              title: context.tr.timeframe,
               subTitle: object.frame.name,
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
@@ -271,6 +270,7 @@ class _RectangleLinePropertiesScreenState
       ),
     );
   }
+
 
   @override
   void dispose() {

@@ -1,6 +1,4 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/indicators/indicator_levels_screen.dart';
-import 'package:candle_chart/indicators/indicator_pixels_screen.dart';
 import 'package:candle_chart/indicators/widgets/indicator_color_widget.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
@@ -9,7 +7,6 @@ import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-
 import '../indicator_properties_screen.dart';
 
 @immutable
@@ -82,10 +79,10 @@ class _ATRPropertiesScreenState extends State<ATRPropertiesScreen> {
                 Align(
                   alignment: AlignmentDirectional.center,
                   child: Text(
-                    'Properties',
+                    context.tr.properties,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
                 Align(
@@ -95,11 +92,11 @@ class _ATRPropertiesScreenState extends State<ATRPropertiesScreen> {
                       _onDone();
                     },
                     child: Text(
-                      'Done',
+                      context.tr.done,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: KChartWidget.colors!.primary,
-                          ),
+                        fontWeight: FontWeight.w500,
+                        color: KChartWidget.colors!.primary,
+                      ),
                     ),
                   ),
                 ),
@@ -109,15 +106,14 @@ class _ATRPropertiesScreenState extends State<ATRPropertiesScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        // padding: EdgeInsets.symmetric(vertical: 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PropertiesTitleWidget(
-              title: '${name.toUpperCase()}',
+              title: name.toUpperCase(),
             ),
             PropertiesItemWidget(
-              title: 'Period',
+              title: context.tr.period,
               child: SizedBox(
                 width: 60.0,
                 height: 20.0,
@@ -125,9 +121,9 @@ class _ATRPropertiesScreenState extends State<ATRPropertiesScreen> {
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: KChartWidget.colors!.primary,
-                      ),
+                    fontWeight: FontWeight.w400,
+                    color: KChartWidget.colors!.primary,
+                  ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
                     if (res != null) indicator!.period = res;
@@ -150,57 +146,31 @@ class _ATRPropertiesScreenState extends State<ATRPropertiesScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'Levels',
+              title: context.tr.levels,
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               subTitle: indicator!.levels.join(', '),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => IndicatorLevelsScreen(
-                      color: indicator!.levelsColor ?? '',
-                      setLevels: (color, levels) {
-                        indicator!.levels = levels;
-                        indicator!.levelsColor = color;
-                        setState(() {});
-                      },
-                      levels: indicator!.levels,
-                    ),
-                  ),
-                );
-              },
+              onTap: () {},
             ),
-            PropertiesTitleWidget(title: 'visualization'),
+            PropertiesTitleWidget(title: context.tr.visualization),
             PropertiesItemWidget(
-              title: 'Timeframe',
-              subTitle: 'All timeframes',
+              title: context.tr.timeframe,
+              subTitle: context.tr.all_timeframes,
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {},
             ),
-            PropertiesTitleWidget(title: 'style'),
+            PropertiesTitleWidget(title: context.tr.style),
             PropertiesItemWidget(
-              title: 'Pixel',
-              subTitle: '${widget.indicator?.strokeWidth ?? 1} Pixel',
+              title: context.tr.pixel,
+              subTitle: '${widget.indicator?.strokeWidth ?? 1} ${context.tr.pixel}',
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => IndicatorPixelsScreen(
-                      pixel: indicator!.strokeWidth,
-                      onConfirm: (pixel) {
-                        indicator!.strokeWidth = pixel;
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                );
-              },
+              onTap: () {},
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
-              title: 'Style ',
+              title: context.tr.style,
               color: colorFromHex(indicator?.color ?? ''),
               onChange: (color, drawAsBackground) {
                 indicator!.color = color.toHexString();

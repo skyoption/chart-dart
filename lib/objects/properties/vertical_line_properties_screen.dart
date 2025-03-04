@@ -1,5 +1,6 @@
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/bottom_sheets/datepicker.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
@@ -50,7 +51,6 @@ class _VerticalLinePropertiesScreenState
     date = dateFormat(currentTime, formats);
     super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,10 +78,10 @@ class _VerticalLinePropertiesScreenState
                 Align(
                   alignment: AlignmentDirectional.center,
                   child: Text(
-                    'Properties',
+                    context.tr.properties, // تم استبدال النص الثابت
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
                 Align(
@@ -93,11 +93,11 @@ class _VerticalLinePropertiesScreenState
                       widget.onDone(null);
                     },
                     child: Text(
-                      'Done',
+                      context.tr.done, // تم استبدال النص الثابت
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: KChartWidget.colors!.primary,
-                          ),
+                        fontWeight: FontWeight.w500,
+                        color: KChartWidget.colors!.primary,
+                      ),
                     ),
                   ),
                 ),
@@ -107,19 +107,18 @@ class _VerticalLinePropertiesScreenState
         ),
       ),
       body: SingleChildScrollView(
-        // padding: EdgeInsets.symmetric(vertical: 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            PropertiesTitleWidget(title: 'Parameters'),
+            PropertiesTitleWidget(title: context.tr.parameters), // استبدال النص
             PropertiesItemWidget(
-              title: 'Name',
+              title: context.tr.name, // استبدال النص
               subTitle: object.name,
               margin: EdgeInsets.zero,
             ),
-            PropertiesTitleWidget(title: 'Coordinates'),
+            PropertiesTitleWidget(title: context.tr.coordinates), // استبدال النص
             PropertiesItemWidget(
-              title: 'Date',
+              title: context.tr.date, // استبدال النص
               onTap: () async {
                 setDatePicker(
                   maxDateTime: lastTime,
@@ -138,13 +137,13 @@ class _VerticalLinePropertiesScreenState
               child: Text(
                 date,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w400,
-                    ),
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
-            PropertiesTitleWidget(title: 'visualization'),
+            PropertiesTitleWidget(title: context.tr.visualization), // استبدال النص
             PropertiesItemWidget(
-              title: 'Symbol',
+              title: context.tr.symbol, // استبدال النص
               subTitle: object.symbol.toUpperCase(),
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
@@ -152,7 +151,7 @@ class _VerticalLinePropertiesScreenState
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'Timeframe',
+              title: context.tr.timeframe, // استبدال النص
               subTitle: object.frame.name,
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
@@ -174,4 +173,5 @@ class _VerticalLinePropertiesScreenState
       ),
     );
   }
+
 }

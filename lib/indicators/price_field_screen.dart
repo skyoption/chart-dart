@@ -1,4 +1,5 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -46,7 +47,7 @@ class _PriceFieldScreenState extends State<PriceFieldScreen> {
                 Align(
                   alignment: AlignmentDirectional.center,
                   child: Text(
-                    'Price Field',
+                    context.tr.priceField,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w500,
                         ),

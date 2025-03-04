@@ -10,3 +10,4 @@ export 'k_chart_widget.dart';
 export 'renderer/index.dart';
 export 'utils/index.dart';
 export 'utils/isar.dart';
+export 'utils/context.dart';

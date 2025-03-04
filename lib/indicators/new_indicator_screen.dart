@@ -9,6 +9,7 @@ import 'package:candle_chart/indicators/properties/oscillators/wpr_properties_sc
 import 'package:candle_chart/indicators/properties/parabolic_properties_screen.dart';
 import 'package:candle_chart/indicators/properties/oscillators/rsi_properties_screen.dart';
 import 'package:candle_chart/indicators/properties/volumes/mfi_properties_screen.dart';
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/indicators/properties/indicator_properties_screen.dart';
@@ -57,7 +58,7 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                 Align(
                   alignment: AlignmentDirectional.center,
                   child: Text(
-                    'Add Indicator',
+                    context.tr.add_indicator,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
@@ -76,21 +77,21 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                'TREND',
+                context.tr.trend,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w400,
                     ),
               ),
             ),
             PropertiesItemWidget(
-              title: 'Moving Average',
+              title: context.tr.moving_average,
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => IndicatorPropertiesScreen(
-                      name: 'Moving Average',
+                      name: context.tr.moving_average,
                       haveMethods: true,
                       onDone: widget.onDone,
                       windowId: widget.windowId,
@@ -101,14 +102,14 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'Bollinger Bands',
+              title: context.tr.bollinger_bands,
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => IndicatorPropertiesScreen(
-                      name: 'Bollinger Bands',
+                      name: context.tr.bollinger_bands,
                       haveDeviations: true,
                       haveMethods: false,
                       onDone: widget.onDone,
@@ -121,14 +122,14 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'Envelops',
+              title: context.tr.envelops,
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => IndicatorPropertiesScreen(
-                      name: 'Envelops',
+                      name: context.tr.envelops,
                       haveDeviations: true,
                       haveMethods: true,
                       haveTwoBands: true,
@@ -143,210 +144,14 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
-              title: 'Parabolic SAR',
+              title: context.tr.parabolic_sar,
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => ParabolicPropertiesScreen(
-                      name: 'Parabolic SAR',
-                      onDone: widget.onDone,
-                      windowId: widget.windowId,
-                    ),
-                  ),
-                );
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: 'Ichimoku Kinko Hyo',
-              margin: EdgeInsets.zero,
-              child: const SizedBox(),
-              onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => IchimokuPropertiesScreen(
-                      name: 'Ichimoku Kinko Hyo',
-                      onDone: widget.onDone,
-                      windowId: widget.windowId,
-                    ),
-                  ),
-                );
-              },
-            ),
-            Padding(
-              padding: EdgeInsetsDirectional.only(
-                start: 8.0,
-                end: 8.0,
-                top: 12.0,
-                bottom: 8.0,
-              ),
-              child: Text(
-                'OSCILLATORS',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w400,
-                    ),
-              ),
-            ),
-            PropertiesItemWidget(
-              title: 'Stochastic Oscillator',
-              margin: EdgeInsets.zero,
-              child: const SizedBox(),
-              onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => SOPropertiesScreen(
-                      name: 'Stochastic Oscillator',
-                      onDone: widget.onDone,
-                      windowId: widget.windowId,
-                    ),
-                  ),
-                );
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: 'MACD',
-              margin: EdgeInsets.zero,
-              child: const SizedBox(),
-              onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => MACDPropertiesScreen(
-                      name: 'MACD',
-                      onDone: widget.onDone,
-                      windowId: widget.windowId,
-                    ),
-                  ),
-                );
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: 'Relative Strength Index',
-              margin: EdgeInsets.zero,
-              child: const SizedBox(),
-              onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => RSIPropertiesScreen(
-                      name: 'Relative Strength Index',
-                      onDone: widget.onDone,
-                      windowId: widget.windowId,
-                    ),
-                  ),
-                );
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: 'Average True Range',
-              margin: EdgeInsets.zero,
-              child: const SizedBox(),
-              onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => ATRPropertiesScreen(
-                      name: 'Average True Range',
-                      onDone: widget.onDone,
-                      windowId: widget.windowId,
-                    ),
-                  ),
-                );
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: 'Commodity Channel Index',
-              margin: EdgeInsets.zero,
-              child: const SizedBox(),
-              onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => CCIPropertiesScreen(
-                      name: 'Commodity Channel Index',
-                      onDone: widget.onDone,
-                      windowId: widget.windowId,
-                    ),
-                  ),
-                );
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: 'DeMarker',
-              margin: EdgeInsets.zero,
-              child: const SizedBox(),
-              onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => DeMarkerPropertiesScreen(
-                      name: 'DeMarker',
-                      onDone: widget.onDone,
-                      windowId: widget.windowId,
-                    ),
-                  ),
-                );
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: 'Momentum',
-              margin: EdgeInsets.zero,
-              child: const SizedBox(),
-              onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => MOMPropertiesScreen(
-                      name: 'Momentum',
-                      onDone: widget.onDone,
-                      windowId: widget.windowId,
-                    ),
-                  ),
-                );
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: "Williams' Percent Range",
-              margin: EdgeInsets.zero,
-              child: const SizedBox(),
-              onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => WPRPropertiesScreen(
-                      name: "Williams' Percent Range",
-                      onDone: widget.onDone,
-                      windowId: widget.windowId,
-                    ),
-                  ),
-                );
-              },
-            ),
-            Padding(
-              padding: EdgeInsetsDirectional.only(
-                start: 8.0,
-                end: 8.0,
-                top: 12.0,
-                bottom: 8.0,
-              ),
-              child: Text(
-                'VOLUMES',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w400,
-                    ),
-              ),
-            ),
-            PropertiesItemWidget(
-              title: 'Money Flow Index',
-              margin: EdgeInsets.zero,
-              child: const SizedBox(),
-              onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => MFIPropertiesScreen(
-                      name: 'Money Flow Index',
+                      name: context.tr.parabolic_sar,
                       onDone: widget.onDone,
                       windowId: widget.windowId,
                     ),
