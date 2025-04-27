@@ -253,10 +253,13 @@ class ChartPainter extends BaseChartPainter
 
     final rWidth = mMainRect.rWidth;
     final rHeight = mMainRect.height + mTopPadding;
-    mMainRenderer.drawGrid(canvas, mGridRows, mGridColumns, rWidth, rHeight);
-    mVolRenderer?.drawGrid(canvas, mGridRows, mGridColumns, rWidth, rHeight);
+    mMainRenderer.drawGrid(canvas, this.chartStyle.gridRows,
+        this.chartStyle.gridColumns, rWidth, rHeight);
+    mVolRenderer?.drawGrid(canvas, this.chartStyle.gridRows,
+        this.chartStyle.gridColumns, rWidth, rHeight);
     mSecondaryRendererList.forEach((element) {
-      element.drawGrid(canvas, mGridRows, mGridColumns, rWidth, rHeight);
+      element.drawGrid(canvas, this.chartStyle.gridRows,
+          this.chartStyle.gridColumns, rWidth, rHeight);
     });
     // }
   }
