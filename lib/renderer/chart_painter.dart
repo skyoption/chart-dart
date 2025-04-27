@@ -141,10 +141,12 @@ class ChartPainter extends BaseChartPainter
       fixedLength =
           NumberUtil.getMaxDecimalLength(t.open, t.close, t.high, t.low);
     }
-    if (secondaryIndicators.isNotEmpty) {
-      this.chartStyle.gridRows = 24 ~/ secondaryIndicators.length;
-    } else {
-      this.chartStyle.gridRows = 18;
+    if (!this.chartStyle.isSmallChart) {
+      if (secondaryIndicators.isNotEmpty) {
+        this.chartStyle.gridRows = 24 ~/ secondaryIndicators.length;
+      } else {
+        this.chartStyle.gridRows = 18;
+      }
     }
     mMainRenderer = MainRenderer(
       mMainRect,

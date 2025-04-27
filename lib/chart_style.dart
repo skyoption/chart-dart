@@ -172,6 +172,7 @@ class ChartStyle {
   bool isShowStrategyTypeBottom;
   bool isShowStrategyTypeBottomForMaxVol;
   bool isShowBottomMa;
+  bool isSmallChart;
   bool showMAVolume;
   double bottomPadding;
   double childPadding;
@@ -206,6 +207,7 @@ class ChartStyle {
     this.priceWidth = 60.0,
     this.isNotPoint = false,
     this.isShowHighOrLowPoint = false,
+    this.isSmallChart = false,
     this.isShowLeftTopicPoint = true,
     this.isShowStrategyTypeTop = true,
     this.isShowStrategyTypeBottom = true,
