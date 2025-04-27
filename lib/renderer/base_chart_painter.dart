@@ -60,7 +60,6 @@ abstract class BaseChartPainter extends CustomPainter
       mSecondaryTopPadding = 28.0;
 
   // grid: rows - columns
-  int mGridRows = 12, mGridColumns = 12;
   int mStartIndex = 0, mStopIndex = 0;
   double mVolMaxValue = double.minPositive, mVolMinValue = double.maxFinite;
   double mTranslateX = double.minPositive;
@@ -103,8 +102,6 @@ abstract class BaseChartPainter extends CustomPainter
     mTopPadding = this.chartStyle.topPadding;
     mBottomPadding = this.chartStyle.bottomPadding;
     mChildPadding = this.chartStyle.childPadding;
-    mGridRows = this.chartStyle.gridRows;
-    mGridColumns = this.chartStyle.gridColumns;
     mDataLen = mItemCount * mPointWidth;
     initFormats();
   }

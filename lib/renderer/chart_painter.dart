@@ -331,10 +331,10 @@ class ChartPainter extends BaseChartPainter
   @override
   void drawVerticalText(canvas) {
     var textStyle = getTextStyle(this.chartColors.black);
-    mMainRenderer.drawVerticalText(canvas, textStyle, mGridRows);
-    mVolRenderer?.drawVerticalText(canvas, textStyle, mGridRows);
+    mMainRenderer.drawVerticalText(canvas, textStyle, this.chartStyle.gridRows);
+    mVolRenderer?.drawVerticalText(canvas, textStyle, this.chartStyle.gridRows);
     mSecondaryRendererList.forEach((element) {
-      element.drawVerticalText(canvas, textStyle, mGridRows);
+      element.drawVerticalText(canvas, textStyle, this.chartStyle.gridRows);
     });
   }
 
@@ -342,13 +342,13 @@ class ChartPainter extends BaseChartPainter
   void drawDate(Canvas canvas, Size size) {
     if (data == null) return;
 
-    double columnSpace = size.rWidth / mGridColumns;
+    double columnSpace = size.rWidth / this.chartStyle.gridColumns;
     double startX = getX(mStartIndex) - mPointWidth / 2;
     double stopX = getX(mStopIndex) + mPointWidth / 2;
     double x = 0.0;
     double y = 0.0;
     const candleSpace = 10.0;
-    for (var i = 0; i < mGridColumns; ++i) {
+    for (var i = 0; i < this.chartStyle.gridColumns; ++i) {
       double translateX = xToTranslateX(columnSpace * i - candleSpace * i);
       if (translateX >= startX && translateX <= stopX) {
         int index = indexOfTranslateX(translateX);
@@ -361,9 +361,9 @@ class ChartPainter extends BaseChartPainter
         final tpSpaceCenter = tp.width / 4;
         x = (columnSpace * i) -
             (tpSpaceCenter * i) +
-            (tpSpaceCenter / (mGridColumns - i));
-        if (mGridColumns - 1 == i) {
-          x -= tpSpaceCenter / mGridColumns;
+            (tpSpaceCenter / (this.chartStyle.gridColumns - i));
+        if (this.chartStyle.gridColumns - 1 == i) {
+          x -= tpSpaceCenter / this.chartStyle.gridColumns;
         }
         // Prevent date text out of canvas
         if (x < 0) x = 0;

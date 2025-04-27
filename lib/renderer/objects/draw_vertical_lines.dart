@@ -12,7 +12,6 @@ mixin DrawVerticalLines on ChartDetails {
   late final ChartStyle chartStyle;
   late Paint dot;
   late double scaleX;
-  late int mGridColumns;
   double? fDisplayHeight;
 
   ObjectEntity? setVerticalLineOffset(
