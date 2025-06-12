@@ -150,6 +150,7 @@ abstract class BaseChartPainter extends CustomPainter
     canvas.save();
     canvas.scale(1, 1);
     drawBg(canvas, size);
+    drawGrid(canvas);
     if (data != null && data!.isNotEmpty) {
       drawChart(canvas, size);
       drawVerticalText(canvas);
@@ -168,7 +169,6 @@ abstract class BaseChartPainter extends CustomPainter
         drawCrossLineText(canvas, size);
       }
     }
-    drawGrid(canvas);
     canvas.restore();
   }
 

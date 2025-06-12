@@ -57,6 +57,7 @@ class _CCIPropertiesScreenState extends State<CCIPropertiesScreen> {
     }
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,8 +87,8 @@ class _CCIPropertiesScreenState extends State<CCIPropertiesScreen> {
                   child: Text(
                     context.tr.properties,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
+                          fontWeight: FontWeight.w500,
+                        ),
                   ),
                 ),
                 Align(
@@ -99,9 +100,9 @@ class _CCIPropertiesScreenState extends State<CCIPropertiesScreen> {
                     child: Text(
                       context.tr.done,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: KChartWidget.colors!.primary,
-                      ),
+                            fontWeight: FontWeight.w500,
+                            color: KChartWidget.colors!.primary,
+                          ),
                     ),
                   ),
                 ),
@@ -111,6 +112,7 @@ class _CCIPropertiesScreenState extends State<CCIPropertiesScreen> {
         ),
       ),
       body: SingleChildScrollView(
+        // padding: EdgeInsets.symmetric(vertical: 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -126,9 +128,9 @@ class _CCIPropertiesScreenState extends State<CCIPropertiesScreen> {
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w400,
-                    color: KChartWidget.colors!.primary,
-                  ),
+                        fontWeight: FontWeight.w400,
+                        color: KChartWidget.colors!.primary,
+                      ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
                     if (res != null) indicator!.period = res;
@@ -198,7 +200,7 @@ class _CCIPropertiesScreenState extends State<CCIPropertiesScreen> {
             PropertiesTitleWidget(title: context.tr.visualization),
             PropertiesItemWidget(
               title: context.tr.timeframe,
-              subTitle: context.tr.allTimeframes,
+              subTitle: context.tr.all_timeframes,
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {},
@@ -236,7 +238,6 @@ class _CCIPropertiesScreenState extends State<CCIPropertiesScreen> {
       ),
     );
   }
-
 
   void _onDone() async {
     if (widget.indicator == null) {

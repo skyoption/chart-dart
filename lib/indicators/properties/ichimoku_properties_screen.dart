@@ -54,29 +54,6 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
     }
     super.initState();
   }
-  final Map<String, String> enTranslations = {
-    'properties': 'Properties',
-    'done': 'Done',
-    'tenkan_sen': 'Tenkan-sen:',
-    'kiju_sen': 'Kiju-sen:',
-    'senkou_span_b': 'Senkou-span B:',
-    'style': 'Style',
-    'chikou_span': 'Chikou Span:',
-    'up_kumo': 'Up Kumo:',
-    'down_kumo': 'Down Kumo:',
-  };
-
-  final Map<String, String> arTranslations = {
-    'properties': 'الخصائص',
-    'done': 'تم',
-    'tenkan_sen': 'تينكان-سن:',
-    'kiju_sen': 'كيجو-سن:',
-    'senkou_span_b': 'سينكو-سبان B:',
-    'style': 'النمط',
-    'chikou_span': 'شيكو سبان:',
-    'up_kumo': 'كومو العلوي:',
-    'down_kumo': 'كومو السفلي:',
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -107,8 +84,8 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
                   child: Text(
                     context.tr.properties,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
+                          fontWeight: FontWeight.w500,
+                        ),
                   ),
                 ),
                 Align(
@@ -120,9 +97,9 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
                     child: Text(
                       context.tr.done,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: KChartWidget.colors!.primary,
-                      ),
+                            fontWeight: FontWeight.w500,
+                            color: KChartWidget.colors!.primary,
+                          ),
                     ),
                   ),
                 ),
@@ -132,56 +109,144 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
         ),
       ),
       body: SingleChildScrollView(
+        // padding: EdgeInsets.symmetric(vertical: 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            PropertiesTitleWidget(title: name.toUpperCase()),
+            PropertiesTitleWidget(
+              title: '${name.toUpperCase()}',
+            ),
             PropertiesItemWidget(
               title: context.tr.tenkan_sen,
-              child: buildTextField(tenkanSenController, (value) {
-                final res = int.tryParse(value);
-                if (res != null) indicator!.ichimoku!.tenkanSen = res;
-              }),
+              child: SizedBox(
+                width: 60.0,
+                height: 20.0,
+                child: TextField(
+                  cursorHeight: 12.0,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w400,
+                        color: KChartWidget.colors!.primary,
+                      ),
+                  onChanged: (value) {
+                    final res = int.tryParse(value);
+                    if (res != null) indicator!.ichimoku!.tenkanSen = res;
+                  },
+                  autofocus: false,
+                  controller: tenkanSenController,
+                  textAlignVertical: TextAlignVertical.center,
+                  keyboardType: TextInputType.numberWithOptions(signed: false),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(vertical: 11.0),
+                  ),
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(3),
+                    NumericalRangeFormatter(min: 1, max: 100),
+                  ],
+                ),
+              ),
+              margin: EdgeInsets.zero,
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
               title: context.tr.kiju_sen,
-              child: buildTextField(kijuSenController, (value) {
-                final res = int.tryParse(value);
-                if (res != null) indicator!.ichimoku!.kijuSen = res;
-              }),
+              margin: EdgeInsets.zero,
+              child: SizedBox(
+                width: 60.0,
+                height: 20.0,
+                child: TextField(
+                  cursorHeight: 12.0,
+                  autofocus: false,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w400,
+                        color: KChartWidget.colors!.primary,
+                      ),
+                  onChanged: (value) {
+                    final res = int.tryParse(value);
+                    if (res != null) indicator!.ichimoku!.kijuSen = res;
+                  },
+                  controller: kijuSenController,
+                  textAlignVertical: TextAlignVertical.center,
+                  keyboardType: TextInputType.numberWithOptions(signed: false),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(vertical: 11.0),
+                  ),
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(3),
+                    NumericalRangeFormatter(min: 1, max: 100),
+                  ],
+                ),
+              ),
+              onTap: () {},
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             PropertiesItemWidget(
               title: context.tr.senkou_span_b,
-              child: buildTextField(senkouSpanController, (value) {
-                final res = int.tryParse(value);
-                if (res != null) indicator!.ichimoku!.senkouSpan = res;
-              }),
+              margin: EdgeInsets.zero,
+              child: SizedBox(
+                width: 60.0,
+                height: 20.0,
+                child: TextField(
+                  cursorHeight: 12.0,
+                  autofocus: false,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w400,
+                        color: KChartWidget.colors!.primary,
+                      ),
+                  onChanged: (value) {
+                    final res = int.tryParse(value);
+                    if (res != null) indicator!.ichimoku!.senkouSpan = res;
+                  },
+                  controller: senkouSpanController,
+                  textAlignVertical: TextAlignVertical.center,
+                  keyboardType: TextInputType.numberWithOptions(signed: false),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(vertical: 11.0),
+                  ),
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(3),
+                    NumericalRangeFormatter(min: 1, max: 100),
+                  ],
+                ),
+              ),
+              onTap: () {},
             ),
             PropertiesTitleWidget(title: context.tr.style),
             IndicatorColorWidget(
               title: context.tr.tenkan_sen,
               color: colorFromHex(indicator!.ichimoku!.tenkanSenColor!),
-              onChange: (color, _) => indicator!.ichimoku!.tenkanSenColor = color.toHexString(),
+              onChange: (color, drawAsBackground) {
+                indicator!.ichimoku!.tenkanSenColor = color.toHexString();
+              },
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
               title: context.tr.kiju_sen,
               color: colorFromHex(indicator!.ichimoku!.kijuSenColor!),
-              onChange: (color, _) => indicator!.ichimoku!.kijuSenColor = color.toHexString(),
+              onChange: (color, drawAsBackground) {
+                indicator!.ichimoku!.kijuSenColor = color.toHexString();
+              },
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
               title: context.tr.chikou_span,
               color: colorFromHex(indicator!.ichimoku!.chikouSpanColor!),
-              onChange: (color, _) => indicator!.ichimoku!.chikouSpanColor = color.toHexString(),
+              onChange: (color, drawAsBackground) {
+                indicator!.ichimoku!.chikouSpanColor = color.toHexString();
+              },
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
               title: context.tr.up_kumo,
               color: colorFromHex(indicator!.ichimoku!.upKumoColor!),
-              onChange: (color, _) => indicator!.ichimoku!.upKumoColor = color.toHexString(),
+              onChange: (color, drawAsBackground) {
+                indicator!.ichimoku!.upKumoColor = color.toHexString();
+              },
             ),
             Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             IndicatorColorWidget(
@@ -199,35 +264,6 @@ class _IchimokuPropertiesScreenState extends State<IchimokuPropertiesScreen> {
       ),
     );
   }
-
-  Widget buildTextField(TextEditingController controller, Function(String) onChanged) {
-    return SizedBox(
-      width: 60.0,
-      height: 20.0,
-      child: TextField(
-        cursorHeight: 12.0,
-        autofocus: false,
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          fontWeight: FontWeight.w400,
-          color: KChartWidget.colors!.primary,
-        ),
-        onChanged: onChanged,
-        controller: controller,
-        textAlignVertical: TextAlignVertical.center,
-        keyboardType: TextInputType.numberWithOptions(signed: false),
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(vertical: 11.0),
-        ),
-        inputFormatters: [
-          LengthLimitingTextInputFormatter(3),
-          NumericalRangeFormatter(min: 1, max: 100),
-        ],
-      ),
-    );
-  }
-
 
   void _onDone() async {
     if (indicator!.isSecondary) {

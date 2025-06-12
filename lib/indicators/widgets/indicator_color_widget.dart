@@ -1,4 +1,3 @@
-import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/bottom_sheets/color_picker.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -35,6 +34,7 @@ class _IndicatorColorWidgetState extends State<IndicatorColorWidget> {
     });
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -53,8 +53,8 @@ class _IndicatorColorWidgetState extends State<IndicatorColorWidget> {
                   Text(
                     widget.title,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w400,
-                    ),
+                          fontWeight: FontWeight.w400,
+                        ),
                   ),
                   GestureDetector(
                     onTap: () {
@@ -89,7 +89,7 @@ class _IndicatorColorWidgetState extends State<IndicatorColorWidget> {
         if (widget.hideDrawAsBackground == false)
           PropertiesItemWidget(
             height: 55.0,
-            title: context.tr.drawAsBackground,
+            title: 'Draw as background',
             child: SizedBox(
               height: 18.0,
               child: Transform.scale(
@@ -111,5 +111,4 @@ class _IndicatorColorWidgetState extends State<IndicatorColorWidget> {
       ],
     );
   }
-
 }

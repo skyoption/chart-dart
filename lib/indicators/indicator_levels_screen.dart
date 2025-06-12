@@ -1,11 +1,11 @@
 import 'package:candle_chart/indicators/widgets/indicator_color_widget.dart';
 import 'package:candle_chart/indicators/widgets/level_item_widget.dart';
-import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:candle_chart/utils/context.dart';
 
 class IndicatorLevelsScreen extends StatefulWidget {
   final Function(String color, List<double> levels) setLevels;
@@ -25,7 +25,9 @@ class IndicatorLevelsScreen extends StatefulWidget {
 
 class _IndicatorLevelsScreenState extends State<IndicatorLevelsScreen> {
   late List<double> levels = widget.levels ?? [];
-  late String color = widget.color;@override
+  late String color = widget.color;
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
@@ -54,8 +56,8 @@ class _IndicatorLevelsScreenState extends State<IndicatorLevelsScreen> {
                   child: Text(
                     context.tr.levels,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
+                          fontWeight: FontWeight.w500,
+                        ),
                   ),
                 ),
               ],
@@ -102,5 +104,4 @@ class _IndicatorLevelsScreenState extends State<IndicatorLevelsScreen> {
       ),
     );
   }
-
 }

@@ -1,7 +1,7 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:candle_chart/k_chart_plus.dart';
 
 class PriceFieldScreen extends StatefulWidget {
   final Function(PriceField field) onApply;

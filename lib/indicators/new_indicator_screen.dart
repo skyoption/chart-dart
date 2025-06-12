@@ -9,12 +9,11 @@ import 'package:candle_chart/indicators/properties/oscillators/wpr_properties_sc
 import 'package:candle_chart/indicators/properties/parabolic_properties_screen.dart';
 import 'package:candle_chart/indicators/properties/oscillators/rsi_properties_screen.dart';
 import 'package:candle_chart/indicators/properties/volumes/mfi_properties_screen.dart';
-import 'package:candle_chart/k_chart_plus.dart';
-import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/indicators/properties/indicator_properties_screen.dart';
 import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/material.dart';
+import 'package:candle_chart/k_chart_plus.dart';
 
 class NewIndicatorScreen extends StatefulWidget {
   final Function onDone;
@@ -152,6 +151,202 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                   MaterialPageRoute(
                     builder: (context) => ParabolicPropertiesScreen(
                       name: context.tr.parabolic_sar,
+                      onDone: widget.onDone,
+                      windowId: widget.windowId,
+                    ),
+                  ),
+                );
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
+              title: context.tr.ichimoku_kinko_hyo,
+              margin: EdgeInsets.zero,
+              child: const SizedBox(),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => IchimokuPropertiesScreen(
+                      name: context.tr.ichimoku_kinko_hyo,
+                      onDone: widget.onDone,
+                      windowId: widget.windowId,
+                    ),
+                  ),
+                );
+              },
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.only(
+                start: 8.0,
+                end: 8.0,
+                top: 12.0,
+                bottom: 8.0,
+              ),
+              child: Text(
+                context.tr.oscillators,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w400,
+                    ),
+              ),
+            ),
+            PropertiesItemWidget(
+              title: context.tr.stochastic_oscillator,
+              margin: EdgeInsets.zero,
+              child: const SizedBox(),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => SOPropertiesScreen(
+                      name: context.tr.stochastic_oscillator,
+                      onDone: widget.onDone,
+                      windowId: widget.windowId,
+                    ),
+                  ),
+                );
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
+              title: context.tr.macd,
+              margin: EdgeInsets.zero,
+              child: const SizedBox(),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => MACDPropertiesScreen(
+                      name: context.tr.macd,
+                      onDone: widget.onDone,
+                      windowId: widget.windowId,
+                    ),
+                  ),
+                );
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
+              title: context.tr.relative_strength_index,
+              margin: EdgeInsets.zero,
+              child: const SizedBox(),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => RSIPropertiesScreen(
+                      name: context.tr.relative_strength_index,
+                      onDone: widget.onDone,
+                      windowId: widget.windowId,
+                    ),
+                  ),
+                );
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
+              title: context.tr.average_true_range,
+              margin: EdgeInsets.zero,
+              child: const SizedBox(),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => ATRPropertiesScreen(
+                      name: context.tr.average_true_range,
+                      onDone: widget.onDone,
+                      windowId: widget.windowId,
+                    ),
+                  ),
+                );
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
+              title: context.tr.commodity_channel_index,
+              margin: EdgeInsets.zero,
+              child: const SizedBox(),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => CCIPropertiesScreen(
+                      name: context.tr.commodity_channel_index,
+                      onDone: widget.onDone,
+                      windowId: widget.windowId,
+                    ),
+                  ),
+                );
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
+              title: context.tr.demarker,
+              margin: EdgeInsets.zero,
+              child: const SizedBox(),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => DeMarkerPropertiesScreen(
+                      name: context.tr.demarker,
+                      onDone: widget.onDone,
+                      windowId: widget.windowId,
+                    ),
+                  ),
+                );
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
+              title: context.tr.momentum,
+              margin: EdgeInsets.zero,
+              child: const SizedBox(),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => MOMPropertiesScreen(
+                      name: context.tr.momentum,
+                      onDone: widget.onDone,
+                      windowId: widget.windowId,
+                    ),
+                  ),
+                );
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
+              title: context.tr.williams_percent_range,
+              margin: EdgeInsets.zero,
+              child: const SizedBox(),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => WPRPropertiesScreen(
+                      name: context.tr.williams_percent_range,
+                      onDone: widget.onDone,
+                      windowId: widget.windowId,
+                    ),
+                  ),
+                );
+              },
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.only(
+                start: 8.0,
+                end: 8.0,
+                top: 12.0,
+                bottom: 8.0,
+              ),
+              child: Text(
+                context.tr.volumes,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w400,
+                    ),
+              ),
+            ),
+            PropertiesItemWidget(
+              title: context.tr.money_flow_index,
+              margin: EdgeInsets.zero,
+              child: const SizedBox(),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => MFIPropertiesScreen(
+                      name: context.tr.money_flow_index,
                       onDone: widget.onDone,
                       windowId: widget.windowId,
                     ),

@@ -61,6 +61,7 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
     }
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,8 +91,8 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
                   child: Text(
                     context.tr.properties,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
+                          fontWeight: FontWeight.w500,
+                        ),
                   ),
                 ),
                 Align(
@@ -103,9 +104,9 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
                     child: Text(
                       context.tr.done,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: KChartWidget.colors!.primary,
-                      ),
+                            fontWeight: FontWeight.w500,
+                            color: KChartWidget.colors!.primary,
+                          ),
                     ),
                   ),
                 ),
@@ -115,11 +116,12 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
         ),
       ),
       body: SingleChildScrollView(
+        // padding: EdgeInsets.symmetric(vertical: 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PropertiesTitleWidget(
-              title: name.toUpperCase(),
+              title: '${name.toUpperCase()}',
             ),
             PropertiesItemWidget(
               title: context.tr.k_period,
@@ -130,9 +132,9 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w400,
-                    color: KChartWidget.colors!.primary,
-                  ),
+                        fontWeight: FontWeight.w400,
+                        color: KChartWidget.colors!.primary,
+                      ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
                     if (res != null) indicator!.stochastic!.kPeriod = res;
@@ -163,9 +165,9 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w400,
-                    color: KChartWidget.colors!.primary,
-                  ),
+                        fontWeight: FontWeight.w400,
+                        color: KChartWidget.colors!.primary,
+                      ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
                     if (res != null) indicator!.stochastic!.dPeriod = res;
@@ -196,9 +198,9 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w400,
-                    color: KChartWidget.colors!.primary,
-                  ),
+                        fontWeight: FontWeight.w400,
+                        color: KChartWidget.colors!.primary,
+                      ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
                     if (res != null) indicator!.stochastic!.slowing = res;
@@ -219,12 +221,121 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
               ),
               margin: EdgeInsets.zero,
             ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
+              title: context.tr.priceField,
+              subTitle:
+                  indicator?.stochastic?.priceField.name.replaceAll('_', '/'),
+              margin: EdgeInsets.zero,
+              subTitleColor: Colors.grey.withOpacity(0.8),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => PriceFieldScreen(
+                      field: indicator?.stochastic?.priceField,
+                      onApply: (field) {
+                        indicator?.stochastic?.priceField = field;
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
+              title: context.tr.method,
+              subTitle:
+                  (setMethod(indicator)?.name ?? 'Sample').replaceAll('_', ' '),
+              margin: EdgeInsets.zero,
+              subTitleColor: Colors.grey.withOpacity(0.8),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => IndicatorMethodsScreen(
+                      method: setMethod(indicator),
+                      onMethod: (method) {
+                        setType(method);
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            PropertiesItemWidget(
+              title: context.tr.levels,
+              margin: EdgeInsets.zero,
+              subTitleColor: Colors.grey.withOpacity(0.8),
+              subTitle: indicator!.levels.join(', '),
+              onTap: () {
+                kPrint(widget.indicator?.levelsColor);
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => IndicatorLevelsScreen(
+                      color: indicator!.levelsColor ?? '',
+                      setLevels: (color, levels) {
+                        indicator!.levels = levels;
+                        indicator!.levelsColor = color;
+                        setState(() {});
+                        kPrint(widget.indicator?.levelsColor);
+                      },
+                      levels: indicator!.levels,
+                    ),
+                  ),
+                );
+              },
+            ),
+            PropertiesTitleWidget(title: context.tr.visualization),
+            PropertiesItemWidget(
+              title: context.tr.timeframe,
+              subTitle: context.tr.all_timeframes,
+              margin: EdgeInsets.zero,
+              subTitleColor: Colors.grey.withOpacity(0.8),
+              onTap: () {},
+            ),
+            PropertiesTitleWidget(title: 'style'),
+            PropertiesItemWidget(
+              title: context.tr.pixel,
+              subTitle: '${widget.indicator?.strokeWidth ?? 1} ${context.tr.pixel}',
+              margin: EdgeInsets.zero,
+              subTitleColor: Colors.grey.withOpacity(0.8),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => IndicatorPixelsScreen(
+                      pixel: indicator!.strokeWidth,
+                      onConfirm: (pixel) {
+                        indicator!.strokeWidth = pixel;
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            IndicatorColorWidget(
+              title: context.tr.main,
+              color: colorFromHex(indicator?.stochastic?.mainColor ?? ''),
+              onChange: (color, drawAsBackground) {
+                indicator?.stochastic?.mainColor = color.toHexString();
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            IndicatorColorWidget(
+              title: context.tr.signal,
+              color: colorFromHex(indicator?.stochastic?.signalColor ?? ''),
+              onChange: (color, drawAsBackground) {
+                indicator?.stochastic?.signalColor = color.toHexString();
+              },
+            ),
           ],
         ),
       ),
     );
   }
-
 
   void setType(method) {
     indicator?.type = method == Methods.Exponential

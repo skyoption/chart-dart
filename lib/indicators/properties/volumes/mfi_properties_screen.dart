@@ -55,6 +55,7 @@ class _MFIPropertiesScreenState extends State<MFIPropertiesScreen> {
     }
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,8 +85,8 @@ class _MFIPropertiesScreenState extends State<MFIPropertiesScreen> {
                   child: Text(
                     context.tr.properties,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
+                          fontWeight: FontWeight.w500,
+                        ),
                   ),
                 ),
                 Align(
@@ -97,9 +98,9 @@ class _MFIPropertiesScreenState extends State<MFIPropertiesScreen> {
                     child: Text(
                       context.tr.done,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: KChartWidget.colors!.primary,
-                      ),
+                            fontWeight: FontWeight.w500,
+                            color: KChartWidget.colors!.primary,
+                          ),
                     ),
                   ),
                 ),
@@ -109,11 +110,12 @@ class _MFIPropertiesScreenState extends State<MFIPropertiesScreen> {
         ),
       ),
       body: SingleChildScrollView(
+        // padding: EdgeInsets.symmetric(vertical: 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PropertiesTitleWidget(
-              title: name.toUpperCase(),
+              title: '${name.toUpperCase()}',
             ),
             PropertiesItemWidget(
               title: context.tr.period,
@@ -124,9 +126,9 @@ class _MFIPropertiesScreenState extends State<MFIPropertiesScreen> {
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w400,
-                    color: KChartWidget.colors!.primary,
-                  ),
+                        fontWeight: FontWeight.w400,
+                        color: KChartWidget.colors!.primary,
+                      ),
                   onChanged: (value) {
                     final res = int.tryParse(value);
                     if (res != null) indicator!.period = res;
@@ -179,10 +181,10 @@ class _MFIPropertiesScreenState extends State<MFIPropertiesScreen> {
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {},
             ),
-            PropertiesTitleWidget(title: context.tr.style),
+            PropertiesTitleWidget(title: 'style'),
             PropertiesItemWidget(
               title: context.tr.pixel,
-              subTitle: context.tr.pixel.replaceFirst('{value}', '${widget.indicator?.strokeWidth ?? 1}'),
+              subTitle: '${widget.indicator?.strokeWidth ?? 1} ${context.tr.pixel}',
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {
@@ -212,7 +214,6 @@ class _MFIPropertiesScreenState extends State<MFIPropertiesScreen> {
       ),
     );
   }
-
 
   void _onDone() async {
     if (widget.indicator == null) {

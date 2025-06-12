@@ -11,12 +11,12 @@ import 'package:candle_chart/indicators/properties/oscillators/so_properties_scr
 import 'package:candle_chart/indicators/properties/oscillators/wpr_properties_screen.dart';
 import 'package:candle_chart/indicators/properties/parabolic_properties_screen.dart';
 import 'package:candle_chart/indicators/properties/volumes/mfi_properties_screen.dart';
-import 'package:candle_chart/k_chart_plus.dart';
-import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/material.dart';
+import 'package:candle_chart/k_chart_plus.dart';
+import 'package:candle_chart/utils/context.dart';
 
 import 'properties/ichimoku_properties_screen.dart';
 
@@ -109,8 +109,35 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                     await chartProperties.removeIndicator(e.key);
                     widget.onDone();
                   },
-                  background: _buildDismissBackground(),
-                  child: _buildIndicatorItem(name, () => _onTap(e.value, null)),
+                  background: Container(
+                    color: Colors.red.withOpacity(0.1),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 21.0),
+                      child: Row(
+                        mainAxisAlignment:
+                            direction == DismissDirection.startToEnd
+                                ? MainAxisAlignment.start
+                                : MainAxisAlignment.end,
+                        children: [
+                          Icon(
+                            Icons.delete_outline_outlined,
+                            color: Colors.red,
+                            size: 28.0,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+                      PropertiesItemWidget(
+                        margin: EdgeInsets.zero,
+                        title: name,
+                        onTap: () => _onTap(e.value, null),
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
@@ -153,9 +180,38 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                           widget.onDone();
                           setState(() {});
                         },
-                        background: _buildDismissBackground(),
-                        child: _buildIndicatorItem(
-                            name, () => _onTap(item.value, e.key)),
+                        background: Container(
+                          color: Colors.red.withOpacity(0.1),
+                          child: Padding(
+                            padding: MPadding.set(horizontal: 21.0),
+                            child: Row(
+                              mainAxisAlignment:
+                                  direction == DismissDirection.startToEnd
+                                      ? MainAxisAlignment.start
+                                      : MainAxisAlignment.end,
+                              children: [
+                                Icon(
+                                  Icons.delete_outline_outlined,
+                                  color: Colors.red,
+                                  size: 28.0,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Divider(
+                              height: 1.0,
+                              color: Colors.grey.withOpacity(0.4),
+                            ),
+                            PropertiesItemWidget(
+                              title: name,
+                              margin: EdgeInsets.zero,
+                              onTap: () => _onTap(item.value, e.key),
+                            ),
+                          ],
+                        ),
                       );
                     })
                   ],
@@ -165,42 +221,6 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  /// Helper widget to show dismissible background
-  Widget _buildDismissBackground() {
-    return Container(
-      color: Colors.red.withOpacity(0.1),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 21.0),
-        child: Row(
-          mainAxisAlignment: direction == DismissDirection.startToEnd
-              ? MainAxisAlignment.start
-              : MainAxisAlignment.end,
-          children: [
-            Icon(
-              Icons.delete_outline_outlined,
-              color: Colors.red,
-              size: 28.0,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Helper widget for indicator items
-  Widget _buildIndicatorItem(String title, VoidCallback onTap) {
-    return Column(
-      children: [
-        Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-        PropertiesItemWidget(
-          margin: EdgeInsets.zero,
-          title: title,
-          onTap: onTap,
-        ),
-      ],
     );
   }
 
