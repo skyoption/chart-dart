@@ -15,7 +15,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   http: ^1.0.0
-  intl: ^0.19.0
+  intl: ^0.20.2
   candle_chart:
     path: ../
   shimmer: ^3.0.0
