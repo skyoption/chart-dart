@@ -1,263 +1,183 @@
-import 'dart:convert';
+import 'dart:async';
 
-import 'package:candle_chart/entity/k_line_entity.dart';
-import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
-import 'package:candle_chart/l10n/chart_localizations.dart';
-import 'package:candle_chart/utils/kprint.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:example/core/builder/flow_builder.dart';
+import 'package:example/core/consts/currency.dart';
+import 'package:example/core/consts/exports.dart';
+import 'package:example/core/framework/app_cubit.dart';
+import 'package:example/core/framework/fcm_notification.dart';
+import 'package:example/core/framework/responsive.dart';
+import 'package:example/features/auth/logic/connect_cubit.dart';
+import 'package:example/features/chart/logic/chart_cubit.dart';
+import 'package:example/features/settings/logic/platform_settings_cubit.dart';
+import 'package:example/features/settings/logic/trading_logs_cubit.dart';
+import 'package:example/features/splash/views/spalsh_screen.dart';
+import 'package:example/features/symbols/logic/quotes_cubit.dart';
+import 'package:example/features/trade/logic/open_position_cubit.dart';
+import 'package:example/features/trade/logic/orders_cubit.dart';
+import 'package:example/features/trade/logic/positions_cubit.dart';
+import 'package:example/features/trade_history/logic/history_actions_cubit.dart';
+import 'package:example/features/trade_history/logic/history_pending_cubit.dart';
+import 'package:example/features/trade_history/logic/history_positions_cubit.dart';
+import 'package:example/l10n/app_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+import 'app_router.dart';
+import 'core/framework/firebase_analytics_service.dart';
+import 'injection/injectable.dart';
+
+late MainContext rootContext;
+
+Future<void> main() async {
+  // runZonedGuarded<Future<void>>(() async {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  MWidgetsSetUp.settings(
+    fontEn: Fonts.en,
+    fontAr: Fonts.ar,
+    primary: const Color(0xff43384D),
+    secondPrimary: const Color(0xff9281A2),
+  );
+  await configureDependencies();
+  await Firebase.initializeApp();
+  rootContext = getIt<MainContext>();
   await KChart.openDB();
-  runApp(const MyApp());
+  // FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  //  Bloc.observer = CubitObserver();
+  runApp(const SkyTrading());
+  // }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class SkyTrading extends StatefulWidget {
+  static late AppLocalizations tr;
+
+  static late bool isDarkTheme;
+
+  static BuildContext get context => rootContext.context;
+
+  const SkyTrading({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData.light(useMaterial3: true),
-      darkTheme: ThemeData.dark(useMaterial3: true),
-      themeMode: ThemeMode.light,
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      supportedLocales: ChartLocalizations.supportedLocales,
-      locale: const Locale('en'),
-      localizationsDelegates: const [
-        ChartLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-    );
-  }
+  State<SkyTrading> createState() => _SkyTradingState();
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, this.title}) : super(key: key);
-
-  final String? title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  List<KLineEntity>? datas;
-  bool showLoading = false;
-
-  List<DepthEntity>? _bids, _asks;
-
-  ChartColors chartColors = ChartColors();
-
+class _SkyTradingState extends State<SkyTrading>
+    with
+        FCMNotificationClickMixin,
+        FCMNotificationMixin,
+        WidgetsBindingObserver {
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    notification.init();
+    FlutterNativeSplash.remove();
     super.initState();
-    // rootBundle.loadString('assets/depth.json').then((result) {
-    //   final parseJson = json.decode(result);
-    //   final tick = parseJson['tick'] as Map<String, dynamic>;
-    //   final List<DepthEntity> bids = (tick['bids'] as List<dynamic>)
-    //       .map<DepthEntity>(
-    //           (item) => DepthEntity(item[0] as double, item[1] as double))
-    //       .toList();
-    //   final List<DepthEntity> asks = (tick['asks'] as List<dynamic>)
-    //       .map<DepthEntity>(
-    //           (item) => DepthEntity(item[0] as double, item[1] as double))
-    //       .toList();
-    //   initDepth(bids, asks);
-    // });
-    getData(_period(CandleTimeFormat.H1)).then(
-      (value) {
-        key.currentState!.updateDefaultSettings(
-          frame: CandleTimeFormat.H1,
-          symbol: 'btcusdt',
-        );
-        key.currentState!.setLoadedCandles(candles: datas!);
-        // key.currentState!.updateAskAndBid(
-        //   LineEntity(
-        //     id: -10,
-        //     color: Colors.red,
-        //     value: 96880.50,
-        //   ),
-        // );
-        key.currentState!.addOrUpdateSLOrTPOrPosition(
-          LineEntity(
-            id: 10000,
-            type: 'SL',
-            color: Colors.red,
-            value: 96780.50,
-            title: 'SL',
-            editable: true,
-          ),
-        );
-        key.currentState!.addOrUpdateSLOrTPOrPosition(
-          LineEntity(
-            id: 10001,
-            type: 'TP',
-            color: Colors.red,
-            value: 96446.50,
-            title: 'TP',
-            editable: true,
-          ),
-        );
-        key.currentState!.addOrUpdateSLOrTPOrPosition(
-          LineEntity(
-            id: 10002,
-            type: 'Position',
-            color: Colors.blue,
-            value: 95430.50,
-            title: 'Buy 0.1',
-            editable: false,
-          ),
-        );
-      },
-    );
   }
 
-  void initDepth(List<DepthEntity>? bids, List<DepthEntity>? asks) {
-    if (bids == null || asks == null || bids.isEmpty || asks.isEmpty) return;
-    _bids = [];
-    _asks = [];
-    double amount = 0.0;
-    bids.sort((left, right) => left.price.compareTo(right.price));
-    for (var item in bids.reversed) {
-      amount += item.vol;
-      item.vol = amount;
-      _bids!.insert(0, item);
-    }
-
-    amount = 0.0;
-    asks.sort((left, right) => left.price.compareTo(right.price));
-    for (var item in asks) {
-      amount += item.vol;
-      item.vol = amount;
-      _asks!.add(item);
-    }
-    setState(() {});
-  }
-
-  final GlobalKey<KChartWidgetState> key = GlobalKey<KChartWidgetState>();
+  final appCubit = getIt<AppCubit>();
+  final loginCubit = getIt<ConnectCubit>();
+  final notification = getIt<FCMNotification>();
+  final tradingSettingsCubit = getIt<PlatformSettingsCubit>();
+  final quotesCubit = getIt<QuotesCubit>();
+  final positionsCubit = getIt<PositionsCubit>();
+  final historyPositionsCubit = getIt<HistoryPositionsCubit>();
+  final historyActionsCubit = getIt<HistoryActionsCubit>();
+  final historyPendingCubit = getIt<HistoryPendingCubit>();
+  final ordersCubit = getIt<OrdersCubit>();
+  final appLogCubit = getIt<TradingLogsCubit>();
+  final chartCubit = getIt<ChartCubit>();
+  final openPositionCubit = getIt<OpenPositionCubit>();
+  final currencyChanged = getIt<CurrencyChanged>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 2.0),
-          child: Column(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    child: const Icon(Icons.data_object),
-                    onTap: () {
-                      key.currentState?.openObjects();
-                    },
-                  ),
-                  const SizedBox(width: 21.0),
-                  InkWell(
-                    child: const Icon(Icons.format_indent_decrease),
-                    onTap: () {
-                      key.currentState?.openIndicators();
-                    },
-                  ),
-                ],
-              ),
-              KChartWidget(
-                key: key,
-                hideGrid: false,
-                chartStyle: ChartStyle(areaLineWidth: 1),
-                chartColors: chartColors,
-                graphStyle: GraphStyle.candles,
-                onGettingSettings: (frame, symbol) {},
-                onUpdatePosition: (position, newValue) {
-                  kPrint(
-                      '${position.id} ${position.type} OldValue : ${position.value} NewValue : $newValue');
-                },
-                onZoomingStart: (bool value) {},
-                fixedLength: 2,
-                timeFormat: TimeFormat.YEAR_MONTH_DAY,
-              ),
-            ],
-          ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: tradingSettingsCubit),
+        BlocProvider.value(value: chartCubit),
+        BlocProvider.value(value: appCubit),
+        BlocProvider.value(value: loginCubit),
+        BlocProvider.value(value: quotesCubit),
+        BlocProvider.value(value: positionsCubit),
+        BlocProvider.value(value: currencyChanged),
+        BlocProvider.value(value: historyPositionsCubit),
+        BlocProvider.value(value: openPositionCubit),
+        BlocProvider.value(value: historyActionsCubit),
+        BlocProvider.value(value: historyPendingCubit),
+        BlocProvider.value(value: ordersCubit),
+        BlocProvider.value(value: appLogCubit..getAllLogs()),
+      ],
+      child: MResponsiveWrapper(
+        child: FlowBuilder<AppCubit>(
+          builder: (context, state, cubit) {
+            SkyTrading.isDarkTheme = cubit.appThemeMode.isDarkTheme;
+            return MaterialApp(
+              theme: cubit.appThemeMode.data,
+              key: rootContext.scaffoldKey,
+              navigatorKey: rootContext.nav,
+              debugShowCheckedModeBanner: false,
+              onGenerateTitle: (context) {
+                SkyTrading.tr = AppLocalizations.of(context)!;
+                return '';
+              },
+              navigatorObservers: [
+                getIt<FirebaseAnalyticsService>().appAnalyticsObserver()
+              ],
+              builder: (context, child) {
+                return MResponsiveWrapper.wrapper(
+                  child: child!,
+                  context: context,
+                );
+              },
+              onGenerateRoute: (RouteSettings settings) {
+                return MaterialPageRoute(
+                  builder: (context) {
+                    return BouncingScrollWrapper.builder(
+                      context,
+                      AppRouter.generatedRoute(settings),
+                    );
+                  },
+                );
+              },
+              initialRoute: getInitialRoute,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              locale: cubit.locale,
+            );
+          },
         ),
       ),
     );
   }
 
-  String _period(CandleTimeFormat format) {
-    switch (format) {
-      case CandleTimeFormat.M1:
-        return '1min';
-      case CandleTimeFormat.M5:
-        return '5min';
-      case CandleTimeFormat.M15:
-        return '15min';
-      case CandleTimeFormat.M30:
-        return '30min';
-      case CandleTimeFormat.H1:
-        return '60min';
-      case CandleTimeFormat.H4:
-        return '4hour';
-      case CandleTimeFormat.D1:
-        return '1day';
-      case CandleTimeFormat.W1:
-        return '1week';
-      case CandleTimeFormat.MN1:
-        return '1mon';
-      default:
-        return '4hour';
-    }
+  @override
+  void didChangePlatformBrightness() {
+    appCubit.applyPlatformThemeMode();
+    super.didChangePlatformBrightness();
   }
 
-  Future<void> getData(String period) async {
-    showLoading = true;
-    try {
-      setState(() {});
-      final String value = await getChatDataFromInternet(period);
-      //final Future<String> future = getChatDataFromJson();
-      solveChatData(value);
-    } catch (e) {
-      debugPrint('### datas error $e');
-    }
-    showLoading = false;
-    setState(() {});
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
-  Future<String> getChatDataFromInternet(String? period) async {
-    var url =
-        'https://api.huobi.br.com/market/history/kline?period=${period ?? '4hour'}&size=400&symbol=btcusdt';
-    late String result;
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      result = response.body;
-    } else {
-      debugPrint('Failed getting IP address');
-    }
-    return result;
+  String get getInitialRoute {
+    return SplashScreen.id;
   }
 
-  Future<String> getChatDataFromJson() async {
-    return rootBundle.loadString('assets/chatData.json');
+  @override
+  void onClick(RemoteMessage message) {
+    notification.onClick(message: message);
   }
 
-  void solveChatData(String result) async {
-    final Map parseJson = json.decode(result) as Map<dynamic, dynamic>;
-    final list = parseJson['data'] as List<dynamic>;
-    datas = list
-        .map((item) => KLineEntity.fromJson(item as Map<String, dynamic>))
-        .toList()
-        .reversed
-        .toList()
-        .cast<KLineEntity>();
-    showLoading = false;
-    setState(() {});
+  @override
+  void onNotify(RemoteMessage message) {
+    notification.onReceived(message: message);
   }
 }
