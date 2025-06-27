@@ -12,8 +12,8 @@ class ChartTranslations {
   const ChartTranslations({
     this.date = 'Date',
     this.open = 'Open',
-    this.high = 'High',
     this.low = 'Low',
+    this.high = 'High',
     this.close = 'Close',
     this.changeAmount = 'Change',
     this.change = 'Change%',
