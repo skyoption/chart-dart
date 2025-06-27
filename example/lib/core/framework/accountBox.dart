@@ -1,8 +1,8 @@
-import 'package:path_provider/path_provider.dart';
 import 'package:example/core/consts/exports.dart';
 import 'package:example/features/auth/models/schema/connected_account_info_model.dart';
 import 'package:example/features/settings/models/schema/app_log_model.dart';
 import 'package:example/objectbox.g.dart';
+import 'package:path_provider/path_provider.dart';
 
 class AccountBox {
   Store? _store;
@@ -12,11 +12,11 @@ class AccountBox {
 
   Future<AccountBox> create() async {
     final baseUrl = await getCachePath();
-    await createDir('$baseUrl/sky5-accounts');
+    await createDir('$baseUrl/example');
     if (_store != null && !_store!.isClosed()) {
       _store!.close();
     }
-    _store = await openStore(directory: '$baseUrl/sky5-accounts/accounts-v1');
+    _store = await openStore(directory: '$baseUrl/example/accounts-v1');
     accounts = Box<ConnectedAccountInfoModel>(_store!);
     logs = Box<AppLogModel>(_store!);
     if (Admin.isAvailable()) {

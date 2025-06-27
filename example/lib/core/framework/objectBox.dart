@@ -1,4 +1,3 @@
-import 'package:path_provider/path_provider.dart';
 import 'package:example/core/consts/exports.dart';
 import 'package:example/features/symbols/models/schema/symbol_model.dart';
 import 'package:example/features/trade/models/schema/order_model.dart';
@@ -8,6 +7,7 @@ import 'package:example/features/trade_history/models/schema/history_actions_mod
 import 'package:example/features/trade_history/models/schema/history_pending_model.dart';
 import 'package:example/features/trade_history/models/schema/history_position_model.dart';
 import 'package:example/objectbox.g.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ObjectBox {
   Store? _store;
@@ -23,11 +23,11 @@ class ObjectBox {
 
   Future<ObjectBox> create(dynamic id) async {
     final baseUrl = await getCachePath();
-    await createDir('$baseUrl/sky5-data');
+    await createDir('$baseUrl/example-data');
     if (_store != null && !_store!.isClosed()) {
       _store!.close();
     }
-    _store = await openStore(directory: '$baseUrl/sky5-data/$id-data-v2');
+    _store = await openStore(directory: '$baseUrl/example-data/$id-data-v2');
     if (Admin.isAvailable()) {
       _admin = Admin(_store!);
     }
