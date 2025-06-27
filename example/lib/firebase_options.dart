@@ -76,6 +76,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '434308019325',
     projectId: 'skyoption-sky-trade',
     storageBucket: 'skyoption-sky-trade.appspot.com',
-    iosBundleId: 'com.sky.trading.RunnerTests',
+    iosBundleId: 'com.example.chart.RunnerTests',
   );
 }
