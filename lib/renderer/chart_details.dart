@@ -1,4 +1,3 @@
-import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/material.dart';
 
 import '../entity/k_line_entity.dart';
@@ -64,7 +63,6 @@ mixin ChartDetails on ChartCalc {
       DateTime.fromMillisecondsSinceEpoch(date!),
       mFormats,
     );
-    kPrint(d);
     return d;
   }
 
