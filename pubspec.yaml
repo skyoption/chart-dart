@@ -1,7 +1,7 @@
 name: candle_chart
 summary: summary
 description: description
-version: 1.0.3
+version: 1.0.4
 homepage: https://github.com/skyoption/chart-dart
 
 environment:
