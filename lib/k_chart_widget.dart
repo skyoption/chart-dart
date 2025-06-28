@@ -135,10 +135,9 @@ class KChartWidgetState extends State<KChartWidget>
     with TickerProviderStateMixin {
   final StreamController<InfoWindowEntity?> mInfoWindowStream =
       StreamController<InfoWindowEntity?>.broadcast();
-
   List<KLineEntity> lineCandles = [];
-  Map<int, LineEntity> ask_bid = {};
-  Map<int, LineEntity> tp_sl_positions = {};
+  List<LineEntity> ask_bid = [];
+  List<LineEntity> tp_sl_positions = [];
   double mScaleX = 1.0, mScaleY = 1, mScrollX = 0.0, mSelectX = 0.0;
   double mHeight = 0, mWidth = 0;
   AnimationController? _controller;
@@ -204,7 +203,12 @@ class KChartWidgetState extends State<KChartWidget>
   }
 
   void updateAskAndBid(LineEntity line) {
-    ask_bid[line.id] = line;
+    final index = ask_bid.indexWhere((e) => e.id == line.id);
+    if (index == -1) {
+      ask_bid.add(line);
+    } else {
+      ask_bid[index] = line;
+    }
     notifyChanged();
   }
 
@@ -215,13 +219,18 @@ class KChartWidgetState extends State<KChartWidget>
   }
 
   void removeSLOrTPOrPosition(int id) {
-    tp_sl_positions.removeWhere((key, value) => key == id);
+    tp_sl_positions.removeWhere((e) => e.id == id);
     chartProperties.removePosition(id);
     notifyChanged();
   }
 
   Future<void> addOrUpdateSLOrTPOrPosition(LineEntity item) async {
-    tp_sl_positions[item.id] = item;
+    final index = tp_sl_positions.indexWhere((e) => e.id == item.id);
+    if (index == -1) {
+      tp_sl_positions.add(item);
+    } else {
+      tp_sl_positions[index] = item;
+    }
     final object = ObjectEntity(
       id: item.id,
       name: item.type,
@@ -232,13 +241,15 @@ class KChartWidgetState extends State<KChartWidget>
       editable: item.editable,
       color: colorToHex(item.color),
     );
-    await chartProperties.addTPAndSLLine(object);
+    if (index == -1) {
+      await chartProperties.addTPAndSLLine(object);
+    }
     _painter!.setTPAndSLLineValue(object, item.value);
     notifyChanged();
   }
 
   void removeAskBid(int id) {
-    ask_bid.removeWhere((key, value) => key == id);
+    ask_bid.removeWhere((e) => e.id == id);
     notifyChanged();
   }
 
@@ -305,7 +316,7 @@ class KChartWidgetState extends State<KChartWidget>
     _painter = ChartPainter(
       widget.chartStyle,
       widget.chartColors,
-      askAndBid: ask_bid.values.toList(),
+      askAndBid: ask_bid,
       graphStyle: widget.graphStyle,
       indicators: chartProperties.indicators,
       baseDimension: baseDimension,
@@ -512,10 +523,10 @@ class KChartWidgetState extends State<KChartWidget>
           chartProperties.updatePositionLine(object!);
         } else if (objectType == ObjectType.Position && !object!.editable) {
           chartProperties.disUpdatePositionLine(object!);
-          final item = tp_sl_positions[object?.id];
-          if (item != null) {
+          final index = tp_sl_positions.indexWhere((e) => e.id == object?.id);
+          if (index != -1) {
             widget.onUpdatePosition(
-              item,
+              tp_sl_positions[index],
               object!.value,
             );
           }
@@ -769,10 +780,11 @@ class KChartWidgetState extends State<KChartWidget>
                 details.localPosition,
               );
               chartProperties.updatePositionLine(object!);
-              final item = tp_sl_positions[object?.id];
-              if (item != null) {
+              final index =
+                  tp_sl_positions.indexWhere((e) => e.id == object?.id);
+              if (index != -1) {
                 widget.onUpdatePosition(
-                  item,
+                  tp_sl_positions[index],
                   object!.value,
                 );
               }
