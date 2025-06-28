@@ -60,7 +60,6 @@ mixin ChartDetails on ChartCalc {
   }
 
   String getDate(int? date) {
-    kPrint(date);
     final d = dateFormat(
       DateTime.fromMillisecondsSinceEpoch(date!),
       mFormats,
