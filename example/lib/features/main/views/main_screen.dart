@@ -42,7 +42,6 @@ class MainScreenState extends State<MainScreen>
       create: (context) => cubit,
       child: Scaffold(
         body: SafeArea(
-          top: false,
           left: false,
           right: false,
           bottom: !context.isGestureNavigation,

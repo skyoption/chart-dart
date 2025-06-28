@@ -654,25 +654,24 @@ class ChartPainter extends BaseChartPainter
         price.toStringAsFixed(fixedLength),
         this.chartColors.priceTextColor,
       );
-
-      // switch (verticalTextAlignment) {
-      //   case VerticalTextAlignment.left:
-      //     offsetX = mWidth - tp.width;
-      //     break;
-      //   case VerticalTextAlignment.right:
-      //     offsetX = 0;
-      //     break;
-      // }
-
-      double offsetX = mWidth - tp.width + this.chartStyle.priceWidth + 4;
-
+      double offsetX = mWidth -
+          tp.width +
+          this.chartStyle.priceWidth -
+          this.chartStyle.leftPadding * 2;
       double top = y - tp.height / 2;
-      canvas.drawRect(
-        Rect.fromLTRB(
-            offsetX - 12, top - 2, offsetX + tp.width, top + tp.height + 3),
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTRB(
+            offsetX - 12,
+            top - 2,
+            offsetX + tp.width * 1.5,
+            top + tp.height + 3,
+          ),
+          const Radius.circular(8.0),
+        ),
         paint,
       );
-      tp.paint(canvas, Offset(offsetX - 6, top + 2));
+      tp.paint(canvas, Offset(offsetX, top));
     }
   }
 

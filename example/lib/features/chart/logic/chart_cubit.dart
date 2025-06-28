@@ -16,7 +16,7 @@ class ChartCubit extends Cubit<FlowState> {
   ChartCubit(this.dataSource) : super(const FlowState());
 
   List<KLineEntity> items = [];
-  CandleTimeFormat timeFrame = CandleTimeFormat.M1;
+  CandleTimeFormat timeFrame = CandleTimeFormat.M15;
   String symbol = '';
   int offset = 0;
   double? bid, ask, low, high;

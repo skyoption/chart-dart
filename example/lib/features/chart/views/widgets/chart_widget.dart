@@ -244,6 +244,7 @@ class _ChartWidgetState extends State<ChartWidget> {
       final chartCubit = context.read<ChartCubit>();
       chartCubit.setSettings(timeFrame: frame, symbol: symbol);
       quotesCubit.currentSymbol.value = quotesCubit.getSymbol(symbol);
+      kPrint(frame);
       widget.timeframe.value = frame;
     }
   }
