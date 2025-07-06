@@ -158,10 +158,10 @@ class KChartWidgetState extends State<KChartWidget>
   Random rand = Random();
   int pointerCount = 0;
 
-  void getDefaultSettings({
+  Future<void> getDefaultSettings({
     required Function(CandleTimeFormat frame, String symbol) onGettingSettings,
-  }) {
-    chartProperties.getDefaultSettings(
+  }) async {
+    await chartProperties.getDefaultSettings(
       onGetting: onGettingSettings,
     );
   }
