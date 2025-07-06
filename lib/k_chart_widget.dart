@@ -78,7 +78,6 @@ class KChartWidget extends StatefulWidget {
   final bool hideGrid;
   final List<String> timeFormat;
 
-  final Function(CandleTimeFormat frame, String symbol) onGettingSettings;
   final Function(bool value)? onLoadMore;
   final Function(bool value)? onZoomingStart;
   final Function(LineEntity position, double newValue) onUpdatePosition;
@@ -101,7 +100,6 @@ class KChartWidget extends StatefulWidget {
     Key? key,
     required this.chartStyle,
     required this.chartColors,
-    required this.onGettingSettings,
     required this.onUpdatePosition,
     this.graphStyle = GraphStyle.line,
     this.xFrontPadding = 100,
@@ -160,10 +158,12 @@ class KChartWidgetState extends State<KChartWidget>
   Random rand = Random();
   int pointerCount = 0;
 
-  @override
-  void initState() {
-    chartProperties.getDefaultSettings(onGetting: widget.onGettingSettings);
-    super.initState();
+  void getDefaultSettings({
+    required Function(CandleTimeFormat frame, String symbol) onGettingSettings,
+  }) {
+    chartProperties.getDefaultSettings(
+      onGetting: onGettingSettings,
+    );
   }
 
   void openObjects() {
