@@ -882,8 +882,10 @@ class KChartWidgetState extends State<KChartWidget>
   }
 
   void goToEnd() {
+    if (_controller == null) return;
     mScrollX = 0;
     _controller!.animateTo(mScrollX, duration: Duration(milliseconds: 100));
+    _onDragChanged(false);
     notifyChanged();
   }
 
