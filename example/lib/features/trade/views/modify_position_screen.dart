@@ -154,6 +154,8 @@ class _ModifyPositionScreenState extends State<ModifyPositionScreen> {
                                   ? null
                                   : () {
                                       cubit.modifyPosition(
+                                        type: widget.position.direction,
+                                        requestSymbol: symbol.symbol,
                                         id: widget.position.id,
                                         sl: sl,
                                         tp: tp,

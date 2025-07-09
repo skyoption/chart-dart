@@ -5,6 +5,7 @@ import 'package:example/features/settings/logic/trading_logs_cubit.dart';
 import 'package:example/features/trade/data_sources/positions_data_source.dart';
 import 'package:example/features/trade/models/requests/modify_pos_request.dart';
 import 'package:example/injection/injectable.dart';
+import 'package:example/main.dart';
 
 ///[ModifyPositionCubit]
 ///[Implementation]
@@ -13,28 +14,30 @@ class ModifyPositionCubit extends Cubit<FlowState> {
   final PositionsDataSource dataSource;
   final PlatformSettingsCubit platformCubit;
 
-  ModifyPositionCubit(
-    this.dataSource,
-    this.platformCubit,
-  ) : super(const FlowState()) {
+  ModifyPositionCubit(this.dataSource, this.platformCubit)
+      : super(const FlowState()) {
     init();
   }
 
   String error = '';
   int id = 0;
+  String requestSymbol = '';
+  String type = '';
 
   void init() {
     dataSource.onData(
       onRequest: (success, message) {
         if (success) {
           error = '';
-          if (platformCubit.settings.tradeNotificationSound) Player.success();
-          getIt<TradingLogsCubit>()
-              .log("Position Number $id Modified Successfully");
+          getIt<TradingLogsCubit>().log(
+            "Position Number $id Modified Successfully",
+          );
           emit(state.copyWith(type: StateType.success));
         } else {
           error = message;
-          if (platformCubit.settings.tradeNotificationSound) Player.failure();
+          if (platformCubit.settings.tradeNotificationSound) {
+            Player.failure();
+          }
           getIt<TradingLogsCubit>().log("Error Modifying Position Number $id");
 
           emit(state.copyWith(data: Data.secure));
@@ -45,18 +48,15 @@ class ModifyPositionCubit extends Cubit<FlowState> {
   }
 
   void modifyPosition({
+    required requestSymbol,
     required int id,
     required double sl,
     required double tp,
+    required String type,
   }) {
+    this.requestSymbol = requestSymbol;
     this.id = id;
-    dataSource.modifyPosition(
-      ModifyPosRequest(
-        id: id,
-        sl: sl,
-        tp: tp,
-      ),
-    );
+    dataSource.modifyPosition(ModifyPosRequest(id: id, sl: sl, tp: tp));
     getIt<TradingLogsCubit>().log("Requested To Modify Position Number $id");
   }
 

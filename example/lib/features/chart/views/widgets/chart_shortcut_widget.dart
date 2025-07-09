@@ -24,9 +24,13 @@ final chartKey = GlobalKey<KChartWidgetState>();
 
 class _ChartShortcutWidgetState extends State<ChartShortcutWidget> {
   bool showLoading = true;
+
   @override
   void initState() {
     Future.delayed(Duration(milliseconds: 150), () {
+      chartKey.currentState?.getDefaultSettings(
+        onGettingSettings: onGettingSettings,
+      );
       final cubit = context.read<QuotesCubit>();
       _updateChart(0, cubit.currentSymbol.value!.symbol);
     });
@@ -65,12 +69,13 @@ class _ChartShortcutWidgetState extends State<ChartShortcutWidget> {
                               widget.isResetZoom.value = !value;
                             },
                             onLoadMore: (value) {
-                              _updateChart(
-                                cubit.offset + 1,
-                                quotesCubit.currentSymbol.value!.symbol,
-                              );
+                              if (value) {
+                                _updateChart(
+                                  cubit.offset + 1,
+                                  quotesCubit.currentSymbol.value!.symbol,
+                                );
+                              }
                             },
-                            onGettingSettings: onGettingSettings,
                             chartStyle: ChartStyle(
                               isSmallChart: true,
                               iconSize: 30.0,
@@ -152,7 +157,6 @@ class _ChartShortcutWidgetState extends State<ChartShortcutWidget> {
   void _updateChart(offset, symbol) {
     final chartCubit = context.read<ChartCubit>();
     chartCubit.getCandles(
-      timeFrame: CandleTimeFormat.M1,
       symbol: symbol,
       offset: offset,
     );

@@ -4,6 +4,7 @@ import 'package:candle_chart/k_chart_plus.dart';
 import 'package:example/core/builder/flow_builder.dart';
 import 'package:example/core/consts/currency.dart';
 import 'package:example/core/consts/exports.dart';
+import 'package:candle_chart/l10n/chart_localizations.dart';
 import 'package:example/core/framework/app_cubit.dart';
 import 'package:example/core/framework/fcm_notification.dart';
 import 'package:example/core/framework/responsive.dart';
@@ -145,7 +146,13 @@ class _SkyTradingState extends State<SkyTrading>
                 );
               },
               initialRoute: getInitialRoute,
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              localizationsDelegates: const [
+                ChartLocalizations.delegate,
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
               supportedLocales: AppLocalizations.supportedLocales,
               locale: cubit.locale,
             );

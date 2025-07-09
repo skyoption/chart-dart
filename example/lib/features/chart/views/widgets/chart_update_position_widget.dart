@@ -13,8 +13,8 @@ import 'package:example/features/trade/views/open_position_screen.dart';
 
 class ChartUpdatePositionWidget extends StatefulWidget {
   final VoidCallback onFinish, onCancel;
-  final LineEntity positionLine;
-  final double updatedValue;
+  final ValueNotifier<LineEntity> positionLine;
+  final ValueNotifier<double> updatedValue;
 
   const ChartUpdatePositionWidget({
     super.key,
@@ -52,14 +52,18 @@ class _ChartUpdatePositionWidgetState extends State<ChartUpdatePositionWidget> {
       );
     } else if (type == UpdatePosition.TP) {
       modifyPositionCubit.modifyPosition(
+        type: position!.direction,
+        requestSymbol: symbol!.symbol,
         id: position!.id,
         sl: position!.sl,
-        tp: widget.updatedValue,
+        tp: widget.updatedValue.value,
       );
     } else if (type == UpdatePosition.SL) {
       modifyPositionCubit.modifyPosition(
+        type: position!.direction,
+        requestSymbol: symbol!.symbol,
         id: position!.id,
-        sl: widget.updatedValue,
+        sl: widget.updatedValue.value,
         tp: position!.tp,
       );
     }
@@ -67,105 +71,112 @@ class _ChartUpdatePositionWidgetState extends State<ChartUpdatePositionWidget> {
 
   @override
   Widget build(BuildContext context) {
-    type = widget.positionLine.positionType;
-    position = positionCubit.getPosition(widget.positionLine.positionId);
-    if (position != null) {
-      symbol = quotesCubit.getSymbol(position!.groupSymbol);
-      orderType = getPositionTypeByDirection(position!.direction);
-    }
-    if (position == null || symbol == null) return const SizedBox.shrink();
-    return Container(
-      decoration: BoxDecoration(
-        color: context.colorScheme.surfaceContainer,
-        borderRadius: MBorderRadius.set(all: 10.0),
-      ),
-      padding: const MPadding.set(vertical: 6.0),
-      margin: const MPadding.set(horizontal: 21.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
+    return ValueListenableBuilder<LineEntity>(
+      valueListenable: widget.positionLine,
+      builder: (context, positionLine, child) {
+        type = positionLine.positionType;
+        position = positionCubit.getPosition(positionLine.positionId);
+        if (position != null) {
+          symbol = quotesCubit.getSymbol(position!.groupSymbol);
+          orderType = getPositionTypeByDirection(position!.direction);
+        }
+        if (position == null || symbol == null) {
+          return const SizedBox.shrink();
+        }
+        return Container(
+          decoration: BoxDecoration(
+            color: context.colorScheme.surfaceContainer,
+            borderRadius: MBorderRadius.set(all: 10.0),
+          ),
+          padding: const MPadding.set(vertical: 6.0),
+          margin: const MPadding.set(horizontal: 21.0),
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.close,
-                size: 25.0,
-                color: context.colorScheme.onSurface,
-              ).addAction(
-                onTap: widget.onCancel,
-                padding: const MPadding.set(horizontal: 12.0),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.close,
+                    size: 25.0,
+                    color: context.colorScheme.onSurface,
+                  ).addAction(
+                    onTap: widget.onCancel,
+                    padding: const MPadding.set(horizontal: 12.0),
+                  ),
+                  if (positionLine.positionType == UpdatePosition.SL)
+                    MBouncingButton(
+                      width: 70,
+                      color: context.colorScheme.error,
+                      textColor: Colors.white,
+                      height: 30,
+                      bouncing: false,
+                      borderRadius: 8,
+                      textSize: FoontSize.font16,
+                      title: "SL",
+                    ),
+                  if (positionLine.positionType == UpdatePosition.TP)
+                    MBouncingButton(
+                      width: 70,
+                      bouncing: false,
+                      color: context.colorScheme.primary,
+                      textColor: Colors.white,
+                      height: 30,
+                      borderRadius: 8,
+                      textSize: FoontSize.font16,
+                      title: "TP",
+                    ),
+                ],
               ),
-              if (widget.positionLine.positionType == UpdatePosition.SL)
-                MBouncingButton(
-                  width: 70,
-                  color: context.colorScheme.error,
-                  textColor: Colors.white,
-                  height: 30,
-                  bouncing: false,
-                  borderRadius: 8,
-                  textSize: FoontSize.font16,
-                  title: context.tr.shortStopLoss,
-                ),
-              if (widget.positionLine.positionType == UpdatePosition.TP)
-                MBouncingButton(
-                  width: 70,
-                  bouncing: false,
-                  color: context.colorScheme.primary,
-                  textColor: Colors.white,
-                  height: 30,
-                  borderRadius: 8,
-                  textSize: FoontSize.font16,
-                  title: context.tr.shortTakeProfit,
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (positionLine.positionType == UpdatePosition.Price)
+                    MBouncingButton(
+                      width: 140,
+                      color: context.colorScheme.error,
+                      height: 32.0,
+                      borderRadius: 8,
+                      bouncing: false,
+                      textSize: FoontSize.font16,
+                      title: context.tr.closePosition,
+                      onTap: () {
+                        if (symbol!.isMarketClose) {
+                          MToast.showError(
+                            message: context.tr.marketCurrentlyClosed,
+                          );
+                        } else {
+                          execute();
+                        }
+                        widget.onFinish();
+                      },
+                    ).addPadding(vertical: 4.0),
+                  if (positionLine.positionType != UpdatePosition.Price)
+                    MBouncingButton(
+                      width: 70,
+                      color: context.colorScheme.surfaceBright,
+                      textColor: Colors.white,
+                      height: 30,
+                      borderRadius: 8,
+                      icon: Svgs.correctIcon,
+                      textSize: FoontSize.font16,
+                      onTap: () {
+                        if (symbol!.isMarketClose) {
+                          MToast.showError(
+                            message: context.tr.marketCurrentlyClosed,
+                          );
+                        } else {
+                          execute();
+                        }
+                        widget.onFinish();
+                      },
+                    ),
+                ],
+              ).addPadding(horizontal: 12.0),
             ],
           ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (widget.positionLine.positionType == UpdatePosition.Price)
-                MBouncingButton(
-                  width: 140,
-                  color: context.colorScheme.error,
-                  height: 32.0,
-                  borderRadius: 8,
-                  bouncing: false,
-                  textSize: FoontSize.font16,
-                  title: context.tr.closePosition,
-                  onTap: () {
-                    if (symbol!.isMarketClose) {
-                      MToast.showError(
-                        message: context.tr.marketCurrentlyClosed,
-                      );
-                    } else {
-                      execute();
-                    }
-                    widget.onFinish();
-                  },
-                ).addPadding(vertical: 4.0),
-              if (widget.positionLine.positionType != UpdatePosition.Price)
-                MBouncingButton(
-                  width: 70,
-                  color: context.colorScheme.surfaceBright,
-                  textColor: Colors.white,
-                  height: 30,
-                  borderRadius: 8,
-                  icon: Svgs.correctIcon,
-                  textSize: FoontSize.font16,
-                  onTap: () {
-                    if (symbol!.isMarketClose) {
-                      MToast.showError(
-                        message: context.tr.marketCurrentlyClosed,
-                      );
-                    } else {
-                      execute();
-                    }
-                    widget.onFinish();
-                  },
-                ),
-            ],
-          ).addPadding(horizontal: 12.0)
-        ],
-      ),
+        );
+      },
     );
   }
 }

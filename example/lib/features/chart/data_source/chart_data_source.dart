@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:candle_chart/entity/k_line_entity.dart';
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:example/core/consts/exports.dart';
 import 'package:example/core/framework/objectBox.dart';
 import 'package:example/core/framework/socket/socket.dart';
@@ -11,17 +12,22 @@ import 'package:example/features/symbols/models/symbol_entity.dart';
 abstract class ChartDataSource {
   void getCandles(GetCandlesRequest request);
 
-  int getTimeframeStart(int timestamp, String timeframe);
+  bool getTimeframeStart(int timestamp, int lastTime, String timeframe);
 
   void onData({
-    required Function(List<KLineEntity> items) onReceiveRequest,
+    required Function(List<KLineEntity> items, int offset) onReceiveRequest,
     required Function(String symbol, double ask) onAskUpdated,
     required Function(String symbol, double bid) onBidUpdated,
   });
 
   void close();
 
-  void setDefaultSymbol(ValueNotifier<SymbolEntity?> value);
+  void setDefaultSymbol({
+    required ValueNotifier<SymbolEntity?> value,
+    required Function(String symbol, double ask, double bid) onAskAndBidUpdated,
+  });
+
+  void setCandleTimeFormat(CandleTimeFormat frame);
 }
 
 @LazySingleton(as: ChartDataSource)
@@ -37,10 +43,14 @@ class QuotesDataSourceImp implements ChartDataSource {
   QuotesDataSourceImp(this.socket, this.objectBox);
 
   @override
-  void setDefaultSymbol(ValueNotifier<SymbolEntity?> value) {
+  void setDefaultSymbol({
+    required ValueNotifier<SymbolEntity?> value,
+    required Function(String symbol, double ask, double bid) onAskAndBidUpdated,
+  }) {
     currentSymbol = value;
     currentSymbol.addListener(() {
       if (currentSymbol.value != null) {
+        offset = 0;
         socket.sendRequest(
           event: SocketEvent.get_chart_data,
           data: GetCandlesRequest(
@@ -49,8 +59,19 @@ class QuotesDataSourceImp implements ChartDataSource {
             offset: offset,
           ).toJson(),
         );
+        onAskAndBidUpdated(
+          currentSymbol.value!.symbol,
+          currentSymbol.value!.ask,
+          currentSymbol.value!.bid,
+        );
+        updatedAt = DateTime(1990);
       }
     });
+  }
+
+  @override
+  void setCandleTimeFormat(CandleTimeFormat frame) {
+    timeFrame = frame.name;
   }
 
   @override
@@ -74,7 +95,7 @@ class QuotesDataSourceImp implements ChartDataSource {
 
   @override
   void onData({
-    required Function(List<KLineEntity> items) onReceiveRequest,
+    required Function(List<KLineEntity> items, int offset) onReceiveRequest,
     required Function(String symbol, double ask) onAskUpdated,
     required Function(String symbol, double bid) onBidUpdated,
   }) {
@@ -93,7 +114,7 @@ class QuotesDataSourceImp implements ChartDataSource {
               final candle = KLineEntity.fromString(item.toString());
               items.add(candle);
             }
-            onReceiveRequest(items);
+            onReceiveRequest(items, offset);
             updatedAt = DateTime.now().add(Duration(milliseconds: 100));
           }
         }
@@ -101,7 +122,7 @@ class QuotesDataSourceImp implements ChartDataSource {
       onUpdateSymbol: (data) async {
         if (data.contains('&')) {
           final values = data.split('&');
-          if (DateTime.now().difference(updatedAt).inMilliseconds >= 100) {
+          if (DateTime.now().difference(updatedAt).inMilliseconds >= 150) {
             final symbol = symbols[values[0]];
             if (symbol != null && currentSymbol.value?.symbol == symbol.name) {
               if (values.last == '1') {
@@ -116,7 +137,7 @@ class QuotesDataSourceImp implements ChartDataSource {
                 onBidUpdated(symbol.name, bid);
               }
             }
-            updatedAt = DateTime.now();
+            updatedAt = DateTime(1990);
           }
         }
       },
@@ -138,30 +159,28 @@ class QuotesDataSourceImp implements ChartDataSource {
   }
 
   @override
-  int getTimeframeStart(int timestampMs, String timeframe) {
-    int timestampMinutes = timestampMs ~/ 60000;
+  bool getTimeframeStart(int timestampSeconds, int lastTime, String timeframe) {
     switch (timeframe) {
       case "M1":
-        return timestampMinutes;
+        return timestampSeconds - lastTime > 60;
       case "M5":
-        return (timestampMinutes ~/ 5) * 5;
+        return timestampSeconds - lastTime > 300;
       case "M15":
-        return (timestampMinutes ~/ 15) * 15;
+        return timestampSeconds - lastTime > 900;
       case "M30":
-        return (timestampMinutes ~/ 30) * 30;
+        return timestampSeconds - lastTime > 1800;
       case "H1":
-        return (timestampMinutes ~/ 60) * 60;
+        return timestampSeconds - lastTime > 3600;
       case "H4":
-        return (timestampMinutes ~/ 240) * 240;
+        return timestampSeconds - lastTime > 14400;
       case "D1":
-        return (timestampMinutes ~/ 1440) * 1440;
+        return timestampSeconds - lastTime > 86400;
       case "W1":
-        return (timestampMinutes ~/ 10080) * 10080;
+        return timestampSeconds - lastTime > 604800;
       case "MN1":
-        return (timestampMinutes ~/ 43200) *
-            43200; // Approximate month (30 days)
+        return timestampSeconds - lastTime > 2592000;
       default:
-        return timestampMinutes;
+        return timestampSeconds - lastTime > 60;
     }
   }
 

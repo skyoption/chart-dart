@@ -8,7 +8,7 @@ import 'package:example/features/chart/models/requests/get_candles_request.dart'
 
 ///[ChartCubit]
 ///[Implementation]
-@injectable
+@lazySingleton
 class ChartCubit extends Cubit<FlowState> {
   final ChartDataSource dataSource;
   List<String> categories = [];
@@ -24,27 +24,34 @@ class ChartCubit extends Cubit<FlowState> {
   Future<void> init() async {
     offset = 0;
     dataSource.onData(
-      onAskUpdated: (symbol, ask) {
-        this.ask = ask;
-        emit(state.copyWith(data: Data.secure, type: StateType.none));
+      onAskUpdated: (symbol, value) {
+        updateAskAndBid(ask: value);
       },
       onBidUpdated: (symbol, bid) {
-        if (high == null || high! < bid) {
-          high = bid;
-        }
-        if (low == null || low! > bid) {
-          low = bid;
-        }
-        _updateCurrent(bid);
+        updateAskAndBid(bid: bid);
       },
-      onReceiveRequest: (values) {
-        if (values.isNotEmpty) _setItems(values);
+      onReceiveRequest: (values, offset) {
+        this.offset = offset;
+
+        if (values.isNotEmpty) _setAllCandles(values, offset);
       },
     );
   }
 
-  void _setItems(List<KLineEntity> values) {
+  void updateAskAndBid({double? ask, double? bid}) {
+    if (ask != null) {
+      this.ask = ask;
+      emit(state.copyWith(data: Data.secure, type: StateType.none));
+    }
+    if (bid != null) {
+      _updateNewOrCurrentCandle(bid);
+    }
+  }
+
+  void _setAllCandles(List<KLineEntity> values, int offset) {
     if (offset == 0) {
+      low = null;
+      high = null;
       items = values.toList();
     } else {
       items = [...values.reversed, ...items];
@@ -56,30 +63,34 @@ class ChartCubit extends Cubit<FlowState> {
     emit(state.copyWith(data: Data.secure, type: StateType.success));
   }
 
-  Future<void> _updateCurrent(double bid) async {
+  Future<void> _updateNewOrCurrentCandle(double value) async {
     if (items.isEmpty) return;
-    this.bid = bid;
+    bid = value;
+    if (high == null || high! < value) high = value;
+    if (low == null || low! > value) low = value;
     final lastTime = items.last.time;
-    int timestamp = DateTime.now().toUtc().millisecondsSinceEpoch;
-    final currentTime = dataSource.getTimeframeStart(timestamp, timeFrame.name);
-
-    if (lastTime == currentTime) {
+    int timestamp = DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000;
+    final isNewCandle = dataSource.getTimeframeStart(
+      timestamp,
+      lastTime,
+      timeFrame.name,
+    );
+    if (!isNewCandle) {
       final candle = items.last;
-      candle.close = bid;
+      candle.close = value;
       if (low != null) candle.low = low!;
       if (high != null) candle.high = high!;
     } else {
       low = null;
       high = null;
-      final dif = currentTime - lastTime;
       items.add(
         KLineEntity(
           vol: 0,
-          open: dif > 1 ? items.last.close : bid,
-          high: bid,
-          low: bid,
-          close: bid,
-          time: currentTime,
+          open: value,
+          high: value,
+          low: value,
+          close: value,
+          time: timestamp,
         ),
       );
     }
@@ -87,17 +98,17 @@ class ChartCubit extends Cubit<FlowState> {
   }
 
   void getCandles({
-    required CandleTimeFormat timeFrame,
+    CandleTimeFormat? timeFrame,
     required String symbol,
     int offset = 0,
   }) {
-    this.timeFrame = timeFrame;
+    if (timeFrame != null) this.timeFrame = timeFrame;
     this.symbol = symbol;
     this.offset = offset;
     dataSource.getCandles(
       GetCandlesRequest(
         symbol: symbol,
-        timeFrame: timeFrame.name,
+        timeFrame: this.timeFrame.name,
         offset: offset,
       ),
     );

@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:example/core/consts/exports.dart';
 import 'package:example/core/enums/symbol_sort.dart';
 import 'package:example/features/chart/data_source/chart_data_source.dart';
+import 'package:example/features/chart/logic/chart_cubit.dart';
 import 'package:example/features/settings/logic/trading_logs_cubit.dart';
 import 'package:example/features/symbols/data_source/quotes_data_source.dart';
 import 'package:example/features/symbols/models/symbol_entity.dart';
@@ -15,12 +17,27 @@ import 'package:example/main.dart';
 @singleton
 class QuotesCubit extends Cubit<FlowState> {
   final QuotesDataSource dataSource;
+  final ChartCubit chartCubit;
   final ChartDataSource chartDataSource;
   List<String> categories = [];
+  String symbol = '';
+  CandleTimeFormat timeframe = CandleTimeFormat.M15;
 
-  QuotesCubit(this.dataSource, this.chartDataSource)
+  QuotesCubit(this.dataSource, this.chartDataSource, this.chartCubit)
       : super(const FlowState()) {
-    chartDataSource.setDefaultSymbol(currentSymbol);
+    chartDataSource.setDefaultSymbol(
+      value: currentSymbol,
+      onAskAndBidUpdated: updateAskAndBid,
+    );
+  }
+
+  Future<void> updateAskAndBid(String symbol, double ask, double bid) async {
+    kPrint("updateAskAndBid: $symbol, $ask, $bid");
+    if (symbol != currentSymbol.value?.symbol) return;
+    chartCubit.ask = null;
+    chartCubit.bid = null;
+    await Future.delayed(const Duration(milliseconds: 300));
+    chartCubit.updateAskAndBid(ask: ask, bid: bid);
   }
 
   @override
@@ -66,11 +83,28 @@ class QuotesCubit extends Cubit<FlowState> {
     } else {
       symbols = noFilterSymbols.where((item) => item.sector == type).toList();
     }
-    if (currentSymbol.value != null) {
+    if (symbol.isNotEmpty) {
+      final item = getSymbol(symbol);
+      if (item != null) {
+        currentSymbol.value = item;
+      } else if (symbols.isNotEmpty) {
+        currentSymbol.value = symbols[0];
+      }
+    } else if (currentSymbol.value != null) {
       currentSymbol.value = getSymbol(currentSymbol.value!.symbol);
     } else if (symbols.isNotEmpty) {
       currentSymbol.value = symbols[0];
     }
+  }
+
+  void setTimeframe(CandleTimeFormat frame) {
+    timeframe = frame;
+    kPrint(timeframe);
+    chartDataSource.setCandleTimeFormat(timeframe);
+  }
+
+  void setSymbol(String symbol) {
+    this.symbol = symbol;
   }
 
   Future<void> init() async {
@@ -156,8 +190,7 @@ class QuotesCubit extends Cubit<FlowState> {
         );
 
       case SymbolSortCriteria.activeTrades:
-        final activeSymbols =
-            rootContext.context.read<PositionsCubit>().symbols;
+        final activeSymbols = SkyTrading.context.read<PositionsCubit>().symbols;
         activeSymbols.sort((a, b) => a.compareTo(b));
         symbols.sort((a, b) {
           // Check if symbols are in active positions

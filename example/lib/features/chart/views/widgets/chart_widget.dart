@@ -44,13 +44,10 @@ class ChartWidget extends StatefulWidget {
 }
 
 class UpdatedPosition {
-  final LineEntity item;
-  final double newValue;
+  ValueNotifier<LineEntity> item;
+  ValueNotifier<double> newValue;
 
-  UpdatedPosition({
-    required this.item,
-    required this.newValue,
-  });
+  UpdatedPosition({required this.item, required this.newValue});
 }
 
 class _ChartWidgetState extends State<ChartWidget> {
@@ -62,147 +59,178 @@ class _ChartWidgetState extends State<ChartWidget> {
   @override
   Widget build(BuildContext context) {
     final quotesCubit = context.read<QuotesCubit>();
-    return ValueListenableBuilder<SymbolEntity?>(
-      valueListenable: quotesCubit.currentSymbol,
-      builder: (context, symbol, child) {
-        if (symbol == null) return const SizedBox();
-        return FlowBuilder<PlatformSettingsCubit>(
-          builder: (context, state, platform) {
-            return Stack(
-              children: [
-                FlowBuilder<PositionsCubit>(
-                  buildWhenCubit: (cubit) => false,
-                  listener: (context, state, cubit) {
-                    if (state.type == StateType.delete) {
-                      widget.removePosition(state.data);
-                    } else {
-                      widget.updatePositions();
-                    }
-                  },
-                  builder: (context, state, cubit) {
-                    return FlowBuilder<OrdersCubit>(
-                      buildWhenCubit: (cubit) => false,
-                      listener: (context, state, cubit) {
-                        if (state.type == StateType.delete) {
-                          widget.removeOrder(state.data);
-                        } else {
-                          widget.updateOrders();
-                        }
-                      },
-                      builder: (context, state, cubit) {
-                        return FlowBuilder<ChartCubit>(
-                          buildWhenCubit: (cubit) {
-                            return cubit.state.type == StateType.success;
-                          },
-                          listener: (context, state, cubit) {
-                            _updateAskAndBid(quotesCubit, cubit, platform);
-                          },
-                          builder: (context, state, cubit) {
-                            return ValueListenableBuilder<GraphStyle>(
-                              valueListenable: widget.graphStyle,
-                              builder: (context, graphStyle, child) {
-                                return ValueListenableBuilder<bool>(
-                                  valueListenable: widget.hideGrid,
-                                  builder: (context, hideGrid, child) {
-                                    return KChartWidget(
-                                      key: widget.chartKey,
-                                      hideGrid: hideGrid,
-                                      graphStyle: graphStyle,
-                                      onUpdatePosition: onUpdatePosition,
-                                      onZoomingStart: (value) {
-                                        isResetZoom.value = !value;
-                                      },
-                                      onLoadMore: (value) {
-                                        _updateChart();
-                                      },
-                                      onGettingSettings: onGettingSettings,
-                                      chartStyle: ChartStyle(
-                                        iconSize: 30.0,
-                                        sizeText: 10.0,
-                                        rightPadding:
-                                            context.isLandscape ? 0.0 : 10.0,
-                                        areaLineWidth:
-                                            platform.settings.chartLineSize,
-                                      ),
-                                      chartColors: ChartColors(
-                                        bgColor: context.colorScheme.surface,
-                                        defaultTextColor:
-                                            context.colorScheme.onSurface,
-                                        maxColor: context.colorScheme.onSurface,
-                                        iconColor:
-                                            context.colorScheme.onSurface,
-                                        primary: context.colorScheme.primary,
-                                        optionsColor:
-                                            context.colorScheme.onSurface,
-                                        ask: platform.settings.askColor,
-                                        bid: platform.settings.bidColor,
-                                        lineChartColor:
-                                            platform.settings.chartThemeColor,
-                                        areaColor: platform.settings.areaColor,
-                                        stopLoss:
-                                            platform.settings.stopLossColor,
-                                        takeProfit:
-                                            platform.settings.takeProfitColor,
-                                        gridColor:
-                                            platform.settings.chartGridColor,
-                                      ),
-                                      fixedLength: 2,
-                                      timeFormat: TimeFormat.YEAR_MONTH_DAY,
-                                      mBaseHeight: context.height,
-                                    );
-                                  },
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return ValueListenableBuilder<SymbolEntity?>(
+          valueListenable: quotesCubit.currentSymbol,
+          builder: (context, symbol, child) {
+            if (symbol == null) return const SizedBox();
+            return FlowBuilder<PlatformSettingsCubit>(
+              builder: (context, state, platform) {
+                return Container(
+                  constraints: BoxConstraints(
+                    maxWidth: constraints.maxWidth,
+                    maxHeight: constraints.maxHeight,
+                  ),
+                  child: Stack(
+                    children: [
+                      FlowBuilder<PositionsCubit>(
+                        buildWhenCubit: (cubit) => false,
+                        listener: (context, state, cubit) {
+                          if (state.type == StateType.delete) {
+                            widget.removePosition(state.data);
+                          } else {
+                            widget.updatePositions();
+                          }
+                        },
+                        builder: (context, state, cubit) {
+                          return FlowBuilder<OrdersCubit>(
+                            buildWhenCubit: (cubit) => false,
+                            listener: (context, state, cubit) {
+                              if (state.type == StateType.delete) {
+                                widget.removeOrder(state.data);
+                              } else {
+                                widget.updateOrders();
+                              }
+                            },
+                            builder: (context, state, cubit) {
+                              return FlowBuilder<ChartCubit>(
+                                buildWhenCubit: (cubit) {
+                                  return cubit.state.type == StateType.success;
+                                },
+                                listener: (context, state, cubit) {
+                                  _updateAskAndBid(
+                                      quotesCubit, cubit, platform);
+                                },
+                                builder: (context, state, cubit) {
+                                  return ValueListenableBuilder<GraphStyle>(
+                                    valueListenable: widget.graphStyle,
+                                    builder: (context, graphStyle, child) {
+                                      return ValueListenableBuilder<bool>(
+                                        valueListenable: widget.hideGrid,
+                                        builder: (context, hideGrid, child) {
+                                          return Container(
+                                            constraints: BoxConstraints(
+                                              maxWidth: constraints.maxWidth,
+                                              maxHeight: constraints.maxHeight,
+                                            ),
+                                            child: KChartWidget(
+                                              key: widget.chartKey,
+                                              hideGrid: hideGrid,
+                                              graphStyle: graphStyle,
+                                              onUpdatePosition:
+                                                  onUpdatePosition,
+                                              onZoomingStart: (value) {
+                                                isResetZoom.value = !value;
+                                              },
+                                              onLoadMore: (value) {
+                                                if (value) _updateChart();
+                                              },
+                                              chartStyle: ChartStyle(
+                                                iconSize: 30.0,
+                                                sizeText: 10.0,
+                                                rightPadding:
+                                                    context.isLandscape
+                                                        ? 0.0
+                                                        : 10.0,
+                                                areaLineWidth: platform
+                                                    .settings.chartLineSize,
+                                              ),
+                                              chartColors: ChartColors(
+                                                bgColor:
+                                                    context.colorScheme.surface,
+                                                defaultTextColor: context
+                                                    .colorScheme.onSurface,
+                                                maxColor: context
+                                                    .colorScheme.onSurface,
+                                                iconColor: context
+                                                    .colorScheme.onSurface,
+                                                primary:
+                                                    context.colorScheme.primary,
+                                                optionsColor: context
+                                                    .colorScheme.onSurface,
+                                                ask: platform.settings.askColor,
+                                                bid: platform.settings.bidColor,
+                                                lineChartColor: platform
+                                                    .settings.chartThemeColor,
+                                                areaColor:
+                                                    platform.settings.areaColor,
+                                                stopLoss: platform
+                                                    .settings.stopLossColor,
+                                                takeProfit: platform
+                                                    .settings.takeProfitColor,
+                                                gridColor: platform
+                                                    .settings.chartGridColor,
+                                              ),
+                                              fixedLength: 2,
+                                              timeFormat:
+                                                  TimeFormat.YEAR_MONTH_DAY,
+                                              mBaseHeight:
+                                                  constraints.maxHeight,
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      ValueListenableBuilder(
+                        valueListenable: widget.showUpdatePosition,
+                        builder: (context, value, child) {
+                          if (position == null) {
+                            return const SizedBox.shrink();
+                          }
+                          return AnimatedPositioned(
+                            duration: const Duration(milliseconds: 300),
+                            bottom: value ? 0 : -1000,
+                            child: ChartUpdatePositionWidget(
+                              onCancel: () {
+                                widget.showUpdatePosition.value = false;
+                                widget.chartKey.currentState!
+                                    .addOrUpdateSLOrTPOrPosition(
+                                  position!.item.value,
                                 );
                               },
-                            );
-                          },
-                        );
-                      },
-                    );
-                  },
-                ),
-                ValueListenableBuilder(
-                  valueListenable: widget.showUpdatePosition,
-                  builder: (context, value, child) {
-                    if (position == null) {
-                      return const SizedBox.shrink();
-                    }
-                    return AnimatedPositioned(
-                      duration: const Duration(milliseconds: 300),
-                      bottom: value ? 0 : -1000,
-                      child: ChartUpdatePositionWidget(
-                        onCancel: () {
-                          widget.showUpdatePosition.value = false;
-                          widget.chartKey.currentState!
-                              .addOrUpdateSLOrTPOrPosition(position!.item);
+                              onFinish: () {
+                                position?.item.dispose();
+                                position?.newValue.dispose();
+                                position = null;
+                                widget.showUpdatePosition.value = false;
+                              },
+                              positionLine: position!.item,
+                              updatedValue: position!.newValue,
+                            ),
+                          );
                         },
-                        onFinish: () {
-                          widget.showUpdatePosition.value = false;
-                        },
-                        positionLine: position!.item,
-                        updatedValue: position!.newValue,
                       ),
-                    );
-                  },
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: ValueListenableBuilder<bool>(
-                    valueListenable: isResetZoom,
-                    builder: (context, value, child) {
-                      if (!value) return const SizedBox();
-                      return Padding(
-                        padding: const MPadding.set(top: 16.0),
-                        child: ResetZoomWidget(
-                          onReset: () {
-                            isResetZoom.value = false;
-                            widget.chartKey.currentState?.resetZoom();
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: ValueListenableBuilder<bool>(
+                          valueListenable: isResetZoom,
+                          builder: (context, value, child) {
+                            if (!value) return const SizedBox();
+                            return Padding(
+                              padding: const MPadding.set(top: 16.0),
+                              child: ResetZoomWidget(
+                                onReset: () {
+                                  isResetZoom.value = false;
+                                  widget.chartKey.currentState?.resetZoom();
+                                },
+                              ),
+                            ).addPadding(
+                                horizontal: context.isLandscape ? 12.0 : 21.0);
                           },
                         ),
-                      );
-                    },
-                  ).addPadding(horizontal: context.isLandscape ? 12.0 : 21.0),
-                ),
-              ],
+                      ),
+                    ],
+                  ),
+                );
+              },
             );
           },
         );
@@ -238,17 +266,6 @@ class _ChartWidgetState extends State<ChartWidget> {
     }
   }
 
-  void onGettingSettings(CandleTimeFormat frame, String symbol) {
-    if (symbol.isNotEmpty) {
-      final quotesCubit = context.read<QuotesCubit>();
-      final chartCubit = context.read<ChartCubit>();
-      chartCubit.setSettings(timeFrame: frame, symbol: symbol);
-      quotesCubit.currentSymbol.value = quotesCubit.getSymbol(symbol);
-      kPrint(frame);
-      widget.timeframe.value = frame;
-    }
-  }
-
   void _updateChart() {
     final chartCubit = context.read<ChartCubit>();
     final quotesCubit = context.read<QuotesCubit>();
@@ -262,7 +279,15 @@ class _ChartWidgetState extends State<ChartWidget> {
 
   void onUpdatePosition(LineEntity position, double newValue) {
     if (!position.isOrder) {
-      this.position = UpdatedPosition(item: position, newValue: newValue);
+      if (this.position != null) {
+        this.position?.item.value = position;
+        this.position?.newValue.value = newValue;
+      } else {
+        this.position = UpdatedPosition(
+          item: ValueNotifier(position),
+          newValue: ValueNotifier(newValue),
+        );
+      }
       widget.showUpdatePosition.value = true;
     }
   }
