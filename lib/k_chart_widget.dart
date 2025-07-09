@@ -894,7 +894,7 @@ class KChartWidgetState extends State<KChartWidget>
       if (mScrollX <= 0) {
         mScrollX = 0;
         if (widget.onLoadMore != null) {
-          widget.onLoadMore!(true);
+          widget.onLoadMore!(false);
         }
         _stopAnimation();
       } else if (mScrollX >= ChartPainter.maxScrollX) {
