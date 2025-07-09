@@ -882,7 +882,7 @@ class KChartWidgetState extends State<KChartWidget>
   }
 
   void goToEnd() {
-    mScrollX = ChartPainter.maxScrollX;
+    mScrollX = 0;
     _controller!.animateTo(mScrollX, duration: Duration(milliseconds: 100));
     notifyChanged();
   }
