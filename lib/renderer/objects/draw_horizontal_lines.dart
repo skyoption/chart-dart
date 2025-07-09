@@ -81,13 +81,17 @@ mixin DrawHorizontalLines on ChartDetails {
     if (horizontalLines.isEmpty) {
       return;
     }
+
     for (int i = 0; i < horizontalLines.length; i++) {
       double value = horizontalLines[i].value;
       if (mMainLowMinValue >= value) continue;
       double y = getMainY(value);
+      double strokeWidth = (horizontalLines[i].height / scaleX).clamp(1, 4.0);
       final pricePaint = Paint()
-        ..color = colorFromHex(horizontalLines[i].color!)!
-        ..strokeWidth = horizontalLines[i].height;
+        ..filterQuality = FilterQuality.high
+        ..isAntiAlias = true
+        ..strokeWidth = strokeWidth
+        ..color = colorFromHex(horizontalLines[i].color!)!;
 
       double startX = 0;
       final max = -mTranslateX + (mWidth + 20) / scaleX;

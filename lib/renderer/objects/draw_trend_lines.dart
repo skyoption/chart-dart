@@ -83,9 +83,9 @@ mixin DrawTrendLines on ChartDetails {
     }
 
     for (int i = 0; i < trendLines.length; i++) {
-      if (trendLines[i].drawAsBackground != isBackground) {
-        continue;
-      }
+      if (trendLines[i].drawAsBackground != isBackground ||
+          (mMainLowMinValue >= trendLines[i].value &&
+              mMainLowMinValue >= trendLines[i].value2)) continue;
 
       double x1 = getXFromTime(trendLines[i].datetime, data);
       double x2 = getXFromTime(trendLines[i].datetime2, data);
@@ -104,9 +104,12 @@ mixin DrawTrendLines on ChartDetails {
         y2 = getMainY(mMainHighMaxValue);
       }
 
+      double strokeWidth = (trendLines[i].height / scaleX).clamp(1, 4.0);
       final pricePaint = Paint()
-        ..color = colorFromHex(trendLines[i].color!)!
-        ..strokeWidth = trendLines[i].height;
+        ..filterQuality = FilterQuality.high
+        ..isAntiAlias = true
+        ..strokeWidth = strokeWidth
+        ..color = colorFromHex(trendLines[i].color!)!;
 
       if (trendLines[i].style == ObjectStyle.dash) {
         drawDashLine(

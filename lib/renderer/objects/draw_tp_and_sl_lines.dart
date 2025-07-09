@@ -67,18 +67,26 @@ mixin DrawTPAndSLLines on ChartDetails {
           y = getMainY(mMainHighMaxValue);
         }
         final pricePaint = Paint()
-          ..color = colorFromHex(tPAndSLLines[i].color!)!
-          ..strokeWidth = tPAndSLLines[i].height;
+          ..filterQuality = FilterQuality.high
+          ..isAntiAlias = true
+          ..strokeWidth = tPAndSLLines[i].height
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round
+          ..strokeJoin = StrokeJoin.round
+          ..color = colorFromHex(tPAndSLLines[i].color!)!;
 
         double startX = 0;
         final max = -mTranslateX + (mWidth + 20) / scaleX;
-        double space =
-            this.chartStyle.priceLineSpan + this.chartStyle.lineLength;
+        final strokeWidth =
+            (this.chartStyle.lineLength / scaleX).clamp(1, 10.0);
         if (tPAndSLLines[i].style == ObjectStyle.dash) {
           while (startX < max) {
-            canvas.drawLine(Offset(startX, y),
-                Offset(startX + this.chartStyle.lineLength, y), pricePaint);
-            startX += space;
+            canvas.drawLine(
+              Offset(startX, y),
+              Offset(startX + strokeWidth, y),
+              pricePaint,
+            );
+            startX += strokeWidth * 2;
           }
         } else {
           canvas.drawLine(Offset(startX, y), Offset(max, y), pricePaint);

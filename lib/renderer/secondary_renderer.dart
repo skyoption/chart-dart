@@ -60,6 +60,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
       chartStyle,
       chartColors,
       [indicator],
+      scaleX,
     );
   }
 
@@ -396,6 +397,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         lastX,
         curX,
         colorFromHex(curPoint.macdSignalValues![index].macd!.signalColor!)!,
+        scaleX: scaleX,
       );
     }
   }
@@ -416,6 +418,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         lastX,
         curX,
         colorFromHex(this.indicator.color!)!,
+        scaleX: scaleX,
       );
     }
   }
@@ -436,6 +439,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         lastX,
         curX,
         colorFromHex(this.indicator.color!)!,
+        scaleX: scaleX,
       );
     }
   }
@@ -456,6 +460,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         lastX,
         curX,
         colorFromHex(this.indicator.color!)!,
+        scaleX: scaleX,
       );
     }
   }
@@ -476,6 +481,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         lastX,
         curX,
         colorFromHex(this.indicator.color!)!,
+        scaleX: scaleX,
       );
     }
   }
@@ -496,6 +502,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         lastX,
         curX,
         colorFromHex(this.indicator.color!)!,
+        scaleX: scaleX,
       );
     }
   }
@@ -516,6 +523,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         lastX,
         curX,
         colorFromHex(this.indicator.color!)!,
+        scaleX: scaleX,
       );
     }
   }
@@ -538,6 +546,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         lastX,
         curX,
         colorFromHex(this.indicator.color!)!,
+        scaleX: scaleX,
       );
     }
   }
@@ -558,6 +567,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         lastX,
         curX,
         colorFromHex(curPoint.stochasticValues![index].stochastic!.mainColor!)!,
+        scaleX: scaleX,
       );
       drawLine(
         lastPoint.stochasticValues?[index].dValue,
@@ -567,6 +577,7 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         curX,
         colorFromHex(
             curPoint.stochasticValues![index].stochastic!.signalColor!)!,
+        scaleX: scaleX,
       );
     }
   }
@@ -599,7 +610,8 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
           0,
           chartRect.rWidth,
           colorFromHex(this.indicator.levelsColor!)!,
-          strokeWidth: 0.4,
+          baseStrokeWidth: 0.4,
+          scaleX: scaleX,
         );
       }
     }

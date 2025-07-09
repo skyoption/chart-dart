@@ -23,16 +23,22 @@ abstract class BaseChartRenderer<T> {
   final ChartStyle chartStyle;
   Paint chartPaint = Paint()
     ..isAntiAlias = true
+    ..strokeCap = StrokeCap.square
+    ..strokeJoin = StrokeJoin.miter
     ..filterQuality = FilterQuality.high
     ..strokeWidth = 1.0
     ..color = Colors.red;
   Paint gridPaint = Paint()
     ..isAntiAlias = true
+    ..strokeCap = StrokeCap.square
+    ..strokeJoin = StrokeJoin.miter
     ..filterQuality = FilterQuality.high
     ..strokeWidth = 0.21
-    ..color = Color(0xff4c5c74);
+    ..color = Color(0xff0A2B34);
   Paint darkPaint = Paint()
     ..isAntiAlias = true
+    ..strokeCap = StrokeCap.square
+    ..strokeJoin = StrokeJoin.miter
     ..color = Colors.black
     ..strokeWidth = 0.3
     ..filterQuality = FilterQuality.high;
@@ -141,12 +147,14 @@ abstract class BaseChartRenderer<T> {
     double curX,
     Color color, {
     ObjectStyle lineStyle = ObjectStyle.normal,
-    double strokeWidth = 1.0,
+    double baseStrokeWidth = 1.0,
+    double scaleX = 1.0,
     bool isDot = false,
   }) {
     if (lastPrice == null || curPrice == null) {
       return;
     }
+    double strokeWidth = (baseStrokeWidth / scaleX).clamp(0.2, 4.0);
     _drawLine(
       lastPrice,
       curPrice,
@@ -167,11 +175,13 @@ abstract class BaseChartRenderer<T> {
     double lastX,
     double curX,
     Color color, {
-    double strokeWidth = 1.0,
+    double baseStrokeWidth = 1.0,
+    double scaleX = 1.0,
   }) {
     if (lastPrice == null || curPrice == null) {
       return;
     }
+    double strokeWidth = (baseStrokeWidth / scaleX).clamp(0.2, 4.0);
     _drawHorizontalDashLine(
       lastPrice,
       curPrice,
@@ -190,11 +200,13 @@ abstract class BaseChartRenderer<T> {
     double lastX,
     double curX,
     Color color, {
-    double strokeWidth = 1.0,
+    double baseStrokeWidth = 1.0,
+    double scaleX = 1.0,
   }) {
     if (lastPrice == null || curPrice == null) {
       return;
     }
+    double strokeWidth = (baseStrokeWidth / scaleX).clamp(0.2, 4.0);
     _drawHDashLine(
       lastPrice,
       curPrice,
@@ -213,11 +225,13 @@ abstract class BaseChartRenderer<T> {
     double lastX,
     double curX,
     Color color, {
-    double strokeWidth = 1.0,
+    double baseStrokeWidth = 1.0,
+    double scaleX = 1.0,
   }) {
     if (lastPrice == null || curPrice == null) {
       return;
     }
+    double strokeWidth = (baseStrokeWidth / scaleX).clamp(1, 4.0);
     _drawVerticalDashLine(
       lastPrice,
       curPrice,

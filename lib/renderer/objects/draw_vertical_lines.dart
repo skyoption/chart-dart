@@ -42,10 +42,12 @@ mixin DrawVerticalLines on ChartDetails {
     }
     for (int i = 0; i < verticalLines.length; i++) {
       double x = getXFromTime(verticalLines[i].datetime, data);
-
+      double strokeWidth = (verticalLines[i].height / scaleX).clamp(1, 4.0);
       final pricePaint = Paint()
-        ..color = colorFromHex(verticalLines[i].color!)!
-        ..strokeWidth = verticalLines[i].height;
+        ..filterQuality = FilterQuality.high
+        ..isAntiAlias = true
+        ..strokeWidth = strokeWidth
+        ..color = colorFromHex(verticalLines[i].color!)!;
 
       if (verticalLines[i].style == ObjectStyle.dash) {
         double startY = this.chartStyle.topPadding;

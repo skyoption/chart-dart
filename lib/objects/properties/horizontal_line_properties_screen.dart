@@ -129,15 +129,15 @@ class _HorizontalLinePropertiesScreenState
               title: context.tr.symbol,
               subTitle: object.symbol.toUpperCase(),
               margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
+              subTitleColor: Colors.grey.withAlpha(80),
               onTap: () {},
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
             PropertiesItemWidget(
               title: context.tr.timeframe,
               subTitle: object.frame.name,
               margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
+              subTitleColor: Colors.grey.withAlpha(80),
               onTap: () {},
             ),
             ObjectStyleWidget(

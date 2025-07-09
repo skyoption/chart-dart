@@ -101,12 +101,15 @@ mixin DrawRectangleLines on ChartDetails {
       } else if (mMainHighMaxValue <= rectangles[i].value2) {
         y2 = getMainY(mMainHighMaxValue);
       }
-
-      final pricePaint = Paint()..strokeWidth = rectangles[i].height;
+      double strokeWidth = (rectangles[i].height / scaleX).clamp(1, 4.0);
+      final pricePaint = Paint()
+        ..filterQuality = FilterQuality.high
+        ..isAntiAlias = true
+        ..strokeWidth = strokeWidth;
 
       if (rectangles[i].isFill) {
         pricePaint.color = colorFromHex(rectangles[i].color!)!
-            .withOpacity(rectangles[i].drawAsBackground ? 1.0 : 0.8);
+            .withAlpha(rectangles[i].drawAsBackground ? 100 : 80);
         canvas.drawRect(
           Rect.fromLTRB(x1, y1, x2, y2),
           pricePaint,

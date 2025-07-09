@@ -1,5 +1,9 @@
+import 'dart:ui';
+
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/renderer/rects/render_rect.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
@@ -67,13 +71,17 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       chartStyle,
       chartColors,
       indicators,
+      scaleX,
     );
 
     mCandleWidth = this.chartStyle.candleWidth;
     mCandleLineWidth = this.chartStyle.candleLineWidth;
     mLinePaint = Paint()
       ..isAntiAlias = true
+      ..filterQuality = FilterQuality.high
       ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.square
+      ..strokeJoin = StrokeJoin.miter
       ..color = this.chartColors.lineChartColor;
     _contentRect = Rect.fromLTRB(
       chartRect.left,
@@ -144,8 +152,14 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   Path? mLinePath, mLineFillPath;
   Paint mLineFillPaint = Paint()
     ..style = PaintingStyle.fill
-    ..isAntiAlias = true;
+    ..isAntiAlias = true
+    ..filterQuality = FilterQuality.high;
 
+  /// Draws a polyline chart (line or area chart)
+  ///
+  /// This method ensures:
+  /// - Consistent stroke width across zoom levels (no scaling by scaleX)
+  /// - Smooth, even thickness everywhere (StrokeCap.round, StrokeJoin.round)
   void drawPolyline(
     double lastPrice,
     double curPrice,
@@ -153,13 +167,21 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     double lastX,
     double curX,
   ) {
-    if (graphStyle == GraphStyle.area) {
-      mLinePath ??= Path();
-      if (lastX == curX) lastX = 0;
-      mLinePath!.moveTo(lastX, getY(lastPrice));
-      mLinePath!.cubicTo((lastX + curX) / 2, getY(lastPrice),
-          (lastX + curX) / 2, getY(curPrice), curX, getY(curPrice));
+    double baseWidth = chartStyle.areaLineWidth; // e.g., 2.0
+    double strokeWidth = (baseWidth / scaleX).clamp(0.7, 4.0);
+    mLinePath ??= Path();
+    if (lastX == curX) lastX = 0;
+    mLinePath!.moveTo(lastX, getY(lastPrice));
+    mLinePath!.cubicTo(
+      (lastX + curX) / 2,
+      getY(lastPrice),
+      (lastX + curX) / 2,
+      getY(curPrice),
+      curX,
+      getY(curPrice),
+    );
 
+    if (graphStyle == GraphStyle.area) {
       mLineFillShader ??= LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
@@ -173,46 +195,25 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       mLineFillPaint..shader = mLineFillShader;
 
       mLineFillPath ??= Path();
-
       mLineFillPath!.moveTo(lastX, chartRect.height + chartRect.top);
       mLineFillPath!.lineTo(lastX, getY(lastPrice));
-      mLineFillPath!.cubicTo((lastX + curX) / 2, getY(lastPrice),
-          (lastX + curX) / 2, getY(curPrice), curX, getY(curPrice));
-      mLineFillPath!.lineTo(curX, chartRect.height + chartRect.top);
-      mLineFillPath!.close();
-
-      canvas.drawPath(mLineFillPath!, mLineFillPaint);
-      mLineFillPath!.reset();
-
-      canvas.drawPath(
-        mLinePath!,
-        mLinePaint
-          ..strokeWidth = (chartStyle.areaLineWidth / scaleX).clamp(0.1, 5.0),
+      mLineFillPath!.cubicTo(
+        (lastX + curX) / 2,
+        getY(lastPrice),
+        (lastX + curX) / 2,
+        getY(curPrice),
+        curX,
+        getY(curPrice),
       );
-      mLinePath!.reset();
-    } else {
-      mLinePath ??= Path();
-      if (lastX == curX) lastX = 0;
-      mLinePath!.moveTo(lastX, getY(lastPrice));
-      mLinePath!.cubicTo((lastX + curX) / 2, getY(lastPrice),
-          (lastX + curX) / 2, getY(curPrice), curX, getY(curPrice));
-
-      mLineFillPath ??= Path();
-
-      mLineFillPath!.moveTo(lastX, chartRect.height + chartRect.top);
       mLineFillPath!.lineTo(curX, chartRect.height + chartRect.top);
       mLineFillPath!.close();
 
       canvas.drawPath(mLineFillPath!, mLineFillPaint);
       mLineFillPath!.reset();
-
-      canvas.drawPath(
-          mLinePath!,
-          mLinePaint
-            ..strokeWidth =
-                (chartStyle.areaLineWidth / scaleX).clamp(0.1, 5.0));
-      mLinePath!.reset();
     }
+    mLinePaint..strokeWidth = strokeWidth;
+    canvas.drawPath(mLinePath!, mLinePaint);
+    mLinePath!.reset();
   }
 
   void drawCandle(CandleEntity curPoint, Canvas canvas, double curX) {
@@ -398,7 +399,7 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
   final ChartStyle chartStyle;
   final ChartColors chartColors;
   final List<IndicatorEntity> indicators;
-
+  final double scaleX;
   SubMainRenderer(
     Rect mainRect,
     double maxValue,
@@ -408,6 +409,7 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
     this.chartStyle,
     this.chartColors,
     this.indicators,
+    this.scaleX,
   ) : super(
           chartRect: mainRect,
           maxValue: maxValue,
@@ -599,7 +601,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           curX,
           colorFromHex(curPoint.maEmaValues![i].color!)!,
           lineStyle: curPoint.maEmaValues![i].style,
-          strokeWidth: curPoint.maEmaValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.maEmaValues![i].strokeWidth,
+          scaleX: scaleX,
         );
       }
     }
@@ -628,7 +631,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           curX,
           colorFromHex(curPoint.maLwmaValues![i].color!)!,
           lineStyle: curPoint.maLwmaValues![i].style,
-          strokeWidth: curPoint.maLwmaValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.maLwmaValues![i].strokeWidth,
+          scaleX: scaleX,
         );
       }
     }
@@ -657,7 +661,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           curX,
           colorFromHex(curPoint.maSmaValues![i].color!)!,
           lineStyle: curPoint.maSmaValues![i].style,
-          strokeWidth: curPoint.maSmaValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.maSmaValues![i].strokeWidth,
+          scaleX: scaleX,
         );
       }
     }
@@ -686,7 +691,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           curX,
           colorFromHex(curPoint.maSmmaValues![i].color!)!,
           lineStyle: curPoint.maSmmaValues![i].style,
-          strokeWidth: curPoint.maSmmaValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.maSmmaValues![i].strokeWidth,
+          scaleX: scaleX,
         );
       }
     }
@@ -712,7 +718,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           curX,
           colorFromHex(curPoint.parabolicValues![i].color!)!,
           lineStyle: curPoint.parabolicValues![i].style,
-          strokeWidth: 4.0,
+          baseStrokeWidth: 4.0,
+          scaleX: scaleX,
           isDot: true,
         );
       }
@@ -750,7 +757,7 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
         ]);
         drawRect(
           [...senkouSpanAOffsets, ...senkouSpanBOffsets],
-          Colors.green.withOpacity(0.15),
+          Colors.green.withAlpha(20),
           canvas,
         );
       }
@@ -768,7 +775,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           curX,
           colorFromHex(curPoint.ichimokuValues![i].ichimoku!.tenkanSenColor!)!,
           lineStyle: curPoint.ichimokuValues![i].style,
-          strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+          scaleX: scaleX,
         );
         drawLine(
           lastPoint.ichimokuValues?[i].chikouSpan,
@@ -778,7 +786,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           curX,
           colorFromHex(curPoint.ichimokuValues![i].ichimoku!.chikouSpanColor!)!,
           lineStyle: curPoint.ichimokuValues![i].style,
-          strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+          scaleX: scaleX,
         );
         drawLine(
           lastPoint.ichimokuValues?[i].kijunSen,
@@ -788,7 +797,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           curX,
           colorFromHex(curPoint.ichimokuValues![i].ichimoku!.kijuSenColor!)!,
           lineStyle: curPoint.ichimokuValues![i].style,
-          strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+          scaleX: scaleX,
         );
 
         ///--
@@ -811,7 +821,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
             lastX,
             lastX,
             color,
-            strokeWidth: 0.5,
+            baseStrokeWidth: 0.5,
+            scaleX: scaleX,
           );
         }
 
@@ -823,7 +834,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           curX,
           colorFromHex(curPoint.ichimokuValues![i].ichimoku!.upKumoColor!)!,
           lineStyle: curPoint.ichimokuValues![i].style,
-          strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+          scaleX: scaleX,
         );
 
         drawLine(
@@ -834,7 +846,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           curX,
           colorFromHex(curPoint.ichimokuValues![i].ichimoku!.downKumoColor!)!,
           lineStyle: curPoint.ichimokuValues![i].style,
-          strokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.ichimokuValues![i].strokeWidth,
+          scaleX: scaleX,
         );
       }
     }
@@ -862,7 +875,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           colorFromHex(curPoint.envelopsEmaValues![i].color!)!,
-          strokeWidth: curPoint.envelopsEmaValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.envelopsEmaValues![i].strokeWidth,
+          scaleX: scaleX,
         );
       }
 
@@ -877,7 +891,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           colorFromHex(curPoint.envelopsEmaValues![i].secondColor!)!,
-          strokeWidth: curPoint.envelopsEmaValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.envelopsEmaValues![i].strokeWidth,
+          scaleX: scaleX,
         );
       }
     }
@@ -905,7 +920,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           colorFromHex(curPoint.envelopsSmaValues![i].color!)!,
-          strokeWidth: curPoint.envelopsSmaValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.envelopsSmaValues![i].strokeWidth,
+          scaleX: scaleX,
         );
       }
 
@@ -919,8 +935,9 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas,
           lastX,
           curX,
-          strokeWidth: curPoint.envelopsSmaValues![i].strokeWidth,
           colorFromHex(curPoint.envelopsSmaValues![i].secondColor!)!,
+          baseStrokeWidth: curPoint.envelopsSmaValues![i].strokeWidth,
+          scaleX: scaleX,
         );
       }
     }
@@ -948,7 +965,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           colorFromHex(curPoint.envelopsSmmaValues![i].color!)!,
-          strokeWidth: curPoint.envelopsSmmaValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.envelopsSmmaValues![i].strokeWidth,
+          scaleX: scaleX,
         );
       }
 
@@ -963,7 +981,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           colorFromHex(curPoint.envelopsSmmaValues![i].secondColor!)!,
-          strokeWidth: curPoint.envelopsSmmaValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.envelopsSmmaValues![i].strokeWidth,
+          scaleX: scaleX,
         );
       }
     }
@@ -990,8 +1009,9 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           canvas,
           lastX,
           curX,
-          strokeWidth: curPoint.envelopsLwmaValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.envelopsLwmaValues![i].strokeWidth,
           colorFromHex(curPoint.envelopsLwmaValues![i].color!)!,
+          scaleX: scaleX,
         );
       }
 
@@ -1006,7 +1026,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           colorFromHex(curPoint.envelopsLwmaValues![i].secondColor!)!,
-          strokeWidth: curPoint.envelopsLwmaValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.envelopsLwmaValues![i].strokeWidth,
+          scaleX: scaleX,
         );
       }
     }
@@ -1033,7 +1054,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           this.chartColors.ma10Color,
-          strokeWidth: curPoint.bollValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.bollValues![i].strokeWidth,
+          scaleX: scaleX,
         );
       }
       if ((lastPoint.bollValues?.length ?? 0) - 1 >= i &&
@@ -1046,7 +1068,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           colorFromHex(curPoint.bollValues![i].color!)!,
-          strokeWidth: curPoint.bollValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.bollValues![i].strokeWidth,
+          scaleX: scaleX,
         );
       }
       if ((lastPoint.bollValues?.length ?? 0) - 1 >= i &&
@@ -1059,7 +1082,8 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
           lastX,
           curX,
           this.chartColors.ma30Color,
-          strokeWidth: curPoint.bollValues![i].strokeWidth,
+          baseStrokeWidth: curPoint.bollValues![i].strokeWidth,
+          scaleX: scaleX,
         );
       }
     }
