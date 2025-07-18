@@ -6,6 +6,7 @@ import 'package:example/features/chart/views/widgets/chart_options_widget.dart';
 import 'package:example/features/chart/views/widgets/chart_widget.dart';
 import 'package:example/features/chart/views/widgets/choose_symbol_widget.dart';
 import 'package:example/features/chart/views/widgets/choose_timeframe_widget.dart';
+import 'package:example/features/chart/views/widgets/cursor_widget.dart';
 import 'package:example/features/chart/views/widgets/symbol_options_widget.dart';
 import 'package:example/features/chart/views/widgets/zoom_widget.dart';
 import 'package:example/features/settings/logic/platform_settings_cubit.dart';
@@ -148,6 +149,9 @@ class _ChartScreenState extends State<ChartScreen> {
                     children: [
                       ChartOptionsWidget(
                         hideGrid: hideGrid,
+                        onCursor: (cursor) {
+                          key.currentState?.setCursor(cursor);
+                        },
                         openObjects: () {
                           key.currentState?.openObjects();
                         },
@@ -176,6 +180,7 @@ class _ChartScreenState extends State<ChartScreen> {
                           },
                         ),
                       ),
+
                       FullSizeWidget(
                         onGesture: () {
                           isFullscreen.value = !isFullscreen.value;

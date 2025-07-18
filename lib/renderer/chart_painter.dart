@@ -3,6 +3,7 @@ import 'dart:async' show StreamSink;
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
+import 'package:candle_chart/renderer/objects/draw_cursor_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_rectangle_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_tp_and_sl_lines.dart';
@@ -49,6 +50,7 @@ class ChartPainter extends BaseChartPainter
         DrawRectangleLines,
         UpdatePointPosition,
         DrawTPAndSLLines,
+        DrawCursorLines,
         ChartCalc {
   static get maxScrollX => BaseChartPainter.maxScrollX;
   late BaseChartRenderer mMainRenderer;
@@ -323,6 +325,7 @@ class ChartPainter extends BaseChartPainter
 
     drawHorizontalLines(canvas, size, false);
     drawTPAndSLLines(canvas, size, false);
+    drawCursorLines(canvas, size, data ?? []);
     drawVerticalLines(canvas, size, false, data ?? []);
     drawTrendLines(canvas, size, false, data ?? []);
     drawRectangles(canvas, size, false, data ?? []);

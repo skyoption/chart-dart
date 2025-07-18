@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
+import 'package:candle_chart/renderer/objects/draw_cursor_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_rectangle_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_tp_and_sl_lines.dart';
@@ -26,6 +27,7 @@ abstract class BaseChartPainter extends CustomPainter
         DrawTrendLines,
         DrawRectangleLines,
         DrawVerticalLines,
+        DrawCursorLines,
         DrawTPAndSLLines {
   static double maxScrollX = 0.0;
   List<KLineEntity>? data; // data of chart
@@ -159,6 +161,7 @@ abstract class BaseChartPainter extends CustomPainter
       drawMaxAndMin(canvas);
       drawHorizontalLinesTitles(canvas, size);
       drawTPAndSLTitles(canvas, size);
+      drawCursorTitles(canvas, size, data!);
       drawPositionsAndAskBidLines(canvas);
       if (this.chartStyle.isLongFocus &&
           (isLongPress == true ||

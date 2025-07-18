@@ -19,6 +19,7 @@ mixin Objects {
     ];
   }
 
+  ObjectEntity? cursor;
   List<ObjectEntity> horizontalLines = [];
   List<ObjectEntity> tPAndSLLines = [];
   List<ObjectEntity> verticalLines = [];

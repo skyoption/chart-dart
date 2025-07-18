@@ -154,7 +154,7 @@ class KChartWidgetState extends State<KChartWidget>
   ObjectEntity? object;
   double _lastScaleX = 1.0;
   bool isScale = false, isDrag = false, isLongPress = false, isOnTap = false;
-
+  bool isCursor = false;
   Random rand = Random();
   int pointerCount = 0;
 
@@ -178,6 +178,30 @@ class KChartWidgetState extends State<KChartWidget>
         ),
       ),
     );
+  }
+
+  void setCursor(bool cursor) {
+    isCursor = cursor;
+    if (isCursor) {
+      _painter!.addCursorOffset(
+        ObjectEntity(
+          type: ObjectType.Cursor,
+          currentEditIndex: -1,
+          value: _painter!.mMainHighMaxValue / 2,
+          dy1: _painter!.getMainY(_painter!.mMainHighMaxValue / 2),
+          dx1: _painter!.getX(300),
+          color: colorToHex(widget.chartColors.cursorColor),
+          height: 0.7,
+          style: ObjectStyle.dash,
+        ),
+        Offset(200, 300),
+        lineCandles,
+      );
+    } else {
+      _tapPosition = null;
+      chartProperties.cursor = null;
+    }
+    notifyChanged();
   }
 
   Future<void> setLoadedObjects() async {
@@ -288,18 +312,22 @@ class KChartWidgetState extends State<KChartWidget>
   Widget build(BuildContext context) {
     double mBaseHeight = widget.mBaseHeight ?? height * 0.7;
     Map<Type, GestureRecognizerFactory<GestureRecognizer>> gestures = {};
-    if (objectType != null) {
-      if (!bottomSheetShown) {
-        if (objectEditable) {
-          gestures[PanGestureRecognizer] = panUpdateGestureRecognizer();
-          gestures[TapGestureRecognizer] = tapGestureRecognizer();
-        } else {
-          gestures[PanGestureRecognizer] = panFirstGestureRecognizer();
-        }
-      }
+    if (isCursor) {
+      gestures[PanGestureRecognizer] = panUpdateGestureRecognizer();
     } else {
-      gestures[LongPressGestureRecognizer] = longPressRecognizer();
-      gestures[HorizontalDragGestureRecognizer] = horizontalRecognizer();
+      if (objectType != null) {
+        if (!bottomSheetShown) {
+          if (objectEditable) {
+            gestures[PanGestureRecognizer] = panUpdateGestureRecognizer();
+            gestures[TapGestureRecognizer] = tapGestureRecognizer();
+          } else {
+            gestures[PanGestureRecognizer] = panFirstGestureRecognizer();
+          }
+        }
+      } else {
+        gestures[LongPressGestureRecognizer] = longPressRecognizer();
+        gestures[HorizontalDragGestureRecognizer] = horizontalRecognizer();
+      }
     }
 
     if (lineCandles.isEmpty) {
@@ -353,6 +381,7 @@ class KChartWidgetState extends State<KChartWidget>
               children: <Widget>[
                 XGestureDetector(
                   onScaleUpdate: (event) {
+                    if (isCursor) return;
                     if (!objectEditable) {
                       pointerCount = 2;
                       if (isDrag || isLongPress) return;
@@ -367,6 +396,7 @@ class KChartWidgetState extends State<KChartWidget>
                     }
                   },
                   onScaleEnd: () {
+                    if (isCursor) return;
                     if (!objectEditable) {
                       pointerCount = 1;
                       isScale = false;
@@ -374,6 +404,7 @@ class KChartWidgetState extends State<KChartWidget>
                     }
                   },
                   onScaleStart: (initialFocusPoint) {
+                    if (isCursor) return;
                     if (!objectEditable) {
                       pointerCount = 2;
                       isScale = true;
@@ -396,18 +427,21 @@ class KChartWidgetState extends State<KChartWidget>
                   width: 40.0,
                   child: GestureDetector(
                     onScaleStart: (details) {
+                      if (isCursor) return;
                       if (!objectEditable) {
                         isScale = true;
                         pointerCount = details.pointerCount;
                       }
                     },
                     onScaleEnd: (details) {
+                      if (isCursor) return;
                       if (!objectEditable) {
                         pointerCount = details.pointerCount;
                         isScale = false;
                       }
                     },
                     onScaleUpdate: (details) {
+                      if (isCursor) return;
                       if (!objectEditable) {
                         if (!isScale) return;
                         if (pointerCount == 2) {
@@ -689,7 +723,12 @@ class KChartWidgetState extends State<KChartWidget>
         () => PanGestureRecognizer(), (PanGestureRecognizer instance) {
       instance
         ..onUpdate = (details) {
-          if (object != null) {
+          if (isCursor) {
+            _tapPosition = details.localPosition;
+            _painter!.updateCursorOffset(details.localPosition, lineCandles);
+            notifyChanged();
+            return;
+          } else if (object != null) {
             _tapPosition = details.localPosition;
             if (object!.type == ObjectType.Trend) {
               if (isSecondOffset) {
@@ -735,7 +774,11 @@ class KChartWidgetState extends State<KChartWidget>
           }
         }
         ..onEnd = (DragEndDetails details) async {
-          if (object != null) {
+          if (isCursor) {
+            _painter!.updateCursorOffset(details.localPosition, lineCandles);
+            notifyChanged();
+            return;
+          } else if (object != null) {
             object!.currentEditIndex = -1;
             if (object!.type == ObjectType.Trend) {
               if (isSecondOffset) {

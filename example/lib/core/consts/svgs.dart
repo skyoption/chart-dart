@@ -8,6 +8,7 @@ class Svgs {
   static const sell = 'sell-icon';
   static const topDown = 'top-down-icon';
   static const buy = 'buy-icon';
+  static const cursor = 'cursor-icon';
   static const equity = 'equity-icon';
   static const deposit = 'deposit-icon';
   static const edit = 'edit-icon';

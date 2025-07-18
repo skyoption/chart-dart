@@ -12,6 +12,7 @@ import 'package:flutter/material.dart' show Color, Colors;
 class ChartColors {
   /// the background color of base chart
   Color bgColor;
+  Color cursorColor;
 
   Color kLineColor;
 
@@ -94,6 +95,7 @@ class ChartColors {
   /// constructor chart color
   ChartColors({
     this.bgColor = const Color(0xffffffff),
+    this.cursorColor = const Color.fromARGB(255, 194, 195, 197),
     this.lineChartColor = Colors.blue,
     this.areaColor = Colors.blue,
     this.ask = Colors.red,

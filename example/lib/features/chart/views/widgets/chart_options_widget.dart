@@ -8,6 +8,7 @@ class ChartOptionsWidget extends StatefulWidget {
   final Function(GraphStyle graphStyle) onChangeStyle;
   final Function openObjects;
   final Function openFunctions;
+  final Function(bool cursor) onCursor;
 
   const ChartOptionsWidget({
     super.key,
@@ -16,6 +17,7 @@ class ChartOptionsWidget extends StatefulWidget {
     required this.onChangeStyle,
     required this.openObjects,
     required this.openFunctions,
+    required this.onCursor,
   });
 
   @override
@@ -25,6 +27,7 @@ class ChartOptionsWidget extends StatefulWidget {
 class _ChartOptionsWidgetState extends State<ChartOptionsWidget> {
   final controller = ExpansionTileController();
   late final ValueNotifier<bool> isExpanded;
+  bool cursor = false;
 
   @override
   void initState() {
@@ -172,6 +175,23 @@ class _ChartOptionsWidgetState extends State<ChartOptionsWidget> {
             isExpanded.value = false;
             controller.collapse();
             widget.openObjects();
+          },
+        ),
+        MSvg(
+          name: Svgs.cursor,
+          width: 24.0,
+          height: 24.0,
+          color: context.colorScheme.scrim,
+        ).addAction(
+          padding: MPadding.set(
+            bottom: context.isLandscape ? 0.0 : 21.0,
+            start: context.isLandscape ? 16.0 : 0.0,
+          ),
+          onTap: () {
+            cursor = !cursor;
+            isExpanded.value = false;
+            controller.collapse();
+            widget.onCursor(cursor);
           },
         ),
         StyleWidget(
