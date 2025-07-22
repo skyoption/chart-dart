@@ -77,7 +77,7 @@ class KChartWidget extends StatefulWidget {
   final bool isTapShowInfoDialog;
   final bool hideGrid;
   final List<String> timeFormat;
-
+  final EdgeInsetsGeometry paddingTapPosition;
   final Function(bool value)? onLoadMore;
   final Function(bool value)? onZoomingStart;
   final Function(LineEntity position, double newValue) onUpdatePosition;
@@ -101,6 +101,7 @@ class KChartWidget extends StatefulWidget {
     required this.chartStyle,
     required this.chartColors,
     required this.onUpdatePosition,
+    this.paddingTapPosition = const EdgeInsets.all(0.0),
     this.graphStyle = GraphStyle.line,
     this.xFrontPadding = 100,
     this.volHidden = true,
@@ -465,22 +466,25 @@ class KChartWidgetState extends State<KChartWidget>
                   ),
                 ),
                 if (_tapPosition != null)
-                  Container(
-                    margin: MPadding.set(horizontal: 6.0),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: KChartWidget.colors!.iconColor,
+                  Padding(
+                    padding: widget.paddingTapPosition,
+                    child: Container(
+                      margin: MPadding.set(horizontal: 6.0),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: KChartWidget.colors!.iconColor,
+                        ),
+                      ),
+                      child: RawMagnifier(
+                        focalPointOffset: Offset(
+                          _tapPosition!.dx - 25,
+                          _tapPosition!.dy,
+                        ),
+                        size: const Size(50, 45),
+                        magnificationScale: 1.0,
                       ),
                     ),
-                    child: RawMagnifier(
-                      focalPointOffset: Offset(
-                        _tapPosition!.dx - 25,
-                        _tapPosition!.dy,
-                      ),
-                      size: const Size(50, 45),
-                      magnificationScale: 1.0,
-                    ),
-                  ),
+                  )
               ],
             ),
           ),
