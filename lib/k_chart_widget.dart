@@ -11,7 +11,6 @@ import 'package:candle_chart/objects/bottom_sheets/properties_bottom_sheet.dart'
 import 'package:candle_chart/objects/objects_screen.dart';
 import 'package:candle_chart/renderer/base_dimension.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
-import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -77,7 +76,6 @@ class KChartWidget extends StatefulWidget {
   final bool isTapShowInfoDialog;
   final bool hideGrid;
   final List<String> timeFormat;
-  final EdgeInsetsGeometry paddingTapPosition;
   final Function(bool value)? onLoadMore;
   final Function(bool value)? onZoomingStart;
   final Function(LineEntity position, double newValue) onUpdatePosition;
@@ -101,7 +99,6 @@ class KChartWidget extends StatefulWidget {
     required this.chartStyle,
     required this.chartColors,
     required this.onUpdatePosition,
-    this.paddingTapPosition = const EdgeInsets.all(0.0),
     this.graphStyle = GraphStyle.line,
     this.xFrontPadding = 100,
     this.volHidden = true,
@@ -466,10 +463,11 @@ class KChartWidgetState extends State<KChartWidget>
                   ),
                 ),
                 if (_tapPosition != null)
-                  Padding(
-                    padding: widget.paddingTapPosition,
+                  Positioned(
+                    top: 24.0,
+                    left: 16.0,
+                    width: 50.0,
                     child: Container(
-                      margin: MPadding.set(horizontal: 6.0),
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: KChartWidget.colors!.iconColor,
@@ -477,14 +475,14 @@ class KChartWidgetState extends State<KChartWidget>
                       ),
                       child: RawMagnifier(
                         focalPointOffset: Offset(
-                          _tapPosition!.dx - 25,
-                          _tapPosition!.dy,
+                          _tapPosition!.dx - 40,
+                          _tapPosition!.dy - 24,
                         ),
                         size: const Size(50, 45),
                         magnificationScale: 1.0,
                       ),
                     ),
-                  )
+                  ),
               ],
             ),
           ),
