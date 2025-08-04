@@ -162,6 +162,7 @@ class KChartWidgetState extends State<KChartWidget>
     await chartProperties.getDefaultSettings(
       onGetting: onGettingSettings,
     );
+    await chartProperties.loadIndicators();
   }
 
   void openObjects() {
