@@ -162,6 +162,9 @@ class KChartWidgetState extends State<KChartWidget>
     await chartProperties.getDefaultSettings(
       onGetting: onGettingSettings,
     );
+  }
+
+  Future<void> getIndicators() async {
     await chartProperties.loadIndicators();
   }
 
