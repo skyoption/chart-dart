@@ -184,6 +184,7 @@ class ChartStyle {
   double volWidth;
   bool volisDouble;
   double macdWidth;
+  int digits;
   double vCrossWidth;
   double hCrossWidth;
   double nowPriceLineLength;
@@ -241,5 +242,6 @@ class ChartStyle {
     this.isFocusCloseText = true,
     this.dateTimeFormat,
     this.isLongFocus = false,
+    this.digits = 5,
   });
 }

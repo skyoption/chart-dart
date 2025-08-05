@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/material.dart';
 
 /// Render Rectangle

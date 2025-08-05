@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/renderer/rects/render_rect.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
@@ -260,16 +261,20 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     canvas.drawRect(rect, paint);
 
     for (var i = 0; i <= gridRows; ++i) {
-      double value = (gridRows - i) * rowSpace / scaleY + minValue;
-
+      double price = (gridRows - i) * rowSpace / scaleY + minValue;
+      String value = '$price';
+      if (value.split('.').last.length < chartStyle.digits) {
+        value = '${value}000000001';
+        price = double.parse(value);
+      }
       if (i == 0) {
-        chartPositions.topPrice = value;
+        chartPositions.topPrice = price;
       }
       if (i == gridRows) {
-        chartPositions.bottomPrice = value;
+        chartPositions.bottomPrice = price;
       }
       final realStyle = getTextStyle(chartColors.maxColor);
-      TextSpan span = formatValueSpan(value, realStyle);
+      TextSpan span = formatValueSpan(price, realStyle);
 
       TextPainter tp =
           TextPainter(text: span, textDirection: TextDirection.ltr);
