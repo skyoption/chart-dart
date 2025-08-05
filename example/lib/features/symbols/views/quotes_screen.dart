@@ -35,7 +35,8 @@ class _QuotesScreenState extends State<QuotesScreen> {
     final width = context.width;
     return Scaffold(
       appBar: PreferredSize(
-          preferredSize: Size(width, 145.0),
+        preferredSize: Size(width, 145.0),
+        child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -107,7 +108,9 @@ class _QuotesScreenState extends State<QuotesScreen> {
               ).addPadding(horizontal: 21.0, vertical: 20),
               const HomeCategories(),
             ],
-          )),
+          ),
+        ),
+      ),
       body: QuotesBodyView(
         layoutController: layoutController,
       ),

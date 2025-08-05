@@ -154,7 +154,8 @@ abstract class BaseChartRenderer<T> {
     if (lastPrice == null || curPrice == null) {
       return;
     }
-    double strokeWidth = scaleX < 1 ? scaleX * 7.0 : baseStrokeWidth;
+    double strokeWidth =
+        isDot ? baseStrokeWidth : (baseStrokeWidth / scaleX).clamp(0.1, 1.0);
     _drawLine(
       lastPrice,
       curPrice,
@@ -181,7 +182,7 @@ abstract class BaseChartRenderer<T> {
     if (lastPrice == null || curPrice == null) {
       return;
     }
-    double strokeWidth = scaleX < 1 ? scaleX * 7.0 : baseStrokeWidth;
+    double strokeWidth = (baseStrokeWidth / scaleX).clamp(0.1, 1.0);
     _drawHorizontalDashLine(
       lastPrice,
       curPrice,
@@ -206,7 +207,7 @@ abstract class BaseChartRenderer<T> {
     if (lastPrice == null || curPrice == null) {
       return;
     }
-    double strokeWidth = (baseStrokeWidth / scaleX).clamp(0.1, 4.0);
+    double strokeWidth = (baseStrokeWidth / scaleX).clamp(0.1, 1.0);
     _drawHDashLine(
       lastPrice,
       curPrice,
@@ -231,7 +232,7 @@ abstract class BaseChartRenderer<T> {
     if (lastPrice == null || curPrice == null) {
       return;
     }
-    double strokeWidth = (baseStrokeWidth / scaleX).clamp(1, 4.0);
+    double strokeWidth = (baseStrokeWidth / scaleX).clamp(0.1, 1.0);
     _drawVerticalDashLine(
       lastPrice,
       curPrice,
@@ -270,9 +271,11 @@ abstract class BaseChartRenderer<T> {
     } else if (isDot) {
       canvas.drawCircle(
         Offset(curX, curY),
-        strokeWidth / 2,
+        (strokeWidth / 2).clamp(0.1, strokeWidth),
         chartPaint
           ..color = color
+          ..isAntiAlias = true
+          ..filterQuality = FilterQuality.high
           ..style = PaintingStyle.fill,
       );
     } else {
