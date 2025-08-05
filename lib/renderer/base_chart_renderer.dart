@@ -154,7 +154,7 @@ abstract class BaseChartRenderer<T> {
     if (lastPrice == null || curPrice == null) {
       return;
     }
-    double strokeWidth = (baseStrokeWidth / scaleX).clamp(0.2, 4.0);
+    double strokeWidth = scaleX < 1 ? scaleX * 7.0 : baseStrokeWidth;
     _drawLine(
       lastPrice,
       curPrice,
@@ -181,7 +181,7 @@ abstract class BaseChartRenderer<T> {
     if (lastPrice == null || curPrice == null) {
       return;
     }
-    double strokeWidth = (baseStrokeWidth / scaleX).clamp(0.2, 4.0);
+    double strokeWidth = scaleX < 1 ? scaleX * 7.0 : baseStrokeWidth;
     _drawHorizontalDashLine(
       lastPrice,
       curPrice,
@@ -206,7 +206,7 @@ abstract class BaseChartRenderer<T> {
     if (lastPrice == null || curPrice == null) {
       return;
     }
-    double strokeWidth = (baseStrokeWidth / scaleX).clamp(0.2, 4.0);
+    double strokeWidth = (baseStrokeWidth / scaleX).clamp(0.1, 4.0);
     _drawHDashLine(
       lastPrice,
       curPrice,

@@ -67,7 +67,9 @@ class _CDropDownState<T> extends State<CDropDown<T>> {
               textSize: FoontSize.font16,
               onChanged: (value) {
                 widget.onSelection(value);
-                state.didChange(value);
+                Future.delayed(const Duration(milliseconds: 100), () {
+                  state.didChange(value);
+                });
               },
               itemTitle: (PickOption<T> item) => item.label,
             ),

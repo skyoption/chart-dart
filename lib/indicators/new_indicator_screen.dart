@@ -87,25 +87,26 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => IndicatorPropertiesScreen(
                       name: context.tr.moving_average,
                       haveMethods: true,
                       onDone: widget.onDone,
                       windowId: widget.windowId,
+                      period: 14,
                     ),
                   ),
                 );
               },
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
             PropertiesItemWidget(
               title: context.tr.bollinger_bands,
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => IndicatorPropertiesScreen(
                       name: context.tr.bollinger_bands,
@@ -114,18 +115,21 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                       onDone: widget.onDone,
                       type: IndicatorType.BOLL,
                       windowId: widget.windowId,
+                      deviations: 2,
+                      period: 20,
+                      shift: 0,
                     ),
                   ),
                 );
               },
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
             PropertiesItemWidget(
               title: context.tr.envelops,
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => IndicatorPropertiesScreen(
                       name: context.tr.envelops,
@@ -136,18 +140,21 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                       onDone: widget.onDone,
                       type: IndicatorType.ENVELOPS_SMA,
                       windowId: widget.windowId,
+                      period: 14,
+                      shift: 0,
+                      deviations: 0.1,
                     ),
                   ),
                 );
               },
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
             PropertiesItemWidget(
               title: context.tr.parabolic_sar,
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => ParabolicPropertiesScreen(
                       name: context.tr.parabolic_sar,
@@ -158,13 +165,13 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                 );
               },
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
             PropertiesItemWidget(
               title: context.tr.ichimoku_kinko_hyo,
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => IchimokuPropertiesScreen(
                       name: context.tr.ichimoku_kinko_hyo,
@@ -194,24 +201,25 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => SOPropertiesScreen(
                       name: context.tr.stochastic_oscillator,
                       onDone: widget.onDone,
                       windowId: widget.windowId,
+                      
                     ),
                   ),
                 );
               },
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
             PropertiesItemWidget(
               title: context.tr.macd,
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => MACDPropertiesScreen(
                       name: context.tr.macd,
@@ -222,13 +230,13 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                 );
               },
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
             PropertiesItemWidget(
               title: context.tr.relative_strength_index,
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => RSIPropertiesScreen(
                       name: context.tr.relative_strength_index,
@@ -239,13 +247,13 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                 );
               },
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
             PropertiesItemWidget(
               title: context.tr.average_true_range,
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => ATRPropertiesScreen(
                       name: context.tr.average_true_range,
@@ -256,13 +264,13 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                 );
               },
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
             PropertiesItemWidget(
               title: context.tr.commodity_channel_index,
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => CCIPropertiesScreen(
                       name: context.tr.commodity_channel_index,
@@ -273,13 +281,13 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                 );
               },
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
             PropertiesItemWidget(
               title: context.tr.demarker,
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => DeMarkerPropertiesScreen(
                       name: context.tr.demarker,
@@ -290,13 +298,13 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                 );
               },
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
             PropertiesItemWidget(
               title: context.tr.momentum,
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => MOMPropertiesScreen(
                       name: context.tr.momentum,
@@ -307,13 +315,13 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                 );
               },
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
             PropertiesItemWidget(
               title: context.tr.williams_percent_range,
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => WPRPropertiesScreen(
                       name: context.tr.williams_percent_range,
@@ -343,7 +351,7 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
               margin: EdgeInsets.zero,
               child: const SizedBox(),
               onTap: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => MFIPropertiesScreen(
                       name: context.tr.money_flow_index,

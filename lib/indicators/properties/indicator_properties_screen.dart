@@ -25,6 +25,10 @@ class IndicatorPropertiesScreen extends StatefulWidget {
       haveTwoBands,
       isENVELOPS;
 
+  final double deviations;
+  final int period;
+  final int shift;
+
   IndicatorPropertiesScreen({
     super.key,
     required this.onDone,
@@ -39,6 +43,9 @@ class IndicatorPropertiesScreen extends StatefulWidget {
     this.haveTwoBands = false,
     this.isENVELOPS = false,
     this.type = IndicatorType.MA_SMA,
+    this.deviations = 2,
+    this.period = 20,
+    this.shift = 0,
   });
 
   @override
@@ -47,9 +54,12 @@ class IndicatorPropertiesScreen extends StatefulWidget {
 }
 
 class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
-  late final periodController = TextEditingController(text: '5');
-  late final shiftController = TextEditingController(text: '0');
-  late final deviationsController = TextEditingController(text: '2.000');
+  late final periodController =
+      TextEditingController(text: widget.period.toString());
+  late final shiftController =
+      TextEditingController(text: widget.shift.toString());
+  late final deviationsController =
+      TextEditingController(text: widget.deviations.toString());
   late String name = widget.name ?? widget.indicator!.name;
   IndicatorEntity? indicator;
 
@@ -62,12 +72,12 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
       deviationsController.text = indicator!.deviations.toString();
     } else {
       indicator = IndicatorEntity(
-        period: 5,
-        shift: 0,
+        period: widget.period,
+        shift: widget.shift,
         name: widget.name!,
         applyTo: ApplyTo.Close,
         type: widget.type,
-        deviations: widget.haveDeviations ? 0.1 : null,
+        deviations: widget.deviations,
         windowId: widget.windowId ?? 0,
         isSecondary: (widget.windowId ?? 0) != 0,
       );

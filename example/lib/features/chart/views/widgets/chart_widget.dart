@@ -167,6 +167,7 @@ class _ChartWidgetState extends State<ChartWidget> {
                                                   TimeFormat.YEAR_MONTH_DAY,
                                               mBaseHeight:
                                                   constraints.maxHeight,
+                                              secondaryRetro: 0.3,
                                             ),
                                           );
                                         },

@@ -87,10 +87,13 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                 color: KChartWidget.colors!.primary,
               ),
               onTap: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => NewIndicatorScreen(
-                      onDone: widget.onDone,
+                      onDone: () {
+                        widget.onDone();
+                        setState(() {});
+                      },
                     ),
                   ),
                 );
@@ -110,7 +113,7 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                     widget.onDone();
                   },
                   background: Container(
-                    color: Colors.red.withOpacity(0.1),
+                    color: Colors.red.withAlpha(10),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 21.0),
                       child: Row(
@@ -130,7 +133,7 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                   ),
                   child: Column(
                     children: [
-                      Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+                      Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
                       PropertiesItemWidget(
                         margin: EdgeInsets.zero,
                         title: name,
@@ -155,10 +158,13 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                         color: KChartWidget.colors!.primary,
                       ),
                       onTap: () {
-                        Navigator.of(context).pushReplacement(
+                        Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => NewIndicatorScreen(
-                              onDone: widget.onDone,
+                              onDone: () {
+                                widget.onDone();
+                                setState(() {});
+                              },
                               windowId: e.key,
                             ),
                           ),
@@ -181,7 +187,7 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                           setState(() {});
                         },
                         background: Container(
-                          color: Colors.red.withOpacity(0.1),
+                          color: Colors.red.withAlpha(10),
                           child: Padding(
                             padding: MPadding.set(horizontal: 21.0),
                             child: Row(
@@ -203,7 +209,7 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                           children: [
                             Divider(
                               height: 1.0,
-                              color: Colors.grey.withOpacity(0.4),
+                              color: Colors.grey.withAlpha(40),
                             ),
                             PropertiesItemWidget(
                               title: name,
@@ -226,52 +232,67 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
 
   void _onTap(IndicatorEntity item, int? windowId) {
     if (item.type == IndicatorType.ICHIMOKU) {
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => IchimokuPropertiesScreen(
             indicator: item,
             windowId: windowId,
-            onDone: widget.onDone,
+            onDone: () {
+              widget.onDone();
+              setState(() {});
+            },
           ),
         ),
       );
     } else if (item.type == IndicatorType.ATR) {
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => ATRPropertiesScreen(
             indicator: item,
             windowId: windowId,
-            onDone: widget.onDone,
+            onDone: () {
+              widget.onDone();
+              setState(() {});
+            },
           ),
         ),
       );
     } else if (item.type == IndicatorType.CCI) {
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => CCIPropertiesScreen(
             indicator: item,
             windowId: windowId,
-            onDone: widget.onDone,
+            onDone: () {
+              widget.onDone();
+              setState(() {});
+            },
           ),
         ),
       );
     } else if (item.type == IndicatorType.DEM) {
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => DeMarkerPropertiesScreen(
             indicator: item,
             windowId: windowId,
-            onDone: widget.onDone,
+            onDone: () {
+              widget.onDone();
+              setState(() {});
+            },
           ),
         ),
       );
     } else if (item.type == IndicatorType.MOM) {
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => MOMPropertiesScreen(
             indicator: item,
             windowId: windowId,
-            onDone: widget.onDone,
+            onDone: () {
+              widget.onDone();
+              setState(() {});
+            },
           ),
         ),
       );
@@ -279,74 +300,95 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
         item.type == IndicatorType.SO_LINEAR ||
         item.type == IndicatorType.SO_SMA ||
         item.type == IndicatorType.SO_SMMA) {
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => SOPropertiesScreen(
             indicator: item,
             windowId: windowId,
-            onDone: widget.onDone,
+            onDone: () {
+              widget.onDone();
+              setState(() {});
+            },
           ),
         ),
       );
     } else if (item.type == IndicatorType.WPR) {
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => WPRPropertiesScreen(
             indicator: item,
             windowId: windowId,
-            onDone: widget.onDone,
+            onDone: () {
+              widget.onDone();
+              setState(() {});
+            },
           ),
         ),
       );
     } else if (item.type == IndicatorType.MFI) {
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => MFIPropertiesScreen(
             indicator: item,
             windowId: windowId,
-            onDone: widget.onDone,
+            onDone: () {
+              widget.onDone();
+              setState(() {});
+            },
           ),
         ),
       );
     } else if (item.type == IndicatorType.MACD) {
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => MACDPropertiesScreen(
             indicator: item,
             windowId: windowId,
-            onDone: widget.onDone,
+            onDone: () {
+              widget.onDone();
+              setState(() {});
+            },
           ),
         ),
       );
     } else if (item.type == IndicatorType.RSI) {
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => RSIPropertiesScreen(
             indicator: item,
             windowId: windowId,
-            onDone: widget.onDone,
+            onDone: () {
+              widget.onDone();
+              setState(() {});
+            },
           ),
         ),
       );
     } else if (item.type == IndicatorType.PARABOLIC) {
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => ParabolicPropertiesScreen(
             indicator: item,
             windowId: windowId,
-            onDone: widget.onDone,
+            onDone: () {
+              widget.onDone();
+              setState(() {});
+            },
           ),
         ),
       );
     } else {
       final isENVELOPS = item.type.name.contains('ENVELOPS');
       final isMA = item.type.name.contains('MA');
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => IndicatorPropertiesScreen(
             indicator: item,
             windowId: windowId,
-            onDone: widget.onDone,
+            onDone: () {
+              widget.onDone();
+              setState(() {});
+            },
             haveDeviations: isENVELOPS || item.type == IndicatorType.BOLL,
             haveMethods: isENVELOPS || isMA,
             haveTwoBands: isENVELOPS,

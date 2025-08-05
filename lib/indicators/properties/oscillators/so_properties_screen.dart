@@ -36,7 +36,7 @@ class SOPropertiesScreen extends StatefulWidget {
 
 class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
   final kPeriodController = TextEditingController(text: '5');
-  final dPeriodController = TextEditingController(text: '5');
+  final dPeriodController = TextEditingController(text: '3');
   final slowingController = TextEditingController(text: '3');
 
   late String name = widget.name ?? widget.indicator!.name;
@@ -298,7 +298,8 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
             PropertiesTitleWidget(title: 'style'),
             PropertiesItemWidget(
               title: context.tr.pixel,
-              subTitle: '${widget.indicator?.strokeWidth ?? 1} ${context.tr.pixel}',
+              subTitle:
+                  '${widget.indicator?.strokeWidth ?? 1} ${context.tr.pixel}',
               margin: EdgeInsets.zero,
               subTitleColor: Colors.grey.withOpacity(0.8),
               onTap: () {

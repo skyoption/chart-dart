@@ -30,8 +30,8 @@ class ParabolicPropertiesScreen extends StatefulWidget {
 }
 
 class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
-  late final stepsController = TextEditingController(text: '0.006');
-  late final maximumController = TextEditingController(text: '0.006');
+  late final stepsController = TextEditingController(text: '0.02');
+  late final maximumController = TextEditingController(text: '0.2');
 
   late String name = widget.name ?? widget.indicator!.name;
   IndicatorEntity? indicator;
@@ -44,8 +44,8 @@ class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
       maximumController.text = indicator!.maximum.toString();
     } else {
       indicator = IndicatorEntity(
-        maximum: 0.006,
-        steps: 0.006,
+        maximum: 0.2,
+        steps: 0.02,
         name: widget.name!,
         type: IndicatorType.PARABOLIC,
         windowId: widget.windowId ?? 0,

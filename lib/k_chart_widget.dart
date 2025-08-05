@@ -93,6 +93,8 @@ class KChartWidget extends StatefulWidget {
   final int isLongFocusDurationTime;
   static ChartColors? colors;
   final double? mBaseHeight;
+  final double secondaryRetro;
+  final double initialScale;
 
   KChartWidget({
     Key? key,
@@ -109,11 +111,13 @@ class KChartWidget extends StatefulWidget {
     this.timeFormat = TimeFormat.YEAR_MONTH_DAY,
     this.onLoadMore,
     this.fixedLength = 2,
+    this.secondaryRetro = 0.4,
     this.maDayList = const [5, 10, 20],
     this.flingTime = 600,
     this.flingRatio = 0.5,
     this.flingCurve = Curves.decelerate,
     this.isOnDrag,
+    this.initialScale = 0.2,
     this.onZoomingStart,
     this.verticalTextAlignment = VerticalTextAlignment.right,
     this.isLongFocusDurationTime = 500,
@@ -134,7 +138,10 @@ class KChartWidgetState extends State<KChartWidget>
   List<KLineEntity> lineCandles = [];
   List<LineEntity> ask_bid = [];
   List<LineEntity> tp_sl_positions = [];
-  double mScaleX = 1.0, mScaleY = 1, mScrollX = 0.0, mSelectX = 0.0;
+  late double mScaleX = widget.initialScale,
+      mScaleY = 1,
+      mScrollX = 0.0,
+      mSelectX = 0.0;
   double mHeight = 0, mWidth = 0;
   AnimationController? _controller;
   Animation<double>? aniX;
@@ -150,7 +157,7 @@ class KChartWidgetState extends State<KChartWidget>
 
   ObjectType? objectType;
   ObjectEntity? object;
-  double _lastScaleX = 1.0;
+  late double _lastScaleX = widget.initialScale;
   bool isScale = false, isDrag = false, isLongPress = false, isOnTap = false;
   bool isCursor = false;
   Random rand = Random();
@@ -293,9 +300,9 @@ class KChartWidgetState extends State<KChartWidget>
   }
 
   void resetZoom() {
-    mScaleX = 1.0;
+    mScaleX = widget.initialScale;
     mScaleY = 1.0;
-    _lastScaleX = 1.0;
+    _lastScaleX = widget.initialScale;
     notifyChanged();
   }
 
@@ -334,13 +341,14 @@ class KChartWidgetState extends State<KChartWidget>
 
     if (lineCandles.isEmpty) {
       mScrollX = mSelectX = 0.0;
-      mScaleX = 1.0;
+      mScaleX = widget.initialScale;
     }
 
     final BaseDimension baseDimension = BaseDimension(
       height: mBaseHeight,
       volHidden: widget.volHidden,
       indicators: chartProperties.secondaries,
+      secondaryRetro: widget.secondaryRetro,
     );
 
     _painter = ChartPainter(
@@ -392,7 +400,8 @@ class KChartWidgetState extends State<KChartWidget>
                         mScaleX = (_lastScaleX * event.scale).clamp(0.1, 8.0);
                       }
                       if (widget.onZoomingStart != null) {
-                        widget.onZoomingStart!(mScaleX == 1 && mScaleY == 1);
+                        widget.onZoomingStart!(
+                            mScaleX == widget.initialScale && mScaleY == 1);
                       }
                       notifyChanged();
                     }
@@ -456,7 +465,8 @@ class KChartWidgetState extends State<KChartWidget>
                           }
                         }
                         if (widget.onZoomingStart != null)
-                          widget.onZoomingStart!(mScaleX == 1 && mScaleY == 1);
+                          widget.onZoomingStart!(
+                              mScaleX == widget.initialScale && mScaleY == 1);
                         notifyChanged();
                       }
                     },

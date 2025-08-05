@@ -19,11 +19,15 @@ class BaseDimension {
   //
   double _mDisplayHeight = 0;
 
+  double _mSecondaryRetro = 0.4;
+
   // getter the vol height
   double get mVolumeHeight => _mVolumeHeight;
 
   // getter the secondary height
   double get mSecondaryHeight => _mSecondaryHeight;
+
+  double get mSecondaryRetro => _mSecondaryRetro;
 
   // getter the total height
   double get mDisplayHeight => _mDisplayHeight;
@@ -44,12 +48,13 @@ class BaseDimension {
     required double height,
     required bool volHidden,
     required Map<int, List<IndicatorEntity>> indicators,
+    required double secondaryRetro,
   }) {
     List<IndicatorEntity> items = [];
     for (var i = 0; i < indicators.length; i++) {
       items.add(HighLevelIndicator.getHigh(indicators, i));
     }
-
+    _mSecondaryRetro = secondaryRetro;
     _mVolumeHeight = volHidden != true ? _mBaseHeight * 0.2 : 0;
     _mSecondaryHeight = _setSecondaryHeight(items, height);
     _mDisplayHeight = height;
@@ -67,6 +72,6 @@ class BaseDimension {
   }
 
   double getSecondaryHeight(IndicatorEntity? item) {
-    return _mBaseHeight * 0.4;
+    return _mBaseHeight * mSecondaryRetro;
   }
 }
