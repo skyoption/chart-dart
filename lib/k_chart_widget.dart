@@ -461,10 +461,10 @@ class KChartWidgetState extends State<KChartWidget>
                           const double step = 0.00007;
 
                           if (details.delta.dy > 1) {
-                            mScaleY = (mScaleY + step)
+                            mScaleY = (mScaleY - step)
                                 .clamp(0.993, widget.initialScaleY);
                           } else if (details.delta.dy < 1) {
-                            mScaleY = (mScaleY - step)
+                            mScaleY = (mScaleY + step)
                                 .clamp(0.993, widget.initialScaleY);
                           }
                         }
