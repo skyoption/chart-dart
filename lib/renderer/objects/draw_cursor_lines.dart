@@ -77,15 +77,16 @@ mixin DrawCursorLines on ChartDetails {
     final pricePaint = Paint()
       ..filterQuality = FilterQuality.high
       ..isAntiAlias = true
-      ..strokeWidth = cursor.height
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
+      ..strokeWidth = (0.5 / scaleX).clamp(0.1, 1.0)
       ..strokeJoin = StrokeJoin.round
       ..color = colorFromHex(cursor.color!)!;
 
     double startX = 0;
     final max = -mTranslateX + (mWidth + 20) / scaleX;
-    final strokeWidth = (this.chartStyle.lineLength / scaleX).clamp(1, 10.0);
+    // Make stroke width responsive to scaling
+    final strokeWidth = (this.chartStyle.lineLength / scaleX).clamp(1.0, 8.0);
 
     if (cursor.style == ObjectStyle.dash) {
       while (startX < max) {
@@ -99,6 +100,8 @@ mixin DrawCursorLines on ChartDetails {
     } else {
       canvas.drawLine(Offset(startX, y), Offset(max, y), pricePaint);
     }
+
+    // Set small stroke width for vertical line
 
     // Draw vertical line
     double x = getXFromTime(cursor.datetime, data);
@@ -122,12 +125,37 @@ mixin DrawCursorLines on ChartDetails {
       );
     }
 
-    // Draw vertical line title (datetime)
+    // Draw vertical line title (datetime) - now handled by drawCursorDate method
+  }
+
+  void drawCursorDate(Canvas canvas, Size size, List<KLineEntity> data) {
+    final cursor = chartProperties.cursor;
+    if (cursor == null) return;
+
     TextPainter dateTitle = getTextPainter(
       getDate(cursor.datetime),
       this.chartColors.priceTextColor,
     );
 
+    double x = getXFromTime(cursor.datetime, data);
+
+    // Calculate y position like drawDate method
+    double y = size.height -
+        (this.chartStyle.bottomPadding - dateTitle.height) / 2 -
+        dateTitle.height;
+
+    // Convert x position to screen coordinates like drawDate
+    double screenX = translateXtoX(x);
+
+    // Center the text by subtracting half the text width
+    double centeredX = screenX - (dateTitle.width / 2);
+
+    // Prevent text from going out of canvas bounds
+    if (centeredX < 0) centeredX = 0;
+    if (centeredX > size.width - dateTitle.width)
+      centeredX = size.width - dateTitle.width;
+
+    // Draw background rounded rectangle
     final datePaint = Paint()
       ..color = colorFromHex(cursor.color!)!
       ..style = PaintingStyle.fill;
@@ -135,22 +163,19 @@ mixin DrawCursorLines on ChartDetails {
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTRB(
-          x - (dateTitle.width / 2) - 8,
-          fDisplayHeight! - 5,
-          x + (dateTitle.width / 2) + 8,
-          fDisplayHeight! + dateTitle.height,
+          centeredX + this.chartStyle.leftPadding - 8,
+          y - 2,
+          centeredX + this.chartStyle.leftPadding + dateTitle.width + 8,
+          y + dateTitle.height + 2,
         ),
-        const Radius.circular(12.0),
+        const Radius.circular(8.0),
       ),
       datePaint,
     );
 
     dateTitle.paint(
       canvas,
-      Offset(
-        x - dateTitle.width / 2,
-        fDisplayHeight! - 2,
-      ),
+      Offset(centeredX + this.chartStyle.leftPadding, y),
     );
   }
 

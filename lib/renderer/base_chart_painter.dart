@@ -162,6 +162,7 @@ abstract class BaseChartPainter extends CustomPainter
       drawHorizontalLinesTitles(canvas, size);
       drawTPAndSLTitles(canvas, size);
       drawCursorTitles(canvas, size, data!);
+      drawCursorDate(canvas, size, data!);
       drawPositionsAndAskBidLines(canvas);
       if (this.chartStyle.isLongFocus &&
           (isLongPress == true ||
