@@ -38,7 +38,7 @@ class ChartScreen extends StatefulWidget {
 final key = GlobalKey<KChartWidgetState>();
 
 class _ChartScreenState extends State<ChartScreen> {
-  final hideGrid = ValueNotifier<bool>(false);
+  final hideGrid = ValueNotifier<bool>(true);
   final showOptions = ValueNotifier<bool>(true);
   final isFullscreen = ValueNotifier<bool>(false);
   final showUpdatePosition = ValueNotifier<bool>(false);

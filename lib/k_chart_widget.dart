@@ -95,6 +95,7 @@ class KChartWidget extends StatefulWidget {
   final double? mBaseHeight;
   final double secondaryRetro;
   final double initialScale;
+  final double initialScaleY;
 
   KChartWidget({
     Key? key,
@@ -117,7 +118,8 @@ class KChartWidget extends StatefulWidget {
     this.flingRatio = 0.5,
     this.flingCurve = Curves.decelerate,
     this.isOnDrag,
-    this.initialScale = 0.2,
+    this.initialScale = 0.4,
+    this.initialScaleY = 0.99999,
     this.onZoomingStart,
     this.verticalTextAlignment = VerticalTextAlignment.right,
     this.isLongFocusDurationTime = 500,
@@ -139,7 +141,7 @@ class KChartWidgetState extends State<KChartWidget>
   List<LineEntity> ask_bid = [];
   List<LineEntity> tp_sl_positions = [];
   late double mScaleX = widget.initialScale,
-      mScaleY = 1,
+      mScaleY = widget.initialScaleY,
       mScrollX = 0.0,
       mSelectX = 0.0;
   double mHeight = 0, mWidth = 0;
@@ -301,7 +303,7 @@ class KChartWidgetState extends State<KChartWidget>
 
   void resetZoom() {
     mScaleX = widget.initialScale;
-    mScaleY = 1.0;
+    mScaleY = widget.initialScaleY;
     _lastScaleX = widget.initialScale;
     notifyChanged();
   }
@@ -400,8 +402,8 @@ class KChartWidgetState extends State<KChartWidget>
                         mScaleX = (_lastScaleX * event.scale).clamp(0.1, 8.0);
                       }
                       if (widget.onZoomingStart != null) {
-                        widget.onZoomingStart!(
-                            mScaleX == widget.initialScale && mScaleY == 1);
+                        widget.onZoomingStart!(mScaleX == widget.initialScale &&
+                            mScaleY == widget.initialScaleY);
                       }
                       notifyChanged();
                     }
@@ -437,36 +439,39 @@ class KChartWidgetState extends State<KChartWidget>
                   right: 0.0,
                   width: 40.0,
                   child: GestureDetector(
-                    onScaleStart: (details) {
+                    onVerticalDragStart: (details) {
                       if (isCursor) return;
                       if (!objectEditable) {
                         isScale = true;
-                        pointerCount = details.pointerCount;
+                        pointerCount = 2;
                       }
                     },
-                    onScaleEnd: (details) {
+                    onVerticalDragEnd: (details) {
                       if (isCursor) return;
                       if (!objectEditable) {
-                        pointerCount = details.pointerCount;
+                        pointerCount = 1;
                         isScale = false;
                       }
                     },
-                    onScaleUpdate: (details) {
+                    onVerticalDragUpdate: (details) {
                       if (isCursor) return;
                       if (!objectEditable) {
                         if (!isScale) return;
                         if (pointerCount == 2) {
-                          const double step = 0.00012;
+                          const double step = 0.00007;
 
-                          if (details.verticalScale > 1) {
-                            mScaleY = (mScaleY + step).clamp(0.9, 1.0);
-                          } else if (details.verticalScale < 1) {
-                            mScaleY = (mScaleY - step).clamp(0.9, 1.0);
+                          if (details.delta.dy > 1) {
+                            mScaleY = (mScaleY + step)
+                                .clamp(0.993, widget.initialScaleY);
+                          } else if (details.delta.dy < 1) {
+                            mScaleY = (mScaleY - step)
+                                .clamp(0.993, widget.initialScaleY);
                           }
                         }
                         if (widget.onZoomingStart != null)
                           widget.onZoomingStart!(
-                              mScaleX == widget.initialScale && mScaleY == 1);
+                              mScaleX == widget.initialScale &&
+                                  mScaleY == widget.initialScaleY);
                         notifyChanged();
                       }
                     },
