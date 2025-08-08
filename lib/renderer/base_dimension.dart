@@ -49,15 +49,20 @@ class BaseDimension {
     required bool volHidden,
     required Map<int, List<IndicatorEntity>> indicators,
     required double secondaryRetro,
+    required bool hideIndicators,
   }) {
-    List<IndicatorEntity> items = [];
-    for (var i = 0; i < indicators.length; i++) {
-      items.add(HighLevelIndicator.getHigh(indicators, i));
+    if (hideIndicators) {
+      _mDisplayHeight = height;
+    } else {
+      List<IndicatorEntity> items = [];
+      for (var i = 0; i < indicators.length; i++) {
+        items.add(HighLevelIndicator.getHigh(indicators, i));
+      }
+      _mSecondaryRetro = secondaryRetro;
+      _mVolumeHeight = volHidden != true ? _mBaseHeight * 0.2 : 0;
+      _mSecondaryHeight = _setSecondaryHeight(items, height);
+      _mDisplayHeight = height;
     }
-    _mSecondaryRetro = secondaryRetro;
-    _mVolumeHeight = volHidden != true ? _mBaseHeight * 0.2 : 0;
-    _mSecondaryHeight = _setSecondaryHeight(items, height);
-    _mDisplayHeight = height;
   }
 
   double _setSecondaryHeight(

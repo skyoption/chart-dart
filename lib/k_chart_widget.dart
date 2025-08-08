@@ -359,6 +359,7 @@ class KChartWidgetState extends State<KChartWidget>
       volHidden: widget.volHidden,
       indicators: chartProperties.secondaries,
       secondaryRetro: widget.secondaryRetro,
+      hideIndicators: widget.hideIndicators,
     );
 
     _painter = ChartPainter(
