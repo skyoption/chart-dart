@@ -72,7 +72,7 @@ abstract class BaseChartPainter extends CustomPainter
   late double mPointWidth;
 
   // format time
-  List<String> mFormats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn];
+  List<String> mFormats = [yyyy, ' ', mm, ' ', dd, ' ', HH, ':', nn];
   double xFrontPadding;
 
   /// base dimension
@@ -116,7 +116,7 @@ abstract class BaseChartPainter extends CustomPainter
     }
 
     if (mItemCount < 2) {
-      mFormats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn];
+      mFormats = [yyyy, ' ', mm, ' ', dd, ' ', HH, ':', nn];
       return;
     }
 
@@ -126,13 +126,13 @@ abstract class BaseChartPainter extends CustomPainter
     time ~/= 1000;
     // monthly line
     if (time >= 24 * 60 * 60 * 28) {
-      mFormats = [yyyy, '-', mm];
+      mFormats = [yyyy, ' ', mm];
     } else if (time >= 24 * 60 * 60) {
       // daily line
-      mFormats = [yyyy, '-', mm, '-', dd];
+      mFormats = [yyyy, ' ', mm, ' ', dd];
     } else {
       // hour line
-      mFormats = [M, '-', dd, ' ', HH, ':', nn];
+      mFormats = [dd, ' ', M, ' ', HH, ':', nn];
     }
   }
 

@@ -220,9 +220,15 @@ class KChartWidgetState extends State<KChartWidget>
     notifyChanged();
   }
 
-  Future<void> setLoadedCandles({required List<KLineEntity> candles}) async {
+  Future<void> setLoadedCandles({
+    required List<KLineEntity> candles,
+    bool setIndicators = true,
+  }) async {
     lineCandles = candles;
-    await chartProperties.updateIndicators(candles);
+    await chartProperties.updateIndicators(
+      candles,
+      setIndicators: setIndicators,
+    );
     notifyChanged();
   }
 
