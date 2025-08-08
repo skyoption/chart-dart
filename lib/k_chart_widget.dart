@@ -211,6 +211,7 @@ class KChartWidgetState extends State<KChartWidget>
         Offset(200, 300),
         lineCandles,
       );
+      _tapPosition = Offset(200, 300);
     } else {
       _tapPosition = null;
       chartProperties.cursor = null;
