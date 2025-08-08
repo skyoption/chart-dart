@@ -170,17 +170,13 @@ mixin Indicators {
     );
   }
 
-  Future<void> updateIndicators(
-    List<KLineEntity> candles, {
-    bool setIndicators = true,
-  }) async {
+  Future<void> updateIndicators(List<KLineEntity> candles) async {
     this.candles = candles;
-    if (setIndicators) {
-      await IndicatorUtils.calculate(
-        candles,
-        indicators,
-        secondaries,
-      );
-    }
+
+    await IndicatorUtils.calculate(
+      candles,
+      indicators,
+      secondaries,
+    );
   }
 }

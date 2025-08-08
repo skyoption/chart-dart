@@ -74,6 +74,7 @@ class KChartWidget extends StatefulWidget {
   bool volHidden;
   final bool isLine;
   final bool isTapShowInfoDialog;
+  final bool hideIndicators;
   final bool hideGrid;
   final List<String> timeFormat;
   final Function(bool value)? onLoadMore;
@@ -105,6 +106,7 @@ class KChartWidget extends StatefulWidget {
     this.graphStyle = GraphStyle.line,
     this.xFrontPadding = 100,
     this.volHidden = true,
+    this.hideIndicators = false,
     this.isLine = false,
     this.isTapShowInfoDialog = false,
     this.hideGrid = false,
@@ -174,6 +176,7 @@ class KChartWidgetState extends State<KChartWidget>
   }
 
   Future<void> getIndicators() async {
+    if (widget.hideIndicators) return;
     await chartProperties.loadIndicators();
   }
 
@@ -225,10 +228,9 @@ class KChartWidgetState extends State<KChartWidget>
     bool setIndicators = true,
   }) async {
     lineCandles = candles;
-    await chartProperties.updateIndicators(
-      candles,
-      setIndicators: setIndicators,
-    );
+    if (!widget.hideIndicators) {
+      await chartProperties.updateIndicators(candles);
+    }
     notifyChanged();
   }
 
