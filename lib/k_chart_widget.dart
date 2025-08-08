@@ -493,8 +493,8 @@ class KChartWidgetState extends State<KChartWidget>
                 ),
                 if (_tapPosition != null)
                   Positioned(
-                    top: 35.0,
-                    left: 16.0,
+                    top: 40.0,
+                    left: 12.0,
                     width: 50.0,
                     child: Container(
                       decoration: BoxDecoration(
@@ -504,8 +504,8 @@ class KChartWidgetState extends State<KChartWidget>
                       ),
                       child: RawMagnifier(
                         focalPointOffset: Offset(
-                          _tapPosition!.dx - 40,
-                          _tapPosition!.dy - 35,
+                          _tapPosition!.dx - 36,
+                          _tapPosition!.dy - 40,
                         ),
                         size: const Size(50, 45),
                         magnificationScale: 1.0,
