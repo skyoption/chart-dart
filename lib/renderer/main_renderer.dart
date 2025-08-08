@@ -338,13 +338,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       }
     } else {
       // Draw border lines when grid is hidden
-      // Top border
-      canvas.drawLine(
-        Offset(chartRect.left, chartRect.top),
-        Offset(chartRect.right, chartRect.top),
-        gridPaint..strokeWidth = 1,
-      );
-
+    
       // Bottom border
       canvas.drawLine(
         Offset(chartRect.left, chartRect.bottom),
