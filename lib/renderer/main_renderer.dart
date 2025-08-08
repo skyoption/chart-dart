@@ -252,7 +252,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     double rowSpace = chartRect.height / gridRows;
 
     Rect rect = Rect.fromLTWH(
-      chartRect.width,
+      chartRect.width + 1,
       topPadding,
       100.0,
       chartRect.height,
