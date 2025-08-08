@@ -170,7 +170,7 @@ class ChartPainter extends BaseChartPainter
       hideIndicators,
     );
 
-    if (mVolRect != null) {
+    if (mVolRect != null && !hideIndicators) {
       mVolRenderer = VolRenderer(
         mVolRect!,
         mVolMaxValue,
@@ -182,31 +182,33 @@ class ChartPainter extends BaseChartPainter
       );
     }
     mSecondaryRendererList.clear();
-    int rectIndex = 0;
-    List<IndicatorEntity> _indicators = [];
-    for (int i = 0; i < secondaryIndicators.length; ++i) {
-      final values = secondaryIndicators.entries.elementAt(i).value;
-      _indicators.addAll(values);
-      for (int index = 0; index < values.length; index++) {
-        mSecondaryRendererList.add(
-          SecondaryRenderer(
-            mSecondaryRectList.sublist(i, i + values.length),
-            mSecondaryRectList[rectIndex].mRect,
-            mSecondaryRectList[rectIndex].mMaxValue,
-            mSecondaryRectList[rectIndex].mMinValue,
-            mChildPadding,
-            values[index],
-            _indicators,
-            values.sublist(index, values.length),
-            index,
-            fixedLength,
-            chartStyle,
-            chartColors,
-            this.scaleX,
-            this.hideGrid,
-          ),
-        );
-        rectIndex++;
+    if (!hideIndicators) {
+      int rectIndex = 0;
+      List<IndicatorEntity> _indicators = [];
+      for (int i = 0; i < secondaryIndicators.length; ++i) {
+        final values = secondaryIndicators.entries.elementAt(i).value;
+        _indicators.addAll(values);
+        for (int index = 0; index < values.length; index++) {
+          mSecondaryRendererList.add(
+            SecondaryRenderer(
+              mSecondaryRectList.sublist(i, i + values.length),
+              mSecondaryRectList[rectIndex].mRect,
+              mSecondaryRectList[rectIndex].mMaxValue,
+              mSecondaryRectList[rectIndex].mMinValue,
+              mChildPadding,
+              values[index],
+              _indicators,
+              values.sublist(index, values.length),
+              index,
+              fixedLength,
+              chartStyle,
+              chartColors,
+              this.scaleX,
+              this.hideGrid,
+            ),
+          );
+          rectIndex++;
+        }
       }
     }
     scaleY = mMainRenderer.scaleY;
