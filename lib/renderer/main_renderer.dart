@@ -35,6 +35,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   final List<IndicatorEntity> indicators;
   late final SubMainRenderer subMainRenderer;
   final GraphStyle graphStyle;
+  final bool hideIndicators;
 
   MainRenderer(
     Rect mainRect,
@@ -51,6 +52,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     this.verticalTextAlignment,
     this.indicators,
     this.graphStyle,
+    this.hideIndicators,
   ) : super(
             chartRect: mainRect,
             maxValue: maxValue,
@@ -112,16 +114,18 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     } else {
       drawPolyline(lastPoint.close, curPoint.close, canvas, lastX, curX);
     }
-    drawIndicators(
-      lastPoint,
-      curPoint,
-      lastX,
-      curX,
-      size,
-      canvas,
-      false,
-      true,
-    );
+    if (!hideIndicators) {
+      drawIndicators(
+        lastPoint,
+        curPoint,
+        lastX,
+        curX,
+        size,
+        canvas,
+        false,
+        true,
+      );
+    }
   }
 
   @override

@@ -385,6 +385,7 @@ class KChartWidgetState extends State<KChartWidget>
       secondaryIndicators: chartProperties.secondaries,
       fixedLength: widget.fixedLength,
       verticalTextAlignment: widget.verticalTextAlignment,
+      hideIndicators: widget.hideIndicators,
     );
 
     return LayoutBuilder(

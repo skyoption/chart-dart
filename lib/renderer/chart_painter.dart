@@ -75,6 +75,7 @@ class ChartPainter extends BaseChartPainter
       mMainLowMinValue = double.maxFinite;
   final double scaleX;
   final double scaleY;
+  final bool hideIndicators;
   final GraphStyle graphStyle;
   final List<LineEntity> askAndBid;
 
@@ -101,6 +102,7 @@ class ChartPainter extends BaseChartPainter
     bool isLine = false,
     this.hideGrid = false,
     this.fixedLength = 2,
+    this.hideIndicators = false,
   }) : super(
           chartStyle,
           data: data,
@@ -165,6 +167,7 @@ class ChartPainter extends BaseChartPainter
       verticalTextAlignment,
       indicators,
       graphStyle,
+      hideIndicators,
     );
 
     if (mVolRect != null) {
