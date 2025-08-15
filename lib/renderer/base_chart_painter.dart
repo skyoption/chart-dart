@@ -316,7 +316,11 @@ abstract class BaseChartPainter extends CustomPainter
 
   /// get the minimum value of translation
   double getMinTranslateX() {
-    var x = -mDataLen + mWidth / scaleX - mPointWidth / 2 - xFrontPadding;
+    var x = -mDataLen +
+        mWidth / scaleX -
+        mPointWidth / 2 -
+        xFrontPadding -
+        this.chartStyle.rightEmptySpace / scaleX;
     return x >= 0 ? 0.0 : x;
   }
 

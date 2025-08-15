@@ -135,6 +135,7 @@ class _ChartWidgetState extends State<ChartWidget> {
                                                         : 10.0,
                                                 areaLineWidth: platform
                                                     .settings.chartLineSize,
+                                                rightEmptySpace: 200.0,
                                               ),
                                               chartColors: ChartColors(
                                                 bgColor:

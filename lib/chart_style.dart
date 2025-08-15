@@ -202,6 +202,7 @@ class ChartStyle {
   bool isFocusCloseText;
   List<String>? dateTimeFormat;
   bool isLongFocus;
+  double rightEmptySpace;
 
   ChartStyle({
     this.topPadding = 30.0,
@@ -243,5 +244,6 @@ class ChartStyle {
     this.dateTimeFormat,
     this.isLongFocus = false,
     this.digits = 5,
+    this.rightEmptySpace = 0.0,
   });
 }
