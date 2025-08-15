@@ -83,7 +83,10 @@ class _IndicatorMethodsScreenState extends State<IndicatorMethodsScreen> {
                   },
                 ),
                 if (item.key != 3)
-                  Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+                  Divider(
+                    height: 1.0,
+                    color: Colors.grey.withValues(alpha: 0.4),
+                  ),
               ],
             );
           }).toList(),

@@ -101,7 +101,6 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
             ),
             ...chartProperties.indicators.asMap().entries.map(
               (e) {
-                final name = '${e.value.name} (${e.value.type.name})';
                 return Dismissible(
                   key: Key('${e.value.id}'),
                   onUpdate: (details) {
@@ -136,7 +135,7 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                       Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
                       PropertiesItemWidget(
                         margin: EdgeInsets.zero,
-                        title: name,
+                        title: _getIndicatorName(e.value),
                         onTap: () => _onTap(e.value, null),
                       ),
                     ],
@@ -172,8 +171,6 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                       },
                     ),
                     ...e.value.asMap().entries.map((item) {
-                      final name =
-                          '${item.value.name} (${item.value.type.name})';
                       return Dismissible(
                         key: Key('${item.value.id}'),
                         onUpdate: (details) {
@@ -212,7 +209,7 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                               color: Colors.grey.withAlpha(40),
                             ),
                             PropertiesItemWidget(
-                              title: name,
+                              title: _getIndicatorName(item.value),
                               margin: EdgeInsets.zero,
                               onTap: () => _onTap(item.value, e.key),
                             ),
@@ -228,6 +225,19 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
         ),
       ),
     );
+  }
+
+  String _getIndicatorName(IndicatorEntity item) {
+    if (item.type.name.contains('LINEAR')) {
+      return '${item.name} (Linear Weighted)';
+    } else if (item.type.name.contains('SMMA')) {
+      return '${item.name} (Smoothed)';
+    } else if (item.type.name.contains('EMA')) {
+      return '${item.name} (Exponential)';
+    } else if (item.type.name.contains('SMA')) {
+      return '${item.name} (Simple)';
+    }
+    return '${item.name}';
   }
 
   void _onTap(IndicatorEntity item, int? windowId) {
