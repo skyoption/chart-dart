@@ -10,6 +10,7 @@ import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/bottom_sheets/properties_bottom_sheet.dart';
 import 'package:candle_chart/objects/objects_screen.dart';
 import 'package:candle_chart/renderer/base_dimension.dart';
+import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -70,6 +71,18 @@ class TimeFormat {
   ];
 }
 
+/// A comprehensive chart widget that supports candlestick charts, indicators, and objects.
+///
+/// Features:
+/// - Candlestick and line chart display
+/// - Multiple technical indicators (RSI, MACD, etc.)
+/// - Chart objects (lines, rectangles, etc.)
+/// - Indicator management with delete functionality
+///
+/// To delete indicators:
+/// 1. Long press on any indicator to enter resize mode (shows red X buttons)
+/// 2. Tap the red X button to delete the indicator
+/// 3. Or use the programmatic methods: enterIndicatorResizeMode() and exitIndicatorResizeMode()
 class KChartWidget extends StatefulWidget {
   bool volHidden;
   final bool isLine;
@@ -155,6 +168,9 @@ class KChartWidgetState extends State<KChartWidget>
   bool objectEditable = false;
   bool bottomSheetShown = false;
 
+  double get maxPrice => _painter!.mMainHighMaxValue;
+  double get minPrice => _painter!.mMainLowMinValue;
+
   double getMinScrollX() {
     return mScaleX;
   }
@@ -164,6 +180,9 @@ class KChartWidgetState extends State<KChartWidget>
   late double _lastScaleX = widget.initialScale;
   bool isScale = false, isDrag = false, isLongPress = false, isOnTap = false;
   bool isCursor = false;
+  bool isIndicatorResizeMode = false;
+  int? currentResizeRectIndex;
+  BaseDimension? currentBaseDimension;
   Random rand = Random();
   int pointerCount = 0;
 
@@ -347,6 +366,10 @@ class KChartWidgetState extends State<KChartWidget>
       } else {
         gestures[LongPressGestureRecognizer] = longPressRecognizer();
         gestures[HorizontalDragGestureRecognizer] = horizontalRecognizer();
+        if (isIndicatorResizeMode) {
+          gestures[VerticalDragGestureRecognizer] = verticalDragRecognizer();
+          gestures[TapGestureRecognizer] = indicatorDeleteTapRecognizer();
+        }
       }
     }
 
@@ -355,7 +378,7 @@ class KChartWidgetState extends State<KChartWidget>
       mScaleX = widget.initialScale;
     }
 
-    final BaseDimension baseDimension = BaseDimension(
+    currentBaseDimension = BaseDimension(
       height: mBaseHeight,
       volHidden: widget.volHidden,
       indicators: chartProperties.secondaries,
@@ -369,7 +392,7 @@ class KChartWidgetState extends State<KChartWidget>
       askAndBid: ask_bid,
       graphStyle: widget.graphStyle,
       indicators: chartProperties.indicators,
-      baseDimension: baseDimension,
+      baseDimension: currentBaseDimension!,
       //For TrendLine
       sink: mInfoWindowStream.sink,
       xFrontPadding: widget.xFrontPadding,
@@ -388,6 +411,8 @@ class KChartWidgetState extends State<KChartWidget>
       fixedLength: widget.fixedLength,
       verticalTextAlignment: widget.verticalTextAlignment,
       hideIndicators: widget.hideIndicators,
+      isIndicatorResizeMode: isIndicatorResizeMode,
+      currentResizeRectIndex: currentResizeRectIndex,
     );
 
     return LayoutBuilder(
@@ -439,7 +464,7 @@ class KChartWidgetState extends State<KChartWidget>
                   child: CustomPaint(
                     size: Size(
                       double.infinity,
-                      baseDimension.mDisplayHeight,
+                      currentBaseDimension!.mDisplayHeight,
                     ),
                     painter: _painter,
                   ),
@@ -614,7 +639,19 @@ class KChartWidgetState extends State<KChartWidget>
         (LongPressGestureRecognizer instance) {
       instance
         ..onLongPressDown = (details) {
+          // // Check if long press is on a secondary indicator rect
+          // final rectIndex = _painter!.findSecondaryRectIndex(
+          //     details.localPosition, _painter!.mSecondaryRectList);
+          // if (rectIndex != null) {
+          //   // Enter indicator resize mode
+          //   isIndicatorResizeMode = true;
+          //   currentResizeRectIndex = rectIndex;
+          //   isLongPress = true;
+          //   notifyChanged();
+          // } else {
+          // Normal object handling
           _objectSetOnUpdate(details);
+          // }
         };
     });
   }
@@ -902,6 +939,43 @@ class KChartWidgetState extends State<KChartWidget>
     );
   }
 
+  GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>
+      indicatorDeleteTapRecognizer() {
+    return GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+      () => TapGestureRecognizer(),
+      (TapGestureRecognizer instance) {
+        instance
+          ..onTapDown = (details) {
+            if (!isIndicatorResizeMode) return;
+            // Check if tap is on a delete button (X button)
+            final rectIndex = _painter!.findSecondaryRectIndex(
+                details.localPosition, _painter!.mSecondaryRectList);
+            kPrint(rectIndex);
+            if (rectIndex != null) {
+              // Check if tap is within the delete button area
+              final rect = _painter!.mSecondaryRectList[rectIndex];
+              final handleSize = 60.0;
+              final deleteButtonRect = Rect.fromLTWH(
+                rect.mRect.right - handleSize - 21,
+                rect.mRect.top,
+                handleSize,
+                handleSize,
+              );
+              if (deleteButtonRect.contains(details.localPosition)) {
+                // Remove the indicator
+                final indicator = _painter!.getIndicatorForRectIndex(rectIndex,
+                    _painter!.mSecondaryRectList, chartProperties.secondaries);
+                if (indicator != null) {
+                  chartProperties.removeSecondaryIndicator(indicator);
+                  notifyChanged();
+                }
+              }
+            }
+          };
+      },
+    );
+  }
+
   GestureRecognizerFactoryWithHandlers<HorizontalDragGestureRecognizer>
       horizontalRecognizer() {
     return GestureRecognizerFactoryWithHandlers<
@@ -934,6 +1008,71 @@ class KChartWidgetState extends State<KChartWidget>
           }
           ..onCancel = () {
             _onDragChanged(false);
+          };
+      },
+    );
+  }
+
+  GestureRecognizerFactoryWithHandlers<VerticalDragGestureRecognizer>
+      verticalDragRecognizer() {
+    return GestureRecognizerFactoryWithHandlers<VerticalDragGestureRecognizer>(
+      () => VerticalDragGestureRecognizer(),
+      (VerticalDragGestureRecognizer instance) {
+        instance
+          ..onDown = (details) {
+            if (!isIndicatorResizeMode || currentResizeRectIndex == null)
+              return;
+            // _tapPosition = details.localPosition;
+          }
+          ..onUpdate = (details) {
+            if (!isIndicatorResizeMode || currentResizeRectIndex == null)
+              return;
+
+            // Update indicator height based on vertical drag
+            final deltaY = details.primaryDelta ?? 0;
+            final totalHeight = height;
+
+            // Update the indicator heightRetro
+            final indicator = _painter!.getIndicatorForRectIndex(
+                currentResizeRectIndex!,
+                _painter!.mSecondaryRectList,
+                chartProperties.secondaries);
+            if (indicator != null) {
+              // Calculate height change based on drag delta
+              final heightChange = -deltaY / totalHeight;
+              final newHeightRetro =
+                  (indicator.heightRetro + heightChange).clamp(0.1, 0.8);
+              indicator.heightRetro = newHeightRetro;
+
+              // Update the base dimension - pass the height change in the correct direction
+              currentBaseDimension?.rearrangeRects(
+                chartProperties.secondaries,
+                currentResizeRectIndex!,
+                -deltaY, // Use negative deltaY to maintain consistent direction
+              );
+
+              // Save the updated indicator
+              chartProperties.updateSecondaryIndicator(indicator);
+            }
+
+            notifyChanged();
+          }
+          ..onEnd = (details) {
+            if (!isIndicatorResizeMode || currentResizeRectIndex == null)
+              return;
+
+            // Exit resize mode
+            isIndicatorResizeMode = false;
+            currentResizeRectIndex = null;
+            isLongPress = false;
+            notifyChanged();
+          }
+          ..onCancel = () {
+            // Exit resize mode on cancel
+            isIndicatorResizeMode = false;
+            currentResizeRectIndex = null;
+            isLongPress = false;
+            notifyChanged();
           };
       },
     );

@@ -4,6 +4,7 @@ import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/renderer/objects/draw_cursor_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
+import 'package:candle_chart/renderer/objects/draw_indicator_resize.dart';
 import 'package:candle_chart/renderer/objects/draw_rectangle_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_tp_and_sl_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_trend_lines.dart';
@@ -28,6 +29,7 @@ abstract class BaseChartPainter extends CustomPainter
         DrawRectangleLines,
         DrawVerticalLines,
         DrawCursorLines,
+        DrawIndicatorResize,
         DrawTPAndSLLines {
   static double maxScrollX = 0.0;
   List<KLineEntity>? data; // data of chart
@@ -79,6 +81,9 @@ abstract class BaseChartPainter extends CustomPainter
   final BaseDimension baseDimension;
   MainRect? mainRect;
   SecondaryRect? secondaryRect;
+  bool isIndicatorResizeMode = false;
+  int? currentResizeRectIndex;
+  bool hideIndicators = false;
 
   /// constructor BaseChartPainter
   ///
@@ -98,6 +103,9 @@ abstract class BaseChartPainter extends CustomPainter
     this.hideGrid = false,
     this.isTapShowInfoDialog = false,
     this.secondaryIndicators = const {},
+    this.isIndicatorResizeMode = false,
+    this.currentResizeRectIndex,
+    this.hideIndicators = false,
   }) {
     mItemCount = data?.length ?? 0;
     mPointWidth = this.chartStyle.pointWidth;
@@ -105,6 +113,7 @@ abstract class BaseChartPainter extends CustomPainter
     mBottomPadding = this.chartStyle.bottomPadding;
     mChildPadding = this.chartStyle.childPadding;
     mDataLen = mItemCount * mPointWidth;
+
     initFormats();
   }
 
@@ -164,15 +173,26 @@ abstract class BaseChartPainter extends CustomPainter
       drawCursorTitles(canvas, size, data!);
       drawCursorDate(canvas, size, data!);
       drawPositionsAndAskBidLines(canvas);
-      if (this.chartStyle.isLongFocus &&
-          (isLongPress == true ||
-              (isTapShowInfoDialog && longPressTriggered))) {
-        drawCrossLineText(canvas, size);
-      } else if (!this.chartStyle.isLongFocus &&
-          (isLongPress == true || (isTapShowInfoDialog && isOnTap))) {
-        drawCrossLineText(canvas, size);
-      }
+      // if (this.chartStyle.isLongFocus &&
+      //     (isLongPress == true ||
+      //         (isTapShowInfoDialog && longPressTriggered))) {
+      //   drawCrossLineText(canvas, size);
+      // } else if (!this.chartStyle.isLongFocus &&
+      //     (isLongPress == true || (isTapShowInfoDialog && isOnTap))) {
+      //   drawCrossLineText(canvas, size);
+      // }
     }
+
+    // Draw indicator resize handles if in resize mode
+    drawIndicatorResizeHandlesIfNeeded(
+      canvas,
+      size,
+      mSecondaryRectList,
+      secondaryIndicators,
+      isIndicatorResizeMode,
+      hideIndicators,
+    );
+
     canvas.restore();
   }
 

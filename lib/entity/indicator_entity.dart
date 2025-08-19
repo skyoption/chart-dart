@@ -35,6 +35,7 @@ class IndicatorEntity {
   String name;
   int shift, period;
   double? deviations, maximum, steps;
+  double heightRetro;
   @enumerated
   IndicatorType type = IndicatorType.MA_SMA;
   Ichimoku? ichimoku;
@@ -85,6 +86,7 @@ class IndicatorEntity {
     this.longEMA,
     this.shortEMA,
     this.value = 0,
+    this.heightRetro = 0.4,
     this.kValue = 0,
     this.dValue = 0,
     this.deviations,

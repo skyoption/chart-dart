@@ -325,6 +325,7 @@ const _ObjectEntitytypeEnumValueMap = {
   'Position': 2,
   'Trend': 3,
   'Rectangle': 4,
+  'Cursor': 5,
 };
 const _ObjectEntitytypeValueEnumMap = {
   0: ObjectType.Vertical,
@@ -332,6 +333,7 @@ const _ObjectEntitytypeValueEnumMap = {
   2: ObjectType.Position,
   3: ObjectType.Trend,
   4: ObjectType.Rectangle,
+  5: ObjectType.Cursor,
 };
 
 Id _objectEntityGetId(ObjectEntity object) {

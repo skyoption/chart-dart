@@ -5,6 +5,7 @@ import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
 import 'package:candle_chart/renderer/objects/draw_cursor_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
+import 'package:candle_chart/renderer/objects/draw_indicator_resize.dart';
 import 'package:candle_chart/renderer/objects/draw_rectangle_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_tp_and_sl_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_trend_lines.dart';
@@ -51,6 +52,7 @@ class ChartPainter extends BaseChartPainter
         UpdatePointPosition,
         DrawTPAndSLLines,
         DrawCursorLines,
+        DrawIndicatorResize,
         ChartCalc {
   static get maxScrollX => BaseChartPainter.maxScrollX;
   late BaseChartRenderer mMainRenderer;
@@ -78,6 +80,8 @@ class ChartPainter extends BaseChartPainter
   final bool hideIndicators;
   final GraphStyle graphStyle;
   final List<LineEntity> askAndBid;
+  final bool isIndicatorResizeMode;
+  final int? currentResizeRectIndex;
 
   ChartPainter(
     this.chartStyle,
@@ -103,6 +107,8 @@ class ChartPainter extends BaseChartPainter
     this.hideGrid = false,
     this.fixedLength = 2,
     this.hideIndicators = false,
+    this.isIndicatorResizeMode = false,
+    this.currentResizeRectIndex,
   }) : super(
           chartStyle,
           data: data,
