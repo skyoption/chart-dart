@@ -203,6 +203,7 @@ class ChartStyle {
   List<String>? dateTimeFormat;
   bool isLongFocus;
   double rightEmptySpace;
+  double initialRightDistance;
 
   ChartStyle({
     this.topPadding = 30.0,
@@ -231,6 +232,7 @@ class ChartStyle {
     this.hCrossWidth = 0.5,
     this.nowPriceLineLength = 4.5,
     this.lineLength = 4.5,
+    this.initialRightDistance = 0.0,
     this.lineSpan = 3.5,
     this.priceLineSpan = 2.5,
     this.priceLineLongSpan = 4.5,

@@ -157,8 +157,8 @@ class KChartWidgetState extends State<KChartWidget>
   List<LineEntity> tp_sl_positions = [];
   late double mScaleX = widget.initialScale,
       mScaleY = widget.initialScaleY,
-      mScrollX = 0.0,
-      mSelectX = 0.0;
+      mScrollX = widget.chartStyle.initialRightDistance,
+      mSelectX = widget.chartStyle.initialRightDistance;
   double mHeight = 0, mWidth = 0;
   AnimationController? _controller;
   Animation<double>? aniX;
@@ -374,7 +374,7 @@ class KChartWidgetState extends State<KChartWidget>
     }
 
     if (lineCandles.isEmpty) {
-      mScrollX = mSelectX = 0.0;
+      // mScrollX = mSelectX = 0.0;
       mScaleX = widget.initialScale;
     }
 
