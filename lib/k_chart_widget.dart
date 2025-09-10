@@ -954,7 +954,7 @@ class KChartWidgetState extends State<KChartWidget>
             if (rectIndex != null) {
               // Check if tap is within the delete button area
               final rect = _painter!.mSecondaryRectList[rectIndex];
-              final handleSize = 60.0;
+              final handleSize = 50.0;
               final deleteButtonRect = Rect.fromLTWH(
                 rect.mRect.right - handleSize,
                 rect.mRect.top,
