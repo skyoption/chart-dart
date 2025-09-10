@@ -639,19 +639,19 @@ class KChartWidgetState extends State<KChartWidget>
         (LongPressGestureRecognizer instance) {
       instance
         ..onLongPressDown = (details) {
-          // // Check if long press is on a secondary indicator rect
-          // final rectIndex = _painter!.findSecondaryRectIndex(
-          //     details.localPosition, _painter!.mSecondaryRectList);
-          // if (rectIndex != null) {
-          //   // Enter indicator resize mode
-          //   isIndicatorResizeMode = true;
-          //   currentResizeRectIndex = rectIndex;
-          //   isLongPress = true;
-          //   notifyChanged();
-          // } else {
-          // Normal object handling
-          _objectSetOnUpdate(details);
-          // }
+          // Check if long press is on a secondary indicator rect
+          final rectIndex = _painter!.findSecondaryRectIndex(
+              details.localPosition, _painter!.mSecondaryRectList);
+          if (rectIndex != null) {
+            // Enter indicator resize mode
+            isIndicatorResizeMode = true;
+            currentResizeRectIndex = rectIndex;
+            isLongPress = true;
+            notifyChanged();
+          } else {
+            // Normal object handling
+            _objectSetOnUpdate(details);
+          }
         };
     });
   }
