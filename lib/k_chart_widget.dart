@@ -956,7 +956,7 @@ class KChartWidgetState extends State<KChartWidget>
               final rect = _painter!.mSecondaryRectList[rectIndex];
               final handleSize = 60.0;
               final deleteButtonRect = Rect.fromLTWH(
-                rect.mRect.right - handleSize - 21,
+                rect.mRect.right - handleSize,
                 rect.mRect.top,
                 handleSize,
                 handleSize,
