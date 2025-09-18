@@ -186,7 +186,7 @@ class KChartWidgetState extends State<KChartWidget>
   Random rand = Random();
   int pointerCount = 0;
 
-  Future<void> getDefaultSettings({
+  static Future<void> getDefaultSettings({
     required Function(CandleTimeFormat frame, String symbol) onGettingSettings,
   }) async {
     await chartProperties.getDefaultSettings(
@@ -498,10 +498,10 @@ class KChartWidgetState extends State<KChartWidget>
 
                           if (details.delta.dy > 1) {
                             mScaleY = (mScaleY - step)
-                                .clamp(0.993, widget.initialScaleY);
+                                .clamp(0.9945, widget.initialScaleY);
                           } else if (details.delta.dy < 1) {
                             mScaleY = (mScaleY + step)
-                                .clamp(0.993, widget.initialScaleY);
+                                .clamp(0.9945, widget.initialScaleY);
                           }
                         }
                         if (widget.onZoomingStart != null)

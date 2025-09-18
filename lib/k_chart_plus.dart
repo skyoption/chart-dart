@@ -11,3 +11,4 @@ export 'renderer/index.dart';
 export 'utils/index.dart';
 export 'utils/isar.dart';
 export 'utils/context.dart';
+export 'utils/properties/chart_properties.dart';
