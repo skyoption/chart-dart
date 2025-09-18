@@ -4,13 +4,17 @@ import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/entity/symbol_enity.dart';
 import 'package:candle_chart/utils/kprint.dart';
+import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class KChart {
   static Isar? isar;
 
   static Future<void> openDB() async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    chartProperties = ChartProperties(sharedPreferences);
     final baseUrl = await getCachePath();
     isar = await Isar.open(
       [

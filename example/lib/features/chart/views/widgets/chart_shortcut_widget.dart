@@ -6,6 +6,7 @@ import 'package:example/features/chart/logic/chart_cubit.dart';
 import 'package:example/features/settings/logic/platform_settings_cubit.dart';
 import 'package:example/features/symbols/logic/quotes_cubit.dart';
 import 'package:example/features/symbols/models/symbol_entity.dart';
+import 'package:candle_chart/utils/properties/chart_properties.dart';
 
 class ChartShortcutWidget extends StatefulWidget {
   const ChartShortcutWidget({
@@ -29,7 +30,7 @@ class _ChartShortcutWidgetState extends State<ChartShortcutWidget> {
   void initState() {
     Future.delayed(Duration(milliseconds: 150), () {
       chartProperties.getDefaultSettings(
-        onGettingSettings: onGettingSettings,
+        onGetting: onGettingSettings,
       );
       final cubit = context.read<QuotesCubit>();
       _updateChart(0, cubit.currentSymbol.value!.symbol);

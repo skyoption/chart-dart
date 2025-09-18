@@ -15,11 +15,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:gesture_x_detector/gesture_x_detector.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 enum GraphStyle { area, candles, line }
 
-late final chartProperties;
 
 enum IndicatorType {
   MA_LINEAR,
@@ -142,11 +140,6 @@ class KChartWidget extends StatefulWidget {
     this.isLongFocusDurationTime = 500,
   }) : super(key: key) {
     KChartWidget.colors = chartColors;
-    initChartProperties();
-  }
-
-  Future<void> initChartProperties() async {
-    chartProperties = ChartProperties(await SharedPreferences.getInstance());
   }
 
   @override

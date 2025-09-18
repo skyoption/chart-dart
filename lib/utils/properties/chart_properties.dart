@@ -5,6 +5,8 @@ import 'package:candle_chart/utils/properties/objects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 export 'package:candle_chart/k_chart_widget.dart';
 
+late final ChartProperties chartProperties;
+
 class ChartProperties with Indicators, Objects {
   String symbol = '';
   CandleTimeFormat frame = CandleTimeFormat.M15;
