@@ -11,13 +11,15 @@ import 'package:candle_chart/objects/bottom_sheets/properties_bottom_sheet.dart'
 import 'package:candle_chart/objects/objects_screen.dart';
 import 'package:candle_chart/renderer/base_dimension.dart';
 import 'package:candle_chart/utils/kprint.dart';
-import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:gesture_x_detector/gesture_x_detector.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum GraphStyle { area, candles, line }
+
+late final chartProperties;
 
 enum IndicatorType {
   MA_LINEAR,
@@ -140,6 +142,11 @@ class KChartWidget extends StatefulWidget {
     this.isLongFocusDurationTime = 500,
   }) : super(key: key) {
     KChartWidget.colors = chartColors;
+    initChartProperties();
+  }
+
+  Future<void> initChartProperties() async {
+    chartProperties = ChartProperties(await SharedPreferences.getInstance());
   }
 
   @override
@@ -185,14 +192,6 @@ class KChartWidgetState extends State<KChartWidget>
   BaseDimension? currentBaseDimension;
   Random rand = Random();
   int pointerCount = 0;
-
-  static Future<void> getDefaultSettings({
-    required Function(CandleTimeFormat frame, String symbol) onGettingSettings,
-  }) async {
-    await chartProperties.getDefaultSettings(
-      onGetting: onGettingSettings,
-    );
-  }
 
   Future<void> getIndicators() async {
     if (widget.hideIndicators) return;
@@ -251,17 +250,6 @@ class KChartWidgetState extends State<KChartWidget>
     if (!widget.hideIndicators) {
       await chartProperties.updateIndicators(candles);
     }
-    notifyChanged();
-  }
-
-  Future<void> updateDefaultSettings({
-    required CandleTimeFormat frame,
-    required String symbol,
-  }) async {
-    await chartProperties.updateDefaultSettings(
-      frame: frame,
-      symbol: symbol,
-    );
     notifyChanged();
   }
 
@@ -494,14 +482,14 @@ class KChartWidgetState extends State<KChartWidget>
                       if (!objectEditable) {
                         if (!isScale) return;
                         if (pointerCount == 2) {
-                          const double step = 0.00007;
+                          const double step = 0.000073;
 
                           if (details.delta.dy > 1) {
                             mScaleY = (mScaleY - step)
-                                .clamp(0.9945, widget.initialScaleY);
+                                .clamp(0.993, widget.initialScaleY);
                           } else if (details.delta.dy < 1) {
                             mScaleY = (mScaleY + step)
-                                .clamp(0.9945, widget.initialScaleY);
+                                .clamp(0.993, widget.initialScaleY);
                           }
                         }
                         if (widget.onZoomingStart != null)

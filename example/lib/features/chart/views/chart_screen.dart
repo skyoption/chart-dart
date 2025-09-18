@@ -259,7 +259,7 @@ class _ChartScreenState extends State<ChartScreen> {
     final quotesCubit = context.read<QuotesCubit>();
     showUpdatePosition.value = false;
     await Future.delayed(const Duration(milliseconds: 200));
-    key.currentState?.updateDefaultSettings(
+    chartProperties.updateDefaultSettings(
       frame: timeframe.value,
       symbol: quotesCubit.currentSymbol.value!.symbol,
     );
@@ -398,7 +398,7 @@ class _ChartScreenState extends State<ChartScreen> {
       offset: offset,
     );
     await Future.delayed(const Duration(milliseconds: 200));
-    key.currentState?.updateDefaultSettings(
+    chartProperties.updateDefaultSettings(
       frame: timeframe.value,
       symbol: quotesCubit.currentSymbol.value!.symbol,
     );

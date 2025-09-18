@@ -1,17 +1,15 @@
-import 'package:candle_chart/entity/symbol_enity.dart';
 import 'package:candle_chart/k_chart_widget.dart';
-import 'package:candle_chart/utils/isar.dart';
 import 'package:candle_chart/utils/kprint.dart';
 import 'package:candle_chart/utils/properties/indicators.dart';
 import 'package:candle_chart/utils/properties/objects.dart';
-import 'package:isar/isar.dart';
-
-final chartProperties = ChartProperties._set();
+import 'package:shared_preferences/shared_preferences.dart';
+export 'package:candle_chart/k_chart_widget.dart';
 
 class ChartProperties with Indicators, Objects {
   String symbol = '';
   CandleTimeFormat frame = CandleTimeFormat.M15;
-
+  ChartProperties(this.sharedPreferences);
+  final SharedPreferences sharedPreferences;
   //For properties
   Map<String, dynamic> properties = {};
 
@@ -22,15 +20,8 @@ class ChartProperties with Indicators, Objects {
     this.frame = frame;
     this.symbol = symbol;
     try {
-      await KChart.write(query: (db) async {
-        await db.symbols.put(
-          Symbol(
-            id: 0,
-            frame: frame,
-            symbol: symbol,
-          ),
-        );
-      });
+      await sharedPreferences.setString('frame', frame.name);
+      await sharedPreferences.setString('symbol', symbol);
       await loadObjects();
       await loadIndicators();
     } catch (e) {
@@ -42,10 +33,10 @@ class ChartProperties with Indicators, Objects {
     required Function(CandleTimeFormat frame, String symbol) onGetting,
   }) async {
     try {
-      final res = await KChart.query.symbols.filter().idEqualTo(0).findFirst();
+      final res = await sharedPreferences.getString('frame');
       if (res != null) {
-        frame = res.frame;
-        symbol = res.symbol;
+        frame = CandleTimeFormat.values.firstWhere((e) => e.name == res);
+        symbol = await sharedPreferences.getString('symbol') ?? '';
       }
       onGetting(frame, symbol);
     } catch (e) {
@@ -56,6 +47,4 @@ class ChartProperties with Indicators, Objects {
   Future<void> updateObjects() async {
     await loadObjects();
   }
-
-  ChartProperties._set();
 }

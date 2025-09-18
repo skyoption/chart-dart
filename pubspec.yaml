@@ -23,6 +23,7 @@ dependencies:
   path_provider: ^2.1.5
   flutter_cupertino_datetime_picker: ^3.0.0
   gesture_x_detector: ^1.1.1
+  shared_preferences: ^2.5.3
 
 
 dev_dependencies:

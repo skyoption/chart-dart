@@ -28,7 +28,7 @@ class _ChartShortcutWidgetState extends State<ChartShortcutWidget> {
   @override
   void initState() {
     Future.delayed(Duration(milliseconds: 150), () {
-      chartKey.currentState?.getDefaultSettings(
+      chartProperties.getDefaultSettings(
         onGettingSettings: onGettingSettings,
       );
       final cubit = context.read<QuotesCubit>();
