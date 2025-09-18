@@ -18,7 +18,6 @@ import 'package:gesture_x_detector/gesture_x_detector.dart';
 
 enum GraphStyle { area, candles, line }
 
-
 enum IndicatorType {
   MA_LINEAR,
   MA_SMMA,
@@ -475,7 +474,7 @@ class KChartWidgetState extends State<KChartWidget>
                       if (!objectEditable) {
                         if (!isScale) return;
                         if (pointerCount == 2) {
-                          const double step = 0.000073;
+                          const double step = 0.00008;
 
                           if (details.delta.dy > 1) {
                             mScaleY = (mScaleY - step)
