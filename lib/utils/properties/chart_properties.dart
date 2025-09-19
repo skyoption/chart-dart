@@ -8,7 +8,7 @@ export 'package:candle_chart/k_chart_widget.dart';
 late final ChartProperties chartProperties;
 
 class ChartProperties with Indicators, Objects {
-  String symbol = '';
+  String symbol = 'GBPUSD';
   CandleTimeFormat frame = CandleTimeFormat.M15;
   ChartProperties(this.sharedPreferences);
   final SharedPreferences sharedPreferences;
@@ -35,11 +35,9 @@ class ChartProperties with Indicators, Objects {
     required Function(CandleTimeFormat frame, String symbol) onGetting,
   }) async {
     try {
-      final res = await sharedPreferences.getString('frame');
-      if (res != null) {
-        frame = CandleTimeFormat.values.firstWhere((e) => e.name == res);
-        symbol = await sharedPreferences.getString('symbol') ?? '';
-      }
+      final res = await sharedPreferences.getString('frame') ?? 'M15';
+      symbol = await sharedPreferences.getString('symbol') ?? 'GBPUSD';
+      frame = CandleTimeFormat.values.firstWhere((e) => e.name == res);
       onGetting(frame, symbol);
     } catch (e) {
       kPrint(e.toString());
