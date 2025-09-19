@@ -163,6 +163,7 @@ class ChartPosition {
 }
 
 class ChartStyle {
+  double scaleStep;
   double topPadding;
   double leftPadding;
   double rightPadding;
@@ -206,6 +207,7 @@ class ChartStyle {
   double initialRightDistance;
 
   ChartStyle({
+    this.scaleStep = 0.000085,
     this.topPadding = 30.0,
     this.leftPadding = 5.0,
     this.rightPadding = 5.0,
