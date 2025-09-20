@@ -1,13 +1,10 @@
 import 'package:candle_chart/entity/k_line_entity.dart';
-import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/indicators/widgets/top_header_widget.dart';
 import 'package:candle_chart/k_chart_plus.dart';
-import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/bottom_sheets/datepicker.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/object_style_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
-import 'package:candle_chart/utils/date_format_util.dart';
-import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
@@ -43,66 +40,29 @@ class _VerticalLinePropertiesScreenState
     point = TextEditingController(text: object.value.toStringAsFixed(2));
 
     ///datetime
-    lastTime = DateTime.fromMillisecondsSinceEpoch(widget.data.last.time!);
-    firstTime = DateTime.fromMillisecondsSinceEpoch(widget.data[0].time!);
+    lastTime = DateTime.fromMillisecondsSinceEpoch(widget.data.last.time);
+    firstTime = DateTime.fromMillisecondsSinceEpoch(widget.data[0].time);
     currentTime = DateTime.fromMillisecondsSinceEpoch(widget.object!.datetime);
 
     ///date
     date = dateFormat(currentTime, formats);
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size(double.infinity, 50.0),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 12.0,
-              horizontal: 12.0,
-            ),
-            child: Stack(
-              children: [
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: InkWell(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      size: 21.0,
-                      color: KChartWidget.colors!.iconColor,
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: AlignmentDirectional.center,
-                  child: Text(
-                    context.tr.properties, // تم استبدال النص الثابت
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: InkWell(
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                      await chartProperties.updateVerticalLine(object);
-                      widget.onDone(null);
-                    },
-                    child: Text(
-                      context.tr.done, // تم استبدال النص الثابت
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: KChartWidget.colors!.primary,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          child: TopHeaderWidget(
+            title: context.tr.properties,
+            onBack: () => Navigator.of(context).pop(),
+            onDone: () async {
+              Navigator.of(context).pop();
+              await chartProperties.updateVerticalLine(object);
+              widget.onDone(null);
+            },
           ),
         ),
       ),
@@ -116,7 +76,8 @@ class _VerticalLinePropertiesScreenState
               subTitle: object.name,
               margin: EdgeInsets.zero,
             ),
-            PropertiesTitleWidget(title: context.tr.coordinates), // استبدال النص
+            PropertiesTitleWidget(
+                title: context.tr.coordinates), // استبدال النص
             PropertiesItemWidget(
               title: context.tr.date, // استبدال النص
               onTap: () async {
@@ -137,24 +98,25 @@ class _VerticalLinePropertiesScreenState
               child: Text(
                 date,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w400,
-                ),
+                      fontWeight: FontWeight.w400,
+                    ),
               ),
             ),
-            PropertiesTitleWidget(title: context.tr.visualization), // استبدال النص
+            PropertiesTitleWidget(
+                title: context.tr.visualization), // استبدال النص
             PropertiesItemWidget(
               title: context.tr.symbol, // استبدال النص
               subTitle: object.symbol.toUpperCase(),
               margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
+              subTitleColor: Colors.grey.withAlpha(80),
               onTap: () {},
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
             PropertiesItemWidget(
               title: context.tr.timeframe, // استبدال النص
               subTitle: object.frame.name,
               margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
+              subTitleColor: Colors.grey.withAlpha(80),
               onTap: () {},
             ),
             ObjectStyleWidget(
@@ -173,5 +135,4 @@ class _VerticalLinePropertiesScreenState
       ),
     );
   }
-
 }

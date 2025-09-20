@@ -1,7 +1,6 @@
 import 'package:candle_chart/entity/k_line_entity.dart';
-import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/indicators/widgets/top_header_widget.dart';
 import 'package:candle_chart/k_chart_plus.dart';
-import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/widgets/object_item_widget.dart';
 import 'package:candle_chart/utils/icons.dart';
 import 'package:flutter/material.dart';
@@ -29,35 +28,9 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
       appBar: PreferredSize(
         preferredSize: const Size(double.infinity, 60.0),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 16.0,
-              horizontal: 12.0,
-            ),
-            child: Stack(
-              children: [
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: InkWell(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      size: 21.0,
-                      color: KChartWidget.colors!.iconColor,
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: AlignmentDirectional.center,
-                  child: Text(
-                    context.tr.addObject,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          child: TopHeaderWidget(
+            title: context.tr.addObject,
+            onBack: () => Navigator.of(context).pop(),
           ),
         ),
       ),
@@ -66,12 +39,13 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
               child: Text(
                 context.tr.lines,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w400,
-                ),
+                      fontWeight: FontWeight.w400,
+                    ),
               ),
             ),
             ObjectItemWidget(
@@ -107,12 +81,13 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
               },
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
               child: Text(
                 context.tr.shapes,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w400,
-                ),
+                      fontWeight: FontWeight.w400,
+                    ),
               ),
             ),
             ObjectItemWidget(
@@ -129,5 +104,4 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
       ),
     );
   }
-
 }

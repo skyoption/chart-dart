@@ -15,6 +15,7 @@
 "macd_sma": "MACD SMA",
 "main": "Main",
 "signal": "Signal",
+"add": "Add",
 "k_period": "%K Period",
 "d_period": "%D Period",
 "slowing": "Slowing",

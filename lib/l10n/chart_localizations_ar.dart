@@ -57,6 +57,9 @@ class ChartLocalizationsAr extends ChartLocalizations {
   String get signal => 'الإشارة';
 
   @override
+  String get add => 'إضافة';
+
+  @override
   String get k_period => 'فترة %K';
 
   @override

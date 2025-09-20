@@ -1,5 +1,6 @@
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/indicators/widgets/top_header_widget.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/add_objects_screen.dart';
@@ -37,54 +38,19 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
       appBar: PreferredSize(
         preferredSize: const Size(double.infinity, 60.0),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 16.0,
-              horizontal: 16.0,
-            ),
-            child: Stack(
-              children: [
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: InkWell(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      size: 26.0,
-                      color: KChartWidget.colors!.iconColor,
-                    ),
+          child: TopHeaderWidget(
+            title: context.tr.objects,
+            doneText: context.tr.add,
+            onBack: () => Navigator.of(context).pop(),
+            onDone: () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => AddObjectsScreen(
+                    onDone: widget.onDone,
                   ),
                 ),
-                Align(
-                  alignment: AlignmentDirectional.center,
-                  child: Text(
-                    context.tr.objects,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => AddObjectsScreen(
-                            onDone: widget.onDone,
-                          ),
-                        ),
-                      );
-                    },
-                    child: Icon(
-                      Icons.add,
-                      size: 21.0,
-                      color: KChartWidget.colors!.iconColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
@@ -93,12 +59,13 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
               child: Text(
                 context.tr.addObject,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w400,
-                ),
+                      fontWeight: FontWeight.w400,
+                    ),
               ),
             ),
             Row(
@@ -171,12 +138,13 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
             ).addPadding(horizontal: 21.0, vertical: 8.0),
             if (chartProperties.objects.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                 child: Text(
                   context.tr.objects,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w400,
-                  ),
+                        fontWeight: FontWeight.w400,
+                      ),
                 ),
               ),
             ...chartProperties.objects.asMap().entries.map((e) {
@@ -209,7 +177,6 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
       ),
     );
   }
-
 
   String _icon(ObjectEntity item) {
     if (item.type == ObjectType.Horizontal) {

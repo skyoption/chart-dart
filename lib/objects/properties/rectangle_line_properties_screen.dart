@@ -1,16 +1,11 @@
-
-
 import 'package:candle_chart/entity/k_line_entity.dart';
-import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/indicators/widgets/top_header_widget.dart';
 import 'package:candle_chart/k_chart_plus.dart';
-import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/objects/bottom_sheets/datepicker.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/object_style_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_boolean_item_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
-import 'package:candle_chart/utils/date_format_util.dart';
-import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -48,8 +43,8 @@ class _RectangleLinePropertiesScreenState
     point2 = TextEditingController(text: object.value2.toStringAsFixed(2));
 
     ///datetime
-    lastTime = DateTime.fromMillisecondsSinceEpoch(widget.data.last.time!);
-    firstTime = DateTime.fromMillisecondsSinceEpoch(widget.data[0].time!);
+    lastTime = DateTime.fromMillisecondsSinceEpoch(widget.data.last.time);
+    firstTime = DateTime.fromMillisecondsSinceEpoch(widget.data[0].time);
     current1 = DateTime.fromMillisecondsSinceEpoch(widget.object!.datetime);
     current2 = DateTime.fromMillisecondsSinceEpoch(widget.object!.datetime2);
 
@@ -58,58 +53,21 @@ class _RectangleLinePropertiesScreenState
     date2 = dateFormat(current2, formats);
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size(double.infinity, 50.0),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 12.0,
-              horizontal: 12.0,
-            ),
-            child: Stack(
-              children: [
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: InkWell(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      size: 21.0,
-                      color: KChartWidget.colors!.iconColor,
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: AlignmentDirectional.center,
-                  child: Text(
-                    context.tr.properties,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: InkWell(
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                      await chartProperties.updateRectangle(object);
-                      widget.onDone(null);
-                    },
-                    child: Text(
-                      context.tr.done,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: KChartWidget.colors!.primary,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          child: TopHeaderWidget(
+            title: context.tr.properties,
+            onBack: () => Navigator.of(context).pop(),
+            onDone: () async {
+              Navigator.of(context).pop();
+              await chartProperties.updateRectangle(object);
+              widget.onDone(null);
+            },
           ),
         ),
       ),
@@ -123,7 +81,7 @@ class _RectangleLinePropertiesScreenState
               subTitle: object.name,
               margin: EdgeInsets.zero,
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
             PropertiesBooleanItemWidget(
               value: object.isFill,
               title: context.tr.fill,
@@ -142,9 +100,9 @@ class _RectangleLinePropertiesScreenState
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w400,
-                    color: Colors.blueAccent,
-                  ),
+                        fontWeight: FontWeight.w400,
+                        color: Colors.blueAccent,
+                      ),
                   onChanged: (value) {
                     if (value.isNotEmpty) {
                       object.value = double.parse(value);
@@ -160,7 +118,7 @@ class _RectangleLinePropertiesScreenState
                 ),
               ),
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
             PropertiesItemWidget(
               title: context.tr.date,
               onTap: () {
@@ -181,8 +139,8 @@ class _RectangleLinePropertiesScreenState
               child: Text(
                 date1,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w400,
-                ),
+                      fontWeight: FontWeight.w400,
+                    ),
               ),
             ),
             PropertiesItemWidget(
@@ -195,9 +153,9 @@ class _RectangleLinePropertiesScreenState
                   cursorHeight: 12.0,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w400,
-                    color: Colors.blueAccent,
-                  ),
+                        fontWeight: FontWeight.w400,
+                        color: Colors.blueAccent,
+                      ),
                   onChanged: (value) {
                     if (value.isNotEmpty) {
                       object.value2 = double.parse(value);
@@ -213,7 +171,7 @@ class _RectangleLinePropertiesScreenState
                 ),
               ),
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
             PropertiesItemWidget(
               title: context.tr.date,
               onTap: () {
@@ -234,8 +192,8 @@ class _RectangleLinePropertiesScreenState
               child: Text(
                 date2,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w400,
-                ),
+                      fontWeight: FontWeight.w400,
+                    ),
               ),
             ),
             PropertiesTitleWidget(title: context.tr.visualization),
@@ -243,15 +201,15 @@ class _RectangleLinePropertiesScreenState
               title: context.tr.symbol,
               subTitle: object.symbol.toUpperCase(),
               margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
+              subTitleColor: Colors.grey.withAlpha(80),
               onTap: () {},
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
             PropertiesItemWidget(
               title: context.tr.timeframe,
               subTitle: object.frame.name,
               margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
+              subTitleColor: Colors.grey.withAlpha(80),
               onTap: () {},
             ),
             ObjectStyleWidget(
@@ -270,7 +228,6 @@ class _RectangleLinePropertiesScreenState
       ),
     );
   }
-
 
   @override
   void dispose() {

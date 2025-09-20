@@ -14,6 +14,7 @@ import 'package:candle_chart/indicators/properties/indicator_properties_screen.d
 import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/material.dart';
 import 'package:candle_chart/k_chart_plus.dart';
+import 'package:candle_chart/indicators/widgets/top_header_widget.dart';
 
 class NewIndicatorScreen extends StatefulWidget {
   final Function onDone;
@@ -36,35 +37,9 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
       appBar: PreferredSize(
         preferredSize: const Size(double.infinity, 60.0),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 14.0,
-              horizontal: 21.0,
-            ),
-            child: Stack(
-              children: [
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: InkWell(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      size: 21.0,
-                      color: KChartWidget.colors!.iconColor,
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: AlignmentDirectional.center,
-                  child: Text(
-                    context.tr.add_indicator,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
-                  ),
-                ),
-              ],
-            ),
+          child: TopHeaderWidget(
+            title: context.tr.add_indicator,
+            onBack: () => Navigator.of(context).pop(),
           ),
         ),
       ),
@@ -207,7 +182,6 @@ class _NewIndicatorScreenState extends State<NewIndicatorScreen> {
                       name: context.tr.stochastic_oscillator,
                       onDone: widget.onDone,
                       windowId: widget.windowId,
-                      
                     ),
                   ),
                 );

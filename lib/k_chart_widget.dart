@@ -474,7 +474,7 @@ class KChartWidgetState extends State<KChartWidget>
                       if (!objectEditable) {
                         if (!isScale) return;
                         if (pointerCount == 2) {
-                           double step = widget.chartStyle.scaleStep;
+                          double step = widget.chartStyle.scaleStep;
 
                           if (details.delta.dy > 1) {
                             mScaleY = (mScaleY - step)
@@ -930,23 +930,21 @@ class KChartWidgetState extends State<KChartWidget>
             // Check if tap is on a delete button (X button)
             final rectIndex = _painter!.findSecondaryRectIndex(
                 details.localPosition, _painter!.mSecondaryRectList);
-            kPrint(rectIndex);
             if (rectIndex != null) {
               // Check if tap is within the delete button area
               final rect = _painter!.mSecondaryRectList[rectIndex];
-              final handleSize = 50.0;
               final deleteButtonRect = Rect.fromLTWH(
-                rect.mRect.right - handleSize,
-                rect.mRect.top,
-                handleSize,
-                handleSize,
+                rect.mRect.right - 50.0,
+                rect.mRect.top - 20.0,
+                50.0,
+                60.0,
               );
               if (deleteButtonRect.contains(details.localPosition)) {
                 // Remove the indicator
                 final indicator = _painter!.getIndicatorForRectIndex(rectIndex,
                     _painter!.mSecondaryRectList, chartProperties.secondaries);
                 if (indicator != null) {
-                  chartProperties.removeSecondaryIndicator(indicator);
+                  chartProperties.removeSecondaryWindow(indicator.windowId);
                   notifyChanged();
                 }
               }

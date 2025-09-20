@@ -194,6 +194,12 @@ abstract class ChartLocalizations {
   /// **'Signal'**
   String get signal;
 
+  /// No description provided for @add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
+
   /// No description provided for @k_period.
   ///
   /// In en, this message translates to:

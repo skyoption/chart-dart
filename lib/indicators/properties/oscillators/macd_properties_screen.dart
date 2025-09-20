@@ -4,7 +4,8 @@ import 'package:candle_chart/indicators/widgets/indicator_color_widget.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
-import 'package:candle_chart/utils/properties/chart_properties.dart';
+
+import 'package:candle_chart/indicators/widgets/top_header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -61,50 +62,12 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
       appBar: PreferredSize(
         preferredSize: const Size(double.infinity, 60.0),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 14.0,
-              horizontal: 21.0,
-            ),
-            child: Stack(
-              children: [
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: InkWell(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      size: 21.0,
-                      color: KChartWidget.colors!.iconColor,
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: AlignmentDirectional.center,
-                  child: Text(
-                    context.tr.properties,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
-                  ),
-                ),
-                Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: InkWell(
-                    onTap: () {
-                      _onDone();
-                    },
-                    child: Text(
-                      context.tr.done,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: KChartWidget.colors!.primary,
-                          ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          child: TopHeaderWidget(
+            title: context.tr.properties,
+            onBack: () => Navigator.of(context).pop(),
+            onDone: () {
+              _onDone();
+            },
           ),
         ),
       ),

@@ -57,6 +57,9 @@ class ChartLocalizationsEn extends ChartLocalizations {
   String get signal => 'Signal';
 
   @override
+  String get add => 'Add';
+
+  @override
   String get k_period => '%K Period';
 
   @override

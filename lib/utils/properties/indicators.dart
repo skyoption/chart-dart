@@ -110,6 +110,28 @@ mixin Indicators {
     await _reset();
   }
 
+  Future<void> removeSecondaryWindow(int windowId) async {
+    //when remove last secondary return trend indicators to get value from apply to close
+    if (windowId != 0) {
+      final items = secondaries[windowId] ?? [];
+      if (items.length > 1) {
+        if (indicators.isEmpty) {
+          for (var item in items) {
+            if (item.applyTo == ApplyTo.Last_Indicator ||
+                item.applyTo == ApplyTo.First_Indicator) {
+              updateSecondaryIndicator(item..applyTo = ApplyTo.Close);
+            }
+          }
+        }
+      }
+      _secondaryIndicators.removeWhere((e) => e.windowId == windowId);
+      await KChart.write(query: (db) async {
+        await db.indicatorEntitys.deleteAll(items.map((e) => e.id).toList());
+      });
+      await _reset();
+    }
+  }
+
   Future<void> removeSecondaryIndicator(IndicatorEntity item) async {
     //when remove last secondary return trend indicators to get value from apply to close
     if (item.windowId != 0) {
