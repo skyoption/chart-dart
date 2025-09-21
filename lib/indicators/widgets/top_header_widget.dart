@@ -23,7 +23,13 @@ class TopHeaderWidget extends StatelessWidget {
           Align(
             alignment: AlignmentDirectional.centerStart,
             child: InkWell(
-              onTap: () => onBack?.call() ?? Navigator.of(context).pop(),
+              onTap: () {
+                if (onBack != null) {
+                  onBack?.call();
+                } else {
+                  Navigator.of(context).pop();
+                }
+              },
               child: Icon(
                 Icons.arrow_back_ios_new_rounded,
                 size: 21.0,
