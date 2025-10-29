@@ -40,7 +40,7 @@ const SymbolSchema = CollectionSchema(
   getId: _symbolGetId,
   getLinks: _symbolGetLinks,
   attach: _symbolAttach,
-  version: '3.1.0+1',
+  version: '3.3.0-dev.3',
 );
 
 int _symbolEstimateSize(
@@ -96,26 +96,28 @@ P _symbolDeserializeProp<P>(
 }
 
 const _SymbolframeEnumValueMap = {
-  'M1': 0,
-  'M5': 1,
-  'M15': 2,
-  'M30': 3,
-  'H1': 4,
-  'H4': 5,
-  'D1': 6,
-  'W1': 7,
-  'MN1': 8,
+  'S5': 0,
+  'M1': 1,
+  'M5': 2,
+  'M15': 3,
+  'M30': 4,
+  'H1': 5,
+  'H4': 6,
+  'D1': 7,
+  'W1': 8,
+  'MN1': 9,
 };
 const _SymbolframeValueEnumMap = {
-  0: CandleTimeFormat.M1,
-  1: CandleTimeFormat.M5,
-  2: CandleTimeFormat.M15,
-  3: CandleTimeFormat.M30,
-  4: CandleTimeFormat.H1,
-  5: CandleTimeFormat.H4,
-  6: CandleTimeFormat.D1,
-  7: CandleTimeFormat.W1,
-  8: CandleTimeFormat.MN1,
+  0: CandleTimeFormat.S5,
+  1: CandleTimeFormat.M1,
+  2: CandleTimeFormat.M5,
+  3: CandleTimeFormat.M15,
+  4: CandleTimeFormat.M30,
+  5: CandleTimeFormat.H1,
+  6: CandleTimeFormat.H4,
+  7: CandleTimeFormat.D1,
+  8: CandleTimeFormat.W1,
+  9: CandleTimeFormat.MN1,
 };
 
 Id _symbolGetId(Symbol object) {

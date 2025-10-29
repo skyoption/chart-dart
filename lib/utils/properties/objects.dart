@@ -3,7 +3,7 @@ import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/utils/isar.dart';
 import 'package:candle_chart/utils/kprint.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 
 mixin Objects {
   late String symbol;

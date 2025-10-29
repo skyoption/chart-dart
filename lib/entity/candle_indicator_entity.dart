@@ -2,7 +2,7 @@ import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 
 part 'candle_indicator_entity.g.dart';
 

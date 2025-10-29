@@ -16,7 +16,7 @@ import firebase_crashlytics
 import firebase_messaging
 import flutter_local_notifications
 import flutter_secure_storage_macos
-import isar_flutter_libs
+import isar_community_flutter_libs
 import objectbox_flutter_libs
 import package_info_plus
 import path_provider_foundation

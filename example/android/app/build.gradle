@@ -62,6 +62,13 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        
+        // 16KB page size support for Android 15+
+        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
+            }
+        }
     }
 
     signingConfigs {
@@ -96,6 +103,20 @@ android {
         checkReleaseBuilds false
         disable 'InvalidPackage', 'Instantiatable'
     }
+    
+    // 16KB page size support - ensure uncompressed native libraries
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = false  // AGP 8.5.1+ uses uncompressed by default
+        }
+        // Exclude problematic ObjectBox libraries for 32-bit architectures
+        // This is a temporary workaround until ObjectBox releases 16KB-aligned versions
+        excludes += [
+            'lib/armeabi-v7a/libobjectbox-jni.so',
+            'lib/x86/libobjectbox-jni.so'
+        ]
+    }
+    
 
 }
 
@@ -110,10 +131,11 @@ configurations {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation("com.google.firebase:firebase-bom:32.2.2")
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation 'com.myfatoorah:myfatoorah:3.0.4'
     debugImplementation("io.objectbox:objectbox-android-objectbrowser:4.3.0")
+    implementation("io.objectbox:objectbox-android:4.3.0")
 }

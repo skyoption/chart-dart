@@ -17,9 +17,9 @@ dependencies:
   shimmer: ^3.0.0
   zoom_widget: ^2.0.1
   flutter_svg: ^2.0.16
-  flutter_colorpicker: ^1.1.0
-  isar: ^3.1.0+1
-  isar_flutter_libs: ^3.1.0+1
+  flutter_colorpicker: ^1.1.0  
+  isar_community: ^3.3.0-dev.3
+  isar_community_flutter_libs: ^3.3.0-dev.3
   path_provider: ^2.1.5
   flutter_cupertino_datetime_picker: ^3.0.0
   gesture_x_detector: ^1.1.1
@@ -30,11 +30,15 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner:
-  isar_generator:
-  analyzer: ^5.13.0
+  isar_community_generator: ^3.3.0-dev.3
 
 flutter:
   generate: true
   assets:
   - assets/svgs/
   - assets/svgs/chart/
+
+
+
+  # chmod +x check_elf_alignment.sh
+# ./check_elf_alignment.sh example/build/app/outputs/apk/release/app-release.apk

@@ -1,5 +1,5 @@
 import 'package:candle_chart/k_chart_widget.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 
 part 'symbol_enity.g.dart';
 

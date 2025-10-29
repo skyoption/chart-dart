@@ -10,7 +10,6 @@ import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/bottom_sheets/properties_bottom_sheet.dart';
 import 'package:candle_chart/objects/objects_screen.dart';
 import 'package:candle_chart/renderer/base_dimension.dart';
-import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
