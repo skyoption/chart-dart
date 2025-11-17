@@ -22,7 +22,9 @@ mixin DrawTPAndSLLines on ChartDetails {
     final i = tPAndSLLines.indexWhere((e) => e.id == item.id);
     if (i != -1) {
       tPAndSLLines[i].currentEditIndex = -1;
-      tPAndSLLines[i].dy1 = getMainY(value);
+      double? y = getMainY(value);
+      if (y == null) return null;
+      tPAndSLLines[i].dy1 = y;
       tPAndSLLines[i].value = value;
       return tPAndSLLines[i];
     }
@@ -37,12 +39,18 @@ mixin DrawTPAndSLLines on ChartDetails {
       final value = getYPositionValue(offset.dy);
       if (mMainLowMinValue >= value) {
         tPAndSLLines[i].value = mMainLowMinValue;
-        tPAndSLLines[i].dy1 = getMainY(mMainLowMinValue);
+        double? y = getMainY(mMainLowMinValue);
+        if (y == null) return null;
+        tPAndSLLines[i].dy1 = y;
       } else if (mMainHighMaxValue <= value) {
         tPAndSLLines[i].value = mMainHighMaxValue;
-        tPAndSLLines[i].dy1 = getMainY(mMainLowMinValue);
+        double? y = getMainY(mMainLowMinValue);
+        if (y == null) return null;
+        tPAndSLLines[i].dy1 = y;
       } else {
-        tPAndSLLines[i].dy1 = getMainY(tPAndSLLines[i].value);
+        double? y = getMainY(tPAndSLLines[i].value);
+        if (y == null) return null;
+        tPAndSLLines[i].dy1 = y;
         tPAndSLLines[i].value = value;
       }
       return tPAndSLLines[i];
@@ -60,12 +68,14 @@ mixin DrawTPAndSLLines on ChartDetails {
       double value = tPAndSLLines[i].value;
       if (value <= this.chartPosition.topPrice &&
           value >= this.chartPosition.bottomPrice) {
-        double y = getMainY(value);
+        double? y = getMainY(value);
+        if (y == null) return;
         if (mMainLowMinValue >= value) {
           y = getMainY(mMainLowMinValue);
         } else if (mMainHighMaxValue <= value) {
           y = getMainY(mMainHighMaxValue);
         }
+        if (y == null) return;
         final pricePaint = Paint()
           ..filterQuality = FilterQuality.high
           ..isAntiAlias = true
@@ -103,7 +113,8 @@ mixin DrawTPAndSLLines on ChartDetails {
     for (int i = 0; i < tPAndSLLines.length; i++) {
       double value = tPAndSLLines[i].value;
       if (mMainLowMinValue >= value) continue;
-      double y = getMainY(value);
+      double? y = getMainY(value);
+      if (y == null) return;
 
       double startX = 0;
       final max = -mTranslateX + (mWidth + 20) / scaleX;

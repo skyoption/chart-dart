@@ -413,7 +413,8 @@ class ChartPainter extends BaseChartPainter
     double w1 = 5;
     double w2 = 3;
     double r = textHeight / 2 + w2;
-    double y = getMainY(point.close);
+    double? y = getMainY(point.close);
+    if (y == null) return;
     double x;
     bool isLeft = false;
     if (translateXtoX(getX(index)) < mWidth / 2) {
@@ -501,7 +502,8 @@ class ChartPainter extends BaseChartPainter
     if (!this.chartStyle.isShowHighOrLowPoint) return;
     //plot maxima and minima
     double x = translateXtoX(getX(mainRect!.mMainMinIndex));
-    double y = getMainY(mMainLowMinValue);
+    double? y = getMainY(mMainLowMinValue);
+    if (y == null) return;
     if (x < mWidth / 2) {
       //draw right
       //EMA
@@ -539,6 +541,7 @@ class ChartPainter extends BaseChartPainter
     }
     x = translateXtoX(getX(mainRect!.mMainMaxIndex));
     y = getMainY(mMainHighMaxValue);
+    if (y == null) return;
     if (x < mWidth / 2) {
       //draw right
       //EMA
@@ -650,7 +653,8 @@ class ChartPainter extends BaseChartPainter
   ) {
     if (price <= this.chartPosition.topPrice &&
         price >= this.chartPosition.bottomPrice) {
-      double y = getMainY(price);
+      double? y = getMainY(price);
+      if (y == null) return;
       //view display area boundary value drawing
       // if (y > getMainY(mMainLowMinValue)) {
       //   y = getMainY(mMainLowMinValue);
@@ -697,7 +701,8 @@ class ChartPainter extends BaseChartPainter
       ..strokeWidth = this.chartStyle.vCrossWidth
       ..isAntiAlias = true;
     double x = getX(index);
-    double y = getMainY(point.close);
+    double? y = getMainY(point.close);
+    if (y == null) return;
 
     // Draw vertical dashed line
     drawDashedLine(canvas, Offset(x, mTopPadding),

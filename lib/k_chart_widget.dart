@@ -206,12 +206,14 @@ class KChartWidgetState extends State<KChartWidget>
   void setCursor(bool cursor) {
     isCursor = cursor;
     if (isCursor) {
+      double? y = _painter!.getMainY(_painter!.mMainHighMaxValue / 2);
+      if (y == null) return;
       _painter!.addCursorOffset(
         ObjectEntity(
           type: ObjectType.Cursor,
           currentEditIndex: -1,
           value: _painter!.mMainHighMaxValue / 2,
-          dy1: _painter!.getMainY(_painter!.mMainHighMaxValue / 2),
+          dy1: y,
           dx1: _painter!.getX(300),
           color: colorToHex(widget.chartColors.cursorColor),
           height: 0.7,

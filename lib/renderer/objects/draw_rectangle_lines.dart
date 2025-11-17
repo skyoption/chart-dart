@@ -30,12 +30,18 @@ mixin DrawRectangleLines on ChartDetails {
       final value = getYPositionValue(offset.dy);
       if (mMainLowMinValue >= value) {
         rectangles[i].value = mMainLowMinValue;
-        rectangles[i].dy1 = getMainY(mMainLowMinValue);
+        double? y = getMainY(mMainLowMinValue);
+        if (y == null) return null;
+        rectangles[i].dy1 = y;
       } else if (mMainHighMaxValue <= value) {
         rectangles[i].value = mMainHighMaxValue;
-        rectangles[i].dy1 = getMainY(mMainLowMinValue);
+        double? y = getMainY(mMainLowMinValue);
+        if (y == null) return null;
+        rectangles[i].dy1 = y;
       } else {
-        rectangles[i].dy1 = getMainY(rectangles[i].value);
+        double? y = getMainY(rectangles[i].value);
+        if (y == null) return null;
+        rectangles[i].dy1 = y;
         rectangles[i].value = value;
       }
       return rectangles[i];
@@ -57,12 +63,18 @@ mixin DrawRectangleLines on ChartDetails {
       final value = getYPositionValue(offset.dy);
       if (mMainLowMinValue >= value) {
         rectangles[i].value2 = mMainLowMinValue;
-        rectangles[i].dy2 = getMainY(mMainLowMinValue);
+        double? y = getMainY(mMainLowMinValue);
+        if (y == null) return null;
+        rectangles[i].dy2 = y;
       } else if (mMainHighMaxValue <= value) {
         rectangles[i].value2 = mMainHighMaxValue;
-        rectangles[i].dy2 = getMainY(mMainLowMinValue);
+        double? y = getMainY(mMainLowMinValue);
+        if (y == null) return null;
+        rectangles[i].dy2 = y;
       } else {
-        rectangles[i].dy2 = getMainY(rectangles[i].value2);
+        double? y = getMainY(rectangles[i].value2);
+        if (y == null) return null;
+        rectangles[i].dy2 = y;
         rectangles[i].value2 = value;
       }
       return rectangles[i];
@@ -87,8 +99,10 @@ mixin DrawRectangleLines on ChartDetails {
               mMainLowMinValue >= rectangles[i].value2)) continue;
       double x1 = getXFromTime(rectangles[i].datetime, data);
       double x2 = getXFromTime(rectangles[i].datetime2, data);
-      double y1 = getMainY(rectangles[i].value);
-      double y2 = getMainY(rectangles[i].value2);
+      double? y1 = getMainY(rectangles[i].value);
+      if (y1 == null) return;
+      double? y2 = getMainY(rectangles[i].value2);
+      if (y2 == null) return;
 
       if (mMainLowMinValue >= rectangles[i].value) {
         y1 = getMainY(mMainLowMinValue);
@@ -106,7 +120,7 @@ mixin DrawRectangleLines on ChartDetails {
         ..filterQuality = FilterQuality.high
         ..isAntiAlias = true
         ..strokeWidth = strokeWidth;
-
+      if (y1 == null || y2 == null) return;
       if (rectangles[i].isFill) {
         pricePaint.color = colorFromHex(rectangles[i].color!)!
             .withAlpha(rectangles[i].drawAsBackground ? 100 : 80);

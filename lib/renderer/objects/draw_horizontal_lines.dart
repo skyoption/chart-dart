@@ -25,12 +25,18 @@ mixin DrawHorizontalLines on ChartDetails {
       final value = getYPositionValue(offset.dy);
       if (mMainLowMinValue >= value) {
         horizontalLines[i].value = mMainLowMinValue;
-        horizontalLines[i].dy1 = getMainY(mMainLowMinValue);
+        double? y = getMainY(mMainLowMinValue);
+        if (y == null) return null;
+        horizontalLines[i].dy1 = y;
       } else if (mMainHighMaxValue <= value) {
         horizontalLines[i].value = mMainHighMaxValue;
-        horizontalLines[i].dy1 = getMainY(mMainLowMinValue);
+        double? y = getMainY(mMainLowMinValue);
+        if (y == null) return null;
+        horizontalLines[i].dy1 = y;
       } else {
-        horizontalLines[i].dy1 = getMainY(horizontalLines[i].value);
+        double? y = getMainY(horizontalLines[i].value);
+        if (y == null) return null;
+        horizontalLines[i].dy1 = y;
         horizontalLines[i].value = value;
       }
       return horizontalLines[i];
@@ -49,11 +55,16 @@ mixin DrawHorizontalLines on ChartDetails {
 
       if (value <= this.chartPosition.topPrice &&
           value >= this.chartPosition.bottomPrice) {
-        double y = getMainY(value);
+        double? y = getMainY(value);
+        if (y == null) return;
         if (mMainLowMinValue >= value) {
-          y = getMainY(mMainLowMinValue);
+          double? y = getMainY(mMainLowMinValue);
+          if (y == null) return;
+          y = y;
         } else if (mMainHighMaxValue <= value) {
-          y = getMainY(mMainHighMaxValue);
+          double? y = getMainY(mMainHighMaxValue);
+          if (y == null) return;
+          y = y;
         }
         final pricePaint = Paint()
           ..color = colorFromHex(horizontalLines[i].color!)!
@@ -85,7 +96,8 @@ mixin DrawHorizontalLines on ChartDetails {
     for (int i = 0; i < horizontalLines.length; i++) {
       double value = horizontalLines[i].value;
       if (mMainLowMinValue >= value) continue;
-      double y = getMainY(value);
+      double? y = getMainY(value);
+      if (y == null) return;
       double strokeWidth = (horizontalLines[i].height / scaleX).clamp(1, 4.0);
       final pricePaint = Paint()
         ..filterQuality = FilterQuality.high

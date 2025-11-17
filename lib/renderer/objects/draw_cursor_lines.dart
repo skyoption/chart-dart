@@ -32,12 +32,18 @@ mixin DrawCursorLines on ChartDetails {
       final value = getYPositionValue(offset.dy);
       if (mMainLowMinValue >= value) {
         cursor.value = mMainLowMinValue;
-        cursor.dy1 = getMainY(mMainLowMinValue);
+        double? y = getMainY(mMainLowMinValue);
+        if (y == null) return;
+        cursor.dy1 = y;
       } else if (mMainHighMaxValue <= value) {
         cursor.value = mMainHighMaxValue;
-        cursor.dy1 = getMainY(mMainLowMinValue);
+        double? y = getMainY(mMainLowMinValue);
+        if (y == null) return;
+        cursor.dy1 = y;
       } else {
-        cursor.dy1 = getMainY(cursor.value);
+        double? y = getMainY(cursor.value);
+        if (y == null) return;
+        cursor.dy1 = y;
         cursor.value = value;
       }
     }
@@ -51,12 +57,18 @@ mixin DrawCursorLines on ChartDetails {
       final value = getYPositionValue(offset.dy);
       if (mMainLowMinValue >= value) {
         cursor.value = mMainLowMinValue;
-        cursor.dy1 = getMainY(mMainLowMinValue);
+        double? y = getMainY(mMainLowMinValue);
+        if (y == null) return;
+        cursor.dy1 = y;
       } else if (mMainHighMaxValue <= value) {
         cursor.value = mMainHighMaxValue;
-        cursor.dy1 = getMainY(mMainLowMinValue);
+        double? y = getMainY(mMainLowMinValue);
+        if (y == null) return;
+        cursor.dy1 = y;
       } else {
-        cursor.dy1 = getMainY(cursor.value);
+        double? y = getMainY(cursor.value);
+        if (y == null) return;
+        cursor.dy1 = y;
         cursor.value = value;
       }
     }
@@ -65,14 +77,17 @@ mixin DrawCursorLines on ChartDetails {
   void drawCursorLines(Canvas canvas, Size size, List<KLineEntity> data) {
     final cursor = chartProperties.cursor;
     if (cursor == null) return;
-    double y = getMainY(cursor.value);
+    double? y = getMainY(cursor.value);
+    if (y == null) return;
 
     if (mMainLowMinValue >= cursor.value) {
-      y = getMainY(mMainLowMinValue);
+      double? y = getMainY(mMainLowMinValue);
+      if (y == null) return;
+      y = y;
     } else if (mMainHighMaxValue <= cursor.value) {
       y = getMainY(mMainHighMaxValue);
     }
-
+    if (y == null) return;
     // Draw horizontal line
     final pricePaint = Paint()
       ..filterQuality = FilterQuality.high
@@ -185,8 +200,8 @@ mixin DrawCursorLines on ChartDetails {
       return;
     }
     double value = cursor.value;
-    double y = getMainY(value);
-
+    double? y = getMainY(value);
+    if (y == null) return;
     double startX = 0;
 
     final pricePaint = Paint()

@@ -33,6 +33,7 @@ mixin UpdatePointPosition on ChartCalc {
       if (object.type == ObjectType.Horizontal) {
         final dy1 = offset.dy;
         final dy2 = getMainY(object.value);
+        if (dy2 == null) return nearObject;
         final disDy = dy2 - dy1;
         if (disDy.abs() <= 20) {
           object.currentEditIndex = horizontalCount;
@@ -44,6 +45,7 @@ mixin UpdatePointPosition on ChartCalc {
       } else if (object.type == ObjectType.Position) {
         final dy1 = offset.dy;
         final dy2 = getMainY(object.value);
+        if (dy2 == null) return nearObject;
         final disDy = dy2 - dy1;
         if (disDy.abs() <= 20) {
           object.currentEditIndex = positionCount;
@@ -68,7 +70,9 @@ mixin UpdatePointPosition on ChartCalc {
         final dx0 = getX(mStartIndex) + (offset.dx / scaleX);
         final dy0 = offset.dy;
         final dy1 = getMainY(object.value);
+        if (dy1 == null) return nearObject;
         final dy2 = getMainY(object.value2);
+        if (dy2 == null) return nearObject;
         final dx1 = object.dx1;
         final dx2 = object.dx2;
 

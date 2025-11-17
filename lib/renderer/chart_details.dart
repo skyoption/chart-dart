@@ -97,7 +97,13 @@ mixin ChartCalc {
 
   // List<KLineEntity>? data;
 
-  double getMainY(double y) => mMainRenderer.getY(y);
+  double? getMainY(double y) {
+    try {
+      return mMainRenderer.getY(y);
+    } catch (e) {
+      return null;
+    }
+  }
 
   double getMainYInChart(double y) => mMainRenderer.getYInChart(y);
 

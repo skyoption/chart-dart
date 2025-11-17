@@ -30,12 +30,18 @@ mixin DrawTrendLines on ChartDetails {
       final value = getYPositionValue(offset.dy);
       if (mMainLowMinValue >= value) {
         trendLines[i].value = mMainLowMinValue;
-        trendLines[i].dy1 = getMainY(mMainLowMinValue);
+        double? y = getMainY(mMainLowMinValue);
+        if (y == null) return null;
+        trendLines[i].dy1 = y;
       } else if (mMainHighMaxValue <= value) {
         trendLines[i].value = mMainHighMaxValue;
-        trendLines[i].dy1 = getMainY(mMainLowMinValue);
+        double? y = getMainY(mMainLowMinValue);
+        if (y == null) return null;
+        trendLines[i].dy1 = y;
       } else {
-        trendLines[i].dy1 = getMainY(trendLines[i].value);
+        double? y = getMainY(trendLines[i].value);
+        if (y == null) return null;
+        trendLines[i].dy1 = y;
         trendLines[i].value = value;
       }
       return trendLines[i];
@@ -58,12 +64,18 @@ mixin DrawTrendLines on ChartDetails {
       final value = getYPositionValue(offset.dy);
       if (mMainLowMinValue >= value) {
         trendLines[i].value2 = mMainLowMinValue;
-        trendLines[i].dy2 = getMainY(mMainLowMinValue);
+        double? y = getMainY(mMainLowMinValue);
+        if (y == null) return null;
+        trendLines[i].dy2 = y;
       } else if (mMainHighMaxValue <= value) {
         trendLines[i].value2 = mMainHighMaxValue;
-        trendLines[i].dy2 = getMainY(mMainLowMinValue);
+        double? y = getMainY(mMainLowMinValue);
+        if (y == null) return null;
+        trendLines[i].dy2 = y;
       } else {
-        trendLines[i].dy2 = getMainY(trendLines[i].value2);
+        double? y = getMainY(trendLines[i].value2);
+        if (y == null) return null;
+        trendLines[i].dy2 = y;
         trendLines[i].value2 = value;
       }
       return trendLines[i];
@@ -89,21 +101,25 @@ mixin DrawTrendLines on ChartDetails {
 
       double x1 = getXFromTime(trendLines[i].datetime, data);
       double x2 = getXFromTime(trendLines[i].datetime2, data);
-      double y1 = getMainY(trendLines[i].value);
-      double y2 = getMainY(trendLines[i].value2);
+      double? y1 = getMainY(trendLines[i].value);
+      if (y1 == null) return;
+      double? y2 = getMainY(trendLines[i].value2);
+      if (y2 == null) return;
 
       if (mMainLowMinValue >= trendLines[i].value) {
-        y1 = getMainY(mMainLowMinValue);
+        double? y1 = getMainY(mMainLowMinValue);
+        if (y1 == null) return;
+        y1 = y1;
       } else if (mMainHighMaxValue <= trendLines[i].value) {
         y1 = getMainY(mMainHighMaxValue);
       }
-
+      if (y1 == null) return;
       if (mMainLowMinValue >= trendLines[i].value2) {
         y2 = getMainY(mMainLowMinValue);
       } else if (mMainHighMaxValue <= trendLines[i].value2) {
         y2 = getMainY(mMainHighMaxValue);
       }
-
+      if (y2 == null) return;
       double strokeWidth = (trendLines[i].height / scaleX).clamp(1, 4.0);
       final pricePaint = Paint()
         ..filterQuality = FilterQuality.high
