@@ -107,39 +107,49 @@ mixin Objects {
 
   Future<void> removeVerticalLine(int id) async {
     final index = verticalLines.indexWhere((e) => e.id == id);
-    verticalLines.removeAt(index);
-    KChart.write(query: (db) async {
-      await db.objectEntitys.delete(id);
-    });
+    if (index != -1) {
+      verticalLines.removeAt(index);
+      KChart.write(query: (db) async {
+        await db.objectEntitys.delete(id);
+      });
+    }
   }
 
   Future<void> removeTrendLine(int id) async {
     final index = trendLines.indexWhere((e) => e.id == id);
-    trendLines.removeAt(index);
-    KChart.write(query: (db) async {
-      await db.objectEntitys.delete(id);
-    });
+    if (index != -1) {
+      trendLines.removeAt(index);
+      KChart.write(query: (db) async {
+        await db.objectEntitys.delete(id);
+      });
+    }
   }
 
   Future<void> removeHorizontalLine(int id) async {
     final index = horizontalLines.indexWhere((e) => e.id == id);
-    horizontalLines.removeAt(index);
-    KChart.write(query: (db) async {
-      await db.objectEntitys.delete(id);
-    });
+    if (index != -1) {
+      horizontalLines.removeAt(index);
+      KChart.write(query: (db) async {
+        await db.objectEntitys.delete(id);
+      });
+    }
   }
 
   Future<void> removeRectangle(int id) async {
     final index = rectangles.indexWhere((e) => e.id == id);
-    rectangles.removeAt(index);
-    KChart.write(query: (db) async {
-      await db.objectEntitys.delete(id);
-    });
+    if (index != -1) {
+      rectangles.removeAt(index);
+      KChart.write(query: (db) async {
+        await db.objectEntitys.delete(id);
+      });
+    }
   }
 
   Future<void> removePosition(int id) async {
     final index = tPAndSLLines.indexWhere((e) => e.id == id);
-    tPAndSLLines.removeAt(index);
+    if (index != -1) {
+      tPAndSLLines.removeAt(index);
+    }
   }
 
   Future<void> updateVerticalLine(ObjectEntity value) async {
