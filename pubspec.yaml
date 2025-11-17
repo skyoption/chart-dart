@@ -18,8 +18,8 @@ dependencies:
   zoom_widget: ^2.0.1
   flutter_svg: ^2.0.16
   flutter_colorpicker: ^1.1.0  
-  isar_community: ^3.3.0-dev.3
-  isar_community_flutter_libs: ^3.3.0-dev.3
+  isar_community: ^3.3.0
+  isar_community_flutter_libs: ^3.3.0
   path_provider: ^2.1.5
   flutter_cupertino_datetime_picker: ^3.0.0
   gesture_x_detector: ^1.1.1
@@ -30,7 +30,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner:
-  isar_community_generator: ^3.3.0-dev.3
+  isar_community_generator: ^3.3.0
 
 flutter:
   generate: true
