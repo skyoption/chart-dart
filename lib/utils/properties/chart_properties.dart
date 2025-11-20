@@ -84,15 +84,14 @@ class ChartProperties with Indicators, Objects {
     }
   }
 
-  Future<void> addCandles(List<KLineEntity> value) async {
-    await clearChart();
-    for (var item in value) {
+  Future<void> addCandles(List<KLineEntity> values) async {
+    for (var item in values) {
       item.symbol = symbol;
       item.frame = frame;
     }
-    lineCandles.addAll(value);
+    lineCandles = values;
     await KChart.write(query: (db) async {
-      await db.kLineEntitys.putAll(value);
+      await db.kLineEntitys.putAll(values);
     });
     loadCandles();
   }
