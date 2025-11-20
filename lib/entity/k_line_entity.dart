@@ -1,7 +1,11 @@
+import 'package:candle_chart/k_chart_widget.dart';
 import 'package:isar_community/isar.dart';
 
 import '../entity/k_entity.dart';
 
+part 'k_line_entity.g.dart';
+
+@collection
 class KLineEntity extends KEntity {
   Id id = Isar.autoIncrement;
   double open = 0;
@@ -10,8 +14,12 @@ class KLineEntity extends KEntity {
   double close = 0;
   double vol = 0;
   int time = 0;
+  String symbol = '';
+  @enumerated
+  CandleTimeFormat frame = CandleTimeFormat.H4;
 
   KLineEntity({
+    this.id = Isar.autoIncrement,
     required this.open,
     required this.high,
     required this.low,
