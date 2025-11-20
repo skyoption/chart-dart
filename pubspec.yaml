@@ -1,7 +1,7 @@
 name: candle_chart
 summary: Candle chart for flutter
 description: Candle chart for flutter
-version: 1.1.2
+version: 1.1.3
 homepage: https://github.com/skyoption/chart-dart
 
 environment:

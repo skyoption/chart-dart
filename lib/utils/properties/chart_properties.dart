@@ -60,7 +60,6 @@ class ChartProperties with Indicators, Objects {
 
   Future<void> loadCandles() async {
     try {
-      await clearChart();
       final res = await KChart.query.kLineEntitys
           .filter()
           .symbolEqualTo(symbol)
@@ -74,7 +73,6 @@ class ChartProperties with Indicators, Objects {
 
   Future<void> getCandlesBySymbol(String symbol) async {
     try {
-      await clearChart();
       final res = await KChart.query.kLineEntitys
           .filter()
           .symbolEqualTo(symbol)
@@ -87,6 +85,7 @@ class ChartProperties with Indicators, Objects {
   }
 
   Future<void> addCandles(List<KLineEntity> value) async {
+    await clearChart();
     for (var item in value) {
       item.symbol = symbol;
       item.frame = frame;
