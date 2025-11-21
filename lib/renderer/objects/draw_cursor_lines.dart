@@ -209,9 +209,9 @@ mixin DrawCursorLines on ChartDetails {
       ..strokeWidth = cursor.height;
 
     // Draw horizontal line title
-    if (cursor.title.isNotEmpty) {
+    if (cursor.title != null && cursor.title!(value).isNotEmpty) {
       TextPainter title = getTextPainter(
-        cursor.title,
+        cursor.title!(value),
         colorFromHex(cursor.color!)!,
         fontWeight: FontWeight.w600,
       );

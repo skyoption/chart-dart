@@ -121,9 +121,10 @@ mixin DrawHorizontalLines on ChartDetails {
         );
       }
 
-      if (horizontalLines[i].title.isNotEmpty) {
+      if (horizontalLines[i].title != null &&
+          horizontalLines[i].title!(value).isNotEmpty) {
         TextPainter title = getTextPainter(
-          horizontalLines[i].title,
+          horizontalLines[i].title!(value),
           colorFromHex(horizontalLines[i].color!)!,
           fontWeight: FontWeight.w600,
         );

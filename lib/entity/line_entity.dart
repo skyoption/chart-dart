@@ -5,13 +5,14 @@ class LineEntity {
   final Color color;
   final double value;
   final bool editable;
-  final String title, type;
+  final String type;
+  final String Function(double value) title;
 
   LineEntity({
     required this.id,
     required this.color,
     required this.value,
-    this.title = '',
+    required this.title,
     this.type = '',
     this.editable = false,
   });

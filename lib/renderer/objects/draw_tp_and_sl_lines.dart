@@ -135,9 +135,10 @@ mixin DrawTPAndSLLines on ChartDetails {
           dot,
         );
       }
-      if (tPAndSLLines[i].title.isNotEmpty) {
+      if (tPAndSLLines[i].title != null &&
+          tPAndSLLines[i].title!(value).isNotEmpty) {
         TextPainter title = getTextPainter(
-          tPAndSLLines[i].title,
+          tPAndSLLines[i].title!(value),
           colorFromHex(tPAndSLLines[i].color!)!,
           fontWeight: FontWeight.w600,
         );

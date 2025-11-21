@@ -23,7 +23,8 @@ class ObjectEntity {
   double height;
   double dx1, dx2, dy1, dy2;
   String name;
-  String title;
+  @ignore
+  String Function(double value)? title;
   int datetime, datetime2;
   String symbol;
   bool drawAsBackground;
@@ -47,7 +48,7 @@ class ObjectEntity {
     this.datetime = 0,
     this.datetime2 = 0,
     this.symbol = '',
-    this.title = '',
+    this.title,
     this.height = 1.0,
     this.style = ObjectStyle.normal,
     this.type = ObjectType.Horizontal,

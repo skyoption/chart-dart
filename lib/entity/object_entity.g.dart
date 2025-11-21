@@ -109,24 +109,19 @@ const ObjectEntitySchema = CollectionSchema(
       name: r'symbol',
       type: IsarType.string,
     ),
-    r'title': PropertySchema(
-      id: 18,
-      name: r'title',
-      type: IsarType.string,
-    ),
     r'type': PropertySchema(
-      id: 19,
+      id: 18,
       name: r'type',
       type: IsarType.byte,
       enumMap: _ObjectEntitytypeEnumValueMap,
     ),
     r'value': PropertySchema(
-      id: 20,
+      id: 19,
       name: r'value',
       type: IsarType.double,
     ),
     r'value2': PropertySchema(
-      id: 21,
+      id: 20,
       name: r'value2',
       type: IsarType.double,
     )
@@ -159,7 +154,6 @@ int _objectEntityEstimateSize(
   }
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.symbol.length * 3;
-  bytesCount += 3 + object.title.length * 3;
   return bytesCount;
 }
 
@@ -187,10 +181,9 @@ void _objectEntitySerialize(
   writer.writeBool(offsets[15], object.rayRight);
   writer.writeByte(offsets[16], object.style.index);
   writer.writeString(offsets[17], object.symbol);
-  writer.writeString(offsets[18], object.title);
-  writer.writeByte(offsets[19], object.type.index);
-  writer.writeDouble(offsets[20], object.value);
-  writer.writeDouble(offsets[21], object.value2);
+  writer.writeByte(offsets[18], object.type.index);
+  writer.writeDouble(offsets[19], object.value);
+  writer.writeDouble(offsets[20], object.value2);
 }
 
 ObjectEntity _objectEntityDeserialize(
@@ -221,11 +214,10 @@ ObjectEntity _objectEntityDeserialize(
     style: _ObjectEntitystyleValueEnumMap[reader.readByteOrNull(offsets[16])] ??
         ObjectStyle.normal,
     symbol: reader.readStringOrNull(offsets[17]) ?? '',
-    title: reader.readStringOrNull(offsets[18]) ?? '',
-    type: _ObjectEntitytypeValueEnumMap[reader.readByteOrNull(offsets[19])] ??
+    type: _ObjectEntitytypeValueEnumMap[reader.readByteOrNull(offsets[18])] ??
         ObjectType.Horizontal,
-    value: reader.readDoubleOrNull(offsets[20]) ?? 0,
-    value2: reader.readDoubleOrNull(offsets[21]) ?? 0,
+    value: reader.readDoubleOrNull(offsets[19]) ?? 0,
+    value2: reader.readDoubleOrNull(offsets[20]) ?? 0,
   );
   return object;
 }
@@ -276,13 +268,11 @@ P _objectEntityDeserializeProp<P>(
     case 17:
       return (reader.readStringOrNull(offset) ?? '') as P;
     case 18:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 19:
       return (_ObjectEntitytypeValueEnumMap[reader.readByteOrNull(offset)] ??
           ObjectType.Horizontal) as P;
-    case 20:
+    case 19:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
-    case 21:
+    case 20:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1548,140 +1538,6 @@ extension ObjectEntityQueryFilter
     });
   }
 
-  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> titleEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
-      titleGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> titleLessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> titleBetween(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'title',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
-      titleStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> titleEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> titleContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> titleMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'title',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
-      titleIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'title',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
-      titleIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'title',
-        value: '',
-      ));
-    });
-  }
-
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> typeEqualTo(
       ObjectType value) {
     return QueryBuilder.apply(this, (query) {
@@ -2092,18 +1948,6 @@ extension ObjectEntityQuerySortBy
     });
   }
 
-  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByTitle() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'title', Sort.asc);
-    });
-  }
-
-  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByTitleDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'title', Sort.desc);
-    });
-  }
-
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.asc);
@@ -2375,18 +2219,6 @@ extension ObjectEntityQuerySortThenBy
     });
   }
 
-  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByTitle() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'title', Sort.asc);
-    });
-  }
-
-  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByTitleDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'title', Sort.desc);
-    });
-  }
-
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.asc);
@@ -2539,13 +2371,6 @@ extension ObjectEntityQueryWhereDistinct
     });
   }
 
-  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByTitle(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'title', caseSensitive: caseSensitive);
-    });
-  }
-
   QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'type');
@@ -2680,12 +2505,6 @@ extension ObjectEntityQueryProperty
   QueryBuilder<ObjectEntity, String, QQueryOperations> symbolProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'symbol');
-    });
-  }
-
-  QueryBuilder<ObjectEntity, String, QQueryOperations> titleProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'title');
     });
   }
 
