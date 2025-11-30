@@ -1,7 +1,7 @@
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
-import 'package:example/core/consts/exports.dart';  
+import 'package:example/core/consts/exports.dart';
 import 'package:example/features/chart/logic/chart_cubit.dart';
 import 'package:example/features/chart/views/widgets/chart_options_widget.dart';
 import 'package:example/features/chart/views/widgets/chart_widget.dart';
@@ -166,6 +166,7 @@ class _ChartScreenState extends State<ChartScreen> {
                                 id: -20,
                                 color: platform.settings.askColor,
                                 value: context.read<ChartCubit>().ask!,
+                                title: (value) => '',
                               ),
                             );
                           } else {
@@ -301,7 +302,7 @@ class _ChartScreenState extends State<ChartScreen> {
           LineEntity(
             id: item.id * 5,
             color: platform.settings.stopLossColor,
-            title: '#${item.id} ${context.tr.stopLossTitle}',
+            title: (value) => '#${item.id} ${context.tr.stopLossTitle}',
             type: UpdatePosition.SL.name,
             value: item.sl,
             editable: true,
@@ -313,7 +314,7 @@ class _ChartScreenState extends State<ChartScreen> {
           LineEntity(
             id: item.id * 10,
             color: platform.settings.takeProfitColor,
-            title: '#${item.id} ${context.tr.takeProfitTitle}',
+            title: (value) => '#${item.id} ${context.tr.takeProfitTitle}',
             type: UpdatePosition.TP.name,
             value: item.tp,
             editable: true,
@@ -325,7 +326,8 @@ class _ChartScreenState extends State<ChartScreen> {
           LineEntity(
             id: item.id * 15,
             color: platform.settings.tradeColor,
-            title: '#${item.id} ${item.direction} ${item.volumeCurrent}',
+            title: (value) =>
+                '#${item.id} ${item.direction} ${item.volumeCurrent}',
             type: UpdatePosition.Price.name,
             value: item.openPrice,
           ),
@@ -355,7 +357,7 @@ class _ChartScreenState extends State<ChartScreen> {
           LineEntity(
             id: item.id * 20,
             color: Colors.grey,
-            title: '#${item.id} ${context.tr.stopLossTitle}',
+            title: (value) => '#${item.id} ${context.tr.stopLossTitle}',
             type: UpdatePosition.SL_Pending.name,
             value: item.sl,
             editable: false,
@@ -367,7 +369,7 @@ class _ChartScreenState extends State<ChartScreen> {
           LineEntity(
             id: item.id * 25,
             color: Colors.grey,
-            title: '#${item.id} ${context.tr.takeProfitTitle}',
+            title: (value) => '#${item.id} ${context.tr.takeProfitTitle}',
             type: UpdatePosition.TP_Pending.name,
             value: item.tp,
             editable: false,
@@ -379,7 +381,7 @@ class _ChartScreenState extends State<ChartScreen> {
           LineEntity(
             id: item.id * 30,
             color: Colors.grey,
-            title: '#${item.id} ${item.direction} ${item.volume}',
+            title: (value) => '#${item.id} ${item.direction} ${item.volume}',
             type: UpdatePosition.Price_Pending.name,
             value: item.openPrice,
             editable: false,

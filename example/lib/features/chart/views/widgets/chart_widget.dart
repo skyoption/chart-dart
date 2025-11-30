@@ -252,6 +252,7 @@ class _ChartWidgetState extends State<ChartWidget> {
           id: -10,
           color: platform.settings.bidColor,
           value: cubit.bid!,
+          title: (value) => '',
         ),
       );
     }
@@ -261,6 +262,7 @@ class _ChartWidgetState extends State<ChartWidget> {
           id: -20,
           color: platform.settings.askColor,
           value: cubit.ask!,
+          title: (value) => '',
         ),
       );
     } else {

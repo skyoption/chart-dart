@@ -36,15 +36,15 @@ class ConnectedAccountInfoModel {
   final double marginFree;
 
   @JsonKey(includeIfNull: false)
-  double? marginLevel;
+  double marginLevel;
   @JsonKey(includeIfNull: false)
-  bool? isSwapFree;
+  bool isSwapFree;
   @JsonKey(includeIfNull: false)
-  int? limitPositions;
+  int limitPositions;
   @JsonKey(includeIfNull: false)
-  int? limitPending;
+  int limitPending;
   @JsonKey(includeIfNull: false)
-  int? rights;
+  int rights;
   @JsonKey(defaultValue: false)
   bool isDefault;
 
@@ -58,12 +58,12 @@ class ConnectedAccountInfoModel {
     required this.floating,
     required this.margin,
     required this.marginFree,
-    this.marginLevel,
-    this.isSwapFree,
+    required this.marginLevel,
+    required this.isSwapFree,
     required this.fullName,
-    this.limitPositions,
-    this.limitPending,
-    this.rights,
+    required this.limitPositions,
+    required this.limitPending,
+    required this.rights,
     required this.isDefault,
   });
 

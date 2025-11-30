@@ -1,5 +1,5 @@
-// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// dart format width=80
 
 // **************************************************************************
 // InjectableConfigGenerator
@@ -95,12 +95,12 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     final injectionModule = _$InjectionModule();
+    gh.factory<_i447.FilePath>(() => _i447.FilePath());
     gh.factory<_i189.FirebaseAnalyticsService>(
         () => _i189.FirebaseAnalyticsService());
-    gh.factory<_i447.FilePath>(() => _i447.FilePath());
+    gh.factory<_i86.BoardingCubit>(() => _i86.BoardingCubit());
     gh.factory<_i356.BottomNavCubit>(() => _i356.BottomNavCubit());
     gh.factory<_i542.MainCubit>(() => _i542.MainCubit());
-    gh.factory<_i86.BoardingCubit>(() => _i86.BoardingCubit());
     await gh.factoryAsync<_i710.SharedPreferences>(
       () => injectionModule.prefs,
       preResolve: true,
@@ -170,10 +170,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i74.CloseAllPendingCubit(gh<_i889.OrdersDataSource>()));
     gh.factory<_i67.OrdersCubit>(
         () => _i67.OrdersCubit(gh<_i889.OrdersDataSource>()));
-    gh.factory<_i749.SubscriptionCubit>(
-        () => _i749.SubscriptionCubit(gh<_i189.SearchDataSource>()));
     gh.factory<_i1039.SearchCubit>(
         () => _i1039.SearchCubit(gh<_i189.SearchDataSource>()));
+    gh.factory<_i749.SubscriptionCubit>(
+        () => _i749.SubscriptionCubit(gh<_i189.SearchDataSource>()));
     gh.singleton<_i844.ConnectCubit>(() => _i844.ConnectCubit(
           gh<_i710.GlobalKey<_i710.FormState>>(),
           gh<_i710.TextEditingController>(),
@@ -206,12 +206,12 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i889.OrdersDataSource>(),
           gh<_i778.PlatformSettingsCubit>(),
         ));
+    gh.factory<_i214.HistoryActionsCubit>(
+        () => _i214.HistoryActionsCubit(gh<_i641.HistoryDataSource>()));
     gh.factory<_i89.HistoryPendingCubit>(
         () => _i89.HistoryPendingCubit(gh<_i641.HistoryDataSource>()));
     gh.factory<_i1012.HistoryPositionsCubit>(
         () => _i1012.HistoryPositionsCubit(gh<_i641.HistoryDataSource>()));
-    gh.factory<_i214.HistoryActionsCubit>(
-        () => _i214.HistoryActionsCubit(gh<_i641.HistoryDataSource>()));
     gh.singleton<_i243.QuotesCubit>(() => _i243.QuotesCubit(
           gh<_i707.QuotesDataSource>(),
           gh<_i374.ChartDataSource>(),
@@ -225,11 +225,11 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.factory<_i108.CurrencyChanged>(
         () => _i108.CurrencyChanged(gh<_i108.Currency>()));
-    gh.factory<_i71.ModifyPositionCubit>(() => _i71.ModifyPositionCubit(
+    gh.factory<_i243.ClosePositionCubit>(() => _i243.ClosePositionCubit(
           gh<_i254.PositionsDataSource>(),
           gh<_i778.PlatformSettingsCubit>(),
         ));
-    gh.factory<_i243.ClosePositionCubit>(() => _i243.ClosePositionCubit(
+    gh.factory<_i71.ModifyPositionCubit>(() => _i71.ModifyPositionCubit(
           gh<_i254.PositionsDataSource>(),
           gh<_i778.PlatformSettingsCubit>(),
         ));

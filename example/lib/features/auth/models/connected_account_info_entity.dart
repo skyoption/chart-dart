@@ -12,11 +12,11 @@ class ConnectedAccountInfoEntity {
   final double marginFree;
   final bool isDefault;
   double balance;
-  double? marginLevel;
-  bool? isSwapFree;
-  int? limitPositions;
-  int? limitPending;
-  int? rights;
+  double marginLevel;
+  bool isSwapFree;
+  int limitPositions;
+  int limitPending;
+  int rights;
 
   ConnectedAccountInfoEntity({
     required this.id,
@@ -29,11 +29,11 @@ class ConnectedAccountInfoEntity {
     required this.floating,
     required this.margin,
     required this.marginFree,
-    this.marginLevel,
-    this.isSwapFree,
-    this.limitPositions,
-    this.limitPending,
-    this.rights,
+    required this.marginLevel,
+    required this.isSwapFree,
+    required this.limitPositions,
+    required this.limitPending,
+    required this.rights,
     required this.isDefault,
   });
 

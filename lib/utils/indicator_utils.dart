@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:candle_chart/entity/candle_indicator_entity.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/k_line_entity.dart';
-import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/renderer/rects/secondary_rect.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 
@@ -139,35 +138,35 @@ class IndicatorUtils {
     calcVolumeMA(data);
   }
 
-  static void _resetCandles(List<KLineEntity> data) {
-    for (int k = 0; k < data.length; k++) {
-      ///MA
-      data[k].maEmaValues = null;
-      data[k].maSmaValues = null;
-      data[k].maLwmaValues = null;
-      data[k].maSmmaValues = null;
+  // static void _resetCandles(List<KLineEntity> data) {
+  //   for (int k = 0; k < data.length; k++) {
+  //     ///MA
+  //     data[k].maEmaValues = null;
+  //     data[k].maSmaValues = null;
+  //     data[k].maLwmaValues = null;
+  //     data[k].maSmmaValues = null;
 
-      ///Envelops
-      data[k].envelopsEmaValues = null;
-      data[k].envelopsSmaValues = null;
-      data[k].envelopsLwmaValues = null;
-      data[k].envelopsSmmaValues = null;
+  //     ///Envelops
+  //     data[k].envelopsEmaValues = null;
+  //     data[k].envelopsSmaValues = null;
+  //     data[k].envelopsLwmaValues = null;
+  //     data[k].envelopsSmmaValues = null;
 
-      data[k].bollValues = null;
-      data[k].parabolicValues = null;
-      data[k].ichimokuValues = null;
-      data[k].rsiValues = null;
-      data[k].macdValues = null;
-      data[k].macdSignalValues = null;
-      data[k].cciValues = null;
-      data[k].atrValues = null;
-      data[k].deMarkerValues = null;
-      data[k].momentumValues = null;
-      data[k].wprValues = null;
-      data[k].mfiValues = null;
-      data[k].stochasticValues = null;
-    }
-  }
+  //     data[k].bollValues = null;
+  //     data[k].parabolicValues = null;
+  //     data[k].ichimokuValues = null;
+  //     data[k].rsiValues = null;
+  //     data[k].macdValues = null;
+  //     data[k].macdSignalValues = null;
+  //     data[k].cciValues = null;
+  //     data[k].atrValues = null;
+  //     data[k].deMarkerValues = null;
+  //     data[k].momentumValues = null;
+  //     data[k].wprValues = null;
+  //     data[k].mfiValues = null;
+  //     data[k].stochasticValues = null;
+  //   }
+  // }
 
   static void calc_SMA_MA(
     List<KLineEntity> dataList,

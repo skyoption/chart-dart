@@ -1133,30 +1133,38 @@ obx_int.ModelDefinition getObjectBoxModel() {
               22,
               0,
             );
-            final marginLevelParam = const fb.Float64Reader().vTableGetNullable(
+            final marginLevelParam = const fb.Float64Reader().vTableGet(
               buffer,
               rootOffset,
               24,
+              0,
             );
-            final isSwapFreeParam = const fb.BoolReader().vTableGetNullable(
+            final isSwapFreeParam = const fb.BoolReader().vTableGet(
               buffer,
               rootOffset,
               26,
+              false,
             );
             final fullNameParam = const fb.StringReader(
               asciiOptimization: true,
             ).vTableGet(buffer, rootOffset, 8, '');
-            final limitPositionsParam = const fb.Int64Reader()
-                .vTableGetNullable(buffer, rootOffset, 28);
-            final limitPendingParam = const fb.Int64Reader().vTableGetNullable(
+            final limitPositionsParam = const fb.Int64Reader().vTableGet(
+              buffer,
+              rootOffset,
+              28,
+              0,
+            );
+            final limitPendingParam = const fb.Int64Reader().vTableGet(
               buffer,
               rootOffset,
               30,
+              0,
             );
-            final rightsParam = const fb.Int64Reader().vTableGetNullable(
+            final rightsParam = const fb.Int64Reader().vTableGet(
               buffer,
               rootOffset,
               32,
+              0,
             );
             final isDefaultParam = const fb.BoolReader().vTableGet(
               buffer,

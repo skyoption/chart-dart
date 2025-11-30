@@ -1,3 +1,4 @@
+import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:example/core/builder/flow_builder.dart';
@@ -130,6 +131,7 @@ class _ChartShortcutWidgetState extends State<ChartShortcutWidget> {
           id: -10,
           color: platform.settings.bidColor,
           value: cubit.bid!,
+          title: (value) => '',
         ),
       );
     }
@@ -139,6 +141,7 @@ class _ChartShortcutWidgetState extends State<ChartShortcutWidget> {
           id: -20,
           color: platform.settings.askColor,
           value: cubit.ask!,
+          title: (value) => '',
         ),
       );
     } else {
@@ -146,11 +149,23 @@ class _ChartShortcutWidgetState extends State<ChartShortcutWidget> {
     }
   }
 
-  void onGettingSettings(CandleTimeFormat frame, String symbol) {
+  void onGettingSettings(
+    CandleTimeFormat frame,
+    String symbol,
+    List<KLineEntity> candles,
+  ) {
     if (symbol.isNotEmpty) {
       final quotesCubit = context.read<QuotesCubit>();
       final chartCubit = context.read<ChartCubit>();
-      chartCubit.setSettings(timeFrame: frame, symbol: symbol);
+      chartCubit.setSettings(
+        timeFrame: frame,
+        symbol: symbol,
+      );
+
+      // Only set currentSymbol if:
+      // 1. No initial symbol was provided, OR
+      // 2. The current symbol is null, OR
+      // 3. The current symbol is different from the intended symbol
       quotesCubit.currentSymbol.value = quotesCubit.getSymbol(symbol);
     }
   }

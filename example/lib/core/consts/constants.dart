@@ -4,7 +4,7 @@ class Constants {
   static const API_TIMEOUT = 60000;
   // static const URL = 'https://api-mysky-dev.skyoption.app';
   static const URL = 'https://back.skyoption.app';
-  static const SOCKETURL = 'wss://sky5alpha-london.skyoption.app:46666/ws';
+  static const SOCKETURL = 'wss://sky5alpha.captatrade.com:46666/ws';
   static const SIGNUPURL = "https://portal.skyoption.app/signup";
   static const USERCACHED = 'USERCACHEDDD';
   static const USERACCOUNTS = 'USERACCOUNTSS';
