@@ -5,6 +5,7 @@ import 'dart:math';
 
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
+import 'package:candle_chart/entity/trade_entity.dart';
 import 'package:candle_chart/indicators/indicators_screen.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/bottom_sheets/properties_bottom_sheet.dart';
@@ -93,6 +94,7 @@ class KChartWidget extends StatefulWidget {
   final Function(LineEntity position, double newValue) onUpdatePosition;
   final int fixedLength;
   final List<int> maDayList;
+  final List<TradeEntity> trades;
   final int flingTime;
   final double flingRatio;
   final Curve flingCurve;
@@ -114,6 +116,7 @@ class KChartWidget extends StatefulWidget {
     required this.chartStyle,
     required this.chartColors,
     required this.onUpdatePosition,
+    this.trades = const [],
     this.graphStyle = GraphStyle.line,
     this.xFrontPadding = 100,
     this.volHidden = true,
