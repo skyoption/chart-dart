@@ -1,5 +1,6 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/k_line_entity.dart';
+import 'package:candle_chart/entity/trade_entity.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/utils/indicator_utils.dart';
 import 'package:candle_chart/utils/isar.dart';
@@ -182,23 +183,27 @@ mixin Indicators {
     }
   }
 
-  Future<void> _reset() async {
+  Future<void> _reset({List<TradeEntity> trades = const []}) async {
     await _getIndicators();
     await _getSecondaryIndicators();
     await IndicatorUtils.calculate(
       candles,
       indicators,
       secondaries,
+      trades: trades,
     );
   }
 
-  Future<void> updateIndicators(List<KLineEntity> candles) async {
+  Future<void> updateIndicators(
+    List<KLineEntity> candles, {
+    List<TradeEntity> trades = const [],
+  }) async {
     this.candles = candles;
-
     await IndicatorUtils.calculate(
       candles,
       indicators,
       secondaries,
+      trades: trades,
     );
   }
 }

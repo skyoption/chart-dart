@@ -4,6 +4,7 @@ class TradeEntity {
   double openPrice;
   int? closeTime;
   double? closePrice;
+  bool isBuy;
 
   TradeEntity({
     this.id = 0,
@@ -11,5 +12,6 @@ class TradeEntity {
     required this.openPrice,
     this.closeTime,
     this.closePrice,
+    this.isBuy = true,
   });
 }

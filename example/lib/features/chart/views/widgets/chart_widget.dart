@@ -1,4 +1,5 @@
 import 'package:candle_chart/entity/line_entity.dart';
+import 'package:candle_chart/entity/trade_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:example/core/builder/flow_builder.dart';
 import 'package:example/core/consts/exports.dart';
@@ -116,6 +117,22 @@ class _ChartWidgetState extends State<ChartWidget> {
                                             ),
                                             child: KChartWidget(
                                               key: widget.chartKey,
+                                              trades: [
+                                                TradeEntity(
+                                                  id: 1,
+                                                  closeTime: 1764195300,
+                                                  openTime: 1764204300,
+                                                  openPrice: 1.32462,
+                                                  closePrice: 1.32383,
+                                                ),
+                                                TradeEntity(
+                                                  id: 2,
+                                                  openTime: 1764342000,
+                                                  closeTime: 1764313200,
+                                                  openPrice: 1.32462,
+                                                  closePrice: 1.32082,
+                                                ),
+                                              ],
                                               hideGrid: hideGrid,
                                               graphStyle: graphStyle,
                                               onUpdatePosition:

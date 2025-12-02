@@ -42,6 +42,7 @@ enum IndicatorType {
   SO_SMA,
   WPR,
   MFI,
+  TRADE_POSITIONS,
 }
 
 enum CandleTimeFormat { S5, M1, M5, M15, M30, H1, H4, D1, W1, MN1 }
@@ -244,7 +245,7 @@ class KChartWidgetState extends State<KChartWidget>
   }) async {
     lineCandles = candles;
     if (!widget.hideIndicators) {
-      await chartProperties.updateIndicators(candles);
+      await chartProperties.updateIndicators(candles, trades: widget.trades);
     }
     notifyChanged();
   }

@@ -1,6 +1,8 @@
 // ignore_for_file: non_constant_identifier_names,library_prefixes,unused_import,camel_case_types
 import 'package:candle_chart/entity/candle_indicator_entity.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/entity/trade_entity.dart';
+import 'package:candle_chart/entity/trade_point_entity.dart';
 import 'package:isar_community/isar.dart';
 
 mixin CandleEntity {
@@ -78,4 +80,12 @@ mixin CandleEntity {
   /// SO
   @ignore
   List<CandleIndicatorEntity>? stochasticValues;
+
+  /// Trade Positions
+  @ignore
+  List<TradePointEntity>? tradePositionsValues;
+
+  /// Trade Entities
+  @ignore
+  List<TradeEntity>? tradeEntities;
 }

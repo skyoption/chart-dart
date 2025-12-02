@@ -8,13 +8,13 @@ import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_indicator_resize.dart';
 import 'package:candle_chart/renderer/objects/draw_rectangle_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_tp_and_sl_lines.dart';
+import 'package:candle_chart/renderer/objects/draw_trade_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_trend_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_vertical_lines.dart';
 import 'package:candle_chart/renderer/objects/update_point_position.dart';
 import 'package:candle_chart/renderer/rects/render_rect.dart';
 import 'package:candle_chart/utils/number_util.dart';
 import 'package:flutter/material.dart';
-
 import '../entity/info_window_entity.dart';
 import '../entity/k_line_entity.dart';
 import '../k_chart_widget.dart';
@@ -53,6 +53,7 @@ class ChartPainter extends BaseChartPainter
         DrawTPAndSLLines,
         DrawCursorLines,
         DrawIndicatorResize,
+        DrawTradeLines,
         ChartCalc {
   static get maxScrollX => BaseChartPainter.maxScrollX;
   late BaseChartRenderer mMainRenderer;
@@ -340,7 +341,7 @@ class ChartPainter extends BaseChartPainter
     drawVerticalLines(canvas, size, false, data ?? []);
     drawTrendLines(canvas, size, false, data ?? []);
     drawRectangles(canvas, size, false, data ?? []);
-
+    drawTradeLines(canvas, size, false, data ?? []);
     canvas.restore();
   }
 
