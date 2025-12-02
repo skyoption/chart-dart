@@ -69,6 +69,8 @@ class _ChartWidgetState extends State<ChartWidget> {
   ValueNotifier<bool> isResetZoom = ValueNotifier(false);
   double tpValue = 0, initTpValue = 0;
   double slValue = 0, initSlValue = 0;
+  List<int> editableSLOrTP = [];
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -130,97 +132,115 @@ class _ChartWidgetState extends State<ChartWidget> {
                                         builder: (context, graphStyle, child) {
                                           return ValueListenableBuilder<bool>(
                                             valueListenable: widget.hideGrid,
-                                            builder: (
-                                              context,
-                                              hideGrid,
-                                              child,
-                                            ) {
-                                              return Container(
-                                                constraints: BoxConstraints(
-                                                  maxWidth:
-                                                      constraints.maxWidth,
-                                                  maxHeight:
-                                                      constraints.maxHeight,
-                                                ),
-                                                child: KChartWidget(
-                                                  key: widget.chartKey,
-                                                  hideGrid: hideGrid,
-                                                  graphStyle: graphStyle,
-                                                  onUpdatePosition:
-                                                      onUpdatePosition,
-                                                  onZoomingStart: (value) {
-                                                    isResetZoom.value = !value;
-                                                  },
-                                                  onLoadMore: (value) {
-                                                    if (value) _updateChart();
-                                                  },
-                                                  chartStyle: ChartStyle(
-                                                    scaleStep: 0.000048,
-                                                    isSmallChart:
-                                                        context.isLandscape,
-                                                    gridRows: 8,
-                                                    iconSize: 30.0,
-                                                    sizeText: 10.0,
-                                                    candleWidth: 10.5,
-                                                    candleLineWidth: 1.2,
-                                                    rightPadding:
-                                                        context.isLandscape
+                                            builder:
+                                                (context, hideGrid, child) {
+                                                  return Container(
+                                                    constraints: BoxConstraints(
+                                                      maxWidth:
+                                                          constraints.maxWidth,
+                                                      maxHeight:
+                                                          constraints.maxHeight,
+                                                    ),
+                                                    child: KChartWidget(
+                                                      key: widget.chartKey,
+                                                      editableSLOrTP:
+                                                          editableSLOrTP,
+                                                      hideGrid: hideGrid,
+                                                      graphStyle: graphStyle,
+                                                      onUpdatePosition:
+                                                          onUpdatePosition,
+                                                      onZoomingStart: (value) {
+                                                        isResetZoom.value =
+                                                            !value;
+                                                      },
+                                                      onLoadMore: (value) {
+                                                        if (value)
+                                                          _updateChart();
+                                                      },
+                                                      chartStyle: ChartStyle(
+                                                        scaleStep: 0.000048,
+                                                        isSmallChart:
+                                                            context.isLandscape,
+                                                        gridRows: 8,
+                                                        iconSize: 30.0,
+                                                        sizeText: 10.0,
+                                                        candleWidth: 10.5,
+                                                        candleLineWidth: 1.2,
+                                                        rightPadding:
+                                                            context.isLandscape
                                                             ? 0.0
                                                             : 10.0,
-                                                    areaLineWidth: platform
-                                                        .settings.chartLineSize,
-                                                    rightEmptySpace: 200.0,
-                                                    initialRightDistance: 300.0,
-                                                  ),
-                                                  chartColors: ChartColors(
-                                                    bgColor: context
-                                                        .colorScheme.surface,
-                                                    defaultTextColor: context
-                                                        .colorScheme.onSurface,
-                                                    maxColor: context
-                                                        .colorScheme.onSurface,
-                                                    iconColor: context
-                                                        .colorScheme.onSurface,
-                                                    primary: context
-                                                        .colorScheme.primary,
-                                                    dnColor: platform.settings
-                                                        .candleDownColor,
-                                                    upColor: platform
-                                                        .settings.candleUpColor,
-                                                    optionsColor: context
-                                                        .colorScheme.onSurface,
-                                                    ask: platform
-                                                        .settings.askColor,
-                                                    bid: platform
-                                                        .settings.bidColor,
-                                                    lineChartColor: platform
-                                                        .settings
-                                                        .chartThemeColor,
-                                                    areaColor: platform
-                                                        .settings.areaColor,
-                                                    stopLoss: platform
-                                                        .settings.stopLossColor,
-                                                    takeProfit: platform
-                                                        .settings
-                                                        .takeProfitColor,
-                                                    gridColor: platform.settings
-                                                        .chartGridColor,
-                                                    cursorColor: platform
-                                                        .settings.cursorColor,
-                                                  ),
-                                                  fixedLength: 2,
-                                                  timeFormat:
-                                                      TimeFormat.YEAR_MONTH_DAY,
-                                                  mBaseHeight:
-                                                      constraints.maxHeight,
-                                                  initialScale: 0.4,
-                                                  secondaryRetro:
-                                                      context.isLandscape
+                                                        areaLineWidth: platform
+                                                            .settings
+                                                            .chartLineSize,
+                                                        rightEmptySpace: 200.0,
+                                                        initialRightDistance:
+                                                            300.0,
+                                                      ),
+                                                      chartColors: ChartColors(
+                                                        bgColor: context
+                                                            .colorScheme
+                                                            .surface,
+                                                        defaultTextColor:
+                                                            context
+                                                                .colorScheme
+                                                                .onSurface,
+                                                        maxColor: context
+                                                            .colorScheme
+                                                            .onSurface,
+                                                        iconColor: context
+                                                            .colorScheme
+                                                            .onSurface,
+                                                        primary: context
+                                                            .colorScheme
+                                                            .primary,
+                                                        dnColor: platform
+                                                            .settings
+                                                            .candleDownColor,
+                                                        upColor: platform
+                                                            .settings
+                                                            .candleUpColor,
+                                                        optionsColor: context
+                                                            .colorScheme
+                                                            .onSurface,
+                                                        ask: platform
+                                                            .settings
+                                                            .askColor,
+                                                        bid: platform
+                                                            .settings
+                                                            .bidColor,
+                                                        lineChartColor: platform
+                                                            .settings
+                                                            .chartThemeColor,
+                                                        areaColor: platform
+                                                            .settings
+                                                            .areaColor,
+                                                        stopLoss: platform
+                                                            .settings
+                                                            .stopLossColor,
+                                                        takeProfit: platform
+                                                            .settings
+                                                            .takeProfitColor,
+                                                        gridColor: platform
+                                                            .settings
+                                                            .chartGridColor,
+                                                        cursorColor: platform
+                                                            .settings
+                                                            .cursorColor,
+                                                      ),
+                                                      fixedLength: 2,
+                                                      timeFormat: TimeFormat
+                                                          .YEAR_MONTH_DAY,
+                                                      mBaseHeight:
+                                                          constraints.maxHeight,
+                                                      initialScale: 0.4,
+                                                      secondaryRetro:
+                                                          context.isLandscape
                                                           ? 0.15
                                                           : 0.32,
-                                                ),
-                                              );
-                                            },
+                                                    ),
+                                                  );
+                                                },
                                           );
                                         },
                                       );
@@ -231,13 +251,15 @@ class _ChartWidgetState extends State<ChartWidget> {
                             },
                           ),
                           ValueListenableBuilder<ConnectedAccountInfoEntity?>(
-                            valueListenable:
-                                context.read<PositionsCubit>().account,
+                            valueListenable: context
+                                .read<PositionsCubit>()
+                                .account,
                             builder: (context, account, child) {
                               final isMainAccount =
                                   account?.isMainAccount ?? true;
-                              if (!isMainAccount)
+                              if (!isMainAccount) {
                                 return const SizedBox.shrink();
+                              }
                               return ValueListenableBuilder(
                                 valueListenable: widget.showUpdatePosition,
                                 builder: (context, value, child) {
@@ -275,31 +297,32 @@ class _ChartWidgetState extends State<ChartWidget> {
                           ),
                           Align(
                             alignment: Alignment.topLeft,
-                            child: ValueListenableBuilder<bool>(
-                              valueListenable: widget.isCursor,
-                              builder: (context, isCursor, child) {
-                                return ValueListenableBuilder<bool>(
-                                  valueListenable: isResetZoom,
-                                  builder: (context, value, child) {
-                                    if (!value) return const SizedBox();
-                                    return Padding(
-                                      padding: MPadding.set(
-                                        top: isCursor ? 100.0 : 40.0,
-                                      ),
-                                      child: ResetZoomWidget(
-                                        onReset: () {
-                                          isResetZoom.value = false;
-                                          widget.chartKey.currentState
-                                              ?.resetZoom();
-                                        },
-                                      ),
+                            child:
+                                ValueListenableBuilder<bool>(
+                                  valueListenable: widget.isCursor,
+                                  builder: (context, isCursor, child) {
+                                    return ValueListenableBuilder<bool>(
+                                      valueListenable: isResetZoom,
+                                      builder: (context, value, child) {
+                                        if (!value) return const SizedBox();
+                                        return Padding(
+                                          padding: MPadding.set(
+                                            top: isCursor ? 100.0 : 40.0,
+                                          ),
+                                          child: ResetZoomWidget(
+                                            onReset: () {
+                                              isResetZoom.value = false;
+                                              widget.chartKey.currentState
+                                                  ?.resetZoom();
+                                            },
+                                          ),
+                                        );
+                                      },
                                     );
                                   },
-                                );
-                              },
-                            ).addPadding(
-                              horizontal: context.isLandscape ? 12.0 : 12.0,
-                            ),
+                                ).addPadding(
+                                  horizontal: context.isLandscape ? 12.0 : 12.0,
+                                ),
                           ),
                           // if (symbol != null && symbol.isMarketClose)
                           //   Positioned(
@@ -406,6 +429,7 @@ class _ChartWidgetState extends State<ChartWidget> {
     _resetSlAndTp();
     _removeSl(item);
     _removeTp(item);
+    editableSLOrTP.clear();
     widget.showUpdatePosition.value = false;
     widget.updatePositions();
     widget.updateOrders();
@@ -425,6 +449,7 @@ class _ChartWidgetState extends State<ChartWidget> {
         editable: true,
       ),
     );
+    editableSLOrTP.add(item.id * 5);
   }
 
   void _drawTp(PositionEntity item, double value) {
@@ -441,18 +466,21 @@ class _ChartWidgetState extends State<ChartWidget> {
         editable: true,
       ),
     );
+    editableSLOrTP.add(item.id * 10);
   }
 
   void _removeSl(PositionEntity item) {
     slValue = 0;
     initSlValue = 0;
     widget.chartKey.currentState?.removeSLOrTPOrPosition(item.id * 5);
+    editableSLOrTP.remove(item.id * 5);
   }
 
   void _removeTp(PositionEntity item) {
     tpValue = 0;
     initTpValue = 0;
     widget.chartKey.currentState?.removeSLOrTPOrPosition(item.id * 10);
+    editableSLOrTP.remove(item.id * 10);
   }
 
   double _drawPrice(
@@ -477,6 +505,7 @@ class _ChartWidgetState extends State<ChartWidget> {
     _resetSlAndTp();
     _removeSl(item);
     _removeTp(item);
+    editableSLOrTP.clear();
     widget.showUpdatePosition.value = false;
     context.read<PositionsCubit>().resetPositions();
     context.read<OrdersCubit>().resetOrders();
@@ -491,10 +520,11 @@ class _ChartWidgetState extends State<ChartWidget> {
     if (cubit.bid != null) {
       widget.chartKey.currentState!.updateAskAndBid(
         LineEntity(
-            id: -10,
-            color: platform.settings.bidColor,
-            value: cubit.bid!,
-            title: (value) => ''),
+          id: -10,
+          color: platform.settings.bidColor,
+          value: cubit.bid!,
+          title: (value) => '',
+        ),
       );
     }
     if (cubit.ask != null && platform.settings.showAskLine) {

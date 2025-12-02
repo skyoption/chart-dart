@@ -90,6 +90,7 @@ class KChartWidget extends StatefulWidget {
   final bool hideIndicators;
   final bool hideGrid;
   final List<String> timeFormat;
+  final List<int> editableSLOrTP;
   final Function(bool value)? onLoadMore;
   final Function(bool value)? onZoomingStart;
   final Function(LineEntity position, double newValue) onUpdatePosition;
@@ -134,6 +135,7 @@ class KChartWidget extends StatefulWidget {
     this.flingTime = 600,
     this.flingRatio = 0.5,
     this.flingCurve = Curves.decelerate,
+    this.editableSLOrTP = const [],
     this.isOnDrag,
     this.initialScale = 0.4,
     this.initialScaleY = 0.99999,
@@ -784,6 +786,14 @@ class KChartWidgetState extends State<KChartWidget>
             return;
           } else if (object != null) {
             _tapPosition = details.localPosition;
+            if (!widget.editableSLOrTP.contains(object!.id)) {
+              _tapPosition = null;
+              objectType = null;
+              object = null;
+              objectEditable = false;
+              notifyChanged();
+              return;
+            }
             if (object!.type == ObjectType.Trend) {
               if (isSecondOffset) {
                 _painter!.setTrendLineOffset2(
