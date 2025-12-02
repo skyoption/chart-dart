@@ -1,8 +1,8 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/core/framework/functions.dart';
-import 'package:example/features/auth/logic/connect_cubit.dart';
-import 'package:example/features/symbols/models/symbol_entity.dart';
 import 'package:example/features/trade/views/widgets/trade_item_details_item_widget.dart';
+import 'package:example/core/framework/functions.dart';
+import 'package:example/features/main/logic/connect_cubit.dart';
+import 'package:example/features/symbols/models/symbol_entity.dart';
 
 class OpenPositionInfoWidget extends StatelessWidget {
   final SymbolEntity symbol;

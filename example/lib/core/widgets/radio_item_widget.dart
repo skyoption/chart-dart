@@ -32,7 +32,7 @@ class RadioItemWidget extends StatelessWidget {
                   text: title,
                   size: FoontSize.font16,
                   weight: FontWeight.w500,
-                  color: context.colorScheme.scrim,
+                  color: context.colorScheme.onSurface,
                 ).addPadding(end: 12.0)
               ],
             ),

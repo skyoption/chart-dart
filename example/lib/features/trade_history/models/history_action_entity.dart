@@ -14,6 +14,7 @@ class HistoryActionEntity {
   double commission;
   String createdAt;
   String direction;
+  int tradeId;
 
   HistoryActionEntity({
     required this.id,
@@ -27,6 +28,7 @@ class HistoryActionEntity {
     required this.source,
     required this.symbol,
     required this.account,
+    required this.tradeId,
   });
 
   HistoryActionModel copyToModel() {
@@ -42,6 +44,7 @@ class HistoryActionEntity {
       direction: direction,
       profit: profit,
       symbol: symbol,
+      tradeId: tradeId,
     );
   }
 }
@@ -59,6 +62,10 @@ extension HistorySort on List<HistoryActionEntity> {
   }
 }
 
+extension HistoryAction on HistoryActionEntity {
+  bool get isPositionClosed => type == 'CLOSE';
+}
+
 final fakeHistoryAction = HistoryActionEntity(
   id: 1,
   account: 123,
@@ -71,4 +78,5 @@ final fakeHistoryAction = HistoryActionEntity(
   commission: 1.25,
   createdAt: DateTime.now().toIso8601String(),
   direction: 'BUY',
+  tradeId: 12345,
 );

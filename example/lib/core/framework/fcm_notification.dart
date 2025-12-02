@@ -1,12 +1,12 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 abstract class FCMNotification extends Cubit<FlowState> {
   FCMNotification() : super(const FlowState());
 
   Future<String> getFCMToken();
 
-  Future<void> init();
+  Future<void> init({FirebaseOptions? options});
 
   void onClick({required RemoteMessage message});
 
@@ -15,48 +15,62 @@ abstract class FCMNotification extends Cubit<FlowState> {
 
 @pragma('vm:entry-point')
 Future<void> onMessagingBackground(RemoteMessage message) async {
-  // await FCMConfig.instance.local.displayNotificationFrom(message);
+  await FCMConfig.instance.local.displayNotificationFrom(
+    message,
+    (androidNotificationDetails, remoteMessage) async {
+      return androidNotificationDetails;
+    },
+    (darwinNotificationDetails, remoteMessage) async {
+      return darwinNotificationDetails;
+    },
+    (darwinNotificationDetails, remoteMessage) async {
+      return darwinNotificationDetails;
+    },
+  );
 }
 
 @LazySingleton(as: FCMNotification)
 class FCMNotificationImpl extends FCMNotification {
-  FCMNotificationImpl() : super();
-
   @override
   Future<String> getFCMToken() async {
-    String? token = '';
-    token = await FCMConfig.instance.messaging.getToken();
-    kPrint('FCMToken : $token');
-    return token ?? '';
+    try {
+      String? token = '';
+      token = await FCMConfig.instance.messaging.getToken();
+      kPrint('FCMToken : $token');
+      return token ?? '';
+    } catch (e) {
+      return DateTime.now().toIso8601String();
+    }
   }
 
   @override
-  Future<void> init() async {
+  Future<void> init({FirebaseOptions? options}) async {
     await FCMConfig.instance.init(
       onBackgroundMessage: onMessagingBackground,
       defaultAndroidChannel: const AndroidNotificationChannel(
         'fcm_channel',
         'fcm_title',
         importance: Importance.high,
-        sound: RawResourceAndroidNotificationSound('notification'),
+        sound: RawResourceAndroidNotificationSound('sound_alert'),
       ),
-      options: DefaultFirebaseOptions.currentPlatform,
+      options: options,
     );
     FirebaseMessaging.onMessageOpenedApp.listen((event) async {
-      kPrint(event.notification);
+      onDataReceive(event.data);
       kPrint(event.data);
     });
   }
 
   @override
-  void onClick({required RemoteMessage message}) {
-    kPrint(message.notification);
-    kPrint(message.data);
+  Future<void> onClick({required RemoteMessage message}) async {
+    onDataReceive(message.data);
   }
 
   @override
-  void onReceived({required RemoteMessage message}) {
+  Future<void> onReceived({required RemoteMessage message}) async {
     kPrint(message.notification);
     kPrint(message.data);
   }
 }
+
+void onDataReceive(Map<String, dynamic> data) {}

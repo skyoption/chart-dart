@@ -34,7 +34,7 @@ class _TwoOptionsWidgetState extends State<TwoOptionsWidget> {
               return MText(
                 text: item.value,
                 color: groupValue == item.key
-                    ? context.colorScheme.scrim
+                    ? context.colorScheme.onSurface
                     : context.colorScheme.onSurface,
                 weight:
                     groupValue == item.key ? FontWeight.w500 : FontWeight.w300,

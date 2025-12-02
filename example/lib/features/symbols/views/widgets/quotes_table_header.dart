@@ -22,7 +22,7 @@ class QuotesTableHeader extends StatelessWidget {
       children: [
         TableRow(
           decoration: BoxDecoration(
-            color: context.colorScheme.primaryContainer,
+            color: context.colorScheme.surfaceContainerLow,
             borderRadius: MBorderRadius.set(all: 10),
             border: Border.all(
               color: context.colorScheme.outline,
@@ -32,7 +32,7 @@ class QuotesTableHeader extends StatelessWidget {
             TableCell(
               child: MText(
                 text: context.tr.symbol,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 weight: FontWeight.w400,
                 size: FoontSize.font13,
                 align: TextAlign.center,
@@ -41,7 +41,7 @@ class QuotesTableHeader extends StatelessWidget {
             TableCell(
               child: MText(
                 text: context.tr.ask,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 weight: FontWeight.w400,
                 size: FoontSize.font13,
                 align: TextAlign.center,
@@ -50,7 +50,7 @@ class QuotesTableHeader extends StatelessWidget {
             TableCell(
               child: MText(
                 text: context.tr.bid,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 weight: FontWeight.w400,
                 size: FoontSize.font13,
                 align: TextAlign.center,
@@ -59,25 +59,25 @@ class QuotesTableHeader extends StatelessWidget {
             TableCell(
               child: MText(
                 text: context.tr.spread,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 weight: FontWeight.w400,
                 size: FoontSize.font13,
                 align: TextAlign.center,
               ).addPadding(vertical: 18),
             ),
-            TableCell(
-              child: MText(
-                text: context.tr.change,
-                color: context.colorScheme.scrim,
-                weight: FontWeight.w400,
-                size: FoontSize.font13,
-                align: TextAlign.center,
-              ).addPadding(vertical: 18),
-            ),
+            // TableCell(
+            //   child: MText(
+            //     text: context.tr.change,
+            //     color: context.colorScheme.scrim,
+            //     weight: FontWeight.w400,
+            //     size: FoontSize.font13,
+            //     align: TextAlign.center,
+            //   ).addPadding(vertical: 18),
+            // ),
             TableCell(
               child: MText(
                 text: context.tr.time,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 weight: FontWeight.w400,
                 size: FoontSize.font13,
                 align: TextAlign.center,

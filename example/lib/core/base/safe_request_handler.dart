@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:eitherx/eitherx.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mwidgets/mwidgets.dart';
@@ -20,13 +19,9 @@ class SafeApi {
       try {
         final response = await apiCall;
         return Right(response);
-      } on DioException catch (error) {
-        kPrint(error);
-        return Left(Failure(
-          error.response?.statusCode ?? 0,
-          error.response?.data['message'] ?? '',
-        ));
-      } catch (error) {
+      } catch (error, s) {
+        kPrint("API Error: $error");
+        kPrint(s);
         return Left(Failure(600, error.toString()));
       }
     } else {

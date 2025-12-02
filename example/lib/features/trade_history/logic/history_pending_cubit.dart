@@ -2,8 +2,8 @@ import 'package:example/core/consts/exports.dart';
 import 'package:example/core/enums/history_sort.dart';
 import 'package:example/core/framework/socket/socket.dart';
 import 'package:example/features/trade_history/data_sources/history_data_source.dart';
+import 'package:example/features/trade_history/models/filters.dart';
 import 'package:example/features/trade_history/models/history_pending_entity.dart';
-import 'package:example/features/trade_history/views/filter_history_screen.dart';
 
 ///[PositionsCubit]
 ///[Implementation]
@@ -11,9 +11,7 @@ import 'package:example/features/trade_history/views/filter_history_screen.dart'
 class HistoryPendingCubit extends Cubit<FlowState> {
   final HistoryDataSource historyDataSource;
 
-  HistoryPendingCubit(
-    this.historyDataSource,
-  ) : super(const FlowState());
+  HistoryPendingCubit(this.historyDataSource) : super(const FlowState());
   List<HistoryPendingEntity> pending = [];
 
   String? selectedTimeFilter;
@@ -48,11 +46,7 @@ class HistoryPendingCubit extends Cubit<FlowState> {
     emit(state.copyWith(data: Data.secure));
   }
 
-  Future<void> getAll({
-    String? type,
-    int? from,
-    int? to,
-  }) async {
+  Future<void> getAll({String? type, int? from, int? to}) async {
     if (type != null) {
       selectedTimeFilter = type;
       customToTime = to;
@@ -95,7 +89,7 @@ class HistoryPendingCubit extends Cubit<FlowState> {
       type: selectedTimeFilter ?? "Last Week",
       from: customFromTime ??
           DateTime.now().subtract(const Duration(days: 7)).toStartTime,
-      to: DateTime.now().subtract(const Duration(days: 7)).toEndTime,
+      to: DateTime.now().toEndTime,
     );
   }
 

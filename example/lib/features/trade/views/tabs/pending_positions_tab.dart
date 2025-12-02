@@ -1,7 +1,6 @@
-import 'package:example/core/builder/flow_builder.dart';
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/trade/logic/orders_cubit.dart';
 import 'package:example/features/trade/views/widgets/order_item_widget.dart';
+import 'package:example/features/trade/logic/orders_cubit.dart';
 
 class PendingPositionsTab extends StatelessWidget {
   const PendingPositionsTab({super.key});

@@ -1,5 +1,5 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/core/widgets/color_palette_widget.dart';
+import 'package:example/core/shared/color_palette_widget.dart';
 
 class ColorPickerWidget extends StatelessWidget {
   final String title;
@@ -28,7 +28,7 @@ class ColorPickerWidget extends StatelessWidget {
           MText(
             text: title,
             size: FoontSize.font17,
-            color: context.colorScheme.scrim,
+            color: context.colorScheme.onSurface,
             weight: FontWeight.w500,
           ).addPadding(bottom: 2, start: 12),
           const Spacer(),

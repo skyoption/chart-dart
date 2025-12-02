@@ -31,7 +31,6 @@ class HistoryPositionEntity implements History {
   String isA;
   @override
   String type;
-
   HistoryPositionEntity({
     required this.id,
     required this.symbol,

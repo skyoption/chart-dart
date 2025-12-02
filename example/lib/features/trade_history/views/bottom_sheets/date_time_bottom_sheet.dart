@@ -63,7 +63,7 @@ class _DateTimeBottomSheetState extends State<DateTimeBottomSheet> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: context.colorScheme.primaryContainer,
+                  color: context.colorScheme.surfaceContainerLow,
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: !context.isDarkTheme
@@ -75,7 +75,7 @@ class _DateTimeBottomSheetState extends State<DateTimeBottomSheet> {
                 child: Icon(
                   Icons.arrow_back_ios_new_rounded,
                   size: 20.0,
-                  color: context.colorScheme.scrim,
+                  color: context.colorScheme.onSurface,
                 ).addAction(
                   padding: const MPadding.set(all: 14.0),
                   onTap: () => controller.backward?.call(),
@@ -107,10 +107,10 @@ class _DateTimeBottomSheetState extends State<DateTimeBottomSheet> {
                       textWeight: FontWeight.w400,
                       setInitial: month,
                       options: months,
-                      iconColor: context.colorScheme.scrim,
-                      selectedItemColor: context.colorScheme.scrim,
+                      iconColor: context.colorScheme.onSurface,
+                      selectedItemColor: context.colorScheme.onSurface,
                       dropdownColor: context.colorScheme.surface,
-                      textColor: context.colorScheme.scrim,
+                      textColor: context.colorScheme.onSurface,
                       titlePadding: const MPadding.set(bottom: 5.0),
                       dropdownPadding: const MPadding.set(end: 6.0),
                       onChanged: (value) {
@@ -143,10 +143,10 @@ class _DateTimeBottomSheetState extends State<DateTimeBottomSheet> {
                       textWeight: FontWeight.w400,
                       setInitial: year,
                       options: years,
-                      iconColor: context.colorScheme.scrim,
-                      selectedItemColor: context.colorScheme.scrim,
+                      iconColor: context.colorScheme.onSurface,
+                      selectedItemColor: context.colorScheme.onSurface,
                       dropdownColor: context.colorScheme.surface,
-                      textColor: context.colorScheme.scrim,
+                      textColor: context.colorScheme.onSurface,
                       titlePadding: const MPadding.set(bottom: 5.0),
                       dropdownPadding: const MPadding.set(end: 6.0),
                       onChanged: (value) {
@@ -171,7 +171,7 @@ class _DateTimeBottomSheetState extends State<DateTimeBottomSheet> {
                 ),
                 child: Icon(
                   Icons.arrow_forward_ios_rounded,
-                  color: context.colorScheme.scrim,
+                  color: context.colorScheme.onSurface,
                   size: 20.0,
                 ).addAction(
                   padding: const MPadding.set(all: 14.0),
@@ -192,10 +192,10 @@ class _DateTimeBottomSheetState extends State<DateTimeBottomSheet> {
               ),
             ),
             rangeSelectionColor: Coolors.highlight,
-            startRangeSelectionColor: AppColors.primary,
-            endRangeSelectionColor: AppColors.primary,
-            todayHighlightColor: AppColors.primary,
-            selectionColor: AppColors.primary,
+            startRangeSelectionColor: context.colorScheme.primary,
+            endRangeSelectionColor: context.colorScheme.primary,
+            todayHighlightColor: context.colorScheme.primary,
+            selectionColor: context.colorScheme.primary,
             yearCellStyle: const DateRangePickerYearCellStyle(
               textStyle: TextStyle(fontSize: FoontSize.font20),
               leadingDatesTextStyle: TextStyle(fontSize: FoontSize.font18),
@@ -241,7 +241,7 @@ class _DateTimeBottomSheetState extends State<DateTimeBottomSheet> {
             height: 45.0,
             width: 120.0,
             title: context.tr.save,
-            color: AppColors.primary,
+            color: context.colorScheme.primary,
             borderRadius: 12.0,
             onTap: () {
               final selectedDate = controller.selectedDate;
@@ -256,7 +256,7 @@ class _DateTimeBottomSheetState extends State<DateTimeBottomSheet> {
                 );
                 widget.onDate(newDate);
               }
-              context.pop();
+              AutoRouterX(context).pop();
             },
           ),
         ],
@@ -283,7 +283,7 @@ void showDateTimeBottomSheet({
   showMBottomSheet(
     context: context,
     noScrolling: true,
-    backgorundColor: context.colorScheme.primaryContainer,
+    backgorundColor: context.colorScheme.scrim,
     removeTransparentBackground: true,
     bottomSheet: DateTimeBottomSheet(
       onDate: onDate,

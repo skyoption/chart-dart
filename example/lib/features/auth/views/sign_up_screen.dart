@@ -1,10 +1,8 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/auth/views/login_screen.dart';
-import 'package:example/features/main/views/main_screen.dart';
 
+@RoutePage()
 class SignUpScreen extends StatefulWidget {
   final Function(String user, String password)? onAddNewAccount;
-  static const id = 'SignUpScreen';
 
   const SignUpScreen({super.key, this.onAddNewAccount});
 
@@ -30,7 +28,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             )
                 .addAction(
                   padding: const MPadding.set(vertical: 21.0, end: 21.0),
-                  onGesture: () => context.pop(),
+                  onGesture: () => AutoRouterX(context).pop(),
                 )
                 .addPadding(horizontal: 21.0),
           ),
@@ -48,7 +46,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   text: context.tr.signUp,
                   size: FoontSize.font26,
                   weight: FontWeight.w600,
-                  color: context.colorScheme.scrim,
+                  color: context.colorScheme.onSurface,
                   align: TextAlign.start,
                 ).addPadding(bottom: 12.0),
                 MText(
@@ -58,7 +56,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 MTextFiled(
                   title: context.tr.fullName,
                   hintText: context.tr.fullName,
-                  titleColor: context.colorScheme.scrim,
+                  titleColor: context.colorScheme.onSurface,
                   hintColor: context.colorScheme.onSurface,
                   contentPadding:
                       MPadding.set(horizontal: 21.0, vertical: 14.0),
@@ -78,10 +76,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 MDropDown<String>(
                   title: context.tr.classification,
-                  titleColor: context.colorScheme.scrim,
+                  titleColor: context.colorScheme.onSurface,
                   hintColor: context.colorScheme.onSurface,
                   borderColor: context.colorScheme.outline,
-                  iconColor: context.colorScheme.scrim,
+                  iconColor: context.colorScheme.onSurface,
                   titleWeight: FontWeight.w500,
                   textSize: FoontSize.font18,
                   borderRadius: 8.0,
@@ -95,10 +93,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   title: context.tr.leverage,
                   titleWeight: FontWeight.w500,
                   textSize: FoontSize.font18,
-                  titleColor: context.colorScheme.scrim,
+                  titleColor: context.colorScheme.onSurface,
                   hintColor: context.colorScheme.onSurface,
                   borderColor: context.colorScheme.outline,
-                  iconColor: context.colorScheme.scrim,
+                  iconColor: context.colorScheme.onSurface,
                   borderRadius: 8.0,
                   options: const [],
                   inFill: false,
@@ -120,10 +118,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 MDropDown<String>(
                   title: context.tr.currency,
-                  titleColor: context.colorScheme.scrim,
+                  titleColor: context.colorScheme.onSurface,
                   hintColor: context.colorScheme.onSurface,
                   borderColor: context.colorScheme.outline,
-                  iconColor: context.colorScheme.scrim,
+                  iconColor: context.colorScheme.onSurface,
                   titleWeight: FontWeight.w500,
                   textSize: FoontSize.font18,
                   borderRadius: 8.0,
@@ -135,10 +133,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 MDropDown<String>(
                   title: context.tr.swap,
-                  titleColor: context.colorScheme.scrim,
+                  titleColor: context.colorScheme.onSurface,
                   hintColor: context.colorScheme.onSurface,
                   borderColor: context.colorScheme.outline,
-                  iconColor: context.colorScheme.scrim,
+                  iconColor: context.colorScheme.onSurface,
                   titleWeight: FontWeight.w500,
                   textSize: FoontSize.font18,
                   borderRadius: 8.0,
@@ -151,13 +149,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 MPasswordWidget(
                   unActiveSize: 18.0,
                   activeSize: 24.0,
-                  activeColor: context.colorScheme.scrim,
-                  unActiveColor: context.colorScheme.scrim,
+                  activeColor: context.colorScheme.onSurface,
+                  unActiveColor: context.colorScheme.onSurface,
                   child: (icon, hide) {
                     return MTextFiled(
                       title: context.tr.mainPassword,
                       hintText: context.tr.mainPassword,
-                      titleColor: context.colorScheme.scrim,
+                      titleColor: context.colorScheme.onSurface,
                       keyboardType: TextInputType.visiblePassword,
                       contentPadding:
                           MPadding.set(horizontal: 21.0, vertical: 14.0),
@@ -182,13 +180,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 MPasswordWidget(
                   unActiveSize: 18.0,
                   activeSize: 24.0,
-                  activeColor: context.colorScheme.scrim,
-                  unActiveColor: context.colorScheme.scrim,
+                  activeColor: context.colorScheme.onSurface,
+                  unActiveColor: context.colorScheme.onSurface,
                   child: (icon, hide) {
                     return MTextFiled(
                       title: context.tr.investorPassword,
                       hintText: context.tr.investorPassword,
-                      titleColor: context.colorScheme.scrim,
+                      titleColor: context.colorScheme.onSurface,
                       contentPadding:
                           MPadding.set(horizontal: 21.0, vertical: 14.0),
                       keyboardType: TextInputType.visiblePassword,
@@ -219,10 +217,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     borderRadius: 12.0,
                     onTap: () {
                       if (widget.onAddNewAccount != null) {
-                        context.pop();
+                        AutoRouterX(context).pop();
                         widget.onAddNewAccount!('', '');
                       } else {
-                        context.pushNamedAndRemoveUntil(MainScreen.id);
+                        context.replaceRoute(AuthenticatedRoutes());
                       }
                     },
                   ).addPadding(top: height * 0.04, bottom: 30.0),
@@ -243,8 +241,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       color: context.colorScheme.primary,
                     ).addAction(
                       onGesture: () {
-                        context.pushReplacement(
-                          LoginScreen(
+                        context.navigateTo(
+                          LoginRoute(
                             onAddNewAccount: widget.onAddNewAccount,
                           ),
                         );

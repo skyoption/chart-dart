@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:example/features/symbols/models/market_schedule.dart';
 import 'package:example/features/symbols/models/schema/symbol_model.dart';
 
 class SymbolEntity {
@@ -25,8 +26,8 @@ class SymbolEntity {
   double volumeMin;
   double volumeMax;
   double volumeStep;
-  int askDifference;
-  int bidDifference;
+  double askDifference;
+  double bidDifference;
   int stopLevel;
   bool isFav;
   int index;
@@ -36,12 +37,14 @@ class SymbolEntity {
   late ValueNotifier<int> dateTime = ValueNotifier(timestamp);
   late ValueNotifier<double> bidChange = ValueNotifier(bid);
   late ValueNotifier<double> askChange = ValueNotifier(ask);
-  late ValueNotifier<Color> askColor =
-      ValueNotifier(colorFromHex(askColorHex) ?? Colors.grey);
-  late ValueNotifier<Color> bidColor =
-      ValueNotifier(colorFromHex(bidColorHex) ?? Colors.grey);
+  late ValueNotifier<Color> askColor = ValueNotifier(
+    colorFromHex(askColorHex) ?? Colors.grey,
+  );
+  late ValueNotifier<Color> bidColor = ValueNotifier(
+    colorFromHex(bidColorHex) ?? Colors.grey,
+  );
   late ValueNotifier<bool> isFavChange = ValueNotifier(isFav);
-  late ValueNotifier<double> tick = ValueNotifier((ask - bid) / tickSize);
+  late ValueNotifier<double> spread = ValueNotifier((ask - bid) / tickSize);
 
   int get digits {
     if (tickSize == 0.00001) {
@@ -127,14 +130,15 @@ class SymbolEntity {
 
 extension SymbolEntityX on SymbolEntity {
   bool get isMarketClose {
-    if (sector != "Crypto") {
-      final gmt2 = DateTime.now().toUtc().add(const Duration(hours: 2));
+    return MarketSchedule.isMarketClosed(
+      sector: sector,
+      symbol: symbol,
+      time: DateTime.now().toUtc(),
+    );
+  }
 
-      return gmt2.weekday == DateTime.saturday ||
-          gmt2.weekday == DateTime.sunday;
-    } else {
-      return false;
-    }
+  DateTime get symbolOpenTime {
+    return MarketSchedule.getNextOpenTime(sector: sector, symbol: symbol);
   }
 }
 

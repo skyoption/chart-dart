@@ -1,12 +1,11 @@
 import 'dart:async';
 
-import 'package:example/core/builder/flow_builder.dart';
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/symbols/logic/quotes_cubit.dart';
-import 'package:example/features/symbols/views/quotes_screen.dart';
+import 'package:example/features/symbols/views/symbols_screen.dart';
 import 'package:example/features/symbols/views/widgets/quotes_simple_widget.dart';
 import 'package:example/features/symbols/views/widgets/quotes_table_widget.dart';
 import 'package:example/features/symbols/views/widgets/vericial_quote_item_widget.dart';
+import 'package:example/features/symbols/logic/quotes_cubit.dart';
 
 class QuotesBodyView extends StatefulWidget {
   final StreamController<QuotesWidgetLayoutType> layoutController;

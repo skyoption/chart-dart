@@ -8,13 +8,13 @@ part of 'account_founds_model.dart';
 
 AccountFoundsModel _$AccountFoundsModelFromJson(Map<String, dynamic> json) =>
     AccountFoundsModel(
-      id: (json['id'] as num).toInt(),
-      amount: (json['amount'] as num?)?.toDouble() ?? 0,
-      type: json['type'] as String? ?? '',
-      comment: json['comment'] as String? ?? '',
-      source: json['source'] as String? ?? '',
-      date: json['createdAt'] as String? ?? '',
-    )
+        id: (json['id'] as num).toInt(),
+        amount: (json['amount'] as num?)?.toDouble() ?? 0,
+        type: json['type'] as String? ?? '',
+        comment: json['comment'] as String? ?? '',
+        source: json['source'] as String? ?? '',
+        date: json['createdAt'] as String? ?? '',
+      )
       ..commission = (json['commission'] as num?)?.toDouble() ?? 0
       ..isA = json['isA'] as String? ?? 'found'
       ..swap = (json['swap'] as num?)?.toDouble() ?? 0;

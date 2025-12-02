@@ -1,7 +1,7 @@
 import 'package:example/core/consts/exports.dart';
+import 'package:example/features/symbols/views/widgets/quote_slogo_item_widget.dart';
 import 'package:example/features/symbols/logic/quotes_cubit.dart';
 import 'package:example/features/symbols/models/symbol_entity.dart';
-import 'package:example/features/symbols/views/widgets/quote_slogo_item_widget.dart';
 
 import '../bottom_sheets/quote_bottom_sheet.dart';
 
@@ -68,7 +68,7 @@ class QuotesValuesTable extends StatelessWidget {
                             return MSvg(
                               name: Svgs.fav,
                               color: value
-                                  ? AppColors.orange
+                                  ? context.colorScheme.warning
                                   : context.colorScheme.onSurface,
                               height: 21.0,
                               width: 21.0,
@@ -93,7 +93,7 @@ class QuotesValuesTable extends StatelessWidget {
                           // ),
                           MText(
                             text: item.symbol,
-                            color: context.colorScheme.scrim,
+                            color: context.colorScheme.onSurface,
                             weight: FontWeight.w400,
                             size: FoontSize.font12,
                           ),
@@ -131,41 +131,46 @@ class QuotesValuesTable extends StatelessWidget {
                   ).addPadding(vertical: 18),
                 ),
                 TableCell(
-                  child: MText(
-                    text: context.tr.noValue,
-                    color: context.colorScheme.scrim,
-                    weight: FontWeight.w400,
-                    size: FoontSize.font13,
-                    align: TextAlign.center,
-                  ).addPadding(vertical: 18),
-                ),
-                TableCell(
-                  child: Column(
-                    children: [
-                      MText(
-                        text: '+320',
-                        color: AppColors.green,
-                        weight: FontWeight.w400,
-                        size: FoontSize.font13,
+                  child: ValueListenableBuilder(
+                    valueListenable: item.spread,
+                    builder: (context, value, child) {
+                      return MText(
+                        text: value.toStringAsFixed(0),
+                        weight: FontWeight.w300,
+                        size: FoontSize.font12,
+                        color: context.colorScheme.onSurface,
                         align: TextAlign.center,
-                      ).addPadding(vertical: 5),
-                      MText(
-                        text: '+0.1%',
-                        color: AppColors.green,
-                        weight: FontWeight.w400,
-                        size: FoontSize.font13,
-                        align: TextAlign.center,
-                      ),
-                    ],
-                  ),
+                      );
+                    },
+                  ).addPadding(end: 4.0),
                 ),
+                // TableCell(
+                //   child: Column(
+                //     children: [
+                //       MText(
+                //         text: '+320',
+                //         color: AppColors.green,
+                //         weight: FontWeight.w400,
+                //         size: FoontSize.font13,
+                //         align: TextAlign.center,
+                //       ).addPadding(vertical: 5),
+                //       MText(
+                //         text: '+0.1%',
+                //         color: AppColors.green,
+                //         weight: FontWeight.w400,
+                //         size: FoontSize.font13,
+                //         align: TextAlign.center,
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 TableCell(
                   child: ValueListenableBuilder(
                     valueListenable: item.dateTime,
                     builder: (context, value, child) {
                       return MText(
                         text: value.toLastTimeOnly,
-                        color: context.colorScheme.scrim,
+                        color: context.colorScheme.onSurface,
                         weight: FontWeight.w400,
                         size: FoontSize.font13,
                         align: TextAlign.center,

@@ -1,16 +1,13 @@
-import 'package:example/core/builder/flow_builder.dart';
 import 'package:example/core/consts/constants.dart';
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/auth/views/login_screen.dart';
 import 'package:example/features/boarding/logic/boarding_cubit.dart';
 import 'package:example/features/splash/views/widgets/gradient_scaffold.dart';
 import 'package:example/injection/injectable.dart';
 
 import 'widgets/boarding_item_widget.dart';
 
+@RoutePage()
 class BoardingScreen extends StatefulWidget {
-  static const id = 'BoardingScreen';
-
   const BoardingScreen({super.key});
 
   @override
@@ -54,12 +51,10 @@ class _OnBoardingScreenState extends State<BoardingScreen>
                       MBouncingButton(
                         title: context.tr.skip,
                         color: Coolors.transparent,
-                        textColor: context.colorScheme.scrim,
+                        textColor: AppColorScheme().light.scrim,
                         textSize: FoontSize.font20,
                         width: context.width * 0.24,
-                        onTap: () {
-                          context.pushNamed(LoginScreen.id);
-                        },
+                        onTap: cubit.skip,
                       ),
                       Row(
                         children: List.generate(
@@ -78,11 +73,7 @@ class _OnBoardingScreenState extends State<BoardingScreen>
                         ),
                       ),
                       MBouncingButton(
-                        onTap: () {
-                          cubit.next(() {
-                            context.pushNamed(LoginScreen.id);
-                          });
-                        },
+                        onTap: cubit.next,
                         title: context.tr.next,
                         width: context.width * 0.24,
                         borderRadius: 20.0,

@@ -24,8 +24,8 @@ class MSwitchWidget extends StatelessWidget {
       value: value,
       onChanged: onChanged,
       activeColor: activeThumbColor ?? Colors.white,
-      activeTrackColor: activeTrackColor ?? AppColors.primary,
-      inactiveThumbColor: inactiveThumbColor ?? AppColors.black,
+      activeTrackColor: activeTrackColor ?? context.colorScheme.primary,
+      inactiveThumbColor: inactiveThumbColor ?? context.colorScheme.onSurface,
       inactiveTrackColor: inactiveTrackColor ?? Coolors.dividerColor,
     );
   }

@@ -26,8 +26,8 @@ class SymbolModel {
   double volumeMin;
   double volumeMax;
   double volumeStep;
-  int askDifference;
-  int bidDifference;
+  double askDifference;
+  double bidDifference;
   int stopLevel;
   bool isFav;
   @Index()
@@ -94,11 +94,26 @@ class SymbolModel {
       volumeMin: (json['volumeMin'] as num?)?.toDouble() ?? 0,
       volumeMax: (json['volumeMax'] as num?)?.toDouble() ?? 0,
       volumeStep: (json['volumeStep'] as num?)?.toDouble() ?? 0,
-      askDifference: (json['askDifference'] as num?)?.toInt() ?? 0,
-      bidDifference: (json['bidDifference'] as num?)?.toInt() ?? 0,
+      askDifference: (json['askDifference'] as num?)?.toDouble() ?? 0,
+      bidDifference: (json['bidDifference'] as num?)?.toDouble() ?? 0,
       stopLevel: (json['stopLevel'] as num?)?.toInt() ?? 0,
       isFav: json['isFav'] as bool? ?? false,
     );
+  }
+
+  int get digits {
+    if (tickSize == 0.00001) {
+      return 5;
+    } else if (tickSize == 0.0001) {
+      return 4;
+    } else if (tickSize == 0.001) {
+      return 3;
+    } else if (tickSize == 0.01) {
+      return 2;
+    } else if (tickSize == 0.1) {
+      return 1;
+    }
+    return 1;
   }
 }
 

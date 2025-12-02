@@ -27,10 +27,10 @@ class AppNotifications {
       onDidReceiveBackgroundNotificationResponse: onReceiveBackgroundResponse,
     );
 
-    // flutterLocalNotificationsPlugin
-    //     .resolvePlatformSpecificImplementation<
-    //         AndroidFlutterLocalNotificationsPlugin>()
-    //     ?.requestPermission();
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
   }
 
   static void onReceiveBackgroundResponse(NotificationResponse details) {
@@ -76,10 +76,10 @@ class AppNotifications {
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
-    // flutterLocalNotificationsPlugin
-    //     .resolvePlatformSpecificImplementation<
-    //         AndroidFlutterLocalNotificationsPlugin>()
-    //     ?.requestPermission();
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
     kPrint(notification.toJson().toString());
     if (isShowNotification) {
       await flutterLocalNotificationsPlugin.show(

@@ -1,4 +1,4 @@
-import 'package:example/main.dart';
+import 'package:example/app.dart';
 
 enum SymbolSortCriteria {
   sortByName,

@@ -1,28 +1,13 @@
-import 'package:example/core/builder/flow_builder.dart';
 import 'package:example/core/consts/exports.dart';
-import 'package:example/core/framework/pick_option.dart';
 import 'package:example/core/widgets/custom_drop_down.dart';
-import 'package:example/features/settings/logic/platform_settings_cubit.dart';
 import 'package:example/features/settings/views/widgets/platform_switch_item.dart';
 import 'package:example/features/settings/views/widgets/trading_color_picker_widget.dart';
+import 'package:example/core/consts/pick_option.dart';
+import 'package:example/features/platform_settings/logic/platform_settings_cubit.dart';
 
-class TradingSettingsScreen extends StatefulWidget {
-  static const id = 'TradingSettingsScreen';
-
+@RoutePage()
+class TradingSettingsScreen extends StatelessWidget {
   const TradingSettingsScreen({super.key});
-
-  @override
-  State<TradingSettingsScreen> createState() => _TradingSettingsScreenState();
-}
-
-class _TradingSettingsScreenState extends State<TradingSettingsScreen> {
-  late final PlatformSettingsCubit _cubit;
-
-  @override
-  void initState() {
-    super.initState();
-    _cubit = context.read<PlatformSettingsCubit>();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,15 +21,15 @@ class _TradingSettingsScreenState extends State<TradingSettingsScreen> {
             children: [
               Icon(
                 Icons.arrow_back,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 size: 32.0,
               ).addAction(
                 padding: const MPadding.set(vertical: 21.0, end: 12.0),
-                onGesture: () => context.pop(),
+                onGesture: () => AutoRouterX(context).pop(),
               ),
               MText(
                 text: context.tr.tradingSettings,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 weight: FontWeight.w600,
                 size: FoontSize.font18,
               ),
@@ -60,22 +45,43 @@ class _TradingSettingsScreenState extends State<TradingSettingsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 PlatformSwitchItem(
-                  title: context.tr.tradeNotification,
-                  subtitle: context.tr.tradeNotificationSubtitle,
-                  initialValue: cubit.settings.tradeNotification,
-                  onChanged: cubit.toggleTradeNotification,
+                  title: context.tr.tradePositionNotification,
+                  subtitle: context.tr.tradePositionNotificationSubtitle,
+                  initialValue: cubit.settings.tradePositionNotification,
+                  onChanged: cubit.toggleTradePositionNotification,
                 ),
                 PlatformSwitchItem(
-                  title: context.tr.tradeNotificationSound,
-                  subtitle: context.tr.tradeNotificationSoundSubtitle,
-                  initialValue: cubit.settings.tradeNotificationSound,
-                  onChanged: cubit.toggleTradeNotificationSound,
+                  title: context.tr.tradePositionNotificationSound,
+                  subtitle: context.tr.tradePositionNotificationSoundSubtitle,
+                  initialValue: cubit.settings.tradePositionNotificationSound,
+                  onChanged: cubit.toggleTradePositionNotificationSound,
                 ),
                 PlatformSwitchItem(
-                  title: context.tr.tradeNotificationVibration,
-                  subtitle: context.tr.tradeNotificationVibrationSubtitle,
-                  initialValue: cubit.settings.tradeNotificationVibration,
-                  onChanged: cubit.toggleNotificationVibration,
+                  title: context.tr.tradePositionNotificationVibration,
+                  subtitle:
+                      context.tr.tradePositionNotificationVibrationSubtitle,
+                  initialValue:
+                      cubit.settings.tradePositionNotificationVibration,
+                  onChanged: cubit.togglePositionNotificationVibration,
+                ),
+                PlatformSwitchItem(
+                  title: context.tr.tradeOrderNotification,
+                  subtitle: context.tr.tradeOrderNotificationSubtitle,
+                  initialValue: cubit.settings.tradePositionNotification,
+                  onChanged: cubit.toggleTradeOrderNotification,
+                ),
+                PlatformSwitchItem(
+                  title: context.tr.tradeOrderNotificationSound,
+                  subtitle: context.tr.tradeOrderNotificationSoundSubtitle,
+                  initialValue: cubit.settings.tradePositionNotificationSound,
+                  onChanged: cubit.toggleTradeOrderNotificationSound,
+                ),
+                PlatformSwitchItem(
+                  title: context.tr.tradeOrderNotificationVibration,
+                  subtitle: context.tr.tradeOrderNotificationVibrationSubtitle,
+                  initialValue:
+                      cubit.settings.tradePositionNotificationVibration,
+                  onChanged: cubit.toggleTradeOrderNotificationVibration,
                 ),
                 PlatformSwitchItem(
                   title: context.tr.showAskLine,
@@ -107,6 +113,37 @@ class _TradingSettingsScreenState extends State<TradingSettingsScreen> {
                       Color(cubit.settings.chartGridDarkColorValue),
                   onLightColorChange: cubit.updateChartGridLightColor,
                   onDarkColorChanged: cubit.updateChartGridDarkColor,
+                ),
+                TradingColorPickerWidget(
+                  title: context.tr.cursorColor,
+                  lightDefaultColor: Color(
+                    cubit.settings.cursorLightColorValue,
+                  ),
+                  darkDefaultColor: Color(cubit.settings.cursorDarkColorValue),
+                  onLightColorChange: cubit.updateCursorLightColor,
+                  onDarkColorChanged: cubit.updateCursorDarkColor,
+                ),
+                TradingColorPickerWidget(
+                  title: context.tr.candleUpColor,
+                  lightDefaultColor: Color(
+                    cubit.settings.candleUpLightColorValue,
+                  ),
+                  darkDefaultColor: Color(
+                    cubit.settings.candleUpDarkColorValue,
+                  ),
+                  onLightColorChange: cubit.updateCandleUpLightColor,
+                  onDarkColorChanged: cubit.updateCandleUpDarkColor,
+                ),
+                TradingColorPickerWidget(
+                  title: context.tr.candleDownColor,
+                  lightDefaultColor: Color(
+                    cubit.settings.candleDownLightColorValue,
+                  ),
+                  darkDefaultColor: Color(
+                    cubit.settings.candleDownDarkColorValue,
+                  ),
+                  onLightColorChange: cubit.updateCandleDownLightColor,
+                  onDarkColorChanged: cubit.updateCandleDownDarkColor,
                 ),
                 TradingColorPickerWidget(
                   title: context.tr.ask,

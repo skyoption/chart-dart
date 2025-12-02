@@ -1,12 +1,11 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/core/framework/functions.dart';
+import 'package:example/core/framework/socket/logging_notifier.dart';
 import 'package:example/core/framework/socket/socket.dart';
-import 'package:example/features/settings/logic/platform_settings_cubit.dart';
-import 'package:example/features/settings/logic/trading_logs_cubit.dart';
+import 'package:example/features/platform_settings/logic/platform_settings_cubit.dart';
+import 'package:example/features/platform_settings/logic/trading_logs_cubit.dart';
 import 'package:example/features/trade/data_sources/positions_data_source.dart';
 import 'package:example/features/trade/models/requests/open_position_request.dart';
 import 'package:example/injection/injectable.dart';
-import 'package:example/main.dart';
 
 ///[OpenPositionCubit]
 ///[Implementation]
@@ -15,43 +14,33 @@ class OpenPositionCubit extends Cubit<FlowState> {
   final PositionsDataSource dataSource;
   final PlatformSettingsCubit platformCubit;
 
-  OpenPositionCubit(
-    this.dataSource,
-    this.platformCubit,
-  ) : super(const FlowState());
+  OpenPositionCubit(this.dataSource, this.platformCubit)
+      : super(const FlowState());
 
-  String error = '';
   String requestSymbol = '';
-  String type = '';
+  String direction = '';
+  double volume = 0.0;
+  double price = 0.0;
 
   Future<void> init() async {
     await dataSource.onData(
-      onRequest: (success, message) {
-        if (success) {
-          error = '';
-          showTradeNotification(
-            platformSettings: platformCubit.settings,
-            message: SkyTrading.tr.positionOpenedNotification(
-              DateTime.now().toLocal().toIso8601String().toDateOnly,
-              requestSymbol,
-              type,
-            ),
-            color: Coolors.primaryColor,
-          );
-          getIt<TradingLogsCubit>().log(
-              "Successfully Opened Position With Type $type For $requestSymbol Symbol");
-          emit(state.copyWith(type: StateType.success));
-        } else {
-          error = message;
-          if (platformCubit.settings.tradeNotificationSound) Player.failure();
-          getIt<TradingLogsCubit>().log(
-              "Failed to Open Position With Type $type For $requestSymbol Symbol");
-          emit(state.copyWith(data: Data.secure));
-        }
+      onRequestError: (message, id) => LoggingPusher.error(
+        message: message,
+        logErrorMessage: "Error Opening Position Number $id",
+      ),
+      onRequest: (message, id) {
+        LoggingPusher.success(
+          message: SkyTrading.tr.positionOpenedNotification(
+            direction,
+            requestSymbol,
+            volume.toString(),
+          ),
+          logSuccessMessage:
+              "Successfully Opened Position For $requestSymbol Symbol",
+        );
+        emit(state.copyWith(type: StateType.success, data: Data.secure));
       },
-      events: [
-        SocketEvent.ev_open_pos,
-      ],
+      events: [SocketEvent.ev_open_pos, SocketEvent.open_pos],
     );
   }
 
@@ -61,9 +50,12 @@ class OpenPositionCubit extends Cubit<FlowState> {
     required double volume,
     required double sl,
     required double tp,
+    required double price,
   }) {
     requestSymbol = symbol;
-    type = direction;
+    this.direction = direction;
+    this.volume = volume;
+    this.price = price;
     dataSource.openPosition(
       OpenPositionRequest(
         symbol: symbol,
@@ -73,8 +65,9 @@ class OpenPositionCubit extends Cubit<FlowState> {
         tp: tp,
       ),
     );
-    getIt<TradingLogsCubit>()
-        .log("Requested To Open Position For $symbol Symbol");
+    getIt<TradingLogsCubit>().log(
+      "Requested To Open Position For $symbol Symbol",
+    );
   }
 
   @override

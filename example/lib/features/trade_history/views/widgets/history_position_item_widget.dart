@@ -38,7 +38,7 @@ class _HistoryPositionItemWidgetState extends State<HistoryPositionItemWidget> {
         borderRadius: MBorderRadius.set(all: 8.0),
         border: Border.all(color: context.colorScheme.outline),
       ),
-      margin: const MPadding.set(horizontal: 21.0, bottom: 5.0),
+      margin: const MPadding.set(horizontal: 12.0, bottom: 4.0),
       child: ExpansionTile(
         showTrailingIcon: false,
         tilePadding: const MPadding.set(horizontal: 6.0),
@@ -49,8 +49,8 @@ class _HistoryPositionItemWidgetState extends State<HistoryPositionItemWidget> {
           reverseCurve: Curves.easeOut,
           reverseDuration: Durations.long1,
         ),
-        collapsedIconColor: context.colorScheme.scrim,
-        iconColor: context.colorScheme.scrim,
+        collapsedIconColor: context.colorScheme.onSurface,
+        iconColor: context.colorScheme.onSurface,
         onExpansionChanged: (value) {
           isExpanded.value = value;
         },
@@ -66,7 +66,7 @@ class _HistoryPositionItemWidgetState extends State<HistoryPositionItemWidget> {
                       expanded
                           ? Icons.keyboard_arrow_up_outlined
                           : Icons.keyboard_arrow_down_outlined,
-                      color: context.colorScheme.scrim,
+                      color: context.colorScheme.onSurface,
                     );
                   },
                 ).addPadding(end: 3.0),
@@ -82,7 +82,7 @@ class _HistoryPositionItemWidgetState extends State<HistoryPositionItemWidget> {
                           text: widget.item.symbol.toUpperCase(),
                           weight: FontWeight.w600,
                           size: FoontSize.font16,
-                          color: context.colorScheme.scrim,
+                          color: context.colorScheme.onSurface,
                         ).addPadding(end: 12.0),
                         MText(
                           text:

@@ -3,15 +3,13 @@ import 'dart:async';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:example/core/consts/exports.dart';
 import 'package:example/core/consts/jsons.dart';
-import 'package:example/core/framework/objectBox.dart';
-import 'package:example/features/auth/logic/connect_cubit.dart';
-import 'package:example/features/auth/views/login_screen.dart';
-import 'package:example/features/main/views/main_screen.dart';
 import 'package:example/injection/injectable.dart';
+import 'package:example/core/framework/app_cubit.dart';
+import 'package:example/core/framework/objectBox.dart';
+import 'package:example/features/main/logic/connect_cubit.dart';
 
+@RoutePage()
 class SplashScreen extends StatefulWidget {
-  static const id = 'SplashScreen';
-
   const SplashScreen({super.key});
 
   @override
@@ -21,28 +19,28 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   StreamController<String> versionController = StreamController();
   late final ConnectCubit loginCubit;
+  late final AppCubit appCubit;
 
   @override
   void initState() {
+    super.initState();
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       String version = packageInfo.version;
       versionController.add(version);
     });
     loginCubit = context.read<ConnectCubit>();
-    _checkCredentials();
-    super.initState();
+    appCubit = context.read<AppCubit>();
+    _afterSplashNavigation();
   }
 
-  Future<void> _checkCredentials() async {
+  Future<void> _afterSplashNavigation() async {
     await Future.delayed(const Duration(seconds: 2));
     final user = await loginCubit.userLoggedIn;
     if (user != null) {
       await getIt<ObjectBox>().create(user.id);
-      if (mounted) {
-        context.pushNamedAndRemoveUntil(MainScreen.id);
-      }
+      if (mounted) context.router.replace(AuthenticatedRoutes());
     } else {
-      if (mounted) context.pushNamedAndRemoveUntil(LoginScreen.id);
+      if (mounted) context.router.replace(UnAuthenticatedRoutes());
     }
   }
 

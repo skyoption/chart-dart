@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:example/core/builder/flow_state.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:example/core/consts/exports.dart';
 import 'package:example/core/framework/mtoast.dart';
-import 'package:example/core/widgets/loading.dart';
+import 'package:example/core/shared/loading.dart';
 
 export 'flow_state.dart';
 
@@ -36,6 +35,7 @@ class FlowBuilder<C extends Cubit<FlowState>> extends StatefulWidget {
 class _FlowBuilderState<C extends Cubit<FlowState>>
     extends State<FlowBuilder<C>> {
   bool popUpOpened = false;
+  BuildContext? _dialogContext;
   late C cubit;
 
   @override
@@ -74,21 +74,29 @@ class _FlowBuilderState<C extends Cubit<FlowState>>
         },
         listener: (context, state) {
           final cubit = context.read<C>();
-          if (popUpOpened) {
+          // Dismiss popup if it's open and we're transitioning to a non-popup state
+          if (popUpOpened && state.type != StateType.loadingPopUp) {
             popUpOpened = false;
-            Navigator.of(context, rootNavigator: true).pop();
-          } else if (!popUpOpened) {
-            popUpOpened = (state.type == StateType.successPopUp ||
-                state.type == StateType.errorPopUp ||
-                state.type == StateType.loadingPopUp);
+            if (_dialogContext != null && _dialogContext!.mounted) {
+              Navigator.of(_dialogContext!, rootNavigator: true).pop();
+              _dialogContext = null;
+            }
           }
+
+          if (!popUpOpened && state.type == StateType.loadingPopUp) {
+            popUpOpened = true;
+          }
+
           if (state.type == StateType.loadingPopUp) {
             FocusManager.instance.primaryFocus?.unfocus();
             showAdaptiveDialog(
               context: context,
               barrierDismissible: false,
               useRootNavigator: true,
-              builder: (context) => Loading.loader(context),
+              builder: (dialogContext) {
+                _dialogContext = dialogContext;
+                return Loading.loader(dialogContext);
+              },
             );
           } else if (state.type == StateType.successPopUp) {
             if (widget.onSuccess != null) {
@@ -103,7 +111,7 @@ class _FlowBuilderState<C extends Cubit<FlowState>>
               widget.onError!(state, cubit);
             } else {
               MToast.showError(
-                message: widget.successMessage ?? '${state.message}',
+                message: widget.errorMessage ?? '${state.message}',
               );
             }
           } else if (state.type == StateType.success) {

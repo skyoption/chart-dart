@@ -1,84 +1,82 @@
 // ignore_for_file: depend_on_referenced_packages
 
+import 'package:example/app.dart';
+import 'package:example/core/consts/exports.dart';
+import 'package:example/core/theme/app_color_scheme.dart';
 import 'package:flash/flash.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:example/core/consts/exports.dart';
-import 'package:example/main.dart';
 
 class AppThemes {
+  static final appColorScheme = AppColorScheme();
+
   static ThemeData get light {
     return ThemeData(
       fontFamily: Fonts.ar,
-      scaffoldBackgroundColor: AppColorScheme.light.surface,
-      appBarTheme: AppBarTheme(backgroundColor: AppColorScheme.light.surface),
-      colorScheme: AppColorScheme.light,
+      scaffoldBackgroundColor: appColorScheme.light.surface,
+      appBarTheme: AppBarTheme(backgroundColor: appColorScheme.light.surface),
+      colorScheme: appColorScheme.light,
       brightness: Brightness.light,
-      iconTheme: IconThemeData(
-        color: AppColorScheme.light.onSurfaceVariant,
-      ),
+      iconTheme: IconThemeData(color: appColorScheme.light.onSurfaceVariant),
       textTheme: TextTheme(
         titleMedium: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w500,
-          color: AppColorScheme.dark.scrim,
+          color: Color(0xFF020000),
         ),
         titleSmall: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w500,
-          color: AppColorScheme.dark.scrim,
+          color: Color(0xFF020000),
         ),
         bodyMedium: TextStyle(
           fontSize: 16.0,
           fontWeight: FontWeight.w500,
-          color: AppColorScheme.dark.scrim,
+          color: Color(0xFF020000),
         ),
       ),
       scrollbarTheme: ScrollbarThemeData(
-        thumbColor: WidgetStateProperty.all(AppColorScheme.light.outline),
+        thumbColor: WidgetStateProperty.all(appColorScheme.light.outline),
       ),
-    ).extendsOption;
+    ).extendsOptions;
   }
 
   static ThemeData get dark {
     return ThemeData(
       fontFamily: Fonts.ar,
-      scaffoldBackgroundColor: AppColorScheme.dark.surface,
-      appBarTheme: AppBarTheme(backgroundColor: AppColorScheme.dark.surface),
-      colorScheme: AppColorScheme.dark,
+      scaffoldBackgroundColor: appColorScheme.dark.surface,
+      appBarTheme: AppBarTheme(backgroundColor: appColorScheme.dark.surface),
+      colorScheme: appColorScheme.dark,
       brightness: Brightness.dark,
-      iconTheme: IconThemeData(
-        color: AppColorScheme.dark.onSurfaceVariant,
-      ),
+      iconTheme: IconThemeData(color: appColorScheme.dark.onSurfaceVariant),
       textTheme: TextTheme(
         titleMedium: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w500,
-          color: AppColorScheme.dark.scrim,
+          color: Color(0xFFFEFEFE),
         ),
         bodyMedium: TextStyle(
           fontSize: 16.0,
           fontWeight: FontWeight.w500,
-          color: AppColorScheme.dark.scrim,
+          color: Color(0xFFFEFEFE),
         ),
         titleSmall: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w500,
-          color: AppColorScheme.dark.scrim,
+          color: Color(0xFFFEFEFE),
         ),
       ),
       scrollbarTheme: ScrollbarThemeData(
-        thumbColor: WidgetStateProperty.all(AppColorScheme.dark.outline),
+        thumbColor: WidgetStateProperty.all(appColorScheme.dark.outline),
       ),
-    ).extendsOption;
+    ).extendsOptions;
   }
 }
 
 extension OnTheme on ThemeData {
-  ThemeData get extendsOption {
-    return copyWith(extensions: [
-      const FlashToastTheme(),
-      const FlashBarTheme(),
-    ]);
+  ThemeData get extendsOptions {
+    return copyWith(
+      extensions: [const FlashToastTheme(), const FlashBarTheme()],
+    );
   }
 }
 
@@ -110,9 +108,9 @@ extension AppThemeModeExtension on AppThemeMode {
   String get icon {
     switch (this) {
       case AppThemeMode.light:
-        return Svgs.changeThemeIcon;
+        return Svgs.lightMode;
       case AppThemeMode.dark:
-        return Svgs.darkModeIcon;
+        return Svgs.darkMode;
       case AppThemeMode.system:
         return Svgs.settings;
     }

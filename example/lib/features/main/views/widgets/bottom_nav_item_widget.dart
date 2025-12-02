@@ -1,6 +1,6 @@
 import 'package:example/core/consts/exports.dart';
 import 'package:example/core/consts/jsons.dart';
-import 'package:example/features/auth/logic/connect_cubit.dart';
+import 'package:example/features/main/logic/connect_cubit.dart';
 import 'package:web_socket_client/web_socket_client.dart' as socket;
 
 class BottomNavItemWidget extends StatelessWidget {
@@ -20,12 +20,12 @@ class BottomNavItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color =
-        active ? context.colorScheme.secondary : context.colorScheme.scrim;
+        active ? context.colorScheme.onPrimary : context.colorScheme.onSurface;
     if (active) {
       return Container(
         decoration: BoxDecoration(
           borderRadius: MBorderRadius.set(all: 14.0),
-          color: const Color(0xff580099).withOpacity(0.4),
+          color: context.colorScheme.primary,
         ),
         padding: const MPadding.set(
           vertical: 12.0,
@@ -62,7 +62,7 @@ class BottomNavItemWidget extends StatelessWidget {
               ).addPadding(end: 6.0),
             MText(
               text: title,
-              size: FoontSize.font15,
+              size: FoontSize.font14,
               color: color,
               weight: FontWeight.w400,
             )
@@ -100,7 +100,7 @@ class BottomNavItemWidget extends StatelessWidget {
           ).addPadding(bottom: 6.0),
         MText(
           text: title,
-          size: FoontSize.font15,
+          size: FoontSize.font14,
           color: color,
           weight: FontWeight.w400,
         )

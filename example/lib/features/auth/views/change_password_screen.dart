@@ -2,9 +2,8 @@ import 'package:example/core/consts/exports.dart';
 import 'package:example/features/auth/views/widget/password_item_widget.dart';
 import 'package:example/features/trade/views/widgets/cupertino_custom_sliding_segmented_control.dart';
 
+@RoutePage()
 class ChangePasswordScreen extends StatefulWidget {
-  static const id = 'ChangePasswordScreen';
-
   const ChangePasswordScreen({super.key});
 
   @override
@@ -24,15 +23,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             children: [
               Icon(
                 Icons.arrow_back,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 size: 32.0,
               ).addAction(
                 padding: const MPadding.set(vertical: 21.0, end: 12.0),
-                onGesture: () => context.pop(),
+                onGesture: () => AutoRouterX(context).pop(),
               ),
               MText(
                 text: context.tr.changePassword,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 weight: FontWeight.w600,
                 size: FoontSize.font18,
               ),
@@ -57,15 +56,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               MPasswordWidget(
                 unActiveSize: 18.0,
                 activeSize: 24.0,
-                activeColor: context.colorScheme.scrim,
-                unActiveColor: context.colorScheme.scrim,
+                activeColor: context.colorScheme.onSurface,
+                unActiveColor: context.colorScheme.onSurface,
                 child: (icon, hide) {
                   return MTextFiled(
                     title: context.tr.masterPassword,
                     hintText: context.tr.enterPassword,
                     hintColor: context.colorScheme.onSurface,
-                    titleColor: context.colorScheme.scrim,
-                    textColor: context.colorScheme.scrim,
+                    titleColor: context.colorScheme.onSurface,
+                    textColor: context.colorScheme.onSurface,
                     contentPadding:
                         MPadding.set(horizontal: 21.0, vertical: 14.0),
                     border: OutlineInputBorder(
@@ -90,8 +89,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               MPasswordWidget(
                 unActiveSize: 18.0,
                 activeSize: 24.0,
-                activeColor: context.colorScheme.scrim,
-                unActiveColor: context.colorScheme.scrim,
+                activeColor: context.colorScheme.onSurface,
+                unActiveColor: context.colorScheme.onSurface,
                 child: (icon, hide) {
                   return MTextFiled(
                     title: context.tr.confirmNewPassword,
@@ -123,7 +122,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   title: context.tr.submit,
                   borderRadius: 8.0,
                   onTap: () {
-                    context.pop();
+                    AutoRouterX(context).pop();
                   },
                 ).addPadding(top: height * 0.04, bottom: 30.0),
               ),

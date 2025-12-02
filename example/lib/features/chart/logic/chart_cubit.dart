@@ -23,6 +23,9 @@ class ChartCubit extends Cubit<FlowState> {
 
   Future<void> init() async {
     offset = 0;
+    items = [];
+    low = null;
+    high = null;
     dataSource.onData(
       onAskUpdated: (symbol, value) {
         updateAskAndBid(ask: value);
@@ -32,7 +35,6 @@ class ChartCubit extends Cubit<FlowState> {
       },
       onReceiveRequest: (values, offset) {
         this.offset = offset;
-
         if (values.isNotEmpty) _setAllCandles(values, offset);
       },
     );
@@ -53,12 +55,12 @@ class ChartCubit extends Cubit<FlowState> {
       low = null;
       high = null;
       items = values.toList();
+      if (items.isNotEmpty) {
+        bid = items.last.close;
+        ask = items.last.close;
+      }
     } else {
       items = [...values.reversed, ...items];
-    }
-    if (items.isNotEmpty) {
-      bid = items.last.close;
-      ask = items.last.close;
     }
     emit(state.copyWith(data: Data.secure, type: StateType.success));
   }
@@ -78,8 +80,8 @@ class ChartCubit extends Cubit<FlowState> {
     if (!isNewCandle) {
       final candle = items.last;
       candle.close = value;
-      if (low != null) candle.low = low!;
-      if (high != null) candle.high = high!;
+      if (low != null && low! < candle.low) candle.low = low!;
+      if (high != null && high! > candle.high) candle.high = high!;
     } else {
       low = null;
       high = null;
@@ -106,21 +108,29 @@ class ChartCubit extends Cubit<FlowState> {
     this.symbol = symbol;
     this.offset = offset;
     dataSource.getCandles(
-      GetCandlesRequest(
+      request: GetCandlesRequest(
         symbol: symbol,
-        timeFrame: this.timeFrame.name,
+        timeFrame: this.timeFrame,
         offset: offset,
       ),
     );
   }
 
+  void setCanldes(values, offset) {
+    this.offset = offset;
+    if (values.isNotEmpty) _setAllCandles(values, offset);
+  }
+
   void setSettings({
     required CandleTimeFormat timeFrame,
     required String symbol,
+    required List<KLineEntity> candles,
     int offset = 0,
   }) {
     this.timeFrame = timeFrame;
     this.symbol = symbol;
     this.offset = offset;
+    items = candles;
+    emit(state.copyWith(data: Data.secure, type: StateType.none));
   }
 }

@@ -9,7 +9,6 @@ class ChartOptionsWidget extends StatefulWidget {
   final Function openObjects;
   final Function openFunctions;
   final Function(bool cursor) onCursor;
-
   const ChartOptionsWidget({
     super.key,
     required this.hideGrid,
@@ -25,10 +24,9 @@ class ChartOptionsWidget extends StatefulWidget {
 }
 
 class _ChartOptionsWidgetState extends State<ChartOptionsWidget> {
-  final controller = ExpansionTileController();
+  final controller = ExpansibleController();
   late final ValueNotifier<bool> isExpanded;
   bool cursor = false;
-
   @override
   void initState() {
     isExpanded = ValueNotifier(false);
@@ -52,22 +50,20 @@ class _ChartOptionsWidgetState extends State<ChartOptionsWidget> {
           borderRadius: MBorderRadius.set(all: 10.0),
         ),
         padding: MPadding.set(horizontal: 12.0, vertical: 12.0),
-        margin: MPadding.set(end: 21.0),
-        child: Row(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             title(),
             AnimatedContainer(
               duration: Duration(seconds: 1),
-              width: _expanded ? 160.0 : 0,
+              width: _expanded ? 24.0 : 0,
+              height: _expanded ? 230 : 0,
               curve: Curves.easeInOut,
-              child: ClipRect(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  widthFactor: 1.0,
-                  child: Row(
-                    children: children(),
-                  ),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: children(),
                 ),
               ),
             ),
@@ -99,8 +95,8 @@ class _ChartOptionsWidgetState extends State<ChartOptionsWidget> {
         ),
         childrenPadding: EdgeInsets.zero,
         tilePadding: EdgeInsets.zero,
-        collapsedIconColor: context.colorScheme.scrim,
-        iconColor: context.colorScheme.scrim,
+        collapsedIconColor: context.colorScheme.onSurface,
+        iconColor: context.colorScheme.onSurface,
         onExpansionChanged: (value) {
           isExpanded.value = value;
         },
@@ -119,7 +115,7 @@ class _ChartOptionsWidgetState extends State<ChartOptionsWidget> {
               name: Svgs.chartSettings,
               width: 24.0,
               height: 24.0,
-              color: context.colorScheme.scrim,
+              color: context.colorScheme.onSurface,
             ).addAction(
               padding: MPadding.set(
                 top: expanded ? 8.0 : 0.0,
@@ -149,11 +145,12 @@ class _ChartOptionsWidgetState extends State<ChartOptionsWidget> {
           name: Svgs.functions,
           width: 24.0,
           height: 24.0,
-          color: context.colorScheme.scrim,
+          color: context.colorScheme.onSurface,
         ).addAction(
           padding: MPadding.set(
-            bottom: context.isLandscape ? 0.0 : 21.0,
-            start: context.isLandscape ? 16.0 : 0.0,
+            top: context.isLandscape ? 16.0 : 0.0,
+            bottom: context.isLandscape ? 12.0 : 21.0,
+            start: context.isLandscape ? 0.0 : 0.0,
           ),
           onTap: () {
             isExpanded.value = false;
@@ -165,11 +162,11 @@ class _ChartOptionsWidgetState extends State<ChartOptionsWidget> {
           name: Svgs.objects,
           width: 24.0,
           height: 24.0,
-          color: context.colorScheme.scrim,
+          color: context.colorScheme.onSurface,
         ).addAction(
           padding: MPadding.set(
-            bottom: context.isLandscape ? 0.0 : 21.0,
-            start: context.isLandscape ? 16.0 : 0.0,
+            bottom: context.isLandscape ? 12.0 : 21.0,
+            start: context.isLandscape ? 0.0 : 0.0,
           ),
           onTap: () {
             isExpanded.value = false;
@@ -181,11 +178,11 @@ class _ChartOptionsWidgetState extends State<ChartOptionsWidget> {
           name: Svgs.cursor,
           width: 24.0,
           height: 24.0,
-          color: context.colorScheme.scrim,
+          color: context.colorScheme.onSurface,
         ).addAction(
           padding: MPadding.set(
-            bottom: context.isLandscape ? 0.0 : 21.0,
-            start: context.isLandscape ? 16.0 : 0.0,
+            bottom: context.isLandscape ? 12.0 : 21.0,
+            start: context.isLandscape ? 0.0 : 0.0,
           ),
           onTap: () {
             cursor = !cursor;
@@ -202,8 +199,8 @@ class _ChartOptionsWidgetState extends State<ChartOptionsWidget> {
             controller.collapse();
           },
         ).addPadding(
-          bottom: context.isLandscape ? 0.0 : 21.0,
-          start: context.isLandscape ? 16.0 : 0.0,
+          bottom: context.isLandscape ? 12.0 : 21.0,
+          start: context.isLandscape ? 0.0 : 0.0,
         ),
         ValueListenableBuilder<bool>(
           valueListenable: widget.hideGrid,
@@ -212,11 +209,11 @@ class _ChartOptionsWidgetState extends State<ChartOptionsWidget> {
               name: Svgs.grid,
               width: 24.0,
               height: 24.0,
-              color: context.colorScheme.scrim,
+              color: context.colorScheme.onSurface,
             ).addAction(
               padding: MPadding.set(
-                bottom: context.isLandscape ? 0.0 : 21.0,
-                start: context.isLandscape ? 16.0 : 0.0,
+                bottom: context.isLandscape ? 12.0 : 21.0,
+                start: context.isLandscape ? 0.0 : 0.0,
               ),
               onTap: () {
                 isExpanded.value = false;
@@ -227,15 +224,13 @@ class _ChartOptionsWidgetState extends State<ChartOptionsWidget> {
           },
         ),
         Icon(
-          context.isLandscape
-              ? Icons.keyboard_arrow_left_rounded
-              : Icons.keyboard_arrow_up_rounded,
+          Icons.keyboard_arrow_up_rounded,
           size: 21.0,
-          color: context.colorScheme.scrim,
+          color: context.colorScheme.onSurface,
         ).addAction(
           padding: MPadding.set(
-            bottom: context.isLandscape ? 0.0 : 21.0,
-            start: context.isLandscape ? 16.0 : 0.0,
+            bottom: context.isLandscape ? 12.0 : 21.0,
+            start: context.isLandscape ? 0.0 : 0.0,
           ),
           onTap: () {
             if (context.isLandscape) {

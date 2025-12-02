@@ -1,7 +1,5 @@
 // ignore_for_file: must_be_immutable
 
-import 'dart:math';
-
 import 'package:example/core/consts/exports.dart';
 
 class QuotePriceItemWidget extends StatelessWidget {
@@ -16,25 +14,11 @@ class QuotePriceItemWidget extends StatelessWidget {
     this.title,
     required this.digits,
   }) {
-    String formattedValue = value.toStringAsFixed(digits);
-    prices = formattedValue.split('.');
+    prices = value.toStringAsFixed(digits).split('.');
     final last = prices[1];
-    if (last.length >= 2) {
-      prices[0] = '${prices[0]}.${last.substring(0, 2)}';
-
-      if (last.length > 2) {
-        prices[1] = last.substring(2, min(4, last.length));
-
-        if (last.length > 4) {
-          prices.add(last.substring(4));
-        }
-      } else {
-        prices[1] = '';
-      }
-    } else {
-      prices[0] = '${prices[0]}.$last';
-      prices[1] = '';
-    }
+    prices[0] = '${prices[0]}.${last.substring(0, digits ~/ 2)}';
+    if (digits > 2) prices.add(last[digits ~/ 2]);
+    prices[1] = last.substring(digits ~/ 2, digits >= 5 ? 4 : digits);
   }
 
   List<String> prices = [];
@@ -46,7 +30,9 @@ class QuotePriceItemWidget extends StatelessWidget {
       padding: const MPadding.set(vertical: 3.0, horizontal: 8.0),
       decoration: title != null
           ? BoxDecoration(
-              color: color != null ? color!.withAlpha(40) : AppColors.highLight,
+              color: color != null
+                  ? color!.withAlpha(40)
+                  : context.colorScheme.surfaceVariant,
               borderRadius: MBorderRadius.set(all: 6.0),
             )
           : null,

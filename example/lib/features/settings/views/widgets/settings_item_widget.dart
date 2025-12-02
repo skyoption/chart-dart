@@ -44,7 +44,7 @@ class SettingsItemWidget extends StatelessWidget {
                       name: iconName,
                       height: iconSize,
                       width: iconSize,
-                      color: suffixIconColor ?? context.colorScheme.scrim,
+                      color: suffixIconColor ?? context.colorScheme.onSurface,
                     ),
                   ),
                 Column(
@@ -52,7 +52,7 @@ class SettingsItemWidget extends StatelessWidget {
                     MText(
                       text: title,
                       size: FoontSize.font17,
-                      color: titleColor ?? context.colorScheme.scrim,
+                      color: titleColor ?? context.colorScheme.onSurface,
                       weight: FontWeight.w500,
                     ).addPadding(bottom: 2.0),
                     if (description != null)
@@ -70,7 +70,7 @@ class SettingsItemWidget extends StatelessWidget {
             Icon(
               Icons.navigate_next,
               size: 34,
-              color: context.colorScheme.scrim,
+              color: context.colorScheme.onSurface,
             ),
           ],
         ).addPadding(horizontal: 5),

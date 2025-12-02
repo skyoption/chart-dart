@@ -1,9 +1,9 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/symbols/logic/quotes_cubit.dart';
-import 'package:example/features/symbols/models/symbol_entity.dart';
 import 'package:example/features/symbols/views/bottom_sheets/quote_bottom_sheet.dart';
 import 'package:example/features/symbols/views/widgets/currencies_item_widget.dart';
 import 'package:example/features/symbols/views/widgets/quote_price_item_widget.dart';
+import 'package:example/features/symbols/logic/quotes_cubit.dart';
+import 'package:example/features/symbols/models/symbol_entity.dart';
 
 import 'quote_slogo_item_widget.dart';
 
@@ -16,7 +16,7 @@ class VerticalQuoteWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: context.colorScheme.primaryContainer,
+        color: context.colorScheme.surfaceContainerLow,
         border: Border.all(
           color: context.colorScheme.outline,
         ),
@@ -40,7 +40,7 @@ class VerticalQuoteWidget extends StatelessWidget {
                     return MSvg(
                       name: Svgs.fav,
                       color: value
-                          ? AppColors.orange
+                          ? context.colorScheme.warning
                           : context.colorScheme.onSurface,
                       height: 21.0,
                       width: 21.0,
@@ -64,28 +64,28 @@ class VerticalQuoteWidget extends StatelessWidget {
                     CurrenciesItemWidget(item: item.symbol),
                     MText(
                       text: item.symbol.toUpperCase(),
-                      color: context.colorScheme.scrim,
+                      color: context.colorScheme.onSurface,
                       weight: FontWeight.w600,
                       size: FoontSize.font16,
                     ),
                   ],
                 ),
-                Row(
-                  children: [
-                    MText(
-                      text: 'High: 1.09457',
-                      color: context.colorScheme.onSurface,
-                      weight: FontWeight.w400,
-                      size: FoontSize.font13,
-                    ),
-                    MText(
-                      text: 'Low: 1.09457',
-                      color: context.colorScheme.onSurface,
-                      weight: FontWeight.w400,
-                      size: FoontSize.font13,
-                    ).addPadding(start: 10.0)
-                  ],
-                ).addPadding(vertical: 4.0),
+                // Row(
+                //   children: [
+                //     MText(
+                //       text: 'High: 1.09457',
+                //       color: context.colorScheme.onSurface,
+                //       weight: FontWeight.w400,
+                //       size: FoontSize.font13,
+                //     ),
+                //     MText(
+                //       text: 'Low: 1.09457',
+                //       color: context.colorScheme.onSurface,
+                //       weight: FontWeight.w400,
+                //       size: FoontSize.font13,
+                //     ).addPadding(start: 10.0)
+                //   ],
+                // ).addPadding(vertical: 4.0),
                 Row(
                   children: [
                     ValueListenableBuilder(
@@ -99,18 +99,18 @@ class VerticalQuoteWidget extends StatelessWidget {
                         );
                       },
                     ),
-                    MText(
-                      text: '+424',
-                      color: AppColors.green,
-                      size: FoontSize.font13,
-                      weight: FontWeight.w400,
-                    ).addPadding(horizontal: 2.0),
-                    MText(
-                      text: '+0.39%',
-                      color: AppColors.green,
-                      size: FoontSize.font13,
-                      weight: FontWeight.w400,
-                    )
+                    // MText(
+                    //   text: '+424',
+                    //   color: AppColors.green,
+                    //   size: FoontSize.font13,
+                    //   weight: FontWeight.w400,
+                    // ).addPadding(horizontal: 2.0),
+                    // MText(
+                    //   text: '+0.39%',
+                    //   color: AppColors.green,
+                    //   size: FoontSize.font13,
+                    //   weight: FontWeight.w400,
+                    // )
                   ],
                 ),
               ],
@@ -124,7 +124,7 @@ class VerticalQuoteWidget extends StatelessWidget {
                 height: 20.0,
               ).addPadding(end: 2.0),
               ValueListenableBuilder(
-                valueListenable: item.tick,
+                valueListenable: item.spread,
                 builder: (context, value, child) {
                   return MText(
                     text: value.toStringAsFixed(0),

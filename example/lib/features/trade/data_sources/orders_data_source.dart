@@ -36,7 +36,8 @@ abstract class OrdersDataSource {
 
   void onData({
     required List<SocketEvent> events,
-    Function(bool success, String message)? onRequest,
+    Function(String message, int? id)? onRequest,
+    Function(String message, int? id)? onRequestError,
     Function(OrderEntity item)? onOpenOrderRequest,
     Function(int id)? onDeleteOrderRequest,
     Function(OrderEntity item)? onModifyOrderRequest,
@@ -79,7 +80,8 @@ class OrdersDataSourceImp implements OrdersDataSource {
   @override
   void onData({
     required List<SocketEvent> events,
-    Function(bool success, String message)? onRequest,
+    Function(String message, int? id)? onRequest,
+    Function(String message, int? id)? onRequestError,
     Function(OrderEntity item)? onOpenOrderRequest,
     Function(int id)? onDeleteOrderRequest,
     Function(OrderEntity item)? onModifyOrderRequest,
@@ -89,14 +91,13 @@ class OrdersDataSourceImp implements OrdersDataSource {
     orders.clear();
     _fillSymbols();
     listener = socket.onData(
-      events: [
-        SocketEvent.subscribe,
-        SocketEvent.unsubscribe,
-        ...events,
-      ],
+      events: [SocketEvent.subscribe, SocketEvent.unsubscribe, ...events],
       onReceiveRequest: (receiver) async {
-        kPrint(receiver.event);
-        kPrint(receiver.data);
+        kPrint("Event: ${receiver.event}\nData: ${receiver.data}");
+        if (!receiver.success && onRequestError != null) {
+          onRequestError(receiver.message, receiver.data?['id']);
+          return;
+        }
 
         if (receiver.event == SocketEvent.ev_open_pending) {
           await _handleOpenOrder(receiver, onOpenOrderRequest);
@@ -110,12 +111,30 @@ class OrdersDataSourceImp implements OrdersDataSource {
             receiver.event == SocketEvent.unsubscribe) {
           _fillSymbols();
         }
-
-        if (events.contains(receiver.event) && onRequest != null) {
-          onRequest(receiver.success, receiver.message);
+        _checkSymbols();
+        if (events.contains(receiver.event) &&
+            receiver.event.name.contains('ev') &&
+            onRequest != null) {
+          onRequest(receiver.message, receiver.data?['id']);
         }
       },
     );
+  }
+
+  Future<void> _checkSymbols() async {
+    final ordersSymbols = orders.map((e) => e.symbol).toSet();
+    final existingSymbols =
+        objectBox.symbolBox!.getAll().map((e) => e.name).toSet();
+
+    final missingSymbols = ordersSymbols.difference(existingSymbols);
+
+    for (final symbol in missingSymbols) {
+      subscribeSymbol(symbol);
+    }
+  }
+
+  void subscribeSymbol(String symbol) {
+    socket.send(event: SocketEvent.subscribe, data: {'symbol': symbol});
   }
 
   Future<void> _handleOpenOrder(
@@ -153,8 +172,9 @@ class OrdersDataSourceImp implements OrdersDataSource {
     Function(OrderEntity item)? onModifyOrderRequest,
   ) async {
     if (onModifyOrderRequest != null) {
-      final index =
-          orders.indexWhere((element) => element.id == receiver.data['id']);
+      final index = orders.indexWhere(
+        (element) => element.id == receiver.data['id'],
+      );
       if (index != -1 && receiver.data['updates'] != null) {
         final item = orders[index];
         var updates = receiver.data['updates'];
@@ -189,18 +209,12 @@ class OrdersDataSourceImp implements OrdersDataSource {
 
   @override
   void openOrder(OpenOrderRequest request) {
-    socket.sendRequest(
-      event: SocketEvent.open_pending,
-      data: request.toJson(),
-    );
+    socket.sendRequest(event: SocketEvent.open_pending, data: request.toJson());
   }
 
   @override
   void deleteOrder(DeleteOrderRequest request) {
-    socket.sendRequest(
-      event: SocketEvent.del_pending,
-      data: request.toJson(),
-    );
+    socket.sendRequest(event: SocketEvent.del_pending, data: request.toJson());
   }
 
   @override

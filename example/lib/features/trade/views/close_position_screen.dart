@@ -1,20 +1,18 @@
-import 'package:example/core/builder/flow_builder.dart';
 import 'package:example/core/consts/exports.dart';
-import 'package:example/core/framework/functions.dart';
-import 'package:example/features/auth/logic/connect_cubit.dart';
-import 'package:example/features/chart/views/widgets/symbol_options_widget.dart';
-import 'package:example/features/symbols/logic/quotes_cubit.dart';
-import 'package:example/features/symbols/views/widgets/currencies_item_widget.dart';
-import 'package:example/features/trade/logic/close_position_cubit.dart';
-import 'package:example/features/trade/models/position_entity.dart';
-import 'package:example/features/trade/views/open_position_screen.dart';
+import 'package:example/features/trade/views/widgets/currency_ask_bid_widget.dart';
+import 'package:example/features/trade/views/widgets/position_details_widget.dart';
 import 'package:example/features/trade/views/widgets/stop_loss_widget.dart';
 import 'package:example/features/trade/views/widgets/take_profit_widget.dart';
-import 'package:example/features/trade/views/widgets/trade_chart_item_widget.dart';
-import 'package:example/features/trade/views/widgets/trade_price_item_widget.dart';
-import 'package:example/features/trade_history/views/bottom_sheets/date_time_bottom_sheet.dart';
-import 'package:example/injection/injectable.dart';
+import 'package:example/core/framework/functions.dart';
+import 'package:example/core/shared/currencies_item_widget.dart';
+import 'package:example/core/shared/my_scaffold_widget.dart';
+import 'package:example/features/main/logic/connect_cubit.dart';
+import 'package:example/features/symbols/logic/quotes_cubit.dart';
+import 'package:example/features/trade/logic/close_position_cubit.dart';
+import 'package:example/features/trade/logic/positions_cubit.dart';
+import 'package:example/features/trade/models/position_entity.dart';
 
+@RoutePage()
 class ClosePositionScreen extends StatefulWidget {
   static const id = 'ClosePositionScreen';
   final PositionEntity position;
@@ -26,21 +24,20 @@ class ClosePositionScreen extends StatefulWidget {
 }
 
 class _ClosePositionScreenState extends State<ClosePositionScreen> {
-  late PositionType orderType =
-      getPositionTypeByDirection(widget.position.direction);
+  late PositionType orderType = getPositionTypeByDirection(
+    widget.position.direction,
+  );
 
-  late ValueNotifier<double> volume =
-      ValueNotifier(widget.position.volumeCurrent);
+  late ValueNotifier<double> volume = ValueNotifier(
+    widget.position.volumeCurrent,
+  );
 
   double sl = 0;
   double tp = 0;
   final ValueNotifier<bool> enableSlAndTpFields = ValueNotifier(false);
   final formKey = GlobalKey<FormState>();
 
-  void setSlAndTp({
-    required double ask,
-    required double bid,
-  }) {
+  void setSlAndTp({required double ask, required double bid}) {
     if (orderType == PositionType.bid) {
       sl = ask;
       tp = ask;
@@ -61,72 +58,72 @@ class _ClosePositionScreenState extends State<ClosePositionScreen> {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<QuotesCubit>();
-    final loginCubit = context.read<ConnectCubit>();
+    final connectCubit = context.read<ConnectCubit>();
     final symbol = cubit.getSymbol(widget.position.groupSymbol);
-    final height = context.height;
-    final width = context.width;
+
     if (symbol == null) return const SizedBox();
-    return BlocProvider(
-      create: (context) => getIt<ClosePositionCubit>(),
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size(width, height * 0.06),
-          child: SafeArea(
-            child: Row(
-              children: [
-                Icon(
-                  Icons.arrow_back,
-                  color: context.colorScheme.scrim,
-                  size: 30.0,
-                ).addAction(
-                  padding: const MPadding.set(end: 12.0),
-                  onGesture: () {
-                    context.pop();
-                  },
-                ),
-                MText(
-                  text: context.tr.closePosition,
-                  color: context.colorScheme.scrim,
-                  weight: FontWeight.w600,
-                  size: FoontSize.font20,
-                ),
-              ],
-            ).addPadding(top: 21.0, horizontal: 21.0),
-          ),
-        ),
-        body: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: const MPadding.set(horizontal: 21.0, bottom: 30.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return FlowBuilder<PositionsCubit>(
+      builder: (context, state, positionCubit) {
+        PositionEntity position =
+            positionCubit.getPosition(widget.position.id) ?? widget.position;
+        return MScaffoldWidget(
+          title: context.tr.closePosition,
+          appbarSize: 72.0,
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: const MPadding.set(horizontal: 21.0, bottom: 30.0),
+            child: Form(
+              key: formKey,
+              child: Column(
                 children: [
-                  CurrenciesItemWidget(item: symbol.symbol),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      MText(
-                        text: symbol.symbol.toUpperCase(),
-                        color: context.colorScheme.scrim,
-                        weight: FontWeight.w600,
-                        size: FoontSize.font21,
-                      ),
-                      if (symbol.description.isNotEmpty)
-                        MText(
-                          text: symbol.description,
-                          color: context.colorScheme.onSurface,
-                          weight: FontWeight.w300,
-                          size: FoontSize.font14,
+                  Container(
+                    alignment: Alignment.center,
+                    padding: const MPadding.set(
+                      vertical: 12.0,
+                      horizontal: 20.0,
+                    ),
+                    margin: const MPadding.set(bottom: 21.0),
+                    decoration: BoxDecoration(
+                      color: context.colorScheme.surfaceContainerLow,
+                      borderRadius: MBorderRadius.set(all: 8.0),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            CurrenciesItemWidget(
+                              item: symbol.symbol,
+                              size: 25.0,
+                            ),
+                            MText(
+                              text: symbol.symbol.toUpperCase(),
+                              weight: FontWeight.w300,
+                              size: FoontSize.font18,
+                              color: context.colorScheme.onSurface,
+                            ),
+                          ],
                         ),
-                    ],
+                        MText(
+                          text:
+                              "${position.direction} ${position.volumeCurrent} ${context.tr.at(position.openPrice)}",
+                          color: position.direction == 'SELL'
+                              ? Colors.red
+                              : Colors.green,
+                          size: FoontSize.font16,
+                          weight: FontWeight.w400,
+                        ).addPadding(start: 10.0),
+                      ],
+                    ),
                   ),
-                ],
-              ).addPadding(bottom: 21.0, top: 16.0),
-              Column(
-                children: [
-                  TradePriceItemWidget(
-                    symbol: symbol,
+                  Padding(
+                    padding: const MPadding.set(bottom: 21.0),
+                    child: CurrencyAskBidWidget(
+                      item: symbol,
+                      textSize: FoontSize.font16,
+                      largeTextSize: FoontSize.font18,
+                    ),
                   ),
                   // ValueListenableBuilder(
                   //   valueListenable: volume,
@@ -137,10 +134,10 @@ class _ClosePositionScreenState extends State<ClosePositionScreen> {
                   //       min: symbol.volumeMin,
                   //       step: symbol.volumeStep,
                   //       digits: symbol.digits,
-                  //       title: 'Volume (Lot)',
+                  //       title: context.tr.volumeLot,
                   //       onChange: (value) {
                   //         double newVolume = double.tryParse(value) ?? 0;
-                  //         if (newVolume < widget.position.volumeCurrent &&
+                  //         if (newVolume < position.volumeCurrent &&
                   //             newVolume != 0) {
                   //           enableSlAndTpFields.value = true;
                   //           setSlAndTp(
@@ -155,10 +152,10 @@ class _ClosePositionScreenState extends State<ClosePositionScreen> {
                   //         volume.value = newVolume;
                   //       },
                   //       validator: (messageError) {
-                  //         if (volume.value > widget.position.volumeCurrent ||
+                  //         if (volume.value > position.volumeCurrent ||
                   //             volume.value < symbol.volumeMin ||
                   //             volume.value == 0) {
-                  //           return 'Invalid';
+                  //           return context.tr.fieldInvalid(context.tr.volumeLot);
                   //         }
                   //         return null;
                   //       },
@@ -166,59 +163,51 @@ class _ClosePositionScreenState extends State<ClosePositionScreen> {
                   //   },
                   // ),
                   ValueListenableBuilder(
-                      valueListenable: enableSlAndTpFields,
-                      builder: (context, isEnabled, child) {
-                        return AnimatedSize(
-                          duration: const Duration(milliseconds: 500),
-                          child: Visibility(
-                            visible: isEnabled,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              key: ValueKey(isEnabled),
-                              children: [
-                                MText(
-                                  text: context.tr.modifyTradeLevels,
-                                  color: context.colorScheme.scrim,
-                                  size: FoontSize.font19,
-                                ).addPadding(top: 21, bottom: 14),
-                                StopLossWidget(
-                                  type: orderType,
-                                  price: sl,
-                                  onChange: (double value) {
-                                    tp = value;
-                                  },
-                                ),
-                                TakeProfitWidget(
-                                  type: orderType,
-                                  price: tp,
-                                  onChange: (double value) {
-                                    sl = value;
-                                  },
-                                ),
-                              ],
-                            ),
+                    valueListenable: enableSlAndTpFields,
+                    builder: (context, isEnabled, child) {
+                      return AnimatedSize(
+                        duration: const Duration(milliseconds: 500),
+                        child: Visibility(
+                          visible: isEnabled,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            key: ValueKey(isEnabled),
+                            children: [
+                              MText(
+                                text: context.tr.modifyTradeLevels,
+                                color: context.colorScheme.onSurface,
+                                size: FoontSize.font19,
+                              ).addPadding(top: 21, bottom: 14),
+                              TakeProfitWidget(
+                                symbol: symbol,
+                                volume: widget.position.volumeCurrent,
+                                entryPrice: widget.position.openPrice,
+                                type: orderType,
+                                digits: symbol.digits,
+                                onChange: (double value) {
+                                  tp = value;
+                                },
+                              ).addPadding(bottom: 16.0),
+                              StopLossWidget(
+                                symbol: symbol,
+                                volume: widget.position.volumeCurrent,
+                                entryPrice: widget.position.openPrice,
+                                type: orderType,
+                                digits: symbol.digits,
+                                onChange: (double value) {
+                                  sl = value;
+                                },
+                              ).addPadding(bottom: 16.0),
+                            ],
                           ),
-                        );
-                      }),
-                  MDividerItemWidget(
-                    color: context.colorScheme.outline,
-                    padding: const MPadding.set(vertical: 21.0),
+                        ),
+                      );
+                    },
                   ),
-                  TradeChartItemWidget(
-                    transition: ValueNotifier<ItemEntity>(
-                      ItemEntity(
-                        name: 'name',
-                        value: TransactionOptions.market_order,
-                      ),
-                    ),
-                  ),
-                  MDividerItemWidget(
-                    color: context.colorScheme.outline,
-                    padding: const MPadding.set(vertical: 21.0),
-                  ),
+                  PositionDetailsWidget(symbol: symbol, position: position),
                   FlowBuilder<ClosePositionCubit>(
                     onSuccess: (state, cubit) {
-                      context.pop();
+                      context.navigateTo(const TradeRoute());
                     },
                     builder: (context, state, cubit) {
                       return Column(
@@ -226,40 +215,56 @@ class _ClosePositionScreenState extends State<ClosePositionScreen> {
                           if (cubit.error.isNotEmpty)
                             MText(
                               text: cubit.error,
-                              color: AppColors.red,
+                              color: Colors.red,
+                              size: FoontSize.font16,
                             ).addPadding(top: 21),
                           ValueListenableBuilder(
-                            valueListenable: loginCubit.socketState,
+                            valueListenable: connectCubit.socketState,
                             builder: (context, socketState, child) {
                               return ValueListenableBuilder(
-                                valueListenable: widget.position.floatingChange,
+                                valueListenable: position.floatingChange,
                                 builder: (context, value, child) {
-                                  return MBouncingButton(
-                                    bouncing: false,
-                                    height: 50.0,
-                                    borderRadius: 8.0,
-                                    title: context.tr.closeWithProfit(
-                                        value.signFixed(symbol.digits)),
-                                    textSize: FoontSize.font16,
-                                    color: socketState.isDisconnected
-                                        ? AppColors.darkGrey
-                                        : (value < 0
-                                            ? context.colorScheme.error
-                                            : context.colorScheme.primary),
-                                    onTap: socketState.isDisconnected
-                                        ? null
-                                        : () {
-                                            cubit.closePosition(
-                                              profit: value
-                                                  .signFixed(symbol.digits),
-                                              symbol: symbol.symbol,
-                                              ticketNumber: widget.position.id,
-                                              volume: volume.value,
-                                              sl: sl,
-                                              tp: tp,
-                                            );
-                                          },
-                                  ).addPadding(top: 12.0);
+                                  return ValueListenableBuilder(
+                                    valueListenable:
+                                        connectCubit.hasTradePermission,
+                                    builder: (
+                                      context,
+                                      hasTradePermission,
+                                      child,
+                                    ) {
+                                      return MBouncingButton(
+                                        bouncing: false,
+                                        height: 50.0,
+                                        borderRadius: 8.0,
+                                        title:
+                                            '${context.tr.close} ${value.isNegative ? '' : '+'}${value.currencyName2}',
+                                        textSize: FoontSize.font16,
+                                        color: socketState.isDisconnected ||
+                                                !hasTradePermission
+                                            ? context
+                                                .colorScheme.onSurfaceDisabled
+                                            : (value < 0
+                                                ? context.colorScheme.error
+                                                : context.colorScheme.success),
+                                        onTap: socketState.isDisconnected ||
+                                                !hasTradePermission
+                                            ? null
+                                            : () {
+                                                cubit.closePosition(
+                                                  profit: value.signFixed(
+                                                    symbol.digits,
+                                                  ),
+                                                  symbol: symbol.symbol,
+                                                  ticketNumber: position.id,
+                                                  volume: volume.value,
+                                                  sl: sl,
+                                                  tp: tp,
+                                                );
+                                                context.router.pop();
+                                              },
+                                      ).addPadding(top: 50.0);
+                                    },
+                                  );
                                 },
                               );
                             },
@@ -267,13 +272,13 @@ class _ClosePositionScreenState extends State<ClosePositionScreen> {
                         ],
                       );
                     },
-                  )
+                  ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

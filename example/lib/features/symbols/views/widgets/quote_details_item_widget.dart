@@ -31,9 +31,9 @@ class QuoteDetailsItemWidget extends StatelessWidget {
           children: [
             MText(
               text: title,
-              size: FoontSize.font14,
+              size: FoontSize.font13,
               weight: fontWeight,
-              color: titleColor ?? context.colorScheme.scrim,
+              color: titleColor ?? context.colorScheme.onSurface,
             ),
             MText(
               text: value,

@@ -1,5 +1,5 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/symbols/views/widgets/quote_details_item_widget.dart';
+import 'package:example/core/shared/row_value_item_widget.dart';
 import 'package:example/features/trade_history/logic/history_positions_cubit.dart';
 
 class PositionProfitItemWidget extends StatelessWidget {
@@ -9,81 +9,125 @@ class PositionProfitItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<HistoryPositionsCubit>();
-    return Container(
-      decoration: BoxDecoration(
-        color: Coolors.primaryColor,
-        image: const DecorationImage(
-          image: AssetImage('assets/pngs/cover.png'),
+    final historyPositions = context.read<HistoryPositionsCubit>();
+    return FlowBuilder<CurrencyChanged>(
+        builder: (context, state, currencyCubit) {
+      return Container(
+        decoration: BoxDecoration(
+          color: Coolors.primaryColor,
+          image: const DecorationImage(
+            image: AssetImage('assets/pngs/cover.png'),
+          ),
         ),
-      ),
-      padding: const MPadding.set(horizontal: 21.0, vertical: 16.0),
-      margin: const MPadding.set(bottom: 4.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ValueListenableBuilder<double>(
-            valueListenable: cubit.floating,
-            builder: (context, value, child) {
-              return QuoteDetailsItemWidget(
-                hideDivider: true,
-                valueColor: AppColors.white,
-                titleColor: AppColors.white,
-                title: context.tr.profit,
-                value: value.toTwoDecimal,
-              ).addPadding(bottom: 6.0);
-            },
-          ),
-          ValueListenableBuilder<double>(
-            valueListenable: cubit.deposit,
-            builder: (context, value, child) {
-              return QuoteDetailsItemWidget(
-                hideDivider: true,
-                valueColor: AppColors.white,
-                titleColor: AppColors.white,
-                title: context.tr.deposit,
-                value: value.toTwoDecimal,
-              ).addPadding(bottom: 6.0);
-            },
-          ),
-          ValueListenableBuilder<double>(
-            valueListenable: cubit.withdrawal,
-            builder: (context, value, child) {
-              return QuoteDetailsItemWidget(
-                hideDivider: true,
-                valueColor: AppColors.white,
-                titleColor: AppColors.white,
-                title: context.tr.withdrawal,
-                value: value.toTwoDecimal,
-              ).addPadding(bottom: 6.0);
-            },
-          ),
-          ValueListenableBuilder<double>(
-            valueListenable: cubit.swap,
-            builder: (context, value, child) {
-              return QuoteDetailsItemWidget(
-                hideDivider: true,
-                valueColor: AppColors.white,
-                titleColor: AppColors.white,
-                title: context.tr.swap,
-                value: value.toTwoDecimal,
-              ).addPadding(bottom: 6.0);
-            },
-          ),
-          ValueListenableBuilder<double>(
-            valueListenable: cubit.commission,
-            builder: (context, value, child) {
-              return QuoteDetailsItemWidget(
-                hideDivider: true,
-                valueColor: AppColors.white,
-                titleColor: AppColors.white,
-                title: context.tr.commission,
-                value: value.toTwoDecimal,
-              );
-            },
-          ),
-        ],
-      ),
-    );
+        padding: const MPadding.set(horizontal: 21.0, vertical: 16.0),
+        margin: const MPadding.set(bottom: 12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ValueListenableBuilder<double>(
+              valueListenable: historyPositions.floating,
+              builder: (context, value, child) {
+                return RowValueItemWidget(
+                  title: context.tr.netProfit,
+                  subTitle:
+                      "${value.currency2} (${currencyDisplayName(currencyCubit.getCurrency)})",
+                  subTitleWeight: FontWeight.w400,
+                  titleColor: context.colorScheme.onPrimary,
+                  subTitleColor: context.colorScheme.onPrimary,
+                ).addPadding(bottom: 4.0);
+              },
+            ),
+            ValueListenableBuilder<double>(
+              valueListenable: historyPositions.totalWinAmount,
+              builder: (context, winAmount, child) {
+                return ValueListenableBuilder<int>(
+                  valueListenable: historyPositions.totalWinCount,
+                  builder: (context, winCount, child) {
+                    return RowValueItemWidget(
+                      title: "${context.tr.winPositions} ($winCount)",
+                      subTitle:
+                          "${winAmount.currency2} (${currencyDisplayName(currencyCubit.getCurrency)})",
+                      subTitleWeight: FontWeight.w400,
+                      titleColor: context.colorScheme.onPrimary,
+                      subTitleColor: context.colorScheme.onPrimary,
+                    ).addPadding(bottom: 4.0);
+                  },
+                );
+              },
+            ),
+            ValueListenableBuilder<double>(
+              valueListenable: historyPositions.totalLoseAmount,
+              builder: (context, loseAmount, child) {
+                return ValueListenableBuilder<int>(
+                  valueListenable: historyPositions.totalLoseCount,
+                  builder: (context, loseCount, child) {
+                    return RowValueItemWidget(
+                      title: "${context.tr.losePositions} ($loseCount)",
+                      subTitle:
+                          "${loseAmount.currency2} (${currencyDisplayName(currencyCubit.getCurrency)})",
+                      subTitleWeight: FontWeight.w400,
+                      titleColor: context.colorScheme.onPrimary,
+                      subTitleColor: context.colorScheme.onPrimary,
+                    ).addPadding(bottom: 4.0);
+                  },
+                );
+              },
+            ),
+            ValueListenableBuilder<double>(
+              valueListenable: historyPositions.deposit,
+              builder: (context, value, child) {
+                return RowValueItemWidget(
+                  title: context.tr.deposit,
+                  subTitle:
+                      "${value.currency2} (${currencyDisplayName(currencyCubit.getCurrency)})",
+                  subTitleWeight: FontWeight.w400,
+                  titleColor: context.colorScheme.onPrimary,
+                  subTitleColor: context.colorScheme.onPrimary,
+                ).addPadding(bottom: 4.0);
+              },
+            ),
+            ValueListenableBuilder<double>(
+              valueListenable: historyPositions.withdrawal,
+              builder: (context, value, child) {
+                return RowValueItemWidget(
+                  title: context.tr.withdrawal,
+                  subTitle:
+                      "${value.currency2} (${currencyDisplayName(currencyCubit.getCurrency)})",
+                  subTitleWeight: FontWeight.w400,
+                  titleColor: context.colorScheme.onPrimary,
+                  subTitleColor: context.colorScheme.onPrimary,
+                ).addPadding(bottom: 4.0);
+              },
+            ),
+            ValueListenableBuilder<double>(
+              valueListenable: historyPositions.swap,
+              builder: (context, value, child) {
+                return RowValueItemWidget(
+                  title: context.tr.swap,
+                  subTitle:
+                      "${value.currency2} (${currencyDisplayName(currencyCubit.getCurrency)})",
+                  subTitleWeight: FontWeight.w400,
+                  titleColor: context.colorScheme.onPrimary,
+                  subTitleColor: context.colorScheme.onPrimary,
+                ).addPadding(bottom: 4.0);
+              },
+            ),
+            ValueListenableBuilder<double>(
+              valueListenable: historyPositions.commission,
+              builder: (context, value, child) {
+                return RowValueItemWidget(
+                  title: context.tr.commission,
+                  subTitle:
+                      "${value.currency2} (${currencyDisplayName(currencyCubit.getCurrency)})",
+                  subTitleWeight: FontWeight.w400,
+                  titleColor: context.colorScheme.onPrimary,
+                  subTitleColor: context.colorScheme.onPrimary,
+                );
+              },
+            ),
+          ],
+        ),
+      );
+    });
   }
 }

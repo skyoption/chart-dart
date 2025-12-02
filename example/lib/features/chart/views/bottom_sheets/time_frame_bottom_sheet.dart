@@ -30,10 +30,21 @@ class _ChooseTimeframeBottomSheetState
         MText(
           text: context.tr.timeframe,
           size: FoontSize.font21,
-          color: context.colorScheme.scrim,
+          color: context.colorScheme.onSurface,
           align: TextAlign.start,
           weight: FontWeight.w600,
         ).addPadding(horizontal: 21.0, bottom: 16.0),
+        // ChooseTimeframeCategoryWidget(
+        //   title: context.tr.seconds,
+        //   items: const [CandleTimeFormat.S5],
+        //   selected: widget.timeframe,
+        //   onTap: (selected) {
+        //     widget.timeframe = selected;
+        //     setState(() {});
+        //     widget.onChanged(selected);
+        //     AutoRouterX(context).maybePop();
+        //   },
+        // ).addPadding(bottom: 12.0),
         ChooseTimeframeCategoryWidget(
           title: context.tr.minute,
           items: const [
@@ -47,7 +58,7 @@ class _ChooseTimeframeBottomSheetState
             widget.timeframe = selected;
             setState(() {});
             widget.onChanged(selected);
-            context.pop();
+            AutoRouterX(context).pop();
           },
         ).addPadding(bottom: 12.0),
         ChooseTimeframeCategoryWidget(
@@ -61,11 +72,11 @@ class _ChooseTimeframeBottomSheetState
             widget.timeframe = selected;
             setState(() {});
             widget.onChanged(selected);
-            context.pop();
+            AutoRouterX(context).pop();
           },
         ).addPadding(bottom: 12.0),
         ChooseTimeframeCategoryWidget(
-          title: context.tr.day,
+          title: context.tr.more,
           items: const [
             CandleTimeFormat.D1,
             CandleTimeFormat.W1,
@@ -76,7 +87,7 @@ class _ChooseTimeframeBottomSheetState
             widget.timeframe = selected;
             setState(() {});
             widget.onChanged(selected);
-            context.pop();
+            AutoRouterX(context).pop();
           },
         ),
       ],
@@ -92,7 +103,7 @@ void showChooseTimeframeBottomSheet({
   showMBottomSheet(
     context: context,
     removeTransparentBackground: true,
-    backgorundColor: context.colorScheme.primaryContainer,
+    backgorundColor: context.colorScheme.scrim,
     bottomSheet: ChooseTimeframeBottomSheet(
       timeframe: timeframe,
       onChanged: onChanged,

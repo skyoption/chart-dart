@@ -37,7 +37,7 @@ class _RotationWidgetState extends State<RotationWidget> {
       padding: const MPadding.set(horizontal: 12.0),
       child: Icon(
         Icons.rotate_90_degrees_ccw_rounded,
-        color: context.colorScheme.scrim,
+        color: context.colorScheme.onSurface,
         size: 21.0,
       ),
     ).addAction(

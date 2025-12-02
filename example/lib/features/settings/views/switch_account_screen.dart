@@ -1,22 +1,20 @@
-import 'package:example/core/builder/flow_builder.dart';
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/auth/logic/connect_cubit.dart';
-import 'package:example/features/auth/views/login_screen.dart';
-import 'package:example/features/chart/logic/chart_cubit.dart';
 import 'package:example/features/main/views/widgets/trading_account_item_widget.dart';
-import 'package:example/features/settings/logic/accounts_cubit.dart';
+import 'package:example/injection/injectable.dart';
+import 'package:example/main.dart';
+import 'package:example/core/framework/socket/socket.dart';
+import 'package:example/features/chart/logic/chart_cubit.dart';
+import 'package:example/features/main/logic/connect_cubit.dart';
+import 'package:example/features/platform_settings/logic/accounts_cubit.dart';
 import 'package:example/features/symbols/logic/quotes_cubit.dart';
 import 'package:example/features/trade/logic/orders_cubit.dart';
 import 'package:example/features/trade/logic/positions_cubit.dart';
 import 'package:example/features/trade_history/logic/history_actions_cubit.dart';
 import 'package:example/features/trade_history/logic/history_pending_cubit.dart';
 import 'package:example/features/trade_history/logic/history_positions_cubit.dart';
-import 'package:example/injection/injectable.dart';
-import 'package:example/main.dart';
 
+@RoutePage()
 class SwitchAccountScreen extends StatefulWidget {
-  static const id = 'SwitchAccountScreen';
-
   const SwitchAccountScreen({super.key});
 
   @override
@@ -45,18 +43,18 @@ class _SwitchAccountScreenState extends State<SwitchAccountScreen> {
                     children: [
                       Icon(
                         Icons.arrow_back,
-                        color: context.colorScheme.scrim,
+                        color: context.colorScheme.onSurface,
                         size: 30.0,
                       ).addAction(
                         padding: const MPadding.set(end: 12.0),
                         onGesture: () {
-                          context.pop();
+                          AutoRouterX(context).pop();
                         },
                       ),
                       MText(
                         text: context.tr.switchAccount,
                         size: FoontSize.font18,
-                        color: context.colorScheme.scrim,
+                        color: context.colorScheme.onSurface,
                         weight: FontWeight.w600,
                       ),
                     ],
@@ -66,24 +64,21 @@ class _SwitchAccountScreenState extends State<SwitchAccountScreen> {
                   alignment: AlignmentDirectional.centerEnd,
                   child: MSvg(
                     name: Svgs.addAccountIcon,
-                    color: context.colorScheme.scrim,
+                    color: context.colorScheme.onSurface,
                     width: 21.0,
                     height: 21.0,
                   ).addAction(
                     padding: const MPadding.set(end: 12.0),
                     onGesture: () {
-                      context.push(
-                        LoginScreen(
-                          onAddNewAccount: (number, password) {
-                            Future.delayed(
-                              const Duration(milliseconds: 650),
-                              () {
-                                onSwitch(
-                                  number: number,
-                                  password: password,
-                                  loginCubit: loginCubit,
-                                );
-                              },
+                      context.router.push(
+                        SwitchNewAccountRoute(
+                          onAddNewAccount: (number, password, serverUrl) async {
+                            await Future.delayed(Duration(milliseconds: 650));
+                            onSwitch(
+                              number: number,
+                              password: password,
+                              loginCubit: loginCubit,
+                              serverUrl: serverUrl,
                             );
                           },
                         ),
@@ -111,6 +106,7 @@ class _SwitchAccountScreenState extends State<SwitchAccountScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TradingAccountItemWidget(
+                                isDefault: true,
                                 onDelete: () {},
                                 onSwitch: () {},
                                 accountInfo: cubit.accounts[index],
@@ -128,6 +124,7 @@ class _SwitchAccountScreenState extends State<SwitchAccountScreen> {
                           );
                         } else {
                           return TradingAccountItemWidget(
+                            isDefault: false,
                             accountInfo: cubit.accounts[index],
                             onDelete: () {
                               loginCubit.deleteAccount(
@@ -138,12 +135,18 @@ class _SwitchAccountScreenState extends State<SwitchAccountScreen> {
                             onSwitch: () {
                               loginCubit.switchAccount(
                                 id: cubit.accounts[index].id,
+                                serverUrl: getIt<Sockeet>().socketUrl,
+                                isSkyTrade: true,
                                 onSwitch: (credential) {
-                                  cubit.execute();
-                                  onSwitch(
-                                    number: credential.id,
-                                    password: credential.password,
-                                    loginCubit: loginCubit,
+                                  cubit.execute().then(
+                                    (_) {
+                                      onSwitch(
+                                        number: credential.id,
+                                        password: credential.password ?? "",
+                                        loginCubit: loginCubit,
+                                        serverUrl: credential.serverUrl ?? "",
+                                      );
+                                    },
                                   );
                                 },
                               );
@@ -166,13 +169,17 @@ class _SwitchAccountScreenState extends State<SwitchAccountScreen> {
     required dynamic number,
     required String password,
     required ConnectCubit loginCubit,
+    required String serverUrl,
   }) {
     final symbols = rootContext.context.read<PositionsCubit>().symbols;
     loginCubit.connect(
       isLogin: true,
       showError: false,
+      isSwitch: true,
+      isSkyTrade: true,
       number: number.toString(),
       password: password,
+      serverUrl: serverUrl,
       refresh: () {
         accountsCubit.execute();
       },
@@ -184,7 +191,7 @@ class _SwitchAccountScreenState extends State<SwitchAccountScreen> {
         rootContext.context.read<HistoryPositionsCubit>().getCachedPositions();
         rootContext.context.read<HistoryActionsCubit>().getCachedActions();
         rootContext.context.read<HistoryPendingCubit>().getCachedPositions();
-        rootContext.context.read<QuotesCubit>().init();
+        rootContext.context.read<QuotesCubit>().init(resetCurrentSymbol: true);
         rootContext.context.read<QuotesCubit>().sendToSubscribe();
         rootContext.context.read<QuotesCubit>().onSwitchAccount(symbols);
         rootContext.context.read<PositionsCubit>().getInfo();

@@ -1,10 +1,15 @@
+import 'package:example/app.dart';
 import 'package:example/core/consts/exports.dart';
-import 'package:example/main.dart';
+import 'package:example/core/router/app_router.dart';
+import 'package:example/core/framework/app_prefs.dart';
 
 import '../views/widgets/boarding_item_widget.dart';
 
 @injectable
 class BoardingCubit extends Cubit<FlowState> {
+  final AppPreferences appPreferences;
+  final AppRouter appRouter;
+
   late final TabController tabController;
 
   int index = 0;
@@ -32,24 +37,29 @@ class BoardingCubit extends Cubit<FlowState> {
     ),
   ];
 
-  BoardingCubit() : super(const FlowState());
+  BoardingCubit(this.appPreferences, this.appRouter) : super(const FlowState());
 
   Future<void> setUp(TabController controller) async {
     tabController = controller;
+    appPreferences.isFirstStartUp = false;
     tabController.addListener(() {
       index = tabController.index;
       emit(state.copyWith(data: index));
     });
   }
 
-  void next(Function onFinished) {
+  void next() {
     if (index < 3) {
       index++;
       _go(index);
       emit(state.copyWith(data: index));
     } else {
-      onFinished();
+      appRouter.replace(LoginRoute());
     }
+  }
+
+  void skip() {
+    appRouter.replace(LoginRoute());
   }
 
   void back() {

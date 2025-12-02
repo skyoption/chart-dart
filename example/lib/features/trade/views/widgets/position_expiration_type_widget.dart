@@ -51,11 +51,15 @@ class _PositionExpirationTypeWidgetState
       return const SizedBox();
     }
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TradeDropdownItemWidget<ItemEntity>(
           title: context.tr.expiration,
           initial: type,
           options: types,
+          borderColor: context.isDarkTheme
+              ? Colors.transparent
+              : context.colorScheme.outline,
           onTap: (item) {
             type = item;
             setState(() {});
@@ -87,7 +91,7 @@ class _PositionExpirationTypeWidgetState
               Expanded(
                 child: MText(
                   text: context.tr.time,
-                  color: AppColors.black,
+                  color: context.colorScheme.onSurface,
                   size: FoontSize.font19,
                 ),
               ),
@@ -97,9 +101,9 @@ class _PositionExpirationTypeWidgetState
                   controller: controller,
                   titlePadding: const MPadding.set(bottom: 8.0),
                   hintText: context.tr.chooseTime,
-                  textColor: context.colorScheme.scrim,
-                  titleColor: context.colorScheme.scrim,
-                  hintColor: context.colorScheme.scrim,
+                  textColor: context.colorScheme.onSurface,
+                  titleColor: context.colorScheme.onSurface,
+                  hintColor: context.colorScheme.onSurfaceVariant,
                   // controller: cubit.number,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),

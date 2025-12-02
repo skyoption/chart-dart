@@ -31,12 +31,12 @@ class FilterItemWidget extends StatelessWidget {
                 text: title,
                 size: FoontSize.font16,
                 weight: FontWeight.w400,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
               ),
               if (check)
                 Icon(
                   Icons.check,
-                  color: context.colorScheme.scrim,
+                  color: context.colorScheme.onSurface,
                   size: 28.0,
                 )
               else

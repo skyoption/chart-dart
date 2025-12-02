@@ -7,10 +7,10 @@ import 'package:example/core/framework/accountBox.dart';
 import 'package:example/core/framework/objectBox.dart';
 import 'package:example/core/framework/socket/models/socket_receiver_request.dart';
 import 'package:example/core/framework/socket/socket.dart';
-import 'package:example/features/auth/models/account_balance_model.dart';
-import 'package:example/features/auth/models/account_credential.dart';
-import 'package:example/features/auth/models/connected_account_info_entity.dart';
-import 'package:example/features/auth/models/schema/connected_account_info_model.dart';
+import 'package:example/features/main/models/account_balance_model.dart';
+import 'package:example/features/main/models/account_credential.dart';
+import 'package:example/features/main/models/connected_account_info_entity.dart';
+import 'package:example/features/main/models/schema/connected_account_info_model.dart';
 import 'package:example/features/symbols/models/schema/symbol_model.dart';
 import 'package:example/features/trade/models/position_entity.dart';
 import 'package:example/features/trade/models/requests/close_position_request.dart';
@@ -45,7 +45,8 @@ abstract class PositionsDataSource {
 
   Future<void> onData({
     required List<SocketEvent> events,
-    Function(bool success, String message)? onRequest,
+    Function(String message, int? id)? onRequest,
+    Function(String message, int? id)? onRequestError,
     Function(PositionEntity item)? onOpenPositionRequest,
     Function(int id)? onClosePositionRequest,
     Function(PositionEntity item)? onModifyPositionRequest,
@@ -53,6 +54,7 @@ abstract class PositionsDataSource {
     Function(List<PositionEntity> items)? onAllPositionRequest,
     Function(double newBalance)? onBalanceUpdate,
     Function(double newCredit)? onCreditUpdate,
+    Function(double newMargin)? onMarginUpdate,
     Function(List<PositionEntity> items)? onUpdateSymbol,
   });
 
@@ -83,11 +85,17 @@ class PositionsDataSourceImp implements PositionsDataSource {
 
   Map<String, SymbolModel> symbols = {};
 
+  int times = 0;
   Future<void> _fillSymbols() async {
-    await Future.delayed(const Duration(seconds: 1));
+    if (times == 10) return;
     final items = objectBox.symbolBox!.getAll();
     for (var item in items) {
       symbols[item.name] = item;
+    }
+    if (symbols.isEmpty) {
+      await Future.delayed(Duration(milliseconds: 200));
+      times++;
+      return await _fillSymbols();
     }
   }
 
@@ -95,7 +103,8 @@ class PositionsDataSourceImp implements PositionsDataSource {
   Future<List<PositionEntity>> getCachedPositions() async {
     final items = objectBox.positionsBox!.getAll();
     positions = Map.fromEntries(
-        items.map((item) => MapEntry(item.id, item.copyToEntity())));
+      items.map((item) => MapEntry(item.id, item.copyToEntity())),
+    );
     return positions.values.toList();
   }
 
@@ -107,7 +116,8 @@ class PositionsDataSourceImp implements PositionsDataSource {
   @override
   Future<void> onData({
     required List<SocketEvent> events,
-    Function(bool success, String message)? onRequest,
+    Function(String message, int? id)? onRequest,
+    Function(String message, int? id)? onRequestError,
     Function(PositionEntity item)? onOpenPositionRequest,
     Function(int id)? onClosePositionRequest,
     Function(PositionEntity item)? onModifyPositionRequest,
@@ -115,6 +125,7 @@ class PositionsDataSourceImp implements PositionsDataSource {
     Function(ConnectedAccountInfoEntity item)? onAccountInfoRequest,
     Function(double newBalance)? onBalanceUpdate,
     Function(double newCredit)? onCreditUpdate,
+    Function(double newMargin)? onMarginUpdate,
     Function(List<PositionEntity> items)? onUpdateSymbol,
   }) async {
     symbols.clear();
@@ -129,9 +140,11 @@ class PositionsDataSourceImp implements PositionsDataSource {
         SocketEvent.unsubscribe,
       ],
       onReceiveRequest: (receiver) async {
-        kPrint(receiver.action);
-        kPrint(receiver.data);
-
+        kPrint("Event: ${receiver.event}\nData: ${receiver.data}");
+        if (!receiver.success && onRequestError != null) {
+          onRequestError(receiver.message, receiver.data?['id']);
+          return;
+        }
         if (receiver.event == SocketEvent.ev_open_pos) {
           await _handleOpenPosition(
             receiver,
@@ -147,10 +160,12 @@ class PositionsDataSourceImp implements PositionsDataSource {
         } else if (receiver.event == SocketEvent.get_all_pos) {
           await _handleAllPositions(receiver, onAllPositionRequest);
         } else if (receiver.event == SocketEvent.ev_acc_updated) {
+          kPrint("MARGIN UPDATED :${receiver.data}");
           await _updateBalanceOrEquity(
             receiver.data,
             onBalanceUpdate,
             onCreditUpdate,
+            onMarginUpdate,
           );
         } else if (receiver.action ==
             SocketEvent.ev_acc_info.name.toUpperCase()) {
@@ -161,16 +176,52 @@ class PositionsDataSourceImp implements PositionsDataSource {
         } else if (receiver.event == SocketEvent.subscribe ||
             receiver.event == SocketEvent.unsubscribe) {
           await _handleSymbolUpdate();
+        } else if (receiver.event == SocketEvent.ev_margin_call) {
+          if (onRequest != null) {
+            onRequest(receiver.message, receiver.data?['id']);
+          }
         }
-
-        if (events.contains(receiver.event) && onRequest != null) {
-          onRequest(receiver.success, receiver.message);
-        }
+        _checkSymbols();
+        _handleOnRequest(receiver, events, onRequest, onClosePositionRequest);
       },
       onUpdateSymbol: (data) {
         _handleSymbolDataUpdate(data, onUpdateSymbol);
       },
     );
+  }
+
+  void _handleOnRequest(
+    SocketReceiverRequest receiver,
+    List<SocketEvent> events,
+    Function(String message, int? id)? onRequest,
+    Function(int id)? onClosePositionRequest,
+  ) async {
+    if (events.contains(receiver.event) &&
+        receiver.event.name.contains('ev') &&
+        onRequest != null) {
+      if (receiver.message == 'Position not found or already closed') {
+        _handleClosePositionError(receiver, onClosePositionRequest);
+        onRequest('', null);
+      } else {
+        int? id;
+        if (receiver.event == SocketEvent.ev_close_pos) {
+          id = receiver.data;
+        } else if (receiver.data.isNotEmpty) {
+          id = receiver.data?['id'];
+        }
+        onRequest(receiver.message, id);
+      }
+    }
+  }
+
+  void _handleClosePositionError(
+    SocketReceiverRequest receiver,
+    Function(int id)? onClosePositionRequest,
+  ) async {
+    if (onClosePositionRequest != null) {
+      onClosePositionRequest(-1);
+    }
+    getAllPositions();
   }
 
   Future<void> _handleOpenPosition(
@@ -185,8 +236,11 @@ class PositionsDataSourceImp implements PositionsDataSource {
       if (positions[item.id] == null) {
         final symbol = symbols[position.groupSymbol];
         if (symbol != null && item.groupSymbol == symbol.name) {
-          position.floating = position.float(symbol);
-          position.floatingChange.value = position.floating;
+          final value = position.float(symbol);
+          if (value != null) {
+            position.floating = value;
+            position.floatingChange.value = value;
+          }
         }
 
         positions[position.id] = position;
@@ -203,7 +257,6 @@ class PositionsDataSourceImp implements PositionsDataSource {
     Function(int id)? onClosePositionRequest,
   ) async {
     if (onClosePositionRequest == null) return;
-    kPrint(receiver.data);
     objectBox.positionsBox!.remove(receiver.data);
     onClosePositionRequest(receiver.data);
     getHistoryPositions();
@@ -219,9 +272,9 @@ class PositionsDataSourceImp implements PositionsDataSource {
       final position = positions[receiver.data['id']];
       if (position != null) {
         if (receiver.data['type'] == "SL") {
-          position.sl = receiver.data['value'];
+          position.sl = double.tryParse(receiver.data['value'].toString()) ?? 0;
         } else if (receiver.data['type'] == "TP") {
-          position.tp = receiver.data['value'];
+          position.tp = double.tryParse(receiver.data['value'].toString()) ?? 0;
         }
 
         objectBox.positionsBox!.put(position.copyToModel());
@@ -265,10 +318,12 @@ class PositionsDataSourceImp implements PositionsDataSource {
       for (var item in items) {
         PositionEntity position = item.copyToEntity();
         final symbol = symbols[position.groupSymbol];
-
         if (symbol != null && item.groupSymbol == symbol.name) {
-          position.floating = position.float(symbol);
-          position.floatingChange.value = position.floating;
+          final value = position.float(symbol);
+          if (value != null) {
+            position.floating = value;
+            position.floatingChange.value = value;
+          }
         }
         // else {
         //   subscribeSymbol(item.groupSymbol);
@@ -276,8 +331,9 @@ class PositionsDataSourceImp implements PositionsDataSource {
         newPositions[position.id] = position;
       }
       final data = newPositions.values.toList();
-      objectBox.positionsBox!
-          .putMany(data.map((e) => e.copyToModel()).toList());
+      objectBox.positionsBox!.putMany(
+        data.map((e) => e.copyToModel()).toList(),
+      );
       onAllPositionRequest(data);
       positions = newPositions;
     }
@@ -289,8 +345,7 @@ class PositionsDataSourceImp implements PositionsDataSource {
   ) async {
     if (onAccountInfoRequest != null) {
       final accountInfo = ConnectedAccountInfoModel.fromJson(receiver.data);
-      accountInfo.isDefault = true;
-      accountBox.accounts.put(accountInfo);
+      await accountBox.accounts.putAsync(accountInfo);
 
       onAccountInfoRequest(accountInfo.copyToEntity());
     }
@@ -322,21 +377,29 @@ class PositionsDataSourceImp implements PositionsDataSource {
       if (symbol != null) {
         final value = double.tryParse(values[1]) ?? 0.0;
         if (values.last == '1') {
-          symbol.ask = value + (symbol.askDifference * symbol.contractSize);
+          symbol.ask = double.parse(
+            (value + symbol.askDifference).toStringAsFixed(symbol.digits),
+          );
         } else {
-          symbol.bid = value + (symbol.bidDifference * symbol.contractSize);
+          symbol.bid = double.parse(
+            (value + symbol.bidDifference).toStringAsFixed(symbol.digits),
+          );
         }
         final targetPositions = positions.values
             .where((e) => e.groupSymbol == symbol.name)
             .toList();
         for (var item in targetPositions) {
-          item.floating = item.float(symbol);
-          item.floatingChange.value = item.floating;
+          final value = item.float(symbol);
+          if (value != null) {
+            item.floating = value;
+            item.floatingChange.value = item.floating;
+          }
         }
-        if (DateTime.now().difference(updatedAt).inSeconds >= 5) {
-          updatedAt = DateTime.now();
+
+        if (DateTime.now().difference(updatedAt).inSeconds >= 2) {
           final items = positions.values.map((e) => e.copyToModel()).toList();
           objectBox.positionsBox!.putMany(items);
+          updatedAt = DateTime.now();
         }
         if (targetPositions.isNotEmpty) onUpdateSymbol(targetPositions);
       }
@@ -347,6 +410,7 @@ class PositionsDataSourceImp implements PositionsDataSource {
     Map<String, dynamic> data,
     Function(double newBalance)? onBalanceUpdate,
     Function(double newCredit)? onCreditUpdate,
+    Function(double newMargin)? onMarginUpdate,
   ) async {
     final results = await _storage.read(key: Constants.USERCACHED);
     if (results != null) {
@@ -368,6 +432,9 @@ class PositionsDataSourceImp implements PositionsDataSource {
         }
         if (updateInfo.credit != null && onCreditUpdate != null) {
           onCreditUpdate(updateInfo.credit!);
+        }
+        if (updateInfo.margin != null && onMarginUpdate != null) {
+          onMarginUpdate(updateInfo.margin!);
         }
       }
     }
@@ -409,18 +476,12 @@ class PositionsDataSourceImp implements PositionsDataSource {
 
   @override
   void openPosition(OpenPositionRequest request) {
-    socket.sendRequest(
-      event: SocketEvent.open_pos,
-      data: request.toJson(),
-    );
+    socket.sendRequest(event: SocketEvent.open_pos, data: request.toJson());
   }
 
   @override
   void closePosition(ClosePositionRequest request) {
-    socket.sendRequest(
-      event: SocketEvent.close_pos,
-      data: request.toJson(),
-    );
+    socket.sendRequest(event: SocketEvent.close_pos, data: request.toJson());
   }
 
   @override
@@ -430,35 +491,23 @@ class PositionsDataSourceImp implements PositionsDataSource {
 
   @override
   void modifyPosition(ModifyPosRequest request) {
-    socket.sendRequest(
-      event: SocketEvent.modify_pos,
-      data: request.toJson(),
-    );
+    socket.sendRequest(event: SocketEvent.modify_pos, data: request.toJson());
   }
 
   Future<void> _checkSymbols() async {
-    List<String> symbols = [];
-    for (var item in positions.values) {
-      if (!symbols.contains(item.groupSymbol)) {
-        symbols.add(item.groupSymbol);
-      }
-    }
-    final items = objectBox.symbolBox!.getAll();
-    final names = items.map((e) => e.name).toList();
-    for (var symbol in symbols) {
-      if (!names.contains(symbol)) {
-        subscribeSymbol(symbol);
-      }
+    final positionSymbols = positions.values.map((e) => e.groupSymbol).toSet();
+    final existingSymbols =
+        objectBox.symbolBox!.getAll().map((e) => e.name).toSet();
+
+    final missingSymbols = positionSymbols.difference(existingSymbols);
+
+    for (final symbol in missingSymbols) {
+      subscribeSymbol(symbol);
     }
   }
 
   void subscribeSymbol(String symbol) {
-    socket.send(
-      event: SocketEvent.subscribe,
-      data: {
-        'symbol': symbol,
-      },
-    );
+    socket.send(event: SocketEvent.subscribe, data: {'symbol': symbol});
   }
 
   @override
@@ -485,6 +534,7 @@ class PositionsDataSourceImp implements PositionsDataSource {
 
   @override
   Future<void> closeAllPositions() async {
+    if (objectBox.positionsBox == null) return;
     final items = objectBox.positionsBox!.getAll();
     for (var item in items) {
       final query = objectBox.symbolBox!
@@ -509,6 +559,7 @@ class PositionsDataSourceImp implements PositionsDataSource {
 
   @override
   Future<void> closeLosingPositions() async {
+    if (objectBox.positionsBox == null) return;
     final items = objectBox.positionsBox!.getAll();
     for (var item in items) {
       final query = objectBox.symbolBox!
@@ -535,6 +586,7 @@ class PositionsDataSourceImp implements PositionsDataSource {
 
   @override
   Future<void> closeProfitablePositions() async {
+    if (objectBox.positionsBox == null) return;
     final items = objectBox.positionsBox!.getAll();
     for (var item in items) {
       final query = objectBox.symbolBox!

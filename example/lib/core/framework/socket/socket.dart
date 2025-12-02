@@ -2,26 +2,32 @@ import 'dart:async' as async;
 import 'dart:convert';
 import 'dart:math' as math;
 
-import 'package:candle_chart/utils/kprint.dart';
 import 'package:flutter/foundation.dart';
+import 'package:injectable/injectable.dart';
+import 'package:mwidgets/mwidgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:example/core/consts/constants.dart';
 import 'package:example/core/enums/user_permissions.dart';
 import 'package:example/core/framework/accountBox.dart';
+import 'package:example/core/framework/app_info.dart';
+import 'package:example/core/framework/device_info.dart';
 import 'package:example/core/framework/objectBox.dart';
 import 'package:example/core/framework/socket/models/socket_receiver_request.dart';
 import 'package:example/core/framework/socket/models/socket_sender_request.dart';
-import 'package:example/features/settings/logic/trading_logs_cubit.dart';
+import 'package:example/features/platform_settings/logic/platform_settings_cubit.dart';
+import 'package:example/features/platform_settings/logic/trading_logs_cubit.dart';
 import 'package:example/injection/injectable.dart';
 import 'package:example/objectbox.g.dart';
 import 'package:web_socket_client/web_socket_client.dart' as socket;
 
 enum SocketEvent {
+  ///[useCase]
   subscribe,
   unsubscribe,
   symbol_update,
   update_data,
   get_all_symbols,
+  get_chart_data,
   open_pos,
   modify_pos,
   modify_pending,
@@ -33,19 +39,24 @@ enum SocketEvent {
   get_history_pos,
   get_actions,
   get_history_pending,
-  get_chart_data,
+
+  ///[Events]
   ev_open_pos,
   ev_modify_pos,
   ev_modify_pending,
   ev_del_pending,
   ev_open_pending,
   ev_close_pos,
+  ev_pclose_pos,
+  ev_margin_call,
+
+  ///[Account]
   ev_acc_info,
   ev_acc_updated,
-  ev_pclose_pos,
   ev_acc_modified,
 }
 
+@lazySingleton
 class Sockeet {
   socket.WebSocket? _socket;
   final SharedPreferences sharedPreferences;
@@ -64,7 +75,7 @@ class Sockeet {
 
   List<async.StreamSubscription> listeners = [];
   async.Timer? _cleanupTimer;
-
+  String? socketUrl;
   String? _lastAccountNumber;
   Function? _onConnectedCallback;
   Function? _onDisconnectedCallback;
@@ -73,7 +84,7 @@ class Sockeet {
   int _reconnectAttempts = 0;
   static const int maxReconnectAttempts = 5;
   bool _isLogin = false;
-
+  String? _password;
   Sockeet({
     required this.accountBox,
     required this.objectBox,
@@ -92,6 +103,7 @@ class Sockeet {
 
   // Getters for (read-only access)
   List<SocketSenderRequest> get requests => _pendingRequests.values.toList();
+
   List<SocketReceiverRequest> get receives => _recentReceives.values.toList();
 
   void _startPeriodicCleanup() {
@@ -107,6 +119,9 @@ class Sockeet {
 
     _pendingRequests.removeWhere((requestId, request) {
       final isExpired = (now - requestId) > timeoutMs;
+      if (isExpired) {
+        kPrint("Removing expired request: $requestId");
+      }
       return isExpired;
     });
   }
@@ -115,8 +130,9 @@ class Sockeet {
     if (_recentReceives.length > maxRecentReceives) {
       // Keep only the most recent entries
       final sortedKeys = _recentReceives.keys.toList()..sort();
-      final keysToRemove =
-          sortedKeys.take(_recentReceives.length - maxRecentReceives);
+      final keysToRemove = sortedKeys.take(
+        _recentReceives.length - maxRecentReceives,
+      );
 
       for (final key in keysToRemove) {
         _recentReceives.remove(key);
@@ -158,26 +174,32 @@ class Sockeet {
   }
 
   Future<void> connect({
-    String? password,
     required String accountNumber,
     required Function onConnected,
     required Function onDisconnected,
+    String? password,
     bool isLogin = false,
     bool openLocalDatabase = true,
+    String? serverUrl,
   }) async {
     _lastAccountNumber = accountNumber;
     _onConnectedCallback = onConnected;
     _onDisconnectedCallback = onDisconnected;
     _isLogin = isLogin;
+    _password = password;
+    if (serverUrl != null && serverUrl.isNotEmpty && serverUrl != socketUrl) {
+      socketUrl = serverUrl;
+      kPrint("SOCKET URL CHANGED TO : $socketUrl");
+    }
 
     if (openLocalDatabase) await objectBox.create(accountNumber);
 
     await _connect(
+      password: password,
       accountNumber: accountNumber,
       onConnected: onConnected,
       onDisconnected: onDisconnected,
       isLogin: isLogin,
-      password: password,
     );
   }
 
@@ -203,6 +225,7 @@ class Sockeet {
       await _connect(
         accountNumber: _lastAccountNumber!,
         onConnected: _onConnectedCallback!,
+        password: _password,
         onDisconnected: _onDisconnectedCallback!,
         isLogin: _isLogin,
       );
@@ -238,16 +261,17 @@ class Sockeet {
     required Function onConnected,
     required Function onDisconnected,
     bool isLogin = false,
-  }) {
-    if (listener != null) listener?.cancel();
+  }) async {
+    if (listener != null) await listener!.cancel();
     listener = _socket?.connection.listen(
       (event) {
-        kPrint(event);
         state.value = event;
+
         if (event is socket.Disconnected && !isLogin) {
           if (_reconnectAttempts < maxReconnectAttempts) {
-            final backoff =
-                Duration(seconds: math.pow(2, _reconnectAttempts).toInt());
+            final backoff = Duration(
+              seconds: math.pow(2, _reconnectAttempts).toInt(),
+            );
             async.Timer(backoff, () {
               _reconnectAttempts++;
               _reconnectOnce();
@@ -260,7 +284,6 @@ class Sockeet {
         if (event is socket.Disconnected && isLogin) {
           onDisconnected();
         }
-
         if (event is socket.Connected) {
           if (_reconnectCompleter != null &&
               !_reconnectCompleter!.isCompleted) {
@@ -285,37 +308,44 @@ class Sockeet {
 
   Future<void> _connect({
     required String accountNumber,
-    String? password,
     required Function onConnected,
     required Function onDisconnected,
+    String? password,
     bool isLogin = false,
   }) async {
     getIt<TradingLogsCubit>().accountId = int.parse(accountNumber);
-    _socket?.close();
-    _socket = null;
-
+    if (_socket?.connection.state is socket.Connected) {
+      _socket?.close();
+      _socket = null;
+      clearListeners();
+    }
     final token = sharedPreferences.getString(Constants.TOKENCACHED) ?? '';
     final query = accountBox.accounts
         .query(ConnectedAccountInfoModel_.id.equals(int.parse(accountNumber)))
         .build();
     final account = query.findFirst();
-
-    final hasRights = account != null &&
+    final isRights = account != null &&
         account.rights!.hasPermission(UserPermissions.connect);
-
-    if (hasRights || account == null) {
-      final params = {
-        'username': accountNumber,
-        if (password == null)
-          'token': token.replaceAll(' ', '').replaceAll('Bearer', '')
-        else
-          'password': password,
-      };
+    if (isRights || account == null) {
+      Map<String, dynamic> params = {'username': accountNumber};
+      if (password != null) {
+        params['password'] = password;
+      } else {
+        params['token'] = token.replaceAll(' ', '').replaceAll('Bearer', '');
+      }
+      final device = await DeviceInfo.getInfo();
+      params['fcmToken'] = device.fcmToken ?? '';
+      params['deviceId'] = device.id;
+      params['deviceType'] = device.type;
+      params['enableNotification'] =
+          getIt<PlatformSettingsCubit>().settings.tradePositionNotification;
+      params['appVersion'] = AppInfo.version;
       kPrint(params);
       _socket = socket.WebSocket(
-        Uri.parse(Constants.SOCKETURL),
+        Uri.parse(socketUrl ?? Constants.SOCKETURL),
         headers: params,
       );
+      kPrint("SelectedSocketURL : $socketUrl");
       _addStream(
         accountNumber: accountNumber,
         onConnected: onConnected,
@@ -334,11 +364,13 @@ class Sockeet {
       (data) {
         try {
           if (data.toString().contains('&') &&
+              !data.toString().contains('{') &&
               events.contains(SocketEvent.update_data) &&
               onUpdateSymbol != null) {
             onUpdateSymbol(data);
-          } else if (!data.toString().contains('&')) {
-            final receiver = SocketReceiverRequest.fromJson(jsonDecode(data));
+          } else if (data.toString().contains('{')) {
+            final json = jsonDecode(data);
+            final receiver = SocketReceiverRequest.fromJson(json);
             if (events.contains(receiver.event)) {
               _addReceive(receiver);
               onReceiveRequest(receiver);
@@ -368,9 +400,9 @@ class Sockeet {
         data: data,
         action: event.name.toUpperCase(),
       );
-      kPrint(request.toJson());
       _addPendingRequest(request);
       _socket?.send(jsonEncode(request.toJson()));
+      kPrint("Sending request: ${event.name.toUpperCase()}\nBody: $data");
     } catch (e) {
       kPrint("Failed to send request: $e");
     }
@@ -385,13 +417,20 @@ class Sockeet {
       if (!isConnected) return;
       final request = {
         "action": event.name.toUpperCase(),
-        if (data != null) "data": data
+        if (data != null) "data": data,
       };
-      kPrint(request);
+      kPrint("Sending request: ${event.name.toUpperCase()}\nBody: $data");
       _socket?.send(jsonEncode(request));
     } catch (e) {
       kPrint("Send failed: $e");
     }
+  }
+
+  void clearListeners() {
+    for (var listener in listeners) {
+      listener.cancel();
+    }
+    listeners.clear();
   }
 
   void disconnect() {
@@ -400,11 +439,7 @@ class Sockeet {
     _cleanupTimer = null;
 
     // Clean up listeners
-    for (var listener in listeners) {
-      listener.cancel();
-    }
-    listeners.clear();
-
+    clearListeners();
     // Clean up socket
     _socket?.close();
     _socket = null;

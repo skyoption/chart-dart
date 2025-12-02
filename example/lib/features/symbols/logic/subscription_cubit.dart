@@ -1,5 +1,5 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/settings/logic/trading_logs_cubit.dart';
+import 'package:example/features/platform_settings/logic/trading_logs_cubit.dart';
 import 'package:example/features/symbols/data_source/search_data_source.dart';
 import 'package:example/injection/injectable.dart';
 

@@ -32,7 +32,7 @@ class _SelectDateItemWidgetState extends State<SelectDateItemWidget> {
       children: [
         MText(
           text: widget.title,
-          color: context.colorScheme.scrim,
+          color: context.colorScheme.onSurface,
           size: FoontSize.font16,
           weight: FontWeight.w400,
         ),
@@ -45,7 +45,7 @@ class _SelectDateItemWidgetState extends State<SelectDateItemWidget> {
           child: MText(
             text: date.yearMonthDay,
             weight: FontWeight.w400,
-            color: context.colorScheme.scrim,
+            color: context.colorScheme.onSurface,
             size: FoontSize.font14,
           ),
         ).addAction(

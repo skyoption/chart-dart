@@ -29,6 +29,8 @@ class HistoryActionModel {
   double profit;
   @JsonKey(defaultValue: '')
   String createdAt;
+  @JsonKey(defaultValue: 0)
+  int tradeId;
 
   HistoryActionModel({
     required this.id,
@@ -42,6 +44,7 @@ class HistoryActionModel {
     required this.symbol,
     required this.commission,
     required this.account,
+    required this.tradeId,
   });
 
   factory HistoryActionModel.fromJson(Map<String, dynamic> json) =>
@@ -62,6 +65,7 @@ class HistoryActionModel {
       account: account,
       profit: profit,
       symbol: symbol,
+      tradeId: tradeId,
     );
   }
 }

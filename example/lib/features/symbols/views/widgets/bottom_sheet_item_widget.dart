@@ -24,7 +24,7 @@ class BottomSheetItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        context.pop();
+        AutoRouterX(context).maybePop();
         onTap();
       },
       child: Column(
@@ -38,12 +38,12 @@ class BottomSheetItemWidget extends StatelessWidget {
                   if (icon != null)
                     MSvg(
                       name: icon,
-                      color: color ?? context.colorScheme.scrim,
+                      color: color ?? context.colorScheme.onSurface,
                       height: iconSize ?? 21.0,
                     ).addPadding(end: 16.0),
                   MText(
                     text: title,
-                    color: color ?? context.colorScheme.scrim,
+                    color: color ?? context.colorScheme.onSurface,
                     size: FoontSize.font16,
                     weight: FontWeight.w400,
                   ),
@@ -52,7 +52,7 @@ class BottomSheetItemWidget extends StatelessWidget {
               if (suffix != null)
                 MSvg(
                   name: suffix,
-                  color: color ?? context.colorScheme.scrim,
+                  color: color ?? context.colorScheme.onSurface,
                   height: iconSize ?? 21.0,
                 ),
             ],

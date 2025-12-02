@@ -25,20 +25,20 @@ HistoryPendingModel _$HistoryPendingModelFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$HistoryPendingModelToJson(
-        HistoryPendingModel instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'symbolName': instance.symbol,
-      'direction': instance.direction,
-      'expirationDate': instance.expirationDate,
-      'createdAt': instance.createdAt,
-      'volume': instance.volume,
-      'openPrice': instance.openPrice,
-      'tp': instance.tp,
-      'sl': instance.sl,
-      'type': instance.type,
-      'comment': instance.comment,
-      'openTime': instance.openTime,
-      'closedAt': instance.closedAt,
-      'reason': instance.reason,
-    };
+  HistoryPendingModel instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'symbolName': instance.symbol,
+  'direction': instance.direction,
+  'expirationDate': instance.expirationDate,
+  'createdAt': instance.createdAt,
+  'volume': instance.volume,
+  'openPrice': instance.openPrice,
+  'tp': instance.tp,
+  'sl': instance.sl,
+  'type': instance.type,
+  'comment': instance.comment,
+  'openTime': instance.openTime,
+  'closedAt': instance.closedAt,
+  'reason': instance.reason,
+};

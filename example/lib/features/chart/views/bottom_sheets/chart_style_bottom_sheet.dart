@@ -29,7 +29,7 @@ class _ChooseChartStyleBottomSheetState
         MText(
           text: context.tr.graphStyle,
           size: FoontSize.font21,
-          color: context.colorScheme.scrim,
+          color: context.colorScheme.onSurface,
           align: TextAlign.start,
           weight: FontWeight.w600,
         ).addPadding(horizontal: 21.0, bottom: 16.0),
@@ -39,12 +39,12 @@ class _ChooseChartStyleBottomSheetState
             name: Svgs.area,
             width: 18.0,
             height: 18.0,
-            color: context.colorScheme.scrim,
+            color: context.colorScheme.onSurface,
           ).addPadding(end: 8.0),
           index: 0,
           groupIndex: widget.graphStyle.index,
           onTap: () {
-            context.pop();
+            AutoRouterX(context).pop();
             widget.onGraphStyleChanged(GraphStyle.area);
           },
         ),
@@ -54,12 +54,12 @@ class _ChooseChartStyleBottomSheetState
             name: Svgs.candle,
             width: 21.0,
             height: 21.0,
-            color: context.colorScheme.scrim,
+            color: context.colorScheme.onSurface,
           ).addPadding(end: 8.0),
           index: 1,
           groupIndex: widget.graphStyle.index,
           onTap: () {
-            context.pop();
+            AutoRouterX(context).pop();
             widget.onGraphStyleChanged(GraphStyle.candles);
           },
         ),
@@ -69,12 +69,12 @@ class _ChooseChartStyleBottomSheetState
             name: Svgs.chart,
             width: 21.0,
             height: 21.0,
-            color: context.colorScheme.scrim,
+            color: context.colorScheme.onSurface,
           ).addPadding(end: 8.0),
           index: 2,
           groupIndex: widget.graphStyle.index,
           onTap: () {
-            context.pop();
+            AutoRouterX(context).pop();
             widget.onGraphStyleChanged(GraphStyle.line);
           },
         ),
@@ -91,7 +91,7 @@ void showChooseChartStyleBottomSheet({
   showMBottomSheet(
     context: context,
     removeTransparentBackground: true,
-    backgorundColor: context.colorScheme.primaryContainer,
+    backgorundColor: context.colorScheme.scrim,
     bottomSheet: ChooseChartStyleBottomSheet(
       graphStyle: graphStyle,
       onGraphStyleChanged: onGraphStyleChanged,

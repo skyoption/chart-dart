@@ -27,8 +27,9 @@ class _SwitchAccountBottomSheetState extends State<SwitchAccountBottomSheet> {
           onTap: widget.onSwitch,
           isDivider: false,
         ),
-        const MDividerItemWidget(
+        MDividerItemWidget(
           padding: MPadding.set(vertical: 21.0),
+          color: context.colorScheme.outline,
         ),
         BottomSheetItemWidget(
           title: context.tr.deleteAccount,
@@ -37,7 +38,7 @@ class _SwitchAccountBottomSheetState extends State<SwitchAccountBottomSheet> {
           isDivider: false,
         ),
       ],
-    ).addPadding(bottom: 21.0, horizontal: 21.0);
+    ).addPadding(bottom: 50.0, horizontal: 21.0);
   }
 }
 
@@ -50,6 +51,7 @@ void showSwitchAccountBottomSheet({
     context: context,
     borderRadius: MBorderRadius.set(all: 12.0),
     removeTransparentBackground: true,
+    backgorundColor: context.colorScheme.scrim,
     bottomSheet: SwitchAccountBottomSheet(
       onSwitch: onSwitch,
       onDelete: onDelete,

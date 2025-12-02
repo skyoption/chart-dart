@@ -1,6 +1,6 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/symbols/models/schema/symbol_model.dart';
 import 'package:example/features/symbols/views/widgets/add_quote_item_widget.dart';
+import 'package:example/features/symbols/models/schema/symbol_model.dart';
 
 class QuoteCategoryItemWidget extends StatefulWidget {
   final String title;
@@ -32,7 +32,7 @@ class _QuoteCategoryItemWidgetState extends State<QuoteCategoryItemWidget> {
               name: Svgs.folder,
               height: 26.0,
               width: 26.0,
-              color: context.colorScheme.scrim,
+              color: context.colorScheme.onSurface,
             ).addPadding(end: 14.0),
             Expanded(
               child: Row(
@@ -42,13 +42,13 @@ class _QuoteCategoryItemWidgetState extends State<QuoteCategoryItemWidget> {
                     text: widget.title,
                     size: FoontSize.font16,
                     weight: FontWeight.w600,
-                    color: context.colorScheme.scrim,
+                    color: context.colorScheme.onSurface,
                   ),
                   Icon(
                     show
                         ? Icons.keyboard_arrow_up_rounded
                         : Icons.keyboard_arrow_down_rounded,
-                    color: context.colorScheme.scrim,
+                    color: context.colorScheme.onSurface,
                     size: 31.0,
                   ).addAction(
                     onGesture: () {

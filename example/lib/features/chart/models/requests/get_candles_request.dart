@@ -1,6 +1,8 @@
+import 'package:candle_chart/k_chart_widget.dart';
+
 class GetCandlesRequest {
   String symbol;
-  String timeFrame;
+  CandleTimeFormat timeFrame;
   int offset;
 
   GetCandlesRequest({
@@ -10,10 +12,6 @@ class GetCandlesRequest {
   });
 
   Map<String, dynamic> toJson() {
-    return {
-      'symbol': symbol,
-      'timeFrame': timeFrame,
-      'offset': offset,
-    };
+    return {'symbol': symbol, 'timeFrame': timeFrame.name, 'offset': offset};
   }
 }

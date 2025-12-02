@@ -1,3 +1,4 @@
+import 'package:path_provider/path_provider.dart';
 import 'package:example/core/consts/exports.dart';
 import 'package:example/features/symbols/models/schema/symbol_model.dart';
 import 'package:example/features/trade/models/schema/order_model.dart';
@@ -7,11 +8,11 @@ import 'package:example/features/trade_history/models/schema/history_actions_mod
 import 'package:example/features/trade_history/models/schema/history_pending_model.dart';
 import 'package:example/features/trade_history/models/schema/history_position_model.dart';
 import 'package:example/objectbox.g.dart';
-import 'package:path_provider/path_provider.dart';
 
+@singleton
 class ObjectBox {
   Store? _store;
-  Admin? _admin;
+  Admin? admin;
 
   Box<OrderModel>? orderBox;
   Box<PositionModel>? positionsBox;
@@ -23,13 +24,13 @@ class ObjectBox {
 
   Future<ObjectBox> create(dynamic id) async {
     final baseUrl = await getCachePath();
-    await createDir('$baseUrl/example-data');
+    await createDir('$baseUrl/data');
     if (_store != null && !_store!.isClosed()) {
       _store!.close();
     }
-    _store = await openStore(directory: '$baseUrl/example-data/$id-data-v2');
+    _store = await openStore(directory: '$baseUrl/data/$id-data-v4');
     if (Admin.isAvailable()) {
-      _admin = Admin(_store!);
+      admin = Admin(_store!);
     }
     symbolBox = Box<SymbolModel>(_store!);
     orderBox = Box<OrderModel>(_store!);

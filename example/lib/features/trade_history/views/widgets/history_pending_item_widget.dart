@@ -1,6 +1,8 @@
 import 'package:example/core/consts/exports.dart';
 import 'package:example/features/symbols/views/widgets/currencies_item_widget.dart';
 import 'package:example/features/symbols/views/widgets/quote_details_item_widget.dart';
+import 'package:example/core/framework/functions.dart';
+import 'package:example/features/symbols/logic/quotes_cubit.dart';
 import 'package:example/features/trade_history/models/history_pending_entity.dart';
 
 class HistoryPendingItemWidget extends StatefulWidget {
@@ -33,12 +35,14 @@ class _HistoryPendingItemWidgetState extends State<HistoryPendingItemWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<QuotesCubit>();
+    final symbol = cubit.getSymbol(widget.item.symbol);
     return Container(
       decoration: BoxDecoration(
         borderRadius: MBorderRadius.set(all: 8.0),
         border: Border.all(color: context.colorScheme.outline),
       ),
-      margin: const MPadding.set(horizontal: 21.0, bottom: 5.0),
+      margin: const MPadding.set(horizontal: 12.0, bottom: 4.0),
       child: ExpansionTile(
         showTrailingIcon: false,
         tilePadding: const MPadding.set(horizontal: 6.0),
@@ -49,8 +53,8 @@ class _HistoryPendingItemWidgetState extends State<HistoryPendingItemWidget> {
           reverseCurve: Curves.easeOut,
           reverseDuration: Durations.long1,
         ),
-        collapsedIconColor: context.colorScheme.scrim,
-        iconColor: context.colorScheme.scrim,
+        collapsedIconColor: context.colorScheme.onSurface,
+        iconColor: context.colorScheme.onSurface,
         onExpansionChanged: (value) {
           isExpanded.value = value;
         },
@@ -66,7 +70,7 @@ class _HistoryPendingItemWidgetState extends State<HistoryPendingItemWidget> {
                       expanded
                           ? Icons.keyboard_arrow_up_outlined
                           : Icons.keyboard_arrow_down_outlined,
-                      color: context.colorScheme.scrim,
+                      color: context.colorScheme.onSurface,
                     );
                   },
                 ).addPadding(end: 8.0),
@@ -82,11 +86,11 @@ class _HistoryPendingItemWidgetState extends State<HistoryPendingItemWidget> {
                           text: widget.item.symbol.toUpperCase(),
                           weight: FontWeight.w600,
                           size: FoontSize.font16,
-                          color: context.colorScheme.scrim,
+                          color: context.colorScheme.onSurface,
                         ),
                         MText(
                           text: widget.item.direction.replaceAll('_', ' '),
-                          color: AppColors.green,
+                          color: context.colorScheme.success,
                           size: FoontSize.font14,
                           weight: FontWeight.w400,
                         ).addPadding(
@@ -143,7 +147,11 @@ class _HistoryPendingItemWidgetState extends State<HistoryPendingItemWidget> {
                           valueColor: context.colorScheme.onSurface,
                           titleColor: context.colorScheme.onSurface,
                           title: context.tr.stopLossTitle,
-                          value: widget.item.sl.toTwoDecimal,
+                          value: truncateToDecimalPlaces(
+                            widget.item.sl,
+                            symbol?.digits ?? 2,
+                            maxDecimalPlaces: symbol?.digits ?? 2,
+                          ).toString(),
                         ).addPadding(bottom: 6.0),
                         QuoteDetailsItemWidget(
                           hideDivider: true,
@@ -151,7 +159,11 @@ class _HistoryPendingItemWidgetState extends State<HistoryPendingItemWidget> {
                           valueColor: context.colorScheme.onSurface,
                           titleColor: context.colorScheme.onSurface,
                           title: context.tr.takeProfitTitle,
-                          value: widget.item.tp.toTwoDecimal,
+                          value: truncateToDecimalPlaces(
+                            widget.item.tp,
+                            symbol?.digits ?? 2,
+                            maxDecimalPlaces: symbol?.digits ?? 2,
+                          ).toString(),
                         ).addPadding(bottom: 6.0),
                       ],
                     ),

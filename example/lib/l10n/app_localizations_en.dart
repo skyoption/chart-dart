@@ -112,6 +112,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings => 'Settings';
 
   @override
+  String get value => 'Value';
+
+  @override
+  String get switch_ => 'Switch';
+
+  @override
+  String get usd => 'USD';
+
+  @override
   String get quotes => 'Quotes';
 
   @override
@@ -119,6 +128,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trade => 'Trade';
+
+  @override
+  String get seconds => 'Seconds';
 
   @override
   String get history => 'History';
@@ -427,24 +439,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chartLineSize => 'Chart Line Size';
 
   @override
-  String get tradeNotification => 'Trade Notification';
+  String get tradePositionNotification => 'Position Notification';
 
   @override
-  String get tradeNotificationSound => 'Trade Sound';
+  String get tradePositionNotificationSound => 'Position Sound';
 
   @override
-  String get tradeNotificationVibration => 'Trade Vibration';
+  String get tradePositionNotificationVibration => 'Position Vibration';
 
   @override
-  String get tradeNotificationSubtitle => 'Control Trade\'s Notification';
+  String get tradePositionNotificationSubtitle =>
+      'Control Position\'s Notification';
 
   @override
-  String get tradeNotificationSoundSubtitle =>
-      'Control Trade\'s Notification Sound';
+  String get tradePositionNotificationSoundSubtitle =>
+      'Control Position\'s Notification Sound';
 
   @override
-  String get tradeNotificationVibrationSubtitle =>
-      'Control Trade\'s Notification Vibration';
+  String get tradePositionNotificationVibrationSubtitle =>
+      'Control Position\'s Notification Vibration';
+
+  @override
+  String get tradeOrderNotification => 'Trade Order Notification';
+
+  @override
+  String get tradeOrderNotificationSound => 'Trade Order Sound';
+
+  @override
+  String get tradeOrderNotificationVibration => 'Trade Order Vibration';
+
+  @override
+  String get tradeOrderNotificationSubtitle =>
+      'Control Trade\'s Order Notification';
+
+  @override
+  String get tradeOrderNotificationSoundSubtitle =>
+      'Control Trade\'s Order Notification Sound';
+
+  @override
+  String get tradeOrderNotificationVibrationSubtitle =>
+      'Control Trade\'s Order Notification Vibration';
 
   @override
   String get noSymbolsWasFound => 'No Symbols Was found';
@@ -457,13 +491,48 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String positionClosedNotification(
-      Object date, Object profit, Object symbol, Object ticketNumber) {
-    return 'Position: $ticketNumber Closed for $symbol With Profit $profit At $date';
+    Object profit,
+    Object symbol,
+    Object ticketNumber,
+  ) {
+    return 'Position:#$ticketNumber on $symbol closed with profit $profit';
   }
 
   @override
-  String positionOpenedNotification(Object date, Object symbol, Object type) {
-    return 'Positioned With Type $type Opened For $symbol At $date';
+  String positionOpenedNotification(
+    Object direction,
+    Object symbol,
+    Object volume,
+  ) {
+    return 'New position: $direction $symbol @ $volume';
+  }
+
+  @override
+  String positionModifiedNotification(Object id, Object symbol) {
+    return 'Position:#$id on $symbol SL/TP Modified';
+  }
+
+  @override
+  String orderClosedNotification(
+    Object profit,
+    Object symbol,
+    Object ticketNumber,
+  ) {
+    return 'Order:#$ticketNumber on $symbol closed with profit $profit';
+  }
+
+  @override
+  String orderOpenedNotification(
+    Object direction,
+    Object price,
+    Object symbol,
+  ) {
+    return 'New Order: $direction $symbol @ $price';
+  }
+
+  @override
+  String orderModifiedNotification(Object id, Object symbol) {
+    return 'Order:#$id on $symbol SL/TP Modified';
   }
 
   @override
@@ -927,17 +996,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get skip => 'Skip';
 
   @override
-  String get welcomeToSky5 => 'Welcome to\\nSky 5';
+  String get welcomeToSky5 => 'Welcome to\nSky 5';
 
   @override
   String get globalMarketsAtYourFingertips =>
-      'Global Markets at\\nYour Fingertips';
+      'Global Markets at\nYour Fingertips';
 
   @override
-  String get advancedTradingTools => 'Advanced\\nTrading Tools';
+  String get advancedTradingTools => 'Advanced\nTrading Tools';
 
   @override
-  String get realTimeMarketInsights => 'Real-Time Market\\nInsights';
+  String get realTimeMarketInsights => 'Real-Time Market\nInsights';
 
   @override
   String get searchBySymbolDots => 'Search by symbol...';
@@ -1274,4 +1343,393 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get historyProfit => 'Profit';
+
+  @override
+  String get floating => 'Floating';
+
+  @override
+  String get cursorColor => 'Cursor Color';
+
+  @override
+  String get thereIsNoServerSelected => 'There is no server selected';
+
+  @override
+  String get searchByServerName => 'Search by Server Name';
+
+  @override
+  String get candleUpColor => 'Candle Up Color';
+
+  @override
+  String get candleDownColor => 'Candle Down Color';
+
+  @override
+  String get totalWinPositions => 'Total Win Positions';
+
+  @override
+  String get totalLosePositions => 'Total Lose Positions';
+
+  @override
+  String get netProfit => 'Net Profit';
+
+  @override
+  String get winPositions => 'Win Positions';
+
+  @override
+  String get losePositions => 'Lose Positions';
+
+  @override
+  String get lot => 'Lot';
+
+  @override
+  String get money => 'Money';
+
+  @override
+  String get pips => 'Pips';
+
+  @override
+  String get orderInformation => 'Order information';
+
+  @override
+  String get orderSend => 'Order Send';
+
+  @override
+  String get openNewPosition => 'Open new position';
+
+  @override
+  String get stopLoss => 'Stop Loss';
+
+  @override
+  String get takeProfit => 'Take Profit';
+
+  @override
+  String get actionId => 'Action Id';
+
+  @override
+  String get positionId => 'Position Id';
+
+  @override
+  String get contactUs => 'Contact Us';
+
+  @override
+  String get tickets => 'Tickets';
+
+  @override
+  String get tooltipEditSymbols => 'Edit Symbols';
+
+  @override
+  String get tooltipEditSymbolsDescription =>
+      'Modify your symbol list and customize your trading symbols.';
+
+  @override
+  String get tooltipLayoutToggle => 'Layout Toggle';
+
+  @override
+  String get tooltipLayoutToggleDescription =>
+      'Switch between advanced, simple, and table view layouts.';
+
+  @override
+  String get tooltipAddSymbol => 'Add Symbol';
+
+  @override
+  String get tooltipAddSymbolDescription =>
+      'Search and add new trading symbols to your list.';
+
+  @override
+  String get tooltipSortSymbols => 'Sort Symbols';
+
+  @override
+  String get tooltipSortSymbolsDescription =>
+      'Sort your symbols by various criteria like name, price, or change.';
+
+  @override
+  String get tooltipSymbolList => 'Symbol List';
+
+  @override
+  String get tooltipSymbolListDescription =>
+      'View all your subscribed trading symbols with real-time prices.';
+
+  @override
+  String get tooltipChartOptions => 'Chart Options';
+
+  @override
+  String get tooltipChartOptionsDescription =>
+      'Customize your chart view and add technical indicators.';
+
+  @override
+  String get tooltipSymbolSelection => 'Symbol Selection';
+
+  @override
+  String get tooltipSymbolSelectionDescription =>
+      'Choose your trading symbol here.';
+
+  @override
+  String get tooltipFullscreenToggle => 'Fullscreen Toggle';
+
+  @override
+  String get tooltipFullscreenToggleDescription =>
+      'Switch to fullscreen chart view.';
+
+  @override
+  String get tooltipZoomOptions => 'Zoom Options';
+
+  @override
+  String get tooltipZoomOptionsDescription =>
+      'Control chart zoom and view options.';
+
+  @override
+  String get tooltipScreenRotation => 'Screen Rotation';
+
+  @override
+  String get tooltipScreenRotationDescription =>
+      'Rotate screen orientation for better chart viewing.';
+
+  @override
+  String get tooltipTimeframeSelection => 'Timeframe Selection';
+
+  @override
+  String get tooltipTimeframeSelectionDescription =>
+      'Change chart timeframe (1M, 5M, 1H, etc.).';
+
+  @override
+  String get tooltipTradingPanel => 'Trading Panel';
+
+  @override
+  String get tooltipTradingPanelDescription =>
+      'Configure your trading parameters and place orders.';
+
+  @override
+  String get tooltipFloatingPnL => 'Floating P&L';
+
+  @override
+  String get tooltipFloatingPnLDescription =>
+      'Your current profit/loss from open positions.';
+
+  @override
+  String get tooltipSortFilter => 'Sort & Filter';
+
+  @override
+  String get tooltipSortFilterDescription =>
+      'Sort and filter your positions and orders.';
+
+  @override
+  String get tooltipNewPosition => 'New Position';
+
+  @override
+  String get tooltipNewPositionDescription => 'Open a new trading position.';
+
+  @override
+  String get tooltipPositionsTab => 'Positions Tab';
+
+  @override
+  String get tooltipPositionsTabDescription =>
+      'View your active trading positions.';
+
+  @override
+  String get tooltipPendingTab => 'Pending Tab';
+
+  @override
+  String get tooltipPendingTabDescription => 'View your pending orders.';
+
+  @override
+  String get tooltipMoreActions => 'More Actions';
+
+  @override
+  String get tooltipMoreActionsDescription =>
+      'Access additional actions for positions and orders.';
+
+  @override
+  String get tooltipTradeInfo => 'Trade Information';
+
+  @override
+  String get tooltipTradeInfoDescription =>
+      'View your trading account information and statistics.';
+
+  @override
+  String get tooltipHistoryInfo => 'History Information';
+
+  @override
+  String get tooltipHistoryInfoDescription =>
+      'View your trading history information and statistics.';
+
+  @override
+  String get tooltipSortHistory => 'Sort History';
+
+  @override
+  String get tooltipSortHistoryDescription =>
+      'Sort your trading history by various criteria.';
+
+  @override
+  String get tooltipFilterHistory => 'Filter History';
+
+  @override
+  String get tooltipFilterHistoryDescription =>
+      'Filter your trading history by date range and other criteria.';
+
+  @override
+  String get tooltipTabSwitcher => 'History Tabs';
+
+  @override
+  String get tooltipTabSwitcherDescription =>
+      'Switch between positions, pending orders, and actions history.';
+
+  @override
+  String get tooltipTradingAccount => 'Trading Account';
+
+  @override
+  String get tooltipTradingAccountDescription =>
+      'View your current trading account information.';
+
+  @override
+  String get tooltipSwitchAccount => 'Switch Account';
+
+  @override
+  String get tooltipSwitchAccountDescription =>
+      'Switch between your trading accounts.';
+
+  @override
+  String get tooltipAddAccount => 'Add Account';
+
+  @override
+  String get tooltipAddAccountDescription => 'Add a new trading account.';
+
+  @override
+  String get tooltipChangePassword => 'Change Password';
+
+  @override
+  String get tooltipChangePasswordDescription =>
+      'Change your account password.';
+
+  @override
+  String get tooltipChangeTheme => 'Change Theme';
+
+  @override
+  String get tooltipChangeThemeDescription =>
+      'Switch between light and dark themes.';
+
+  @override
+  String get tooltipLanguage => 'Language';
+
+  @override
+  String get tooltipLanguageDescription => 'Change the application language.';
+
+  @override
+  String get tooltipTradingSettings => 'Trading Settings';
+
+  @override
+  String get tooltipTradingSettingsDescription =>
+      'Configure your trading preferences and settings.';
+
+  @override
+  String get tooltipLogs => 'Logs';
+
+  @override
+  String get tooltipLogsDescription =>
+      'View application logs and system information.';
+
+  @override
+  String get tooltipTickets => 'Tickets';
+
+  @override
+  String get tooltipTicketsDescription =>
+      'Contact support and manage your support tickets.';
+
+  @override
+  String get tooltipLogout => 'Logout';
+
+  @override
+  String get tooltipLogoutDescription => 'Sign out of your account.';
+
+  @override
+  String get requiredMargin => 'Required Margin';
+
+  @override
+  String get addNewSymbol => 'Add New Symbol';
+
+  @override
+  String get main => 'Main';
+
+  @override
+  String get spectator => 'Spectator';
+
+  @override
+  String get accountType => 'Account Type';
+
+  @override
+  String get aed => 'AED';
+
+  @override
+  String get sar => 'SAR';
+
+  @override
+  String get justNow => 'Just Now';
+
+  @override
+  String minutesAgo(Object count) {
+    return '$count Minutes Ago';
+  }
+
+  @override
+  String hoursAgo(Object count) {
+    return '$count Hours Ago';
+  }
+
+  @override
+  String daysAgo(Object count) {
+    return '$count Days Ago';
+  }
+
+  @override
+  String minutesSeconds(Object minutes, Object seconds) {
+    return '$minutes Minutes $seconds Seconds';
+  }
+
+  @override
+  String hoursMinutes(Object hours, Object minutes) {
+    return '$hours Hours $minutes Minutes';
+  }
+
+  @override
+  String get copiedToClipboard => 'Copied to Clipboard';
+
+  @override
+  String get filter => 'Filter';
+
+  @override
+  String marketWillOpenIn(
+    Object day,
+    Object hour,
+    Object minute,
+    Object second,
+  ) {
+    return 'The market will open in $day days $hour hours $minute minutes $second seconds';
+  }
+
+  @override
+  String secondsX(Object count) {
+    return '$count Seconds';
+  }
+
+  @override
+  String get from => 'From';
+
+  @override
+  String get to => 'To';
+
+  @override
+  String get maxAmount => 'Max Amount';
+
+  @override
+  String get minAmount => 'Min Amount';
+
+  @override
+  String get saved => 'Saved';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get positionDirection => 'Position Direction';
+
+  @override
+  String get id => 'ID';
 }

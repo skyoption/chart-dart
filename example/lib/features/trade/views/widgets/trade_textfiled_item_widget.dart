@@ -12,6 +12,8 @@ class TradeTextFiledItemWidget extends StatefulWidget {
   final int digits;
   final String? Function(String? messageError)? validator;
   final bool enable, removeBorder;
+  final Widget? suffix;
+  final double bottomPadding;
 
   const TradeTextFiledItemWidget({
     super.key,
@@ -20,13 +22,15 @@ class TradeTextFiledItemWidget extends StatefulWidget {
     this.validator,
     this.color,
     this.contentPadding,
-    this.max = 10,
+    this.suffix,
+    this.max = double.infinity,
     this.min = 0.1,
     this.step = 0.1,
     this.digits = 4,
     this.enable = true,
     this.removeBorder = false,
     this.init,
+    this.bottomPadding = 8.0,
   });
 
   @override
@@ -40,40 +44,73 @@ class _TradeTextFiledItemWidgetState extends State<TradeTextFiledItemWidget> {
 
   @override
   void initState() {
+    super.initState();
     if (widget.init != null) {
       value = widget.init!;
+      controller.text = value.toStringAsFixed(widget.digits);
+      widget.onChange(value.toString());
+    } else {
+      controller.text = value.toString();
     }
-    controller.text = value.toString();
-    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(TradeTextFiledItemWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Update the value when init parameter changes (e.g., when symbol changes)
+    if (widget.init != null && widget.init != oldWidget.init) {
+      value = widget.init!;
+      Future.delayed(Duration.zero, () {
+        controller.text = value.toStringAsFixed(widget.digits);
+        // Defer the onChange call to avoid setState during build
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          widget.onChange(value.toString());
+        });
+      });
+    }
+    if (widget.max != oldWidget.max || widget.min != oldWidget.min) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {});
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return MTextFiled(
       title: widget.title,
-      titleColor: context.colorScheme.scrim,
+      titleColor: context.colorScheme.onSurface,
       controller: controller,
-      titleSize: FoontSize.font17,
-      textSize: FoontSize.font16,
-      hintSize: FoontSize.font16,
+      titleSize: context.isLandscape ? FoontSize.font14 : FoontSize.font15,
+      textSize: context.isLandscape ? FoontSize.font14 : FoontSize.font15,
+      hintSize: context.isLandscape ? FoontSize.font14 : FoontSize.font15,
       titlePadding: const MPadding.set(bottom: 6.0),
-      suffix: Icon(
-        Icons.add,
-        color: context.colorScheme.primary,
-      ).addAction(
-        onGesture: () {
-          if (value < widget.max) {
-            value += widget.step;
-            controller.text = value.toStringAsFixed(widget.digits);
-            widget.onChange(value.toString());
-          }
-        },
+      suffix: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (widget.suffix != null) widget.suffix!,
+          Icon(
+            Icons.add,
+            color: context.colorScheme.primary,
+            size: context.isLandscape ? 18.0 : 24.0,
+          ).addAction(
+            padding: const MPadding.set(end: 10.0),
+            onGesture: () {
+              if (value < widget.max) {
+                value += widget.step;
+                controller.text = value.toStringAsFixed(widget.digits);
+                widget.onChange(value.toString());
+              }
+            },
+          ),
+        ],
       ),
-      fillColor: widget.color,
+      fillColor: widget.color ?? context.colorScheme.surfaceContainerLow,
       validator: widget.validator,
       prefix: Icon(
         Icons.remove,
         color: context.colorScheme.primary,
+        size: context.isLandscape ? 18.0 : 24.0,
       ).addAction(
         onGesture: () {
           if (value > widget.min) {
@@ -83,14 +120,12 @@ class _TradeTextFiledItemWidgetState extends State<TradeTextFiledItemWidget> {
           }
         },
       ),
-      inputFiltering: [
-        DecimalTextInputFormatter(decimalRange: 2),
-      ],
+      inputFiltering: [DecimalTextInputFormatter(decimalRange: widget.digits)],
       enabled: widget.enable,
-      hintText: context.tr.enterValue,
+      hintText: '0.00',
       hintWeight: FontWeight.w300,
-      hintColor: context.colorScheme.onSurface,
-      activeBorderColor: context.colorScheme.scrim,
+      hintColor: context.colorScheme.onSurfaceVariant,
+      activeBorderColor: context.colorScheme.onSurface,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8.0),
         borderSide: widget.removeBorder
@@ -98,7 +133,7 @@ class _TradeTextFiledItemWidgetState extends State<TradeTextFiledItemWidget> {
             : BorderSide(color: context.colorScheme.outline),
       ),
       textAlign: TextAlign.center,
-      textColor: context.colorScheme.scrim,
+      textColor: context.colorScheme.onSurface,
       keyboardType: const TextInputType.numberWithOptions(
         decimal: true,
         signed: false,
@@ -108,11 +143,8 @@ class _TradeTextFiledItemWidgetState extends State<TradeTextFiledItemWidget> {
         widget.onChange(value);
       },
       contentPadding: widget.contentPadding ??
-          const MPadding.set(
-            vertical: 14.0,
-            horizontal: 12.0,
-          ),
-    ).addPadding(bottom: 8.0);
+          const MPadding.set(vertical: 13.0, horizontal: 12.0),
+    ).addPadding(bottom: widget.bottomPadding);
   }
 
   @override

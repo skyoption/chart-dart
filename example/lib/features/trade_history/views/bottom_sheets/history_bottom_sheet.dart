@@ -1,5 +1,4 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/chart/views/chart_screen.dart';
 import 'package:example/features/symbols/views/widgets/bottom_sheet_item_widget.dart';
 import 'package:example/features/trade/views/widgets/close_by_item_widget.dart';
 
@@ -234,9 +233,9 @@ class HistoryBottomSheet extends StatelessWidget {
         BottomSheetItemWidget(
           title: context.tr.chart,
           onTap: () {
-            context.push(
-              ChartScreen(
-                onFullSize: (bool isOpened) {},
+            context.navigateTo(
+              ChartRoute(
+                isFullscreen: ValueNotifier(false),
               ),
             );
           },
@@ -251,6 +250,8 @@ void showHistoryBottomSheet({
 }) {
   showMBottomSheet(
     context: context,
+    removeTransparentBackground: true,
+    backgorundColor: context.colorScheme.scrim,
     bottomSheet: HistoryBottomSheet(),
   );
 }

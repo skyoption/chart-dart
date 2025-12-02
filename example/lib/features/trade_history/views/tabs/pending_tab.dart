@@ -1,8 +1,7 @@
-import 'package:example/core/builder/flow_builder.dart';
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/trade_history/logic/history_pending_cubit.dart';
 import 'package:example/features/trade_history/views/widgets/history_pending_item_widget.dart';
 import 'package:example/features/trade_history/views/widgets/pending_profit_item_widget.dart';
+import 'package:example/features/trade_history/logic/history_pending_cubit.dart';
 
 class PendingTab extends StatelessWidget {
   const PendingTab({super.key});

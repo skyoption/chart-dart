@@ -1,10 +1,9 @@
-import 'package:example/core/builder/flow_builder.dart';
 import 'package:example/core/consts/exports.dart';
+import 'package:example/features/symbols/views/widgets/currencies_item_widget.dart';
+import 'package:example/injection/injectable.dart';
 import 'package:example/features/symbols/logic/search_cubit.dart';
 import 'package:example/features/symbols/logic/subscription_cubit.dart';
 import 'package:example/features/symbols/models/schema/symbol_model.dart';
-import 'package:example/features/symbols/views/widgets/currencies_item_widget.dart';
-import 'package:example/injection/injectable.dart';
 
 class AddQuoteWidget extends StatefulWidget {
   final SymbolModel item;
@@ -53,7 +52,7 @@ class _AddQuoteWidgetState extends State<AddQuoteWidget> {
                     size: 30.0,
                     color: cubit.isSubscribed
                         ? Colors.red
-                        : context.colorScheme.scrim,
+                        : context.colorScheme.onSurface,
                   ).addAction(
                     onGesture: () {
                       cubit.subscription(widget.item.name);
@@ -73,7 +72,7 @@ class _AddQuoteWidgetState extends State<AddQuoteWidget> {
                       ),
                       MText(
                         text: widget.item.name,
-                        color: context.colorScheme.scrim,
+                        color: context.colorScheme.onSurface,
                         weight: FontWeight.w600,
                         size: FoontSize.font14,
                       ),

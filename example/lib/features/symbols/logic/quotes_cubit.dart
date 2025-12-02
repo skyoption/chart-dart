@@ -1,16 +1,16 @@
 import 'dart:async';
 
-import 'package:candle_chart/k_chart_plus.dart';
+import 'package:candle_chart/k_chart_widget.dart';
+import 'package:example/app.dart';
 import 'package:example/core/consts/exports.dart';
 import 'package:example/core/enums/symbol_sort.dart';
 import 'package:example/features/chart/data_source/chart_data_source.dart';
 import 'package:example/features/chart/logic/chart_cubit.dart';
-import 'package:example/features/settings/logic/trading_logs_cubit.dart';
+import 'package:example/features/platform_settings/logic/trading_logs_cubit.dart';
 import 'package:example/features/symbols/data_source/quotes_data_source.dart';
 import 'package:example/features/symbols/models/symbol_entity.dart';
 import 'package:example/features/trade/logic/positions_cubit.dart';
 import 'package:example/injection/injectable.dart';
-import 'package:example/main.dart';
 
 ///[QuotesCubit]
 ///[Implementation]
@@ -28,15 +28,19 @@ class QuotesCubit extends Cubit<FlowState> {
     chartDataSource.setDefaultSymbol(
       value: currentSymbol,
       onAskAndBidUpdated: updateAskAndBid,
+      onReceiveRequest: (items, offset) {
+        chartCubit.setCanldes(items, offset);
+      },
     );
   }
 
   Future<void> updateAskAndBid(String symbol, double ask, double bid) async {
-    kPrint("updateAskAndBid: $symbol, $ask, $bid");
-    if (symbol != currentSymbol.value?.symbol) return;
+    chartCubit.offset = 0;
+    chartCubit.items = [];
+    chartCubit.low = null;
+    chartCubit.high = null;
     chartCubit.ask = null;
     chartCubit.bid = null;
-    await Future.delayed(const Duration(milliseconds: 300));
     chartCubit.updateAskAndBid(ask: ask, bid: bid);
   }
 
@@ -60,11 +64,27 @@ class QuotesCubit extends Cubit<FlowState> {
   );
 
   void setCurrentSymbol(SymbolEntity item) {
+    kPrint('🎯 setCurrentSymbol called with: ${item.symbol}');
     currentSymbol.value = getSymbol(item.symbol);
+    symbol = item.symbol; // Keep symbol field in sync
+    emit(state.copyWith(type: StateType.none));
   }
 
   SymbolEntity? getSymbol(String item) {
     return dataSource.getSymbol(item);
+  }
+
+  /// Validates if a symbol exists in the current filtered list
+  bool _isSymbolInFilteredList(String symbolName) {
+    return symbols.any((s) => s.symbol == symbolName);
+  }
+
+  /// Safely sets current symbol with validation
+  void _setCurrentSymbolSafely(SymbolEntity? item) {
+    if (item != null) {
+      currentSymbol.value = item;
+      symbol = item.symbol;
+    }
   }
 
   String type = 'All';
@@ -83,18 +103,6 @@ class QuotesCubit extends Cubit<FlowState> {
     } else {
       symbols = noFilterSymbols.where((item) => item.sector == type).toList();
     }
-    if (symbol.isNotEmpty) {
-      final item = getSymbol(symbol);
-      if (item != null) {
-        currentSymbol.value = item;
-      } else if (symbols.isNotEmpty) {
-        currentSymbol.value = symbols[0];
-      }
-    } else if (currentSymbol.value != null) {
-      currentSymbol.value = getSymbol(currentSymbol.value!.symbol);
-    } else if (symbols.isNotEmpty) {
-      currentSymbol.value = symbols[0];
-    }
   }
 
   void setTimeframe(CandleTimeFormat frame) {
@@ -104,17 +112,43 @@ class QuotesCubit extends Cubit<FlowState> {
   }
 
   void setSymbol(String symbol) {
+    kPrint('🔧 setSymbol called with: $symbol');
     this.symbol = symbol;
+    // Update currentSymbol.value if the symbol exists
+    final item = getSymbol(symbol);
+    if (item != null) {
+      currentSymbol.value = item;
+      kPrint('✅ Symbol $symbol found and set as current');
+    } else {
+      kPrint('❌ Symbol $symbol not found in data source');
+    }
   }
 
-  Future<void> init() async {
+  Future<void> init({
+    bool resetCurrentSymbol = false,
+    bool noLoading = false,
+  }) async {
+    if (!noLoading) {
+      emit(state.copyWith(type: StateType.loading));
+    }
     symbols.clear();
     noFilterSymbols.clear();
+    if (resetCurrentSymbol) {
+      currentSymbol.value = null;
+    }
     dataSource.onData(
       onReceiveRequest: (symbols, categories) {
         this.symbols = symbols;
         noFilterSymbols = symbols;
         this.categories = categories;
+        if (currentSymbol.value == null) {
+          currentSymbol.value = symbols[0];
+        } else {
+          final symbol = getSymbol(currentSymbol.value!.symbol);
+          if (symbol != null) {
+            setCurrentSymbol(symbol);
+          }
+        }
         _filter();
         emit(state.copyWith(data: this.symbols));
       },

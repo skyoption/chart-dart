@@ -2,6 +2,7 @@ import 'package:example/core/consts/exports.dart';
 import 'package:example/features/trade_history/views/widgets/custom_date_time_widget.dart';
 import 'package:example/features/trade_history/views/widgets/filter_item_widget.dart';
 
+@RoutePage()
 class FilterHistoryScreen extends StatefulWidget {
   final Function(String type, int from, int to) onPick;
   final String? type;
@@ -29,7 +30,7 @@ class _FilterHistoryScreenState extends State<FilterHistoryScreen> {
 
   @override
   void initState() {
-    type = widget.type ?? 'Today';
+    type = widget.type ?? 'Last Week';
     customFrom = widget.customFrom?.toDateTime() ?? DateTime.now();
     customTo = widget.customTo?.toDateTime() ?? DateTime.now();
     super.initState();
@@ -81,7 +82,7 @@ class _FilterHistoryScreenState extends State<FilterHistoryScreen> {
   void _applyFilter(DateTime from, DateTime to) {
     if (hasChanges) {
       widget.onPick(type, from.toStartTime, to.toEndTime);
-      context.pop();
+      AutoRouterX(context).pop();
     }
   }
 
@@ -97,7 +98,7 @@ class _FilterHistoryScreenState extends State<FilterHistoryScreen> {
             children: [
               Icon(
                 Icons.clear,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 size: 30.0,
               ).addAction(
                 padding: const MPadding.set(
@@ -105,12 +106,12 @@ class _FilterHistoryScreenState extends State<FilterHistoryScreen> {
                   end: 12.0,
                 ),
                 onGesture: () {
-                  context.pop();
+                  AutoRouterX(context).pop();
                 },
               ),
               MText(
                 text: context.tr.filterByDate,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 weight: FontWeight.w400,
                 size: FoontSize.font18,
               ),
@@ -187,7 +188,7 @@ class _FilterHistoryScreenState extends State<FilterHistoryScreen> {
                           height: 50.0,
                           borderRadius: 8.0,
                           title: context.tr.apply,
-                          color: AppColors.primary,
+                          color: context.colorScheme.primary,
                           onTap: () {
                             _applyFilter(customFrom!, customTo!);
                           },

@@ -1,6 +1,6 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/core/framework/app_cubit.dart';
 import 'package:example/core/widgets/option_item_widget.dart';
+import 'package:example/core/framework/app_cubit.dart';
 
 class ChangeThemeSheet extends StatefulWidget {
   const ChangeThemeSheet({super.key});
@@ -39,7 +39,7 @@ class _ChangeThemeSheetState extends State<ChangeThemeSheet> {
                 text: context.tr.changeTheme,
                 size: FoontSize.font18,
                 weight: FontWeight.w500,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
               ),
             ).addPadding(bottom: 30.0),
             OptionItemWidget(
@@ -49,7 +49,7 @@ class _ChangeThemeSheetState extends State<ChangeThemeSheet> {
               onTap: () {
                 _selectedIndex.value = 0;
                 _appCubit.changeThemeMode(0);
-                context.pop();
+                AutoRouterX(context).pop();
               },
             ),
             OptionItemWidget(
@@ -59,7 +59,7 @@ class _ChangeThemeSheetState extends State<ChangeThemeSheet> {
               onTap: () {
                 _selectedIndex.value = 1;
                 _appCubit.changeThemeMode(1);
-                context.pop();
+                AutoRouterX(context).pop();
               },
             ),
             OptionItemWidget(
@@ -69,7 +69,7 @@ class _ChangeThemeSheetState extends State<ChangeThemeSheet> {
               onTap: () {
                 _selectedIndex.value = 2;
                 _appCubit.changeThemeMode(2);
-                context.pop();
+                AutoRouterX(context).pop();
               },
             ),
           ],
@@ -85,7 +85,7 @@ void showThemeBottomSheet({required BuildContext context}) {
     removeTransparentBackground: true,
     borderRadius: MBorderRadius.set(topStart: 24.0, topEnd: 24.0),
     padding: const MPadding.set(vertical: 30),
-    backgorundColor: context.colorScheme.primaryContainer,
+    backgorundColor: context.colorScheme.scrim,
     bottomSheet: const ChangeThemeSheet(),
   );
 }

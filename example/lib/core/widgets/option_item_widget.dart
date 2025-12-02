@@ -23,7 +23,7 @@ class OptionItemWidget extends StatelessWidget {
       padding: const MPadding.set(horizontal: 8.0),
       decoration: BoxDecoration(
         color: isSelected
-            ? backgroundColor ?? context.colorScheme.inversePrimary
+            ? backgroundColor ?? context.colorScheme.onPrimaryContainer
             : Colors.transparent,
       ),
       child: Column(
@@ -36,14 +36,14 @@ class OptionItemWidget extends StatelessWidget {
                   name: icon!,
                   width: 20.0,
                   height: 20.0,
-                  color: context.colorScheme.scrim,
+                  color: context.colorScheme.onSurface,
                 ).addPadding(end: 8),
               Expanded(
                 child: MText(
                   text: title,
                   size: FoontSize.font16,
                   weight: FontWeight.w400,
-                  color: context.colorScheme.scrim,
+                  color: context.colorScheme.onSurface,
                 ),
               ),
               if (isSelected)
@@ -51,7 +51,7 @@ class OptionItemWidget extends StatelessWidget {
                   height: 18,
                   width: 18,
                   name: Svgs.lightCheckMarIcon,
-                  color: context.colorScheme.scrim,
+                  color: context.colorScheme.onSurface,
                 )
             ],
           ).addPadding(horizontal: 8),

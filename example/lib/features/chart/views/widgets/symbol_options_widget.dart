@@ -1,14 +1,15 @@
 import 'dart:ui';
 
-import 'package:example/core/builder/flow_builder.dart';
-import 'package:example/core/consts/currency.dart';
 import 'package:example/core/consts/exports.dart';
+import 'package:example/features/trade/views/widgets/trade_textfiled_item_widget.dart';
+import 'package:example/core/framework/functions.dart';
 import 'package:example/core/framework/mtoast.dart';
-import 'package:example/features/auth/logic/connect_cubit.dart';
+import 'package:example/core/shared/change_currencies_drop_down_widget.dart';
+import 'package:example/features/main/logic/connect_cubit.dart';
 import 'package:example/features/symbols/logic/quotes_cubit.dart';
 import 'package:example/features/symbols/models/symbol_entity.dart';
 import 'package:example/features/trade/logic/open_position_cubit.dart';
-import 'package:example/features/trade/views/widgets/trade_textfiled_item_widget.dart';
+import 'package:example/features/trade/logic/positions_cubit.dart';
 import 'package:web_socket_client/web_socket_client.dart' as socket;
 
 enum TransactionOptions {
@@ -39,10 +40,7 @@ extension TransactionOptionsExtension on TransactionOptions {
 class SymbolOptionsWidget extends StatefulWidget {
   final TransactionOptions type;
 
-  const SymbolOptionsWidget({
-    super.key,
-    required this.type,
-  });
+  const SymbolOptionsWidget({super.key, required this.type});
 
   @override
   State<SymbolOptionsWidget> createState() => _SymbolOptionsWidgetState();
@@ -52,7 +50,8 @@ class _SymbolOptionsWidgetState extends State<SymbolOptionsWidget> {
   late final openPositionCubit = context.read<OpenPositionCubit>();
   late final connectCubit = context.read<ConnectCubit>();
   final formKey = GlobalKey<FormState>();
-  ValueNotifier<double> volume = ValueNotifier<double>(0);
+  final volume = ValueNotifier<double>(0);
+  final price = ValueNotifier<double>(0);
 
   @override
   Widget build(BuildContext context) {
@@ -71,116 +70,125 @@ class _SymbolOptionsWidgetState extends State<SymbolOptionsWidget> {
         valueListenable: context.read<QuotesCubit>().currentSymbol,
         builder: (context, symbol, widget) {
           if (symbol == null) return const SizedBox();
-          if (volume.value == 0) volume.value = symbol.volumeMin;
+          price.value = symbol.bidChange.value;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Future.delayed(Duration(milliseconds: 150), () {
+              formKey.currentState?.validate();
+            });
+          });
           if (context.isLandscape) {
-            return Column(
+            return Row(
+              spacing: 16.0,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                changeCurrency().addPadding(bottom: 6.0),
-                tradeTextFiled(symbol).addPadding(bottom: 12.0),
-                FlowBuilder<OpenPositionCubit>(
-                  builder: (context, state, cubit) {
-                    return Column(
-                      children: [
-                        if (cubit.error.isNotEmpty)
-                          MText(
-                            text: cubit.error,
-                            color: Colors.red,
-                            size: FoontSize.font14,
-                          ).addPadding(top: 12.0),
-                        ValueListenableBuilder(
-                          valueListenable: connectCubit.socketState,
-                          builder: (context, connectionState, child) {
-                            return SizedBox(
-                              height: 120.0,
-                              child: Stack(
-                                children: [
-                                  Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      bidChange(
-                                        symbol,
-                                        cubit,
-                                        connectionState,
-                                      ),
-                                      askChange(
-                                        symbol,
-                                        cubit,
-                                        connectionState,
-                                      ),
-                                    ],
-                                  ),
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: diffPrice(symbol),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    );
-                  },
+                Spacer(flex: 2),
+                Expanded(
+                  flex: 6,
+                  child: FlowBuilder<OpenPositionCubit>(
+                    builder: (context, state, cubit) {
+                      return ValueListenableBuilder(
+                        valueListenable: connectCubit.socketState,
+                        builder: (context, connectionState, child) {
+                          return ValueListenableBuilder(
+                            valueListenable: connectCubit.hasTradePermission,
+                            builder: (context, hasTradePermission, child) {
+                              return SizedBox(
+                                height: 50.0,
+                                child: Stack(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        bidChange(
+                                          symbol,
+                                          cubit,
+                                          connectionState,
+                                          height: 45.0,
+                                          hasTradePermission:
+                                              hasTradePermission,
+                                        ),
+                                        askChange(
+                                          symbol,
+                                          cubit,
+                                          connectionState,
+                                          height: 45.0,
+                                          hasTradePermission:
+                                              hasTradePermission,
+                                        ),
+                                      ],
+                                    ),
+                                    Positioned.fill(
+                                      bottom: 8.0,
+                                      child: Center(child: diffPrice(symbol)),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
+                Expanded(flex: 4, child: tradeTextFiled(symbol)),
+                Expanded(flex: 2, child: changeCurrency()),
               ],
             );
           }
           return Column(
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    flex: 5,
-                    child: tradeTextFiled(symbol),
-                  ),
+                  Expanded(flex: 5, child: tradeTextFiled(symbol)),
                   const SizedBox(width: 16.0),
-                  Expanded(
-                    flex: 2,
-                    child: changeCurrency(),
-                  )
+                  Expanded(flex: 2, child: changeCurrency()),
                 ],
               ).addPadding(bottom: 5.0),
               FlowBuilder<OpenPositionCubit>(
                 builder: (context, state, cubit) {
                   return Column(
                     children: [
-                      if (cubit.error.isNotEmpty)
-                        MText(
-                          text: cubit.error,
-                          color: Colors.red,
-                          size: FoontSize.font14,
-                        ).addPadding(top: 12.0),
                       ValueListenableBuilder(
                         valueListenable: connectCubit.socketState,
                         builder: (context, connectionState, child) {
-                          return SizedBox(
-                            height: 45.0,
-                            child: Stack(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                          return ValueListenableBuilder(
+                            valueListenable: connectCubit.hasTradePermission,
+                            builder: (context, hasTradePermission, child) {
+                              return SizedBox(
+                                height: 45.0,
+                                child: Stack(
                                   children: [
-                                    bidChange(
-                                      symbol,
-                                      cubit,
-                                      connectionState,
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        bidChange(
+                                          symbol,
+                                          cubit,
+                                          connectionState,
+                                          hasTradePermission:
+                                              hasTradePermission,
+                                        ),
+                                        askChange(
+                                          symbol,
+                                          cubit,
+                                          connectionState,
+                                          hasTradePermission:
+                                              hasTradePermission,
+                                        ),
+                                      ],
                                     ),
-                                    askChange(
-                                      symbol,
-                                      cubit,
-                                      connectionState,
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: diffPrice(symbol),
                                     ),
                                   ],
                                 ),
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: diffPrice(symbol),
-                                ),
-                              ],
-                            ),
+                              );
+                            },
                           );
                         },
                       ),
@@ -195,42 +203,67 @@ class _SymbolOptionsWidgetState extends State<SymbolOptionsWidget> {
     );
   }
 
+  double getLimitVolume(
+    SymbolEntity symbol,
+    double volume,
+    double currentPrice,
+    int accountLeverage,
+  ) {
+    return convertLotVolumeToPrice(
+      data: volume,
+      symbol: symbol,
+      price: currentPrice,
+      accountLeverage: accountLeverage,
+    );
+  }
+
   Widget bidChange(
     SymbolEntity symbol,
     OpenPositionCubit cubit,
-    socket.ConnectionState? connectionState,
-  ) =>
+    socket.ConnectionState? connectionState, {
+    required bool hasTradePermission,
+    double height = 50.0,
+  }) =>
       ValueListenableBuilder(
         valueListenable: symbol.bidChange,
         builder: (context, value, child) {
           return MBouncingButton(
             bouncing: false,
-            onTap: connectionState.isDisconnected
+            onTap: connectionState.isDisconnected || !hasTradePermission
                 ? null
                 : () {
                     if (symbol.isMarketClose) {
                       MToast.showError(
-                        message: context.tr.marketCurrentlyClosed,
-                      );
+                          message: context.tr.marketCurrentlyClosed);
                     } else {
+                      price.value = value;
                       if (formKey.currentState!.validate()) {
+                        final positionsCubit = context.read<PositionsCubit>();
                         cubit.openPosition(
                           symbol: symbol.symbol,
                           direction: 'SELL',
-                          volume: volume.value,
+                          volume: convertPriceToLot(
+                            value: volume.value,
+                            symbol: symbol,
+                            price: value,
+                            accountLeverage:
+                                positionsCubit.account.value!.leverage,
+                          ),
+                          price: value,
                           sl: 0,
                           tp: 0,
                         );
                       }
                     }
                   },
-            title: context.tr.sellAtPrice('$value'),
+            title: context.tr.sellAtPrice(value.toStringAsFixed(symbol.digits)),
             width: context.isLandscape
-                ? context.width * 0.22
+                ? context.width * 0.16
                 : context.width * 0.42,
             borderRadius: 8.0,
-            height: 50.0,
-            color: connectionState.isDisconnected
+            height: height,
+            textSize: context.isLandscape ? FoontSize.font14 : FoontSize.font16,
+            color: connectionState.isDisconnected || !hasTradePermission
                 ? context.colorScheme.surfaceDisabled
                 : context.colorScheme.error,
           );
@@ -240,39 +273,50 @@ class _SymbolOptionsWidgetState extends State<SymbolOptionsWidget> {
   Widget askChange(
     SymbolEntity symbol,
     OpenPositionCubit cubit,
-    socket.ConnectionState? connectionState,
-  ) =>
+    socket.ConnectionState? connectionState, {
+    required bool hasTradePermission,
+    double height = 50.0,
+  }) =>
       ValueListenableBuilder(
         valueListenable: symbol.askChange,
         builder: (context, value, child) {
           return MBouncingButton(
             bouncing: false,
-            onTap: connectionState.isDisconnected
+            onTap: connectionState.isDisconnected || !hasTradePermission
                 ? null
                 : () {
                     if (symbol.isMarketClose) {
                       MToast.showError(
-                        message: context.tr.marketCurrentlyClosed,
-                      );
+                          message: context.tr.marketCurrentlyClosed);
                     } else {
+                      price.value = value;
                       if (formKey.currentState!.validate()) {
+                        final positionsCubit = context.read<PositionsCubit>();
                         cubit.openPosition(
                           symbol: symbol.symbol,
                           direction: 'BUY',
-                          volume: volume.value,
+                          volume: convertPriceToLot(
+                            value: volume.value,
+                            symbol: symbol,
+                            price: value,
+                            accountLeverage:
+                                positionsCubit.account.value!.leverage,
+                          ),
+                          price: value,
                           sl: 0,
                           tp: 0,
                         );
                       }
                     }
                   },
-            title: context.tr.buyAtPrice('$value'),
+            textSize: context.isLandscape ? FoontSize.font14 : FoontSize.font16,
+            title: context.tr.buyAtPrice(value.toStringAsFixed(symbol.digits)),
             borderRadius: 8.0,
             width: context.isLandscape
-                ? context.width * 0.22
+                ? context.width * 0.16
                 : context.width * 0.42,
-            height: 50.0,
-            color: connectionState.isDisconnected
+            height: height,
+            color: connectionState.isDisconnected || !hasTradePermission
                 ? context.colorScheme.onSurfaceDisabled
                 : context.colorScheme.success,
           );
@@ -282,28 +326,22 @@ class _SymbolOptionsWidgetState extends State<SymbolOptionsWidget> {
   Widget diffPrice(SymbolEntity symbol) => ClipRect(
         child: BackdropFilter(
           blendMode: BlendMode.srcOver,
-          filter: ImageFilter.blur(
-            sigmaX: 2.0,
-            sigmaY: 2.0,
-          ),
+          filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
           child: Container(
-            padding: const MPadding.set(
-              vertical: 3.0,
-              horizontal: 12.0,
-            ),
-            constraints: BoxConstraints(minWidth: 60),
+            padding: const MPadding.set(vertical: 3.0, horizontal: 12.0),
+            constraints: BoxConstraints(minWidth: 70),
             decoration: BoxDecoration(
               color: context.colorScheme.surfaceContainerLow,
               borderRadius: MBorderRadius.set(all: 25.0),
             ),
             child: ValueListenableBuilder(
-              valueListenable: symbol.tick,
+              valueListenable: symbol.spread,
               builder: (context, tick, child) {
                 return MText(
                   text: tick.round().toString(),
                   size: FoontSize.font12,
                   align: TextAlign.center,
-                  color: context.colorScheme.scrim,
+                  color: context.colorScheme.onSurface,
                 );
               },
             ),
@@ -311,68 +349,121 @@ class _SymbolOptionsWidgetState extends State<SymbolOptionsWidget> {
         ),
       );
 
-  Widget changeCurrency() => Container(
-        margin: const MPadding.set(bottom: 10.0),
-        // decoration: BoxDecoration(
-        //   border: Border.all(
-        //     color: context.colorScheme.outline,
-        //   ),
-        //   borderRadius: MBorderRadius.set(all: 10.0),
-        // ),
-        child: MDropDown<Currencies>(
-          setInitial: context.read<CurrencyChanged>().getCurrency,
-          dropdownPadding: const MPadding.set(
-            horizontal: 10.0,
-            vertical: 3.5,
-          ),
-          options: Currencies.values,
-          titleSize: FoontSize.font17,
-          iconSize: 24,
-          borderRadius: 10,
-          iconColor: context.colorScheme.scrim,
-          textColor: context.colorScheme.scrim,
-          selectedItemColor: context.colorScheme.scrim,
-          backgroundColor: context.colorScheme.surfaceContainer,
-          textSize: FoontSize.font16,
-          prefix: (item) {
-            if (item == Currencies.LOT) {
-              return SizedBox(width: 35.0);
-            }
-            return MSvg(
-              name: item?.name,
-              width: 24.0,
-              height: 24.0,
-            ).addPadding(end: 5.0);
-          },
-          itemTitle: (Currencies item) => item.name,
-          onChanged: (value) {
-            context.read<CurrencyChanged>().change(value);
-          },
-        ),
-      );
+  Widget changeCurrency({double? width}) =>
+      ChangeCurrenciesDropDownWidget(width: width);
 
-  Widget tradeTextFiled(SymbolEntity symbol) => TradeTextFiledItemWidget(
-        color: context.colorScheme.surfaceContainer,
-        init: symbol.volumeMin,
-        max: symbol.volumeMax,
-        min: symbol.volumeMin,
-        step: symbol.volumeStep,
-        digits: 2,
-        removeBorder: true,
-        contentPadding: const MPadding.set(
-          vertical: 16.0,
-          horizontal: 12.0,
-        ),
-        onChange: (value) {
-          volume.value = double.tryParse(value) ?? 0;
-        },
-        validator: (messageError) {
-          if (volume.value < symbol.volumeMin ||
-              volume.value > symbol.volumeMax ||
-              volume.value == 0) {
-            return context.tr.fieldInvalid(context.tr.volume);
-          }
-          return null;
-        },
-      );
+  Widget tradeTextFiled(SymbolEntity symbol) {
+    final positionsCubit = context.read<PositionsCubit>();
+    return ValueListenableBuilder<double>(
+      valueListenable: price,
+      builder: (context, priceValue, child) {
+        return FlowBuilder<CurrencyChanged>(
+          listener: (context, state, cubit) {
+            if (state.type == StateType.success) {
+              Future.delayed(Duration(milliseconds: 100), () {
+                formKey.currentState!.validate();
+              });
+            }
+          },
+          buildWhenState: (previous, current) {
+            return current.type == StateType.success;
+          },
+          builder: (context, state, cubit) {
+            return ValueListenableBuilder(
+              valueListenable: positionsCubit.account,
+              builder: (context, account, child) {
+                final accountLeverage = account?.leverage ?? 1;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TradeTextFiledItemWidget(
+                      suffix: MText(
+                        text: cubit.getCurrency.name,
+                        size: context.isLandscape
+                            ? FoontSize.font13
+                            : FoontSize.font15,
+                        color: context.colorScheme.onSurface,
+                      ).addPadding(right: 20.0),
+                      init: getLimitVolume(
+                        symbol,
+                        symbol.volumeMin,
+                        priceValue,
+                        accountLeverage,
+                      ),
+                      color: context.colorScheme.surfaceContainerLow,
+                      max: getLimitVolume(
+                        symbol,
+                        symbol.volumeMax,
+                        priceValue,
+                        accountLeverage,
+                      ),
+                      min: getLimitVolume(
+                        symbol,
+                        symbol.volumeMin,
+                        priceValue,
+                        accountLeverage,
+                      ),
+                      step: symbol.volumeStep,
+                      digits: 2,
+                      contentPadding: MPadding.set(
+                        vertical: context.isLandscape ? 0.0 : 14.0,
+                        horizontal: 12.0,
+                      ),
+                      onChange: (value) {
+                        volume.value = double.tryParse(value) ?? 0;
+                      },
+                      validator: (messageError) {
+                        final volumeMin = getLimitVolume(
+                          symbol,
+                          symbol.volumeMin,
+                          priceValue,
+                          accountLeverage,
+                        );
+                        final volumeMax = getLimitVolume(
+                          symbol,
+                          symbol.volumeMax,
+                          priceValue,
+                          accountLeverage,
+                        );
+                        if (volume.value < volumeMin || volume.value == 0) {
+                          return errorMessage(context, volumeMin.toString());
+                        } else if (volume.value > volumeMax) {
+                          return errorMessage(
+                            context,
+                            volumeMax.toString(),
+                            isMax: true,
+                          );
+                        }
+                        return null;
+                      },
+                    ),
+                    if (cubit.getCurrency == Currencies.LOT)
+                      ValueListenableBuilder(
+                        valueListenable: volume,
+                        builder: (context, value, child) {
+                          final requiredMargin = getTradeMargin(
+                            volume: value,
+                            symbol: symbol,
+                            price: priceValue,
+                            accountLeverage: accountLeverage,
+                          );
+                          return MText(
+                            text:
+                                "${context.tr.requiredMargin}: $requiredMargin ${context.tr.usd}",
+                            size: FoontSize.font12,
+                            color: context.colorScheme.onSurface,
+                          );
+                        },
+                      ).addPadding(bottom: 8.0)
+                    else
+                      SizedBox(height: 8.0),
+                  ],
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
 }

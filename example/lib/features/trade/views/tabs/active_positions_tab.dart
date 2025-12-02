@@ -1,7 +1,6 @@
-import 'package:example/core/builder/flow_builder.dart';
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/trade/logic/positions_cubit.dart';
 import 'package:example/features/trade/views/widgets/position_item_widget.dart';
+import 'package:example/features/trade/logic/positions_cubit.dart';
 
 class ActivePositionsTab extends StatelessWidget {
   const ActivePositionsTab({super.key});

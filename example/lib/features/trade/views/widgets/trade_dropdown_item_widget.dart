@@ -48,16 +48,17 @@ class _TradeDropdownItemWidgetState<T>
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         if (widget.title != null)
           MText(
             text: widget.title,
-            color: context.colorScheme.scrim,
+            color: context.colorScheme.onSurface,
             size: FoontSize.font17,
             weight: FontWeight.w600,
-          ),
+          ).addPadding(bottom: 10),
         Container(
           height: widget.height,
           width: widget.width,
@@ -69,19 +70,18 @@ class _TradeDropdownItemWidgetState<T>
                 : null,
             borderRadius: MBorderRadius.set(all: 8.0),
           ),
-          padding: const MPadding.set(vertical: 12.0, horizontal: 16.0),
-          alignment: Alignment.center,
+          padding: const MPadding.set(vertical: 8.0, horizontal: 16.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               MText(
                 text: item == null ? '' : widget.onName(item!),
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 size: FoontSize.font19,
-              ).addPadding(horizontal: 12.0),
+              ),
               Icon(
                 Icons.keyboard_arrow_down_rounded,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 size: 30.0,
               )
             ],
@@ -143,7 +143,8 @@ class _TradeBottomSheetState<T> extends State<TradeBottomSheet<T>> {
               setState(() {});
             },
             hintText: widget.searchTitle,
-            hintColor: context.colorScheme.scrim,
+            hintColor: context.colorScheme.onSurfaceVariant,
+            textColor: context.colorScheme.onSurface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
               borderSide: BorderSide.none,
@@ -163,7 +164,7 @@ class _TradeBottomSheetState<T> extends State<TradeBottomSheet<T>> {
             title: widget.onName(item),
             onTap: () {
               widget.onTap(item);
-              // context.pop();
+              // AutoRouterX(context).pop();
             },
           );
         }),
@@ -184,7 +185,7 @@ void showTradeBottomSheet<T>({
     borderRadius: MBorderRadius.set(all: 12.0),
     removeTransparentBackground: true,
     noScrolling: searchTitle != null,
-    backgorundColor: context.colorScheme.primaryContainer,
+    backgorundColor: context.colorScheme.scrim,
     bottomSheet: TradeBottomSheet<T>(
       onTap: onTap,
       options: options,

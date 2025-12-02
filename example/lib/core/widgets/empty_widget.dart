@@ -24,7 +24,7 @@ class EmptyWidget extends StatelessWidget {
           if (svgIconPath != null)
             MSvg(
               name: svgIconPath,
-              color: context.colorScheme.scrim,
+              color: context.colorScheme.onSurface,
               width: 70,
               height: 70,
             ).addPadding(start: 6.0, end: 12.0, bottom: 21.0),

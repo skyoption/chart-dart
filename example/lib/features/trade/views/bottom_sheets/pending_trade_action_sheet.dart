@@ -1,7 +1,7 @@
 import 'package:example/core/consts/exports.dart';
 import 'package:example/features/symbols/views/widgets/bottom_sheet_item_widget.dart';
-import 'package:example/features/trade/logic/close_all_pending_cubit.dart';
 import 'package:example/injection/injectable.dart';
+import 'package:example/features/trade/logic/close_all_pending_cubit.dart';
 
 class PendingTradeActionsSheet extends StatefulWidget {
   const PendingTradeActionsSheet({
@@ -27,9 +27,9 @@ class _PendingTradeActionsSheetState extends State<PendingTradeActionsSheet> {
             child: Icon(
               Icons.clear,
               size: 30.0,
-              color: context.colorScheme.scrim,
+              color: context.colorScheme.onSurface,
             ).addAction(
-              onGesture: () => context.pop(),
+              onGesture: () => AutoRouterX(context).pop(),
             ),
           ).addPadding(bottom: 21.0),
           BottomSheetItemWidget(
@@ -74,7 +74,7 @@ void showPendingTradeActionsBottomSheet({
   showMBottomSheet(
     context: context,
     removeTransparentBackground: true,
-    backgorundColor: context.colorScheme.primaryContainer,
+    backgorundColor: context.colorScheme.scrim,
     bottomSheet: const PendingTradeActionsSheet(),
   );
 }

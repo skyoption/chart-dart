@@ -15,7 +15,9 @@ class _AllSymbolsItemWidgtState extends State<AllSymbolsItemWidget> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: MBorderRadius.set(all: 6.0),
-        border: check ? null : Border.all(color: AppColors.highLight),
+        border: check
+            ? null
+            : Border.all(color: context.colorScheme.surfaceVariant),
         color: check ? Colors.blue.withValues(alpha: 0.3) : Coolors.transparent,
       ),
       padding: const MPadding.set(all: 18.0),
@@ -26,13 +28,13 @@ class _AllSymbolsItemWidgtState extends State<AllSymbolsItemWidget> {
           MText(
             text: context.tr.allSymbols,
             size: FoontSize.font20,
-            color: AppColors.black,
+            color: context.colorScheme.onSurface,
             weight: FontWeight.w500,
           ),
           if (check)
-            const Icon(
+            Icon(
               Icons.check,
-              color: AppColors.black,
+              color: context.colorScheme.onSurface,
               size: 28.0,
             )
         ],

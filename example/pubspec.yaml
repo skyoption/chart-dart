@@ -6,7 +6,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.1+47
 
 environment:
-  sdk: '>=3.4.0 <4.0.0'
+  sdk: '>=3.8.0 <4.0.0'
 
 dependencies:
   flutter:
@@ -62,7 +62,6 @@ dependencies:
   flutter_colorpicker: ^1.1.0
   flutter_svg: ^2.2.2
   barcode: ^2.2.9
-  myfatoorah_flutter: ^3.2.4
   objectbox: ^5.0.2
   objectbox_flutter_libs: ^5.0.2
   web_socket_client: ^0.2.1
@@ -97,6 +96,7 @@ dependencies:
   pointycastle: ^4.0.0
   candle_chart:
     path: ../
+  overlay_tooltip: ^0.2.4
 
 dev_dependencies:
   flutter_test:

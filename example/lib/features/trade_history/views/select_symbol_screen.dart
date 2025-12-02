@@ -2,6 +2,7 @@ import 'package:example/core/consts/exports.dart';
 import 'package:example/features/trade_history/views/widgets/all_symbols_item_widget.dart';
 import 'package:example/features/trade_history/views/widgets/symbols_category_item_widget.dart';
 
+@RoutePage()
 class SelectSymbolScreen extends StatefulWidget {
   static const id = 'SelectSymbolScreen';
 
@@ -31,7 +32,7 @@ class _SelectSymbolScreenState extends State<SelectSymbolScreen> {
                   ).addAction(
                     padding: const MPadding.set(end: 12.0),
                     onGesture: () {
-                      context.pop();
+                      AutoRouterX(context).pop();
                     },
                   ),
                   MText(

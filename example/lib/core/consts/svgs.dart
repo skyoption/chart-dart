@@ -8,7 +8,6 @@ class Svgs {
   static const sell = 'sell-icon';
   static const topDown = 'top-down-icon';
   static const buy = 'buy-icon';
-  static const cursor = 'cursor-icon';
   static const equity = 'equity-icon';
   static const deposit = 'deposit-icon';
   static const edit = 'edit-icon';
@@ -22,12 +21,15 @@ class Svgs {
   static const zoomInOut = 'zoom-in-out-icon';
   static const zoomLight = 'zoom-light-icon';
   static const sounds = 'sounds-icon';
+  static const contactUs = 'contact-us-icon';
   static const apple = 'apple-icon';
   static const appleWhite = 'apple-white-icon';
   static const closeCheck = 'close-check-icon';
   static const sort = 'sort-icon';
   static const filter = 'filter-icon';
   static const applySort = 'apply-sort-icon';
+
+  static const cursor = 'cursor-icon';
   static const applyFilter = 'apply-filter-icon';
   static const fav = 'fav-icon';
   static const up = 'up-icon';
@@ -120,4 +122,11 @@ class Svgs {
   static const lightMode = 'light-icon';
   static const darkMode = 'dark-icon';
   static const correctIcon = 'correct-icon';
+
+  static const size = "size-icon";
+
+  static const info = "info-icon";
+
+  static const copy = "copy-icon";
+  static const notifications = "notifications-icon";
 }

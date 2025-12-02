@@ -1,6 +1,6 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/symbols/models/symbol_entity.dart';
 import 'package:example/features/symbols/views/widgets/currencies_item_widget.dart';
+import 'package:example/features/symbols/models/symbol_entity.dart';
 
 class EditQuoteWidget extends StatelessWidget {
   final Function(SymbolEntity deletedSymbol) onDelete;
@@ -46,7 +46,7 @@ class EditQuoteWidget extends StatelessWidget {
                     ),
                     MText(
                       text: item.symbol,
-                      color: context.colorScheme.scrim,
+                      color: context.colorScheme.onSurface,
                       weight: FontWeight.w600,
                       size: FoontSize.font16,
                     ),

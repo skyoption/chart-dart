@@ -1,6 +1,6 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/symbols/models/symbol_entity.dart';
 import 'package:example/features/symbols/views/widgets/quote_price_item_widget.dart';
+import 'package:example/features/symbols/models/symbol_entity.dart';
 
 class TradePriceItemWidget extends StatefulWidget {
   final SymbolEntity symbol;
@@ -35,7 +35,7 @@ class _TradePriceItemWidgetState extends State<TradePriceItemWidget> {
               height: 22.0,
             ).addPadding(horizontal: 2.0),
             ValueListenableBuilder(
-              valueListenable: widget.symbol.tick,
+              valueListenable: widget.symbol.spread,
               builder: (context, value, child) {
                 return MText(
                   text: value.toStringAsFixed(0),

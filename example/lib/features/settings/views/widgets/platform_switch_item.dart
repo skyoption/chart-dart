@@ -53,7 +53,7 @@ class _PlatformSwitchItemState extends State<PlatformSwitchItem> {
             title: widget.title,
             titleFontSize: FoontSize.font17,
             titleWeight: FontWeight.w400,
-            titleColor: context.colorScheme.scrim,
+            titleColor: context.colorScheme.onSurface,
             subTitle: widget.subtitle,
             subTitleColor: context.colorScheme.onSurface,
             subTitleFontSize: FoontSize.font13,

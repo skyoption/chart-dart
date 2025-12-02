@@ -1,6 +1,6 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/core/framework/app_cubit.dart';
 import 'package:example/core/widgets/option_item_widget.dart';
+import 'package:example/core/framework/app_cubit.dart';
 
 class LanguageBottomSheet extends StatefulWidget {
   const LanguageBottomSheet({
@@ -40,7 +40,7 @@ class _LanguageBottomSheetState extends State<LanguageBottomSheet> {
               Center(
                 child: MText(
                   text: context.tr.language,
-                  color: context.colorScheme.scrim,
+                  color: context.colorScheme.onSurface,
                   weight: FontWeight.w600,
                   size: FoontSize.font20,
                 ).addPadding(bottom: 30.0),
@@ -51,7 +51,7 @@ class _LanguageBottomSheetState extends State<LanguageBottomSheet> {
                 onTap: () {
                   _selectedIndex.value = 0;
                   _appCubit.changeLang('en');
-                  context.pop();
+                  AutoRouterX(context).pop();
                 },
               ),
               OptionItemWidget(
@@ -60,7 +60,7 @@ class _LanguageBottomSheetState extends State<LanguageBottomSheet> {
                 onTap: () {
                   _selectedIndex.value = 1;
                   _appCubit.changeLang('ar');
-                  context.pop();
+                  AutoRouterX(context).pop();
                 },
               ),
             ],
@@ -76,7 +76,7 @@ void showLanguageBottomSheet({
     context: context,
     borderRadius: MBorderRadius.set(all: 12.0),
     removeTransparentBackground: true,
-    backgorundColor: context.colorScheme.primaryContainer,
+    backgorundColor: context.colorScheme.scrim,
     bottomSheet: const LanguageBottomSheet(),
   );
 }

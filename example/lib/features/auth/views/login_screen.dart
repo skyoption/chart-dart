@@ -1,12 +1,25 @@
-import 'package:example/core/builder/flow_builder.dart';
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/auth/logic/connect_cubit.dart';
 import 'package:example/features/chart/views/chart_screen.dart';
-import 'package:example/features/main/views/main_screen.dart';
+import 'package:example/features/trade/views/widgets/trade_dropdown_item_widget.dart';
+import 'package:example/injection/injectable.dart';
+import 'package:example/core/framework/mtoast.dart';
+import 'package:example/core/framework/socket/socket.dart';
+import 'package:example/core/shared/loading.dart';
+import 'package:example/features/auth/domain/entities/socket_server_entity.dart';
+import 'package:example/features/auth/views/logic/get_socket_servers_cubit.dart';
+import 'package:example/features/chart/logic/chart_cubit.dart';
+import 'package:example/features/main/logic/connect_cubit.dart';
+import 'package:example/features/symbols/logic/quotes_cubit.dart';
+import 'package:example/features/trade/logic/open_position_cubit.dart';
+import 'package:example/features/trade/logic/orders_cubit.dart';
+import 'package:example/features/trade/logic/positions_cubit.dart';
+import 'package:example/features/trade_history/logic/history_actions_cubit.dart';
+import 'package:example/features/trade_history/logic/history_pending_cubit.dart';
+import 'package:example/features/trade_history/logic/history_positions_cubit.dart';
 
+@RoutePage()
 class LoginScreen extends StatefulWidget {
   final Function(String user, String password)? onAddNewAccount;
-  static const id = 'LoginScreen';
 
   const LoginScreen({
     super.key,
@@ -19,6 +32,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   late final cubit = context.read<ConnectCubit>();
+  late final serversCubit = context.read<GetSocketServersCubit>();
 
   @override
   void initState() {
@@ -44,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
               size: FoontSize.font32,
               weight: FontWeight.w600,
               align: TextAlign.start,
-              color: AppColors.white,
+              color: context.colorScheme.onPrimary,
             ).addPadding(horizontal: 32.0, vertical: 80.0),
           ),
           SafeArea(
@@ -70,30 +84,40 @@ class _LoginScreenState extends State<LoginScreen> {
                         text: context.tr.loginWelcomeMessage,
                         size: FoontSize.font17,
                         weight: FontWeight.w400,
-                        color: context.colorScheme.scrim,
+                        color: context.colorScheme.onSurface,
                       ).addPadding(bottom: 30.0),
-                      // TradeDropdownItemWidget<String>(
-                      //   height: 65.0,
-                      //   width: context.width * 0.919,
-                      //   searchTitle: 'Search by Name Server',
-                      //   options: const [
-                      //     'Live 1',
-                      //     'Live 2',
-                      //     'Live 3',
-                      //     'Live 4',
-                      //     'Live 5',
-                      //     'Demo 1',
-                      //     'Demo 2',
-                      //   ],
-                      //   isOutline: false,
-                      //   onTap: (item) {},
-                      //   onName: (item) => item,
-                      // ).addPadding(bottom: 6.0),
+                      FlowBuilder<GetSocketServersCubit>(
+                        onSuccess: (state, cubit) {
+                          if (cubit.servers.isNotEmpty) {
+                            getIt<Sockeet>().socketUrl =
+                                cubit.servers.first.url;
+                          }
+                        },
+                        loading: Loading.loadingSkeleton(
+                          padding: const MPadding.set(bottom: 12.0),
+                          borderRadius: MBorderRadius.set(all: 8.0),
+                          height: 55.0,
+                          width: context.width,
+                        ),
+                        builder: (context, state, cubit) {
+                          return TradeDropdownItemWidget<SocketServerEntity>(
+                            height: 55.0,
+                            width: context.width,
+                            searchTitle: context.tr.searchByServerName,
+                            options: cubit.servers,
+                            isOutline: false,
+                            onTap: (item) {
+                              getIt<Sockeet>().socketUrl = item.url;
+                            },
+                            onName: (item) => item.serverName,
+                          );
+                        },
+                      ).addPadding(bottom: 6.0),
                       MTextFiled(
                         hintText: context.tr.accountNumber,
                         hintColor: context.colorScheme.onSurface,
                         controller: cubit.number,
-                        textColor: context.colorScheme.scrim,
+                        textColor: context.colorScheme.onSurface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                           borderSide: BorderSide.none,
@@ -118,8 +142,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       MPasswordWidget(
                         unActiveSize: 18.0,
                         activeSize: 24.0,
-                        activeColor: context.colorScheme.scrim,
-                        unActiveColor: context.colorScheme.scrim,
+                        activeColor: context.colorScheme.onSurface,
+                        unActiveColor: context.colorScheme.onSurface,
                         child: (icon, hide) {
                           return MTextFiled(
                             hintText: context.tr.password,
@@ -130,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             contentPadding:
                                 MPadding.set(horizontal: 21.0, vertical: 14.0),
                             hintColor: context.colorScheme.onSurface,
-                            textColor: context.colorScheme.scrim,
+                            textColor: context.colorScheme.onSurface,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                               borderSide: BorderSide.none,
@@ -139,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             validator: (valid) {
                               return Validates.isHasData(
                                 minLength: 5,
-                                data: cubit.password.text,
+                                data: cubit.password?.text ?? "",
                                 errorMessage: context.tr.pleaseEnterPassword,
                               );
                             },
@@ -153,28 +177,64 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: FlowBuilder<ConnectCubit>(
                           onSuccess: (state, cubit) {
                             cubit.number.clear();
-                            cubit.password.clear();
-                            context.pushNamedAndRemoveUntil(MainScreen.id);
+                            cubit.password?.clear();
+                            context.replaceRoute(AuthenticatedRoutes());
                           },
                           builder: (context, state, cubit) {
                             return MBouncingButton(
                               width: double.infinity,
-                              color: AppColors.primary,
+                              color: context.colorScheme.primary,
                               height: 55.0,
                               title: context.tr.login,
                               borderRadius: 8.0,
                               onTap: () {
-                                if (widget.onAddNewAccount != null) {
-                                  context.pop();
-                                  widget.onAddNewAccount!(
-                                    cubit.number.text,
-                                    cubit.password.text,
-                                  );
+                                if (serversCubit.servers.isNotEmpty) {
+                                  if (widget.onAddNewAccount != null) {
+                                    AutoRouterX(context).pop();
+                                    widget.onAddNewAccount!(
+                                      cubit.number.text,
+                                      cubit.password?.text ?? "",
+                                    );
+                                  } else {
+                                    cubit.execute(
+                                      serverUrl: getIt<Sockeet>().socketUrl,
+                                      onConnected: () {
+                                        key.currentState
+                                            ?.clearSLOrTPOrPosition();
+                                        context.read<ChartCubit>().init();
+                                        context.read<QuotesCubit>().init();
+                                        context
+                                            .read<QuotesCubit>()
+                                            .sendToSubscribe();
+                                        context.read<PositionsCubit>().init();
+                                        context.read<OrdersCubit>().init();
+                                        context
+                                            .read<OpenPositionCubit>()
+                                            .init();
+                                        context
+                                            .read<HistoryPositionsCubit>()
+                                            .init();
+                                        context
+                                            .read<HistoryPendingCubit>()
+                                            .init();
+                                        context
+                                            .read<HistoryActionsCubit>()
+                                            .init();
+                                        context
+                                            .read<HistoryPositionsCubit>()
+                                            .getAll();
+                                        context
+                                            .read<HistoryActionsCubit>()
+                                            .getAll();
+                                        context
+                                            .read<HistoryPendingCubit>()
+                                            .getAll();
+                                      },
+                                    );
+                                  }
                                 } else {
-                                  cubit.execute(
-                                    onConnected: () {
-                                      key.currentState?.clearSLOrTPOrPosition();
-                                    },
+                                  MToast.showError(
+                                    message: context.tr.thereIsNoServerSelected,
                                   );
                                 }
                                 // context.pushNamedAndRemoveUntil(MainScreen.id);

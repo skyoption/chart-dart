@@ -27,8 +27,8 @@ class PendingProfitItemWidget extends StatelessWidget {
             builder: (context, value, child) {
               return QuoteDetailsItemWidget(
                 hideDivider: true,
-                valueColor: AppColors.white,
-                titleColor: AppColors.white,
+                valueColor: context.colorScheme.onPrimary,
+                titleColor: context.colorScheme.onPrimary,
                 title: context.tr.filled,
                 value: '$value',
               ).addPadding(bottom: 6.0);
@@ -39,8 +39,8 @@ class PendingProfitItemWidget extends StatelessWidget {
             builder: (context, value, child) {
               return QuoteDetailsItemWidget(
                 hideDivider: true,
-                valueColor: AppColors.white,
-                titleColor: AppColors.white,
+                valueColor: context.colorScheme.onPrimary,
+                titleColor: context.colorScheme.onPrimary,
                 title: context.tr.canceled,
                 value: '$value',
               ).addPadding(bottom: 6.0);
@@ -51,8 +51,8 @@ class PendingProfitItemWidget extends StatelessWidget {
             builder: (context, value, child) {
               return QuoteDetailsItemWidget(
                 hideDivider: true,
-                valueColor: AppColors.white,
-                titleColor: AppColors.white,
+                valueColor: context.colorScheme.onPrimary,
+                titleColor: context.colorScheme.onPrimary,
                 title: context.tr.total,
                 value: '$value',
               ).addPadding(bottom: 6.0);

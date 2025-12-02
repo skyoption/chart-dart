@@ -19,7 +19,7 @@ class ResetZoomWidget extends StatelessWidget {
       padding: MPadding.set(horizontal: 12.0),
       child: Icon(
         Icons.refresh_outlined,
-        color: context.colorScheme.scrim,
+        color: context.colorScheme.onSurface,
       ),
     ).addAction(onGesture: onReset);
   }

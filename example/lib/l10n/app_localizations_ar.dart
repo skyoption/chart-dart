@@ -112,6 +112,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settings => 'الإعدادات';
 
   @override
+  String get value => 'القيمة';
+
+  @override
+  String get switch_ => 'تبديل';
+
+  @override
+  String get usd => 'دولار';
+
+  @override
   String get quotes => 'الأسعار';
 
   @override
@@ -119,6 +128,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get trade => 'تداول';
+
+  @override
+  String get seconds => 'ثواني';
 
   @override
   String get history => 'السجل';
@@ -421,23 +433,44 @@ class AppLocalizationsAr extends AppLocalizations {
   String get chartLineSize => 'حجم خط الرسم البياني';
 
   @override
-  String get tradeNotification => 'إشعار التداول';
+  String get tradePositionNotification => 'إشعارت الصفقات';
 
   @override
-  String get tradeNotificationSound => 'صوت التداول';
+  String get tradePositionNotificationSound => 'صوت الصفقة';
 
   @override
-  String get tradeNotificationVibration => 'اهتزاز التداول';
+  String get tradePositionNotificationVibration => 'اهتزاز الصفقة';
 
   @override
-  String get tradeNotificationSubtitle => 'التحكم في إشعار التداول';
+  String get tradePositionNotificationSubtitle => 'تحكم في اشعارات الصفقات';
 
   @override
-  String get tradeNotificationSoundSubtitle => 'التحكم في صوت إشعار التداول';
+  String get tradePositionNotificationSoundSubtitle =>
+      'تحكم في صوت اشعارات الصفقات';
 
   @override
-  String get tradeNotificationVibrationSubtitle =>
-      'التحكم في اهتزاز إشعار التداول';
+  String get tradePositionNotificationVibrationSubtitle =>
+      'تحكم في اهتزاز اشعارات الصفقات';
+
+  @override
+  String get tradeOrderNotification => 'إشعارت طلبات الصفقات';
+
+  @override
+  String get tradeOrderNotificationSound => 'صوت طلب الصفقة';
+
+  @override
+  String get tradeOrderNotificationVibration => 'اهتزاز طلب الصفقة';
+
+  @override
+  String get tradeOrderNotificationSubtitle => 'تحكم في اشعارات طلبات الصفقات';
+
+  @override
+  String get tradeOrderNotificationSoundSubtitle =>
+      'تحكم في صوت اشعارات طلبات الصفقات';
+
+  @override
+  String get tradeOrderNotificationVibrationSubtitle =>
+      'تحكم في اهتزاز اشعارات طلبات الصفقات';
 
   @override
   String get noSymbolsWasFound => 'لم يتم العثور على رموز';
@@ -446,17 +479,52 @@ class AppLocalizationsAr extends AppLocalizations {
   String get marketCurrentlyClosed => 'السوق مغلق حالياً';
 
   @override
-  String get closePosition => 'إغلاق المركز';
+  String get closePosition => 'إغلاق الصفقة';
 
   @override
   String positionClosedNotification(
-      Object date, Object profit, Object symbol, Object ticketNumber) {
-    return 'المركز: $ticketNumber مغلق لـ $symbol بربح $profit في $date';
+    Object profit,
+    Object symbol,
+    Object ticketNumber,
+  ) {
+    return 'الصفقة:#$ticketNumber على $symbol مغلقة بربح $profit';
   }
 
   @override
-  String positionOpenedNotification(Object date, Object symbol, Object type) {
-    return 'تم فتح مركز من نوع $type لـ $symbol في $date';
+  String positionOpenedNotification(
+    Object direction,
+    Object symbol,
+    Object volume,
+  ) {
+    return 'صفقة جديدة: $direction $symbol @ $volume';
+  }
+
+  @override
+  String positionModifiedNotification(Object id, Object symbol) {
+    return 'الصفقة:#$id على $symbol تم تعديل وقف الخسارة/جني الأرباح';
+  }
+
+  @override
+  String orderClosedNotification(
+    Object profit,
+    Object symbol,
+    Object ticketNumber,
+  ) {
+    return 'الطلب:#$ticketNumber على $symbol مغلق بربح $profit';
+  }
+
+  @override
+  String orderOpenedNotification(
+    Object direction,
+    Object price,
+    Object symbol,
+  ) {
+    return 'طلب جديد: $direction $symbol @ $price';
+  }
+
+  @override
+  String orderModifiedNotification(Object id, Object symbol) {
+    return 'الطلب:#$id على $symbol تم تعديل وقف الخسارة/جني الأرباح';
   }
 
   @override
@@ -541,7 +609,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get enterYourPassword => 'أدخل كلمة المرور الخاصة بك';
 
   @override
-  String get positions => 'المراكز';
+  String get positions => 'الصفقات';
 
   @override
   String get pending => 'قيد الانتظار';
@@ -737,7 +805,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get wait => 'انتظر';
 
   @override
-  String get modifyPosition => 'تعديل المركز';
+  String get modifyPosition => 'تعديل الصفقة';
 
   @override
   String get balance => 'الرصيد';
@@ -920,17 +988,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get skip => 'تخطي';
 
   @override
-  String get welcomeToSky5 => 'مرحباً بك في\\nسكاي 5';
+  String get welcomeToSky5 => 'مرحباً بك في\nسكاي 5';
 
   @override
   String get globalMarketsAtYourFingertips =>
-      'الأسواق العالمية\\nفي متناول يديك';
+      'الأسواق العالمية\nفي متناول يديك';
 
   @override
-  String get advancedTradingTools => 'أدوات تداول\\nمتقدمة';
+  String get advancedTradingTools => 'أدوات تداول\nمتقدمة';
 
   @override
-  String get realTimeMarketInsights => 'رؤى السوق\\nفي الوقت الفعلي';
+  String get realTimeMarketInsights => 'رؤى السوق\nفي الوقت الفعلي';
 
   @override
   String get searchBySymbolDots => 'البحث بالرمز...';
@@ -1131,19 +1199,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get closePrice => 'سعر الإغلاق';
 
   @override
-  String get orderId => 'المعرف';
+  String get orderId => 'ID';
 
   @override
   String get openTime => 'وقت الفتح';
 
   @override
-  String get closeAllPositions => 'إغلاق جميع المراكز';
+  String get closeAllPositions => 'إغلاق جميع الصفقات';
 
   @override
-  String get closeProfitablePositions => 'إغلاق المراكز الرابحة';
+  String get closeProfitablePositions => 'إغلاق الصفقات الرابحة';
 
   @override
-  String get closeLosingPositions => 'إغلاق المراكز الخاسرة';
+  String get closeLosingPositions => 'إغلاق الصفقات الخاسرة';
 
   @override
   String get stopLossTitle => 'وقف الخسارة';
@@ -1221,10 +1289,10 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get mainPosition => 'المركز الرئيسي';
+  String get mainPosition => 'الصفقة الرئيسي';
 
   @override
-  String get closeByMainPosition => 'إغلاق بواسطة المركز الرئيسي';
+  String get closeByMainPosition => 'إغلاق بواسطة الصفقة الرئيسي';
 
   @override
   String get searchByNameServer => 'البحث باسم الخادم';
@@ -1267,4 +1335,388 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get historyProfit => 'الربح';
+
+  @override
+  String get floating => 'عائم';
+
+  @override
+  String get cursorColor => 'لون المؤشر';
+
+  @override
+  String get thereIsNoServerSelected => 'لم يتم إختيار سيرفر';
+
+  @override
+  String get searchByServerName => 'البحث بإستخدام اسم السيرفر';
+
+  @override
+  String get candleUpColor => 'لون الشمعة الصاعدة';
+
+  @override
+  String get candleDownColor => 'لون الشمعة الهابطة';
+
+  @override
+  String get totalWinPositions => 'إجمالي الصفقات الرابحة';
+
+  @override
+  String get totalLosePositions => 'إجمالي الصفقات الخاسرة';
+
+  @override
+  String get netProfit => 'صافي الربح';
+
+  @override
+  String get winPositions => 'الصفقات الرابحة';
+
+  @override
+  String get losePositions => 'الصفقات الخاسرة';
+
+  @override
+  String get lot => 'اللوت';
+
+  @override
+  String get money => 'المال';
+
+  @override
+  String get pips => 'النقاط';
+
+  @override
+  String get orderInformation => 'تفاصيل الطلب';
+
+  @override
+  String get orderSend => 'إرسال الطلب';
+
+  @override
+  String get openNewPosition => 'فتح مركز جديد';
+
+  @override
+  String get stopLoss => 'وقف الخسارة';
+
+  @override
+  String get takeProfit => 'جني الأرباح';
+
+  @override
+  String get actionId => 'معرف الإجراء';
+
+  @override
+  String get positionId => 'معرف الصفقة';
+
+  @override
+  String get contactUs => 'تواصل معنا';
+
+  @override
+  String get tickets => 'التذاكر';
+
+  @override
+  String get tooltipEditSymbols => 'تعديل الرموز';
+
+  @override
+  String get tooltipEditSymbolsDescription =>
+      'قم بتعديل قائمة الرموز وتخصيص رموز التداول الخاصة بك.';
+
+  @override
+  String get tooltipLayoutToggle => 'تبديل التخطيط';
+
+  @override
+  String get tooltipLayoutToggleDescription =>
+      'التبديل بين تخطيطات العرض المتقدمة والبسيطة والجدولية.';
+
+  @override
+  String get tooltipAddSymbol => 'إضافة رمز';
+
+  @override
+  String get tooltipAddSymbolDescription =>
+      'البحث عن رموز التداول الجديدة وإضافتها إلى قائمتك.';
+
+  @override
+  String get tooltipSortSymbols => 'ترتيب الرموز';
+
+  @override
+  String get tooltipSortSymbolsDescription =>
+      'قم بترتيب رموزك حسب معايير مختلفة مثل الاسم أو السعر أو التغيير.';
+
+  @override
+  String get tooltipSymbolList => 'قائمة الرموز';
+
+  @override
+  String get tooltipSymbolListDescription =>
+      'عرض جميع رموز التداول المشتركة مع الأسعار في الوقت الفعلي.';
+
+  @override
+  String get tooltipChartOptions => 'خيارات الرسم البياني';
+
+  @override
+  String get tooltipChartOptionsDescription =>
+      'تخصيص عرض الرسم البياني وإضافة المؤشرات الفنية.';
+
+  @override
+  String get tooltipSymbolSelection => 'اختيار الرمز';
+
+  @override
+  String get tooltipSymbolSelectionDescription =>
+      'اختر رمز التداول الخاص بك هنا.';
+
+  @override
+  String get tooltipFullscreenToggle => 'تبديل الشاشة الكاملة';
+
+  @override
+  String get tooltipFullscreenToggleDescription =>
+      'التبديل إلى عرض الرسم البياني في الشاشة الكاملة.';
+
+  @override
+  String get tooltipZoomOptions => 'خيارات التكبير';
+
+  @override
+  String get tooltipZoomOptionsDescription =>
+      'التحكم في تكبير الرسم البياني وخيارات العرض.';
+
+  @override
+  String get tooltipScreenRotation => 'دوران الشاشة';
+
+  @override
+  String get tooltipScreenRotationDescription =>
+      'تدوير اتجاه الشاشة لعرض أفضل للرسم البياني.';
+
+  @override
+  String get tooltipTimeframeSelection => 'اختيار الإطار الزمني';
+
+  @override
+  String get tooltipTimeframeSelectionDescription =>
+      'تغيير الإطار الزمني للرسم البياني (1د، 5د، 1س، إلخ).';
+
+  @override
+  String get tooltipTradingPanel => 'لوحة التداول';
+
+  @override
+  String get tooltipTradingPanelDescription =>
+      'تكوين معاملات التداول ووضع الأوامر.';
+
+  @override
+  String get tooltipFloatingPnL => 'الربح والخسارة العائم';
+
+  @override
+  String get tooltipFloatingPnLDescription =>
+      'الربح/الخسارة الحالي من الصفقات المفتوحة.';
+
+  @override
+  String get tooltipSortFilter => 'الترتيب والتصفية';
+
+  @override
+  String get tooltipSortFilterDescription => 'ترتيب وتصفية مراكزك وأوامرك.';
+
+  @override
+  String get tooltipNewPosition => 'مركز جديد';
+
+  @override
+  String get tooltipNewPositionDescription => 'فتح مركز تداول جديد.';
+
+  @override
+  String get tooltipPositionsTab => 'تبويب الصفقات';
+
+  @override
+  String get tooltipPositionsTabDescription => 'عرض مراكز التداول النشطة.';
+
+  @override
+  String get tooltipPendingTab => 'تبويب المعلق';
+
+  @override
+  String get tooltipPendingTabDescription => 'عرض أوامرك المعلقة.';
+
+  @override
+  String get tooltipMoreActions => 'المزيد من الإجراءات';
+
+  @override
+  String get tooltipMoreActionsDescription =>
+      'الوصول إلى إجراءات إضافية للمراكز والأوامر.';
+
+  @override
+  String get tooltipTradeInfo => 'معلومات التداول';
+
+  @override
+  String get tooltipTradeInfoDescription =>
+      'عرض معلومات حساب التداول والإحصائيات الخاصة بك.';
+
+  @override
+  String get tooltipHistoryInfo => 'معلومات السجل';
+
+  @override
+  String get tooltipHistoryInfoDescription =>
+      'عرض معلومات سجل التداول والإحصائيات الخاصة بك.';
+
+  @override
+  String get tooltipSortHistory => 'ترتيب السجل';
+
+  @override
+  String get tooltipSortHistoryDescription =>
+      'ترتيب سجل التداول حسب معايير مختلفة.';
+
+  @override
+  String get tooltipFilterHistory => 'تصفية السجل';
+
+  @override
+  String get tooltipFilterHistoryDescription =>
+      'تصفية سجل التداول حسب نطاق التاريخ ومعايير أخرى.';
+
+  @override
+  String get tooltipTabSwitcher => 'تبويبات السجل';
+
+  @override
+  String get tooltipTabSwitcherDescription =>
+      'التبديل بين سجل الصفقات والأوامر المعلقة وإجراءات التداول.';
+
+  @override
+  String get tooltipTradingAccount => 'حساب التداول';
+
+  @override
+  String get tooltipTradingAccountDescription =>
+      'عرض معلومات حساب التداول الحالي.';
+
+  @override
+  String get tooltipSwitchAccount => 'تبديل الحساب';
+
+  @override
+  String get tooltipSwitchAccountDescription => 'التبديل بين حسابات التداول.';
+
+  @override
+  String get tooltipAddAccount => 'إضافة حساب';
+
+  @override
+  String get tooltipAddAccountDescription => 'إضافة حساب تداول جديد.';
+
+  @override
+  String get tooltipChangePassword => 'تغيير كلمة المرور';
+
+  @override
+  String get tooltipChangePasswordDescription => 'تغيير كلمة مرور الحساب.';
+
+  @override
+  String get tooltipChangeTheme => 'تغيير المظهر';
+
+  @override
+  String get tooltipChangeThemeDescription =>
+      'التبديل بين المظاهر الفاتح والداكن.';
+
+  @override
+  String get tooltipLanguage => 'اللغة';
+
+  @override
+  String get tooltipLanguageDescription => 'تغيير لغة التطبيق.';
+
+  @override
+  String get tooltipTradingSettings => 'إعدادات التداول';
+
+  @override
+  String get tooltipTradingSettingsDescription =>
+      'تكوين تفضيلات وإعدادات التداول.';
+
+  @override
+  String get tooltipLogs => 'السجلات';
+
+  @override
+  String get tooltipLogsDescription => 'عرض سجلات التطبيق ومعلومات النظام.';
+
+  @override
+  String get tooltipTickets => 'التذاكر';
+
+  @override
+  String get tooltipTicketsDescription =>
+      'التواصل مع الدعم وإدارة تذاكر الدعم.';
+
+  @override
+  String get tooltipLogout => 'تسجيل الخروج';
+
+  @override
+  String get tooltipLogoutDescription => 'الخروج من حسابك.';
+
+  @override
+  String get requiredMargin => 'الهامش المطلوب';
+
+  @override
+  String get addNewSymbol => 'اضافة رمز جديد';
+
+  @override
+  String get main => 'رئيسي';
+
+  @override
+  String get spectator => 'مراقب';
+
+  @override
+  String get accountType => 'نوع الحساب';
+
+  @override
+  String get aed => 'درهم إماراتي';
+
+  @override
+  String get sar => 'ريال سعودي';
+
+  @override
+  String get justNow => 'منذ لحظة';
+
+  @override
+  String minutesAgo(Object count) {
+    return 'منذ $count دقائق';
+  }
+
+  @override
+  String hoursAgo(Object count) {
+    return 'منذ $count ساعات';
+  }
+
+  @override
+  String daysAgo(Object count) {
+    return 'منذ $count أيام';
+  }
+
+  @override
+  String minutesSeconds(Object minutes, Object seconds) {
+    return '$minutes دقيقة $seconds ثانية';
+  }
+
+  @override
+  String hoursMinutes(Object hours, Object minutes) {
+    return '$hours ساعة $minutes دقيقة';
+  }
+
+  @override
+  String get copiedToClipboard => 'تم النسخ إلى الحافظة';
+
+  @override
+  String get filter => 'تصفية';
+
+  @override
+  String marketWillOpenIn(
+    Object day,
+    Object hour,
+    Object minute,
+    Object second,
+  ) {
+    return 'سيفتح السوق خلال $day يوم $hour ساعة $minute دقيقة $second ثانية';
+  }
+
+  @override
+  String secondsX(Object count) {
+    return '$count ثانية';
+  }
+
+  @override
+  String get from => 'من';
+
+  @override
+  String get to => 'إلى';
+
+  @override
+  String get maxAmount => 'اقصى قيمة';
+
+  @override
+  String get minAmount => 'اقل قيمة';
+
+  @override
+  String get saved => 'تم الحفظ';
+
+  @override
+  String get date => 'التاريخ';
+
+  @override
+  String get positionDirection => 'اتجاه الصفقة';
+
+  @override
+  String get id => 'الصفقة';
 }

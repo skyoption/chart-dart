@@ -1,10 +1,14 @@
 import 'package:example/core/consts/exports.dart';
 import 'package:example/core/enums/position_sort.dart';
+import 'package:example/core/enums/user_permissions.dart';
 import 'package:example/core/framework/socket/socket.dart';
-import 'package:example/features/auth/data_source/connected_account_data_source.dart';
-import 'package:example/features/auth/logic/connect_cubit.dart';
-import 'package:example/features/auth/models/connected_account_info_entity.dart';
+import 'package:example/features/main/data_source/connected_account_data_source.dart';
+import 'package:example/features/main/logic/connect_cubit.dart';
+import 'package:example/features/main/models/connected_account_info_entity.dart';
+import 'package:example/features/symbols/logic/quotes_cubit.dart';
+import 'package:example/features/symbols/models/symbol_entity.dart';
 import 'package:example/features/trade/data_sources/positions_data_source.dart';
+import 'package:example/features/trade/logic/position_assets_lose_alert_cubit.dart';
 import 'package:example/features/trade/models/position_entity.dart';
 
 ///[PositionsCubit]
@@ -12,13 +16,16 @@ import 'package:example/features/trade/models/position_entity.dart';
 @injectable
 class PositionsCubit extends Cubit<FlowState> {
   final PositionsDataSource tradeDataSource;
-  final ConnectCubit connectCubit;
   final ConnectedAccountDataSource loginDataSource;
-
+  final QuotesCubit quotesCubit;
+  final ConnectCubit connectCubit;
+  final PositionAssetsLoseAlertCubit assetsLoseAlertCubit;
   PositionsCubit(
     this.tradeDataSource,
-    this.connectCubit,
     this.loginDataSource,
+    this.quotesCubit,
+    this.connectCubit,
+    this.assetsLoseAlertCubit,
   ) : super(const FlowState(type: StateType.success));
 
   List<String> get symbols {
@@ -26,6 +33,17 @@ class PositionsCubit extends Cubit<FlowState> {
     for (var item in positions) {
       if (!items.contains(item.groupSymbol)) {
         items.add(item.groupSymbol);
+      }
+    }
+    return items;
+  }
+
+  List<SymbolEntity> get subscribedSymbols {
+    List<SymbolEntity> items = [];
+    for (var item in positions) {
+      final symbol = quotesCubit.getSymbol(item.groupSymbol);
+      if (symbol != null && !items.contains(symbol)) {
+        items.add(symbol);
       }
     }
     return items;
@@ -43,6 +61,9 @@ class PositionsCubit extends Cubit<FlowState> {
   String currentFilterSymbol = "All";
 
   ValueNotifier<ConnectedAccountInfoEntity?> account = ValueNotifier(null);
+  bool isMainAccount() => account.value?.isMainAccount ?? true;
+  bool hasPermission(UserPermissions permission) =>
+      account.value?.rights?.hasPermission(permission) ?? false;
   ValueNotifier<double> floating = ValueNotifier(0);
   ValueNotifier<double> balance = ValueNotifier(0);
   ValueNotifier<double> credit = ValueNotifier(0);
@@ -59,6 +80,8 @@ class PositionsCubit extends Cubit<FlowState> {
   bool isAscending = true;
 
   Future<void> init() async {
+    positions = [];
+    filteredPositions = [];
     tradeDataSource.onData(
       events: [
         SocketEvent.ev_open_pos,
@@ -105,10 +128,22 @@ class PositionsCubit extends Cubit<FlowState> {
       onBalanceUpdate: (newBalance) {
         balance.value = newBalance;
         equity.value = balance.value + floating.value;
+        freeMargin.value = newBalance;
         connectCubit.updateDefaultAccountBalance(newBalance);
       },
       onCreditUpdate: (newCredit) {
         credit.value = newCredit;
+      },
+      onMarginUpdate: (newMargin) {
+        margin.value = newMargin;
+        if (margin.value != 0 &&
+            marginLevel.value != 0 &&
+            positions.isNotEmpty) {
+          assetsLoseAlertCubit.execute(
+            marginCallLevel: account.value?.marginCallLevel ?? 0,
+            marginLevel: marginLevel.value,
+          );
+        }
       },
       onAccountInfoRequest: (item) {
         account.value = item;
@@ -119,12 +154,29 @@ class PositionsCubit extends Cubit<FlowState> {
         floating.value = item.floating;
         credit.value = item.credit;
         marginLevel.value = item.marginLevel ?? 0;
+        connectCubit.setAccountInfo(item);
+        kPrint("MARGIN :${margin.value}");
+        if (margin.value != 0 &&
+            marginLevel.value != 0 &&
+            positions.isNotEmpty) {
+          assetsLoseAlertCubit.execute(
+            marginCallLevel: item.marginCallLevel,
+            marginLevel: marginLevel.value,
+          );
+        }
       },
     );
     Future.delayed(
       Duration(milliseconds: 100),
       tradeDataSource.getAllPositions,
     );
+  }
+
+  void resetPositions() {
+    positions = [];
+    filteredPositions = [];
+    tradeDataSource.getAllPositions();
+    emit(state.copyWith(data: Data.secure, type: StateType.success));
   }
 
   Future<void> getCachedPositions() async {
@@ -135,40 +187,56 @@ class PositionsCubit extends Cubit<FlowState> {
   }
 
   void updateTargetPositions(List<PositionEntity> items) {
-    if (items.isNotEmpty) {
+    if (positions.isNotEmpty) {
       double totalFloating = 0;
-      double totalMargin = 0;
+      double commission = 0;
 
-      for (var item in items) {
+      for (final updated in items) {
+        final index = positions.indexWhere((p) => p.id == updated.id);
+        if (index != -1) {
+          positions[index] = updated;
+        } else {
+          positions.add(updated);
+        }
+      }
+
+      for (var item in positions) {
         final symbol = item.groupSymbol;
         floatingSymbols[symbol] ??= ValueNotifier(0);
         final floatingValue = item.floating.toTwoDecimalNum;
         final swapValue = item.swap.toTwoDecimalNum;
         final commissionValue = item.commission.toTwoDecimalNum;
-        final marginValue = item.margin.toTwoDecimalNum;
         final itemFloating = floatingValue + swapValue - commissionValue;
         totalFloating += itemFloating;
-        totalMargin += marginValue;
+        commission += commissionValue;
         final currentFloating = floatingSymbols[symbol]!.value.toTwoDecimalNum;
         final newFloating = currentFloating + floatingValue;
         floatingSymbols[symbol]!.value = newFloating;
       }
 
+      positions.sortByConfig(currentSort);
       filteredPositions = positions.filterBySymbol(currentFilterSymbol);
-
-      margin.value = totalMargin;
+      filteredPositions.sortByConfig(currentSort);
       floating.value = totalFloating;
-      equity.value = balance.value + floating.value;
+      equity.value = balance.value + floating.value + commission;
       freeMargin.value = equity.value - margin.value;
       marginLevel.value =
           margin.value == 0 ? 0 : (equity.value / margin.value) * 100;
+      if (margin.value != 0 && marginLevel.value != 0) {
+        assetsLoseAlertCubit.execute(
+          marginCallLevel: account.value?.marginCallLevel ?? 0,
+          marginLevel: marginLevel.value,
+        );
+      }
     } else {
       floatingSymbols = {};
       floating.value = 0;
-      margin.value = 0;
       equity.value = balance.value;
       freeMargin.value = balance.value;
       marginLevel.value = 0;
+      assetsLoseAlertCubit.stop();
+      positions.sortByConfig(currentSort);
+      filteredPositions.sortByConfig(currentSort);
     }
   }
 
@@ -195,6 +263,7 @@ class PositionsCubit extends Cubit<FlowState> {
   void filterBySymbol(String symbol) {
     currentFilterSymbol = symbol;
     filteredPositions = positions.filterBySymbol(currentFilterSymbol);
+    filteredPositions.sortByConfig(currentSort);
     emit(state.copyWith(data: Data.secure, type: StateType.success));
   }
 
@@ -214,6 +283,8 @@ class PositionsCubit extends Cubit<FlowState> {
     margin = ValueNotifier(0);
     marginLevel = ValueNotifier(0);
   }
+
+  bool get canTrade => hasPermission(UserPermissions.trade);
 
   @override
   Future<void> close() {

@@ -1,6 +1,6 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/core/enums/history_sort.dart';
 import 'package:example/core/widgets/sheet_selection_item.dart';
+import 'package:example/core/enums/history_sort.dart';
 
 class HistorySortBottomSheet extends StatefulWidget {
   final HistorySortConfig initialConfig;
@@ -36,7 +36,7 @@ class _HistorySortBottomSheetState extends State<HistorySortBottomSheet> {
               alignment: Alignment.center,
               child: MText(
                 text: context.tr.sortBy,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 weight: FontWeight.w600,
                 size: FoontSize.font20,
               ).addPadding(top: 12.0),
@@ -46,9 +46,9 @@ class _HistorySortBottomSheetState extends State<HistorySortBottomSheet> {
               child: Icon(
                 Icons.clear,
                 size: 30.0,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
               ).addAction(
-                onGesture: () => context.pop(),
+                onGesture: () => AutoRouterX(context).pop(),
               ),
             )
           ],
@@ -81,7 +81,7 @@ class _HistorySortBottomSheetState extends State<HistorySortBottomSheet> {
                 }
               });
               widget.onSortSelection(currentConfig);
-              context.pop();
+              AutoRouterX(context).pop();
             },
           );
         }),
@@ -99,7 +99,7 @@ void showHistorySortBottomSheet({
   showMBottomSheet(
     context: context,
     removeTransparentBackground: true,
-    backgorundColor: context.colorScheme.primaryContainer,
+    backgorundColor: context.colorScheme.scrim,
     bottomSheet: HistorySortBottomSheet(
       initialConfig: currentSort,
       onSortSelection: onSortSelection,

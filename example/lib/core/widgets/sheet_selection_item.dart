@@ -25,15 +25,15 @@ class SheetSelectionItem extends StatelessWidget {
             MText(
               text: name,
               color: isSelected
-                  ? context.colorScheme.inversePrimary
-                  : context.colorScheme.scrim,
+                  ? context.colorScheme.primary
+                  : context.colorScheme.onSurface,
               size: FoontSize.font16,
               weight: FontWeight.w400,
             ),
             if (isSelected && !hideIcon)
               Icon(
                 isAscending ? Icons.arrow_upward : Icons.arrow_downward,
-                color: context.colorScheme.inversePrimary,
+                color: context.colorScheme.primary,
               )
           ],
         ),

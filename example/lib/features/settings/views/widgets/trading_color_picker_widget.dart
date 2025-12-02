@@ -1,4 +1,4 @@
-import 'package:example/core/widgets/color_palette_widget.dart';
+import 'package:example/core/shared/color_palette_widget.dart';
 
 import '../../../../core/consts/exports.dart';
 
@@ -34,7 +34,7 @@ class TradingColorPickerWidget extends StatelessWidget {
           MText(
             text: title,
             size: FoontSize.font17,
-            color: context.colorScheme.scrim,
+            color: context.colorScheme.onSurface,
             weight: FontWeight.w500,
           ).addPadding(start: 12),
           const Spacer(),

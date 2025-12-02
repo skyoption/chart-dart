@@ -44,15 +44,15 @@ class _PasswordItemWidgetState extends State<PasswordItemWidget> {
         MPasswordWidget(
           unActiveSize: 18.0,
           activeSize: 24.0,
-          activeColor: context.colorScheme.scrim,
-          unActiveColor: context.colorScheme.scrim,
+          activeColor: context.colorScheme.onSurface,
+          unActiveColor: context.colorScheme.onSurface,
           child: (icon, hide) {
             return MTextFiled(
               focusNode: focusNode,
               title: widget.title,
               hintText: context.tr.enterYourPassword,
-              titleColor: context.colorScheme.scrim,
-              textColor: context.colorScheme.scrim,
+              titleColor: context.colorScheme.onSurface,
+              textColor: context.colorScheme.onSurface,
               hintColor: context.colorScheme.onSurface,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
@@ -80,12 +80,12 @@ class _PasswordItemWidgetState extends State<PasswordItemWidget> {
                   height: 5.0,
                   decoration: BoxDecoration(
                     color: level == 0 && item.key == 0
-                        ? AppColors.red
+                        ? context.colorScheme.error
                         : level < item.key
-                            ? AppColors.highLight
+                            ? context.colorScheme.surfaceVariant
                             : level >= 2 || level > item.key
-                                ? AppColors.green
-                                : AppColors.orange,
+                                ? context.colorScheme.success
+                                : context.colorScheme.warning,
                   ),
                 ),
               );
@@ -103,25 +103,33 @@ class _PasswordItemWidgetState extends State<PasswordItemWidget> {
                     text: "• ${context.tr.longPasswordValidation}",
                     size: FoontSize.font16,
                     weight: FontWeight.w400,
-                    color: passwords[3].check ? AppColors.green : AppColors.red,
+                    color: passwords[3].check
+                        ? context.colorScheme.success
+                        : context.colorScheme.error,
                   ).addPadding(bottom: 6.0),
                   MText(
                     text: "• ${context.tr.upperCaseValidation}",
                     size: FoontSize.font16,
                     weight: FontWeight.w400,
-                    color: passwords[0].check ? AppColors.green : AppColors.red,
+                    color: passwords[0].check
+                        ? context.colorScheme.success
+                        : context.colorScheme.error,
                   ).addPadding(bottom: 6.0),
                   MText(
                     text: "• ${context.tr.lowerCaseValidation}",
                     size: FoontSize.font16,
                     weight: FontWeight.w400,
-                    color: passwords[1].check ? AppColors.green : AppColors.red,
+                    color: passwords[1].check
+                        ? context.colorScheme.success
+                        : context.colorScheme.error,
                   ).addPadding(bottom: 6.0),
                   MText(
                     text: "• ${context.tr.symbolValidation}",
                     size: FoontSize.font16,
                     weight: FontWeight.w400,
-                    color: passwords[2].check ? AppColors.green : AppColors.red,
+                    color: passwords[2].check
+                        ? context.colorScheme.success
+                        : context.colorScheme.error,
                   ).addPadding(bottom: 6.0),
                   MText(
                     text: "• ${context.tr.includeNumbersValidation}",
@@ -142,10 +150,10 @@ class _PasswordItemWidgetState extends State<PasswordItemWidget> {
                 size: FoontSize.font17,
                 weight: FontWeight.w400,
                 color: level < 1
-                    ? AppColors.red
+                    ? context.colorScheme.error
                     : level < 3
-                        ? AppColors.orange
-                        : AppColors.green,
+                        ? context.colorScheme.warning
+                        : context.colorScheme.success,
               ),
             ],
           ),

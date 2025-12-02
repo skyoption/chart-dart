@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:example/core/theme/app_themes.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:example/core/consts/constants.dart';
 import 'package:example/core/consts/exports.dart';
 import 'package:example/core/framework/app_prefs.dart';
@@ -12,6 +14,16 @@ class AppCubit extends Cubit<FlowState> {
   late AppThemeMode appThemeMode;
   late ValueNotifier<bool> isArSelected;
   late bool isDarkTheme;
+  final _storage = const FlutterSecureStorage(
+    aOptions: AndroidOptions(
+      encryptedSharedPreferences: true,
+      resetOnError: true,
+    ),
+    iOptions: IOSOptions(
+      accessibility: KeychainAccessibility.first_unlock,
+      synchronizable: true,
+    ),
+  );
 
   AppCubit(this._preferences) : super(FlowState()) {
     locale = Locale(_preferences.language);
@@ -41,5 +53,11 @@ class AppCubit extends Cubit<FlowState> {
     if (appThemeMode == AppThemeMode.system) {
       emit(state.copyWith(data: randomInt));
     }
+  }
+
+  bool get isFirstStartUp => _preferences.isFirstStartUp;
+
+  Future<void> clear() async {
+    if (isFirstStartUp) await _storage.deleteAll();
   }
 }

@@ -1,12 +1,12 @@
+import 'package:example/app.dart';
 import 'package:example/core/consts/exports.dart';
-import 'package:example/core/framework/functions.dart';
+import 'package:example/core/framework/socket/logging_notifier.dart';
 import 'package:example/core/framework/socket/socket.dart';
-import 'package:example/features/settings/logic/platform_settings_cubit.dart';
-import 'package:example/features/settings/logic/trading_logs_cubit.dart';
+import 'package:example/features/platform_settings/logic/platform_settings_cubit.dart';
+import 'package:example/features/platform_settings/logic/trading_logs_cubit.dart';
 import 'package:example/features/trade/data_sources/positions_data_source.dart';
 import 'package:example/features/trade/models/requests/close_position_request.dart';
 import 'package:example/injection/injectable.dart';
-import 'package:example/main.dart';
 
 ///[ClosePositionCubit]
 ///[Implementation]
@@ -15,46 +15,38 @@ class ClosePositionCubit extends Cubit<FlowState> {
   final PositionsDataSource dataSource;
   final PlatformSettingsCubit platformCubit;
 
-  ClosePositionCubit(
-    this.dataSource,
-    this.platformCubit,
-  ) : super(const FlowState()) {
-    init();
-  }
+  ClosePositionCubit(this.dataSource, this.platformCubit)
+      : super(const FlowState());
 
   String error = '';
-  int ticketNumber = 0;
   double profit = 0;
   String symbol = '';
 
   void init() {
     dataSource.onData(
-      onRequest: (success, message) {
-        if (success) {
-          error = '';
-          showTradeNotification(
-            platformSettings: platformCubit.settings,
-            message: SkyTrading.tr.positionClosedNotification(
-              DateTime.now().toLocal().toIso8601String().toDateOnly,
-              profit,
-              symbol,
-              ticketNumber,
-            ),
-            color: profit > 0 ? Coolors.green : Colors.redAccent,
-          );
-          getIt<TradingLogsCubit>()
-              .log("Position Number $ticketNumber Closed Successfully");
-
-          emit(state.copyWith(type: StateType.success));
-        } else {
-          getIt<TradingLogsCubit>()
-              .log("Error Closing Position Number $ticketNumber");
-          error = message;
-          if (platformCubit.settings.tradeNotificationSound) Player.failure();
-          emit(state.copyWith(data: Data.secure));
-        }
+      onRequestError: (message, id) => LoggingPusher.error(
+        message: message,
+        logErrorMessage: "Error Closing Position Number $id",
+      ),
+      onRequest: (message, id) {
+        LoggingPusher.success(
+          message: SkyTrading.tr.positionClosedNotification(
+            profit,
+            symbol,
+            id.toString(),
+          ),
+          logSuccessMessage: "Position Number $id Closed Successfully",
+          color: profit > 0
+              ? getIt<AppColorScheme>().light.success
+              : getIt<AppColorScheme>().light.error,
+        );
+        emit(state.copyWith(type: StateType.success, data: Data.secure));
       },
-      events: [SocketEvent.close_pos],
+      events: [
+        SocketEvent.ev_close_pos,
+        SocketEvent.close_pos,
+        SocketEvent.ev_pclose_pos,
+      ],
     );
   }
 
@@ -66,7 +58,6 @@ class ClosePositionCubit extends Cubit<FlowState> {
     required String profit,
     required String symbol,
   }) {
-    this.ticketNumber = ticketNumber;
     this.profit = double.parse(profit);
     this.symbol = symbol;
     dataSource.closePosition(
@@ -77,8 +68,9 @@ class ClosePositionCubit extends Cubit<FlowState> {
         tp: tp,
       ),
     );
-    getIt<TradingLogsCubit>()
-        .log("Requested To Close Position Number $ticketNumber");
+    getIt<TradingLogsCubit>().log(
+      "Requested To Close Position Number $ticketNumber",
+    );
   }
 
   @override

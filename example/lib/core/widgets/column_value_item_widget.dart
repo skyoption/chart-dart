@@ -41,12 +41,12 @@ class ColumnValueItemWidget extends StatelessWidget {
                 color: titleIsRisky && item.key == 0
                     ? int.parse(item.value) <
                             (int.parse(title.split('/')[1]) * 0.5)
-                        ? AppColors.primary
+                        ? context.colorScheme.primary
                         : int.parse(item.value) <
                                 (int.parse(title.split('/')[1]) * 0.75)
-                            ? AppColors.black
-                            : AppColors.red
-                    : titleColor ?? AppColors.black,
+                            ? context.colorScheme.onSurface
+                            : context.colorScheme.error
+                    : titleColor ?? context.colorScheme.onSurface,
                 weight: titleWeight,
               );
             }).toList(),
@@ -55,7 +55,7 @@ class ColumnValueItemWidget extends StatelessWidget {
           MText(
             text: title,
             size: titleFontSize,
-            color: titleColor ?? context.colorScheme.scrim,
+            color: titleColor ?? context.colorScheme.onSurface,
             weight: titleWeight,
           ).addPadding(bottom: 2.0),
         Row(

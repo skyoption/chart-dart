@@ -7,13 +7,13 @@ class CheckItemWidget extends StatefulWidget {
   final Function? onTap;
 
   const CheckItemWidget({
-    Key? key,
+    super.key,
     required this.onChange,
     required this.title,
     this.linkedTitle,
     this.completedTitle,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   State<CheckItemWidget> createState() => _CheckItemWidgetState();
@@ -28,8 +28,9 @@ class _CheckItemWidgetState extends State<CheckItemWidget> {
       children: [
         Container(
           decoration: BoxDecoration(
-            color:
-                check ? context.colorScheme.primary : context.colorScheme.scrim,
+            color: check
+                ? context.colorScheme.primary
+                : context.colorScheme.onSurface,
             borderRadius: MBorderRadius.set(all: 8.0),
             border: Border.all(
               color: check
@@ -41,7 +42,7 @@ class _CheckItemWidgetState extends State<CheckItemWidget> {
           child: Icon(
             Icons.check,
             color: check
-                ? context.colorScheme.scrim
+                ? context.colorScheme.onPrimary
                 : context.colorScheme.onSurface,
           ),
         ).addAction(

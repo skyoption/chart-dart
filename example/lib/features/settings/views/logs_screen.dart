@@ -1,9 +1,8 @@
-import 'package:example/core/builder/flow_builder.dart';
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/settings/logic/trading_logs_cubit.dart';
+import 'package:example/features/platform_settings/logic/trading_logs_cubit.dart';
 
+@RoutePage()
 class LogsScreen extends StatelessWidget {
-  static const String id = "LogsScreen";
   const LogsScreen({super.key});
 
   @override
@@ -18,15 +17,15 @@ class LogsScreen extends StatelessWidget {
             children: [
               Icon(
                 Icons.arrow_back,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 size: 30.0,
               ).addAction(
                 padding: const MPadding.set(end: 16.0),
-                onGesture: () => context.pop(),
+                onGesture: () => AutoRouterX(context).pop(),
               ),
               MText(
                 text: context.tr.logs,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 weight: FontWeight.w600,
                 size: FoontSize.font18,
               ),
@@ -55,14 +54,14 @@ class LogsScreen extends StatelessWidget {
                     children: [
                       MText(
                         text: "'${log.accountNumber}' : ",
-                        color: context.colorScheme.scrim,
+                        color: context.colorScheme.onSurface,
                         size: FoontSize.font16,
                         weight: FontWeight.w400,
                       ),
                       Flexible(
                         child: MText(
                           text: log.event,
-                          color: context.colorScheme.scrim,
+                          color: context.colorScheme.onSurface,
                           size: FoontSize.font16,
                           weight: FontWeight.w400,
                         ),

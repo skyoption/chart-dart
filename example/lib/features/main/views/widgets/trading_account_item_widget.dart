@@ -1,12 +1,13 @@
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/auth/models/connected_account_info_entity.dart';
 import 'package:example/features/settings/views/bottom_sheets/switch_account_bottom_sheet.dart';
 import 'package:example/features/settings/views/widgets/trade_value_item_widget.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:example/features/main/models/connected_account_info_entity.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class TradingAccountItemWidget extends StatefulWidget {
   final Function onDelete, onSwitch;
+  final bool isDefault;
   final Function(BuildContext)? onTap;
   final ConnectedAccountInfoEntity accountInfo;
   const TradingAccountItemWidget({
@@ -14,6 +15,7 @@ class TradingAccountItemWidget extends StatefulWidget {
     required this.onDelete,
     required this.onSwitch,
     this.onTap,
+    required this.isDefault,
     required this.accountInfo,
   });
 
@@ -33,47 +35,49 @@ class _TradingAccountItemWidgetState extends State<TradingAccountItemWidget>
     return Slidable(
       key: key,
       controller: controller,
-      endActionPane: ActionPane(
-        extentRatio: 0.2675,
-        motion: const ScrollMotion(),
-        dragDismissible: false,
-        children: [
-          VisibilityDetector(
-            key: GlobalKey(),
-            onVisibilityChanged: (info) {
-              isOpen = !isOpen;
-              setState(() {});
-            },
-            child: Container(
-              height: double.infinity,
-              padding: const MPadding.set(all: 16.0),
-              decoration: BoxDecoration(
-                color: context.colorScheme.error,
-                borderRadius: MBorderRadius.set(end: 21.0),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.delete,
-                    color: context.colorScheme.scrim,
-                    size: 30.0,
-                  ).addPadding(end: 6.0),
-                  MText(
-                    text: context.tr.delete,
-                    color: context.colorScheme.scrim,
-                    size: FoontSize.font16,
-                    weight: FontWeight.w500,
-                  )
-                ],
-              ),
-            ).addAction(
-              onGesture: () {
-                controller.close();
-              },
-            ),
-          )
-        ],
-      ),
+      endActionPane: !widget.isDefault
+          ? ActionPane(
+              extentRatio: 0.2675,
+              motion: const ScrollMotion(),
+              dragDismissible: false,
+              children: [
+                VisibilityDetector(
+                  key: GlobalKey(),
+                  onVisibilityChanged: (info) {
+                    isOpen = !isOpen;
+                    setState(() {});
+                  },
+                  child: Container(
+                    height: double.infinity,
+                    padding: const MPadding.set(all: 16.0),
+                    decoration: BoxDecoration(
+                      color: context.colorScheme.error,
+                      borderRadius: MBorderRadius.set(end: 21.0),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.delete,
+                          color: context.colorScheme.onSurface,
+                          size: 30.0,
+                        ).addPadding(end: 6.0),
+                        MText(
+                          text: context.tr.delete,
+                          color: context.colorScheme.onSurface,
+                          size: FoontSize.font16,
+                          weight: FontWeight.w500,
+                        )
+                      ],
+                    ),
+                  ).addAction(
+                    onGesture: () {
+                      controller.close();
+                    },
+                  ),
+                )
+              ],
+            )
+          : null,
       child: SizedBox(
         width: context.width,
         child: Stack(
@@ -84,7 +88,7 @@ class _TradingAccountItemWidgetState extends State<TradingAccountItemWidget>
                   end: isOpen ? 0.0 : 21.0,
                   start: 21.0,
                 ),
-                color: context.colorScheme.primaryContainer,
+                color: context.colorScheme.surfaceContainerLow,
                 border: Border.all(
                   color: context.colorScheme.outline,
                 ),
@@ -101,7 +105,7 @@ class _TradingAccountItemWidgetState extends State<TradingAccountItemWidget>
                         text: '${widget.accountInfo.id}',
                         size: FoontSize.font16,
                         weight: FontWeight.w600,
-                        color: context.colorScheme.scrim,
+                        color: context.colorScheme.onSurface,
                       ).addPadding(top: 5),
                       MText(
                         text: widget.accountInfo.group.toUpperCase(),
@@ -120,9 +124,21 @@ class _TradingAccountItemWidgetState extends State<TradingAccountItemWidget>
                       TradeValueItemWidget(
                         title: context.tr.balance,
                         value: '${widget.accountInfo.balance}',
-                        titleColor: context.colorScheme.scrim,
+                        titleColor: context.colorScheme.onSurface,
                         titleSize: FoontSize.font14,
-                        valueColor: context.colorScheme.scrim,
+                        valueColor: context.colorScheme.onSurface,
+                        valueWeight: FontWeight.w600,
+                        titleWeight: FontWeight.w400,
+                        valueSize: FoontSize.font14,
+                      ).addPadding(end: 30.0),
+                      TradeValueItemWidget(
+                        title: context.tr.accountType,
+                        value: widget.accountInfo.isMainAccount
+                            ? context.tr.main
+                            : context.tr.spectator,
+                        titleColor: context.colorScheme.onSurface,
+                        titleSize: FoontSize.font14,
+                        valueColor: context.colorScheme.onSurface,
                         valueWeight: FontWeight.w600,
                         titleWeight: FontWeight.w400,
                         valueSize: FoontSize.font14,
@@ -130,9 +146,9 @@ class _TradingAccountItemWidgetState extends State<TradingAccountItemWidget>
                       TradeValueItemWidget(
                         title: context.tr.leverageTitle,
                         value: '1:${widget.accountInfo.leverage}',
-                        titleColor: context.colorScheme.scrim,
+                        titleColor: context.colorScheme.onSurface,
                         titleSize: FoontSize.font14,
-                        valueColor: context.colorScheme.scrim,
+                        valueColor: context.colorScheme.onSurface,
                         valueWeight: FontWeight.w600,
                         titleWeight: FontWeight.w400,
                         valueSize: FoontSize.font14,
@@ -158,7 +174,7 @@ class _TradingAccountItemWidgetState extends State<TradingAccountItemWidget>
         ),
       ).addAction(
         onGesture: () {
-          if (!widget.accountInfo.isDefault) {
+          if (!widget.isDefault) {
             showSwitchAccountBottomSheet(
               context: context,
               onSwitch: widget.onSwitch,

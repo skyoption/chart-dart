@@ -17,7 +17,7 @@ class ChooseTimeframeItemWidget extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: isSelected
-            ? context.colorScheme.surfaceBright
+            ? context.colorScheme.primary
             : context.colorScheme.surfaceContainer,
         borderRadius: MBorderRadius.set(all: 12.0),
       ),
@@ -30,7 +30,7 @@ class ChooseTimeframeItemWidget extends StatelessWidget {
         text: title,
         weight: FontWeight.w400,
         size: FoontSize.font14,
-        color: context.colorScheme.scrim,
+        color: context.colorScheme.onSurface,
       ),
     ).addAction(
       onGesture: () {

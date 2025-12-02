@@ -21,20 +21,11 @@ abstract class HistoryDataSource {
 
   Future<List<HistoryActionEntity>> getCachedActions();
 
-  void getAllPositions({
-    required int from,
-    required int to,
-  });
+  void getAllPositions({required int from, required int to});
 
-  void getAllPending({
-    required int from,
-    required int to,
-  });
+  void getAllPending({required int from, required int to});
 
-  void getAllActions({
-    required int from,
-    required int to,
-  });
+  void getAllActions({required int from, required int to});
 
   void onData({
     required List<SocketEvent> events,
@@ -61,10 +52,7 @@ class HistoryDataSourceImp implements HistoryDataSource {
   List<HistoryActionEntity> actions = [];
 
   @override
-  void getAllPositions({
-    required int from,
-    required int to,
-  }) {
+  void getAllPositions({required int from, required int to}) {
     socket.send(
       event: SocketEvent.get_history_pos,
       data: GetHistoryRequest(from: from, to: to).toJson(),
@@ -95,10 +83,7 @@ class HistoryDataSourceImp implements HistoryDataSource {
   }
 
   @override
-  void getAllActions({
-    required int from,
-    required int to,
-  }) {
+  void getAllActions({required int from, required int to}) {
     socket.send(
       event: SocketEvent.get_actions,
       data: GetHistoryRequest(from: from, to: to).toJson(),
@@ -106,10 +91,7 @@ class HistoryDataSourceImp implements HistoryDataSource {
   }
 
   @override
-  void getAllPending({
-    required int from,
-    required int to,
-  }) async {
+  void getAllPending({required int from, required int to}) async {
     socket.send(
       event: SocketEvent.get_history_pending,
       data: GetHistoryRequest(from: from, to: to).toJson(),
@@ -131,7 +113,7 @@ class HistoryDataSourceImp implements HistoryDataSource {
     listener = socket.onData(
       events: events,
       onReceiveRequest: (receiver) async {
-        kPrint(receiver.data);
+        kPrint("Event: ${receiver.event}\nData: ${receiver.data}");
 
         if (receiver.event == SocketEvent.get_history_pos) {
           _handleHistoryPositions(

@@ -59,26 +59,30 @@ class PositionEntity {
 }
 
 extension OnPosition on PositionEntity {
-  double float(SymbolModel item) {
+  double? float(SymbolModel item) {
+    double value = 0;
     if (direction == 'BUY') {
-      return (item.bid - openPrice) *
+      value = (item.bid - openPrice) *
+          item.contractSize *
+          volumeCurrent *
+          item.profitRatio;
+    } else {
+      value = (openPrice - item.ask) *
           item.contractSize *
           volumeCurrent *
           item.profitRatio;
     }
-    return (openPrice - item.ask) *
-        item.contractSize *
-        volumeCurrent *
-        item.profitRatio;
+    if (value == 0) return null;
+    return value;
   }
 
-//
-// distance * contractSize * currentVolume * profitRatio
-//
-// if buy :
-// distance = currency bid - openPrice
-// if sell:
-// distance  = openPrice - currentAsk
+  //
+  // distance * contractSize * currentVolume * profitRatio
+  //
+  // if buy :
+  // distance = currency bid - openPrice
+  // if sell:
+  // distance  = openPrice - currentAsk
 }
 
 extension PositionSort on List<PositionEntity> {

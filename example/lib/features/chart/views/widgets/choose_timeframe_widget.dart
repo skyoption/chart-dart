@@ -31,7 +31,7 @@ class _ChooseTimeframeWidgetState extends State<ChooseTimeframeWidget> {
         text: widget.timeframe.name,
         weight: FontWeight.w400,
         size: FoontSize.font14,
-        color: context.colorScheme.scrim,
+        color: context.colorScheme.onSurface,
       ),
     ).addAction(
       onGesture: () {

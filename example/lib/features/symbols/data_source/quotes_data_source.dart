@@ -1,12 +1,13 @@
 import 'dart:async';
 
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:example/core/consts/exports.dart';
+import 'package:example/core/framework/functions.dart';
 import 'package:example/core/framework/objectBox.dart';
 import 'package:example/core/framework/socket/socket.dart';
 import 'package:example/features/symbols/models/schema/symbol_model.dart';
 import 'package:example/features/symbols/models/symbol_entity.dart';
 import 'package:example/objectbox.g.dart' as Box;
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 abstract class QuotesDataSource {
   List<String> categories = [];
@@ -67,9 +68,10 @@ class QuotesDataSourceImp implements QuotesDataSource {
         SocketEvent.subscribe,
         SocketEvent.unsubscribe,
         SocketEvent.update_data,
-        SocketEvent.symbol_update
+        SocketEvent.symbol_update,
       ],
       onReceiveRequest: (receiver) async {
+        kPrint("Event: ${receiver.event}\nData: ${receiver.data}");
         if (receiver.event == SocketEvent.subscribe) {
           final symbol = SymbolModel.fromJson(receiver.data);
           await _addSymbol(symbol.copyToEntity());
@@ -90,31 +92,38 @@ class QuotesDataSourceImp implements QuotesDataSource {
       onUpdateSymbol: (data) async {
         if (data.contains('&')) {
           final values = data.split('&');
-          final item = mappedSymbol[values[0]];
-          if (item != null) {
+          final symbol = mappedSymbol[values[0]];
+          if (symbol != null) {
             if (values.last == '1') {
               final value = double.tryParse(values[1]) ?? 0.0;
-              final ask = value + (item.askDifference * item.contractSize);
-              final color = item.ask < ask ? Colors.red : Colors.green;
-              item.askColor.value = color;
-              item.ask = ask;
-              item.askChange.value = ask;
-              item.askColorHex = colorToHex(color);
+              final ask = truncateToFixedDecimal(
+                value + symbol.askDifference,
+                symbol.digits,
+              );
+              final color = symbol.ask < ask ? Colors.red : Colors.green;
+              symbol.askColor.value = color;
+              symbol.ask = ask;
+              symbol.askChange.value = ask;
+              symbol.askColorHex = colorToHex(color);
             } else {
               final value = double.tryParse(values[1]) ?? 0.0;
-              final bed = value + (item.bidDifference * item.contractSize);
-              final color = item.bid > bed ? Colors.red : Colors.green;
-              item.bidColor.value = color;
-              item.bid = bed;
-              item.bidChange.value = bed;
-              item.bidColorHex = colorToHex(color);
+              final bed = truncateToFixedDecimal(
+                value + symbol.bidDifference,
+                symbol.digits,
+              );
+              final color = symbol.bid > bed ? Colors.red : Colors.green;
+              symbol.bidColor.value = color;
+              symbol.bid = bed;
+              symbol.bidChange.value = bed;
+              symbol.bidColorHex = colorToHex(color);
             }
-            final tick = (item.ask - item.bid) / item.tickSize;
-            item.tick.value = tick;
-            item.timestamp = DateTime.now().millisecondsSinceEpoch;
-            item.dateTime.value = DateTime.now().millisecondsSinceEpoch;
+            final spread = (symbol.ask - symbol.bid) / symbol.tickSize;
+            symbol.spread.value = spread;
+            symbol.timestamp = DateTime.now().millisecondsSinceEpoch;
+            symbol.dateTime.value = symbol.timestamp;
+            mappedSymbol[values[0]] = symbol;
             if (DateTime.now().difference(updatedAt).inSeconds >= 5) {
-              await updateSymbol(item);
+              await updateSymbol(symbol);
               updatedAt = DateTime.now();
             }
             onUpdateSymbol(mappedSymbol.values.toList());
@@ -143,20 +152,12 @@ class QuotesDataSourceImp implements QuotesDataSource {
 
   @override
   void subscribeSymbol(String symbol) {
-    socket.send(
-      event: SocketEvent.subscribe,
-      data: {
-        'symbol': symbol,
-      },
-    );
+    socket.send(event: SocketEvent.subscribe, data: {'symbol': symbol});
   }
 
   @override
   void unsubscribeSymbol(String symbol) {
-    socket.send(
-      event: SocketEvent.unsubscribe,
-      data: {'symbol': symbol},
-    );
+    socket.send(event: SocketEvent.unsubscribe, data: {'symbol': symbol});
   }
 
   Future<void> _addSymbol(SymbolEntity value) async {
@@ -225,6 +226,7 @@ class QuotesDataSourceImp implements QuotesDataSource {
         return mappedSymbol[e.name]!;
       }).toList();
     } catch (e) {
+      kPrint(e);
       return [];
     }
   }
@@ -247,6 +249,9 @@ class QuotesDataSourceImp implements QuotesDataSource {
   @override
   Future<void> sendToSubscribe() async {
     final symbols = objectBox.symbolBox!.getAll();
+    for (var item in symbols) {
+      kPrint(item.name);
+    }
     if (symbols.isEmpty) {
       for (var item in ['GBPUSD', 'EURUSD', 'XAUUSD']) {
         subscribeSymbol(item);

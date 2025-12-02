@@ -1,9 +1,9 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/symbols/logic/quotes_cubit.dart';
-import 'package:example/features/symbols/models/symbol_entity.dart';
 import 'package:example/features/symbols/views/bottom_sheets/quote_bottom_sheet.dart';
 import 'package:example/features/symbols/views/widgets/quote_price_item_widget.dart';
 import 'package:example/features/symbols/views/widgets/quote_slogo_item_widget.dart';
+import 'package:example/features/symbols/logic/quotes_cubit.dart';
+import 'package:example/features/symbols/models/symbol_entity.dart';
 
 import 'currencies_item_widget.dart';
 
@@ -16,7 +16,7 @@ class QuotesSimpleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: context.colorScheme.primaryContainer,
+        color: context.colorScheme.surfaceContainerLow,
         border: Border.all(
           color: context.colorScheme.outline,
         ),
@@ -40,7 +40,7 @@ class QuotesSimpleWidget extends StatelessWidget {
                     return MSvg(
                       name: Svgs.fav,
                       color: value
-                          ? AppColors.orange
+                          ? context.colorScheme.warning
                           : context.colorScheme.onSurface,
                       height: 21.0,
                       width: 21.0,
@@ -64,7 +64,7 @@ class QuotesSimpleWidget extends StatelessWidget {
                     CurrenciesItemWidget(item: item.symbol),
                     MText(
                       text: item.symbol.toUpperCase(),
-                      color: context.colorScheme.scrim,
+                      color: context.colorScheme.onSurface,
                       weight: FontWeight.w600,
                       size: FoontSize.font16,
                     ),
@@ -94,7 +94,7 @@ class QuotesSimpleWidget extends StatelessWidget {
                     height: 18.0,
                   ).addPadding(end: 2.0),
                   ValueListenableBuilder(
-                    valueListenable: item.tick,
+                    valueListenable: item.spread,
                     builder: (context, value, child) {
                       return MText(
                         text: value.toStringAsFixed(0),

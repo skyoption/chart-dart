@@ -10,9 +10,8 @@ import 'package:example/features/trade/models/order_entity.dart';
 class OrdersCubit extends Cubit<FlowState> {
   final OrdersDataSource ordersDataSource;
 
-  OrdersCubit(
-    this.ordersDataSource,
-  ) : super(const FlowState(type: StateType.success));
+  OrdersCubit(this.ordersDataSource)
+      : super(const FlowState(type: StateType.success));
 
   List<OrderEntity> orders = [];
   List<OrderEntity> filteredOrders = [];
@@ -25,6 +24,8 @@ class OrdersCubit extends Cubit<FlowState> {
   );
 
   Future<void> init() async {
+    orders = [];
+    filteredOrders = [];
     ordersDataSource.onData(
       events: [
         SocketEvent.get_all_pending,
@@ -40,6 +41,8 @@ class OrdersCubit extends Cubit<FlowState> {
               value.symbol == currentFilterSymbol) {
             filteredOrders.insert(0, value);
           }
+          orders.sortByConfig(currentSort);
+          filteredOrders.sortByConfig(currentSort);
         }
         emit(state.copyWith(data: Data.secure, type: StateType.success));
       },
@@ -56,30 +59,39 @@ class OrdersCubit extends Cubit<FlowState> {
       onModifyOrderRequest: (value) {
         final index = orders.indexWhere((e) => e.id == value.id);
         if (index != -1) orders[index] = value;
-        final filteredIndex =
-            filteredOrders.indexWhere((e) => e.id == value.id);
+        final filteredIndex = filteredOrders.indexWhere(
+          (e) => e.id == value.id,
+        );
         if (filteredIndex != -1) {
           final item = orders[filteredIndex];
           filteredOrders.removeAt(filteredIndex);
           emit(state.copyWith(data: item, type: StateType.success));
         }
+        orders.sortByConfig(currentSort);
+        filteredOrders.sortByConfig(currentSort);
       },
       onAllOrderRequest: (items) {
         orders = items..sortByConfig(currentSort);
         filteredOrders = orders.filterBySymbol(currentFilterSymbol);
+        filteredOrders.sortByConfig(currentSort);
         emit(state.copyWith(data: Data.secure, type: StateType.success));
       },
     );
-    Future.delayed(
-      Duration(milliseconds: 100),
-      ordersDataSource.getAllOrders,
-    );
+    Future.delayed(Duration(milliseconds: 100), ordersDataSource.getAllOrders);
+  }
+
+  void resetOrders() {
+    orders = [];
+    filteredOrders = [];
+    ordersDataSource.getAllOrders();
+    emit(state.copyWith(data: Data.secure, type: StateType.success));
   }
 
   Future<void> getCachedOrders() async {
     orders = await ordersDataSource.getCachedOrders();
     orders.sortByConfig(currentSort);
     filteredOrders = orders.filterBySymbol(currentFilterSymbol);
+    filteredOrders.sortByConfig(currentSort);
     emit(state.copyWith(data: Data.secure, type: StateType.success));
   }
 
@@ -92,6 +104,7 @@ class OrdersCubit extends Cubit<FlowState> {
   void filterBySymbol(String symbol) {
     currentFilterSymbol = symbol;
     filteredOrders = orders.filterBySymbol(currentFilterSymbol);
+    filteredOrders.sortByConfig(currentSort);
     emit(state.copyWith(data: Data.secure, type: StateType.success));
   }
 

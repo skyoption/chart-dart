@@ -1,8 +1,7 @@
-import 'package:example/core/builder/flow_builder.dart';
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/trade_history/logic/history_actions_cubit.dart';
 import 'package:example/features/trade_history/views/widgets/actions_profit_item_widget.dart';
 import 'package:example/features/trade_history/views/widgets/history_action_item_widget.dart';
+import 'package:example/features/trade_history/logic/history_actions_cubit.dart';
 
 class ActionsTab extends StatelessWidget {
   const ActionsTab({super.key});

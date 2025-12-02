@@ -1,6 +1,6 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/core/enums/symbol_sort.dart';
 import 'package:example/core/widgets/sheet_selection_item.dart';
+import 'package:example/core/enums/symbol_sort.dart';
 
 class QuoteSortBottomSheet extends StatefulWidget {
   final SymbolSortConfig symbolSortConfig;
@@ -40,7 +40,7 @@ class _QuoteSortBottomSheetState extends State<QuoteSortBottomSheet> {
       }
     });
     widget.onSortSelection(currentConfig);
-    context.pop();
+    AutoRouterX(context).pop();
   }
 
   @override
@@ -53,7 +53,7 @@ class _QuoteSortBottomSheetState extends State<QuoteSortBottomSheet> {
               alignment: Alignment.center,
               child: MText(
                 text: context.tr.sortBy,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 weight: FontWeight.w600,
                 size: FoontSize.font20,
               ),
@@ -63,9 +63,9 @@ class _QuoteSortBottomSheetState extends State<QuoteSortBottomSheet> {
               child: Icon(
                 Icons.clear,
                 size: 30.0,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
               ).addAction(
-                onGesture: () => context.pop(),
+                onGesture: () => AutoRouterX(context).pop(),
               ),
             )
           ],
@@ -96,7 +96,7 @@ void showQuoteSortBottomSheet({
   showMBottomSheet(
     context: context,
     removeTransparentBackground: true,
-    backgorundColor: context.colorScheme.primaryContainer,
+    backgorundColor: context.colorScheme.scrim,
     bottomSheet: QuoteSortBottomSheet(
       symbolSortConfig: symbolSortConfig,
       onSortSelection: onSortChange,

@@ -2,8 +2,8 @@ import 'package:example/core/consts/exports.dart';
 import 'package:example/core/enums/history_sort.dart';
 import 'package:example/core/framework/socket/socket.dart';
 import 'package:example/features/trade_history/data_sources/history_data_source.dart';
+import 'package:example/features/trade_history/models/filters.dart';
 import 'package:example/features/trade_history/models/history_action_entity.dart';
-import 'package:example/features/trade_history/views/filter_history_screen.dart';
 
 ///[PositionsCubit]
 ///[Implementation]
@@ -11,9 +11,7 @@ import 'package:example/features/trade_history/views/filter_history_screen.dart'
 class HistoryActionsCubit extends Cubit<FlowState> {
   final HistoryDataSource historyDataSource;
 
-  HistoryActionsCubit(
-    this.historyDataSource,
-  ) : super(const FlowState());
+  HistoryActionsCubit(this.historyDataSource) : super(const FlowState());
 
   List<HistoryActionEntity> actions = [];
 
@@ -48,11 +46,7 @@ class HistoryActionsCubit extends Cubit<FlowState> {
     emit(state.copyWith(data: Data.secure));
   }
 
-  Future<void> getAll({
-    String? type,
-    int? from,
-    int? to,
-  }) async {
+  Future<void> getAll({String? type, int? from, int? to}) async {
     emit(state.copyWith(type: StateType.none));
     if (type != null) {
       selectedTimeFilter = type;
@@ -61,8 +55,8 @@ class HistoryActionsCubit extends Cubit<FlowState> {
     }
     from ??= customFromTime ??
         DateTime.now().subtract(const Duration(days: 7)).toStartTime;
-    to ??= customToTime ??
-        DateTime.now().subtract(const Duration(days: 7)).toEndTime;
+    to ??= customToTime ?? DateTime.now().toEndTime;
+    kPrint("GET ALL ACTIONS ${from.toDateTime()} ${to.toDateTime()}");
     historyDataSource.getAllActions(from: from, to: to);
   }
 

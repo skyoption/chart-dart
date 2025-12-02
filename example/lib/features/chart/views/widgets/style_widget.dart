@@ -19,31 +19,23 @@ class StyleWidget extends StatelessWidget {
     return ValueListenableBuilder<GraphStyle>(
       valueListenable: graphStyle,
       builder: (context, graphStyle, child) {
-        return Container(
-          height: 35.0,
-          decoration: BoxDecoration(
-            color: context.colorScheme.surfaceContainer,
-            borderRadius: MBorderRadius.set(all: 8.0),
-          ),
-          padding: const MPadding.set(horizontal: 12.0),
-          child: MSvg(
-            name: Svgs.candles,
-            width: 24.0,
-            height: 24.0,
-            color: context.colorScheme.scrim,
-          ).addAction(
-            onGesture: () {
-              onGesture();
-              showChooseChartStyleBottomSheet(
-                context: context,
-                graphStyle: graphStyle,
-                onGraphStyleChanged: (graphStyle) {
-                  this.graphStyle.value = graphStyle;
-                  onGraphStyleChanged(graphStyle);
-                },
-              );
-            },
-          ),
+        return MSvg(
+          name: Svgs.candles,
+          width: 24.0,
+          height: 24.0,
+          color: context.colorScheme.onSurface,
+        ).addAction(
+          onGesture: () {
+            onGesture();
+            showChooseChartStyleBottomSheet(
+              context: context,
+              graphStyle: graphStyle,
+              onGraphStyleChanged: (graphStyle) {
+                this.graphStyle.value = graphStyle;
+                onGraphStyleChanged(graphStyle);
+              },
+            );
+          },
         );
       },
     );

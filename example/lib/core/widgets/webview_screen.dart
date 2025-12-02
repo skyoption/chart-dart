@@ -97,13 +97,13 @@ class _WebViewWidgetState extends State<WebViewScreen> {
                     alignment: AlignmentDirectional.centerStart,
                     child: Icon(
                       Icons.arrow_back_rounded,
-                      color: context.colorScheme.scrim,
+                      color: context.colorScheme.onSurface,
                       size: 28.0,
                     ).addAction(onGesture: () async {
                       if (await controller.canGoBack()) {
                         controller.goBack();
                       } else {
-                        context.pop();
+                        AutoRouterX(context).pop();
                       }
                     }),
                   ),
@@ -113,7 +113,7 @@ class _WebViewWidgetState extends State<WebViewScreen> {
                       text: widget.title,
                       size: FoontSize.font16,
                       weight: FontWeight.w600,
-                      color: context.colorScheme.scrim,
+                      color: context.colorScheme.onSurface,
                     ),
                   ),
                   if (widget.suffix != null)

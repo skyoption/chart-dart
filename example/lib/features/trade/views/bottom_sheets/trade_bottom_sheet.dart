@@ -1,6 +1,6 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/core/enums/position_sort.dart';
 import 'package:example/core/widgets/sheet_selection_item.dart';
+import 'package:example/core/enums/position_sort.dart';
 
 class TradeBottomSheet extends StatefulWidget {
   final PositionSortConfig initialConfig;
@@ -37,7 +37,7 @@ class _TradeBottomSheetState extends State<TradeBottomSheet> {
               alignment: Alignment.center,
               child: MText(
                 text: context.tr.sortBy,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 weight: FontWeight.w600,
                 size: FoontSize.font20,
               ),
@@ -47,9 +47,9 @@ class _TradeBottomSheetState extends State<TradeBottomSheet> {
               child: Icon(
                 Icons.clear,
                 size: 30.0,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
               ).addAction(
-                onGesture: () => context.pop(),
+                onGesture: () => AutoRouterX(context).pop(),
               ),
             )
           ],
@@ -78,7 +78,7 @@ class _TradeBottomSheetState extends State<TradeBottomSheet> {
                 }
               });
               widget.onSortSelection(currentConfig);
-              context.pop();
+              AutoRouterX(context).pop();
             },
           );
         }),
@@ -96,7 +96,7 @@ void showTradeBottomSheet({
   showMBottomSheet(
     context: context,
     removeTransparentBackground: true,
-    backgorundColor: context.colorScheme.primaryContainer,
+    backgorundColor: context.colorScheme.scrim,
     bottomSheet: TradeBottomSheet(
       initialConfig: currentSort,
       onSortSelection: onSortSelection,

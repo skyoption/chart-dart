@@ -19,6 +19,7 @@ HistoryActionModel _$HistoryActionModelFromJson(Map<String, dynamic> json) =>
       symbol: json['symbolName'] as String? ?? '',
       commission: (json['commission'] as num?)?.toDouble() ?? 0,
       account: (json['account'] as num?)?.toInt() ?? 0,
+      tradeId: (json['tradeId'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$HistoryActionModelToJson(HistoryActionModel instance) =>
@@ -34,4 +35,5 @@ Map<String, dynamic> _$HistoryActionModelToJson(HistoryActionModel instance) =>
       'price': instance.price,
       'profit': instance.profit,
       'createdAt': instance.createdAt,
+      'tradeId': instance.tradeId,
     };

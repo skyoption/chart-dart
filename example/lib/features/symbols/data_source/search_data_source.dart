@@ -52,7 +52,7 @@ class SearchDataSourceImp implements SearchDataSource {
     listener = socket.onData(
       events: [SocketEvent.get_all_symbols],
       onReceiveRequest: (receiver) {
-        kPrint(receiver.data);
+        kPrint("Event: ${receiver.event}\nData: ${receiver.data}");
         for (var item in receiver.data['symbols']) {
           final value = SymbolModel.fromJson(item);
           if (categories[value.sector] == null) {

@@ -63,7 +63,7 @@ import 'app_localizations_en.dart';
 /// property.
 abstract class AppLocalizations {
   AppLocalizations(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -86,16 +86,16 @@ abstract class AppLocalizations {
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
       <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ar'),
-    Locale('en')
+    Locale('en'),
   ];
 
   /// No description provided for @passwordIsShort.
@@ -284,6 +284,24 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get settings;
 
+  /// No description provided for @value.
+  ///
+  /// In en, this message translates to:
+  /// **'Value'**
+  String get value;
+
+  /// No description provided for @switch_.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch'**
+  String get switch_;
+
+  /// No description provided for @usd.
+  ///
+  /// In en, this message translates to:
+  /// **'USD'**
+  String get usd;
+
   /// No description provided for @quotes.
   ///
   /// In en, this message translates to:
@@ -301,6 +319,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Trade'**
   String get trade;
+
+  /// No description provided for @seconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Seconds'**
+  String get seconds;
 
   /// No description provided for @history.
   ///
@@ -878,41 +902,77 @@ abstract class AppLocalizations {
   /// **'Chart Line Size'**
   String get chartLineSize;
 
-  /// No description provided for @tradeNotification.
+  /// No description provided for @tradePositionNotification.
   ///
   /// In en, this message translates to:
-  /// **'Trade Notification'**
-  String get tradeNotification;
+  /// **'Position Notification'**
+  String get tradePositionNotification;
 
-  /// No description provided for @tradeNotificationSound.
+  /// No description provided for @tradePositionNotificationSound.
   ///
   /// In en, this message translates to:
-  /// **'Trade Sound'**
-  String get tradeNotificationSound;
+  /// **'Position Sound'**
+  String get tradePositionNotificationSound;
 
-  /// No description provided for @tradeNotificationVibration.
+  /// No description provided for @tradePositionNotificationVibration.
   ///
   /// In en, this message translates to:
-  /// **'Trade Vibration'**
-  String get tradeNotificationVibration;
+  /// **'Position Vibration'**
+  String get tradePositionNotificationVibration;
 
-  /// No description provided for @tradeNotificationSubtitle.
+  /// No description provided for @tradePositionNotificationSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Control Trade\'s Notification'**
-  String get tradeNotificationSubtitle;
+  /// **'Control Position\'s Notification'**
+  String get tradePositionNotificationSubtitle;
 
-  /// No description provided for @tradeNotificationSoundSubtitle.
+  /// No description provided for @tradePositionNotificationSoundSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Control Trade\'s Notification Sound'**
-  String get tradeNotificationSoundSubtitle;
+  /// **'Control Position\'s Notification Sound'**
+  String get tradePositionNotificationSoundSubtitle;
 
-  /// No description provided for @tradeNotificationVibrationSubtitle.
+  /// No description provided for @tradePositionNotificationVibrationSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Control Trade\'s Notification Vibration'**
-  String get tradeNotificationVibrationSubtitle;
+  /// **'Control Position\'s Notification Vibration'**
+  String get tradePositionNotificationVibrationSubtitle;
+
+  /// No description provided for @tradeOrderNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Trade Order Notification'**
+  String get tradeOrderNotification;
+
+  /// No description provided for @tradeOrderNotificationSound.
+  ///
+  /// In en, this message translates to:
+  /// **'Trade Order Sound'**
+  String get tradeOrderNotificationSound;
+
+  /// No description provided for @tradeOrderNotificationVibration.
+  ///
+  /// In en, this message translates to:
+  /// **'Trade Order Vibration'**
+  String get tradeOrderNotificationVibration;
+
+  /// No description provided for @tradeOrderNotificationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Control Trade\'s Order Notification'**
+  String get tradeOrderNotificationSubtitle;
+
+  /// No description provided for @tradeOrderNotificationSoundSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Control Trade\'s Order Notification Sound'**
+  String get tradeOrderNotificationSoundSubtitle;
+
+  /// No description provided for @tradeOrderNotificationVibrationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Control Trade\'s Order Notification Vibration'**
+  String get tradeOrderNotificationVibrationSubtitle;
 
   /// No description provided for @noSymbolsWasFound.
   ///
@@ -935,15 +995,50 @@ abstract class AppLocalizations {
   /// No description provided for @positionClosedNotification.
   ///
   /// In en, this message translates to:
-  /// **'Position: {ticketNumber} Closed for {symbol} With Profit {profit} At {date}'**
+  /// **'Position:#{ticketNumber} on {symbol} closed with profit {profit}'**
   String positionClosedNotification(
-      Object date, Object profit, Object symbol, Object ticketNumber);
+    Object profit,
+    Object symbol,
+    Object ticketNumber,
+  );
 
   /// No description provided for @positionOpenedNotification.
   ///
   /// In en, this message translates to:
-  /// **'Positioned With Type {type} Opened For {symbol} At {date}'**
-  String positionOpenedNotification(Object date, Object symbol, Object type);
+  /// **'New position: {direction} {symbol} @ {volume}'**
+  String positionOpenedNotification(
+    Object direction,
+    Object symbol,
+    Object volume,
+  );
+
+  /// No description provided for @positionModifiedNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Position:#{id} on {symbol} SL/TP Modified'**
+  String positionModifiedNotification(Object id, Object symbol);
+
+  /// No description provided for @orderClosedNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Order:#{ticketNumber} on {symbol} closed with profit {profit}'**
+  String orderClosedNotification(
+    Object profit,
+    Object symbol,
+    Object ticketNumber,
+  );
+
+  /// No description provided for @orderOpenedNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'New Order: {direction} {symbol} @ {price}'**
+  String orderOpenedNotification(Object direction, Object price, Object symbol);
+
+  /// No description provided for @orderModifiedNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Order:#{id} on {symbol} SL/TP Modified'**
+  String orderModifiedNotification(Object id, Object symbol);
 
   /// No description provided for @fullName.
   ///
@@ -1806,25 +1901,25 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeToSky5.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to\\nSky 5'**
+  /// **'Welcome to\nSky 5'**
   String get welcomeToSky5;
 
   /// No description provided for @globalMarketsAtYourFingertips.
   ///
   /// In en, this message translates to:
-  /// **'Global Markets at\\nYour Fingertips'**
+  /// **'Global Markets at\nYour Fingertips'**
   String get globalMarketsAtYourFingertips;
 
   /// No description provided for @advancedTradingTools.
   ///
   /// In en, this message translates to:
-  /// **'Advanced\\nTrading Tools'**
+  /// **'Advanced\nTrading Tools'**
   String get advancedTradingTools;
 
   /// No description provided for @realTimeMarketInsights.
   ///
   /// In en, this message translates to:
-  /// **'Real-Time Market\\nInsights'**
+  /// **'Real-Time Market\nInsights'**
   String get realTimeMarketInsights;
 
   /// No description provided for @searchBySymbolDots.
@@ -2474,6 +2569,695 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profit'**
   String get historyProfit;
+
+  /// No description provided for @floating.
+  ///
+  /// In en, this message translates to:
+  /// **'Floating'**
+  String get floating;
+
+  /// No description provided for @cursorColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Cursor Color'**
+  String get cursorColor;
+
+  /// No description provided for @thereIsNoServerSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'There is no server selected'**
+  String get thereIsNoServerSelected;
+
+  /// No description provided for @searchByServerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by Server Name'**
+  String get searchByServerName;
+
+  /// No description provided for @candleUpColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Candle Up Color'**
+  String get candleUpColor;
+
+  /// No description provided for @candleDownColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Candle Down Color'**
+  String get candleDownColor;
+
+  /// No description provided for @totalWinPositions.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Win Positions'**
+  String get totalWinPositions;
+
+  /// No description provided for @totalLosePositions.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Lose Positions'**
+  String get totalLosePositions;
+
+  /// No description provided for @netProfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Net Profit'**
+  String get netProfit;
+
+  /// No description provided for @winPositions.
+  ///
+  /// In en, this message translates to:
+  /// **'Win Positions'**
+  String get winPositions;
+
+  /// No description provided for @losePositions.
+  ///
+  /// In en, this message translates to:
+  /// **'Lose Positions'**
+  String get losePositions;
+
+  /// No description provided for @lot.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot'**
+  String get lot;
+
+  /// No description provided for @money.
+  ///
+  /// In en, this message translates to:
+  /// **'Money'**
+  String get money;
+
+  /// No description provided for @pips.
+  ///
+  /// In en, this message translates to:
+  /// **'Pips'**
+  String get pips;
+
+  /// No description provided for @orderInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Order information'**
+  String get orderInformation;
+
+  /// No description provided for @orderSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Send'**
+  String get orderSend;
+
+  /// No description provided for @openNewPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Open new position'**
+  String get openNewPosition;
+
+  /// No description provided for @stopLoss.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop Loss'**
+  String get stopLoss;
+
+  /// No description provided for @takeProfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Take Profit'**
+  String get takeProfit;
+
+  /// No description provided for @actionId.
+  ///
+  /// In en, this message translates to:
+  /// **'Action Id'**
+  String get actionId;
+
+  /// No description provided for @positionId.
+  ///
+  /// In en, this message translates to:
+  /// **'Position Id'**
+  String get positionId;
+
+  /// No description provided for @contactUs.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Us'**
+  String get contactUs;
+
+  /// No description provided for @tickets.
+  ///
+  /// In en, this message translates to:
+  /// **'Tickets'**
+  String get tickets;
+
+  /// No description provided for @tooltipEditSymbols.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Symbols'**
+  String get tooltipEditSymbols;
+
+  /// No description provided for @tooltipEditSymbolsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Modify your symbol list and customize your trading symbols.'**
+  String get tooltipEditSymbolsDescription;
+
+  /// No description provided for @tooltipLayoutToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Layout Toggle'**
+  String get tooltipLayoutToggle;
+
+  /// No description provided for @tooltipLayoutToggleDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch between advanced, simple, and table view layouts.'**
+  String get tooltipLayoutToggleDescription;
+
+  /// No description provided for @tooltipAddSymbol.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Symbol'**
+  String get tooltipAddSymbol;
+
+  /// No description provided for @tooltipAddSymbolDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Search and add new trading symbols to your list.'**
+  String get tooltipAddSymbolDescription;
+
+  /// No description provided for @tooltipSortSymbols.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort Symbols'**
+  String get tooltipSortSymbols;
+
+  /// No description provided for @tooltipSortSymbolsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort your symbols by various criteria like name, price, or change.'**
+  String get tooltipSortSymbolsDescription;
+
+  /// No description provided for @tooltipSymbolList.
+  ///
+  /// In en, this message translates to:
+  /// **'Symbol List'**
+  String get tooltipSymbolList;
+
+  /// No description provided for @tooltipSymbolListDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'View all your subscribed trading symbols with real-time prices.'**
+  String get tooltipSymbolListDescription;
+
+  /// No description provided for @tooltipChartOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart Options'**
+  String get tooltipChartOptions;
+
+  /// No description provided for @tooltipChartOptionsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize your chart view and add technical indicators.'**
+  String get tooltipChartOptionsDescription;
+
+  /// No description provided for @tooltipSymbolSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Symbol Selection'**
+  String get tooltipSymbolSelection;
+
+  /// No description provided for @tooltipSymbolSelectionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your trading symbol here.'**
+  String get tooltipSymbolSelectionDescription;
+
+  /// No description provided for @tooltipFullscreenToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fullscreen Toggle'**
+  String get tooltipFullscreenToggle;
+
+  /// No description provided for @tooltipFullscreenToggleDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to fullscreen chart view.'**
+  String get tooltipFullscreenToggleDescription;
+
+  /// No description provided for @tooltipZoomOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom Options'**
+  String get tooltipZoomOptions;
+
+  /// No description provided for @tooltipZoomOptionsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Control chart zoom and view options.'**
+  String get tooltipZoomOptionsDescription;
+
+  /// No description provided for @tooltipScreenRotation.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen Rotation'**
+  String get tooltipScreenRotation;
+
+  /// No description provided for @tooltipScreenRotationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Rotate screen orientation for better chart viewing.'**
+  String get tooltipScreenRotationDescription;
+
+  /// No description provided for @tooltipTimeframeSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeframe Selection'**
+  String get tooltipTimeframeSelection;
+
+  /// No description provided for @tooltipTimeframeSelectionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Change chart timeframe (1M, 5M, 1H, etc.).'**
+  String get tooltipTimeframeSelectionDescription;
+
+  /// No description provided for @tooltipTradingPanel.
+  ///
+  /// In en, this message translates to:
+  /// **'Trading Panel'**
+  String get tooltipTradingPanel;
+
+  /// No description provided for @tooltipTradingPanelDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure your trading parameters and place orders.'**
+  String get tooltipTradingPanelDescription;
+
+  /// No description provided for @tooltipFloatingPnL.
+  ///
+  /// In en, this message translates to:
+  /// **'Floating P&L'**
+  String get tooltipFloatingPnL;
+
+  /// No description provided for @tooltipFloatingPnLDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current profit/loss from open positions.'**
+  String get tooltipFloatingPnLDescription;
+
+  /// No description provided for @tooltipSortFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort & Filter'**
+  String get tooltipSortFilter;
+
+  /// No description provided for @tooltipSortFilterDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort and filter your positions and orders.'**
+  String get tooltipSortFilterDescription;
+
+  /// No description provided for @tooltipNewPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'New Position'**
+  String get tooltipNewPosition;
+
+  /// No description provided for @tooltipNewPositionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Open a new trading position.'**
+  String get tooltipNewPositionDescription;
+
+  /// No description provided for @tooltipPositionsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Positions Tab'**
+  String get tooltipPositionsTab;
+
+  /// No description provided for @tooltipPositionsTabDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'View your active trading positions.'**
+  String get tooltipPositionsTabDescription;
+
+  /// No description provided for @tooltipPendingTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Tab'**
+  String get tooltipPendingTab;
+
+  /// No description provided for @tooltipPendingTabDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'View your pending orders.'**
+  String get tooltipPendingTabDescription;
+
+  /// No description provided for @tooltipMoreActions.
+  ///
+  /// In en, this message translates to:
+  /// **'More Actions'**
+  String get tooltipMoreActions;
+
+  /// No description provided for @tooltipMoreActionsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Access additional actions for positions and orders.'**
+  String get tooltipMoreActionsDescription;
+
+  /// No description provided for @tooltipTradeInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Trade Information'**
+  String get tooltipTradeInfo;
+
+  /// No description provided for @tooltipTradeInfoDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'View your trading account information and statistics.'**
+  String get tooltipTradeInfoDescription;
+
+  /// No description provided for @tooltipHistoryInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'History Information'**
+  String get tooltipHistoryInfo;
+
+  /// No description provided for @tooltipHistoryInfoDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'View your trading history information and statistics.'**
+  String get tooltipHistoryInfoDescription;
+
+  /// No description provided for @tooltipSortHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort History'**
+  String get tooltipSortHistory;
+
+  /// No description provided for @tooltipSortHistoryDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort your trading history by various criteria.'**
+  String get tooltipSortHistoryDescription;
+
+  /// No description provided for @tooltipFilterHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter History'**
+  String get tooltipFilterHistory;
+
+  /// No description provided for @tooltipFilterHistoryDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter your trading history by date range and other criteria.'**
+  String get tooltipFilterHistoryDescription;
+
+  /// No description provided for @tooltipTabSwitcher.
+  ///
+  /// In en, this message translates to:
+  /// **'History Tabs'**
+  String get tooltipTabSwitcher;
+
+  /// No description provided for @tooltipTabSwitcherDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch between positions, pending orders, and actions history.'**
+  String get tooltipTabSwitcherDescription;
+
+  /// No description provided for @tooltipTradingAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Trading Account'**
+  String get tooltipTradingAccount;
+
+  /// No description provided for @tooltipTradingAccountDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'View your current trading account information.'**
+  String get tooltipTradingAccountDescription;
+
+  /// No description provided for @tooltipSwitchAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch Account'**
+  String get tooltipSwitchAccount;
+
+  /// No description provided for @tooltipSwitchAccountDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch between your trading accounts.'**
+  String get tooltipSwitchAccountDescription;
+
+  /// No description provided for @tooltipAddAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Account'**
+  String get tooltipAddAccount;
+
+  /// No description provided for @tooltipAddAccountDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a new trading account.'**
+  String get tooltipAddAccountDescription;
+
+  /// No description provided for @tooltipChangePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get tooltipChangePassword;
+
+  /// No description provided for @tooltipChangePasswordDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Change your account password.'**
+  String get tooltipChangePasswordDescription;
+
+  /// No description provided for @tooltipChangeTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Theme'**
+  String get tooltipChangeTheme;
+
+  /// No description provided for @tooltipChangeThemeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch between light and dark themes.'**
+  String get tooltipChangeThemeDescription;
+
+  /// No description provided for @tooltipLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get tooltipLanguage;
+
+  /// No description provided for @tooltipLanguageDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Change the application language.'**
+  String get tooltipLanguageDescription;
+
+  /// No description provided for @tooltipTradingSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Trading Settings'**
+  String get tooltipTradingSettings;
+
+  /// No description provided for @tooltipTradingSettingsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure your trading preferences and settings.'**
+  String get tooltipTradingSettingsDescription;
+
+  /// No description provided for @tooltipLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Logs'**
+  String get tooltipLogs;
+
+  /// No description provided for @tooltipLogsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'View application logs and system information.'**
+  String get tooltipLogsDescription;
+
+  /// No description provided for @tooltipTickets.
+  ///
+  /// In en, this message translates to:
+  /// **'Tickets'**
+  String get tooltipTickets;
+
+  /// No description provided for @tooltipTicketsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact support and manage your support tickets.'**
+  String get tooltipTicketsDescription;
+
+  /// No description provided for @tooltipLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get tooltipLogout;
+
+  /// No description provided for @tooltipLogoutDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out of your account.'**
+  String get tooltipLogoutDescription;
+
+  /// No description provided for @requiredMargin.
+  ///
+  /// In en, this message translates to:
+  /// **'Required Margin'**
+  String get requiredMargin;
+
+  /// No description provided for @addNewSymbol.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Symbol'**
+  String get addNewSymbol;
+
+  /// No description provided for @main.
+  ///
+  /// In en, this message translates to:
+  /// **'Main'**
+  String get main;
+
+  /// No description provided for @spectator.
+  ///
+  /// In en, this message translates to:
+  /// **'Spectator'**
+  String get spectator;
+
+  /// No description provided for @accountType.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Type'**
+  String get accountType;
+
+  /// No description provided for @aed.
+  ///
+  /// In en, this message translates to:
+  /// **'AED'**
+  String get aed;
+
+  /// No description provided for @sar.
+  ///
+  /// In en, this message translates to:
+  /// **'SAR'**
+  String get sar;
+
+  /// No description provided for @justNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just Now'**
+  String get justNow;
+
+  /// No description provided for @minutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Minutes Ago'**
+  String minutesAgo(Object count);
+
+  /// No description provided for @hoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Hours Ago'**
+  String hoursAgo(Object count);
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Days Ago'**
+  String daysAgo(Object count);
+
+  /// No description provided for @minutesSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} Minutes {seconds} Seconds'**
+  String minutesSeconds(Object minutes, Object seconds);
+
+  /// No description provided for @hoursMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} Hours {minutes} Minutes'**
+  String hoursMinutes(Object hours, Object minutes);
+
+  /// No description provided for @copiedToClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to Clipboard'**
+  String get copiedToClipboard;
+
+  /// No description provided for @filter.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter'**
+  String get filter;
+
+  /// No description provided for @marketWillOpenIn.
+  ///
+  /// In en, this message translates to:
+  /// **'The market will open in {day} days {hour} hours {minute} minutes {second} seconds'**
+  String marketWillOpenIn(
+    Object day,
+    Object hour,
+    Object minute,
+    Object second,
+  );
+
+  /// No description provided for @secondsX.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Seconds'**
+  String secondsX(Object count);
+
+  /// No description provided for @from.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get from;
+
+  /// No description provided for @to.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get to;
+
+  /// No description provided for @maxAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Amount'**
+  String get maxAmount;
+
+  /// No description provided for @minAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Min Amount'**
+  String get minAmount;
+
+  /// No description provided for @saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get saved;
+
+  /// No description provided for @date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get date;
+
+  /// No description provided for @positionDirection.
+  ///
+  /// In en, this message translates to:
+  /// **'Position Direction'**
+  String get positionDirection;
+
+  /// No description provided for @id.
+  ///
+  /// In en, this message translates to:
+  /// **'ID'**
+  String get id;
 }
 
 class _AppLocalizationsDelegate
@@ -2503,8 +3287,9 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   }
 
   throw FlutterError(
-      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
 }

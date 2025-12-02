@@ -1,25 +1,24 @@
+// ignore_for_file: depend_on_referenced_packages
+
+import 'package:example/app.dart';
 import 'package:flash/flash.dart';
 import 'package:example/core/consts/exports.dart';
-import 'package:example/main.dart';
+import 'package:example/core/consts/fonts.dart';
 
 class MToast {
-  static void showError({
-    required String message,
-  }) {
+  static void showError({required String message}) {
     _showCustomToast(
       context: SkyTrading.context,
       content: message,
-      boxColor: rootContext.context.colorScheme.error,
+      boxColor: SkyTrading.context.colorScheme.error,
     );
   }
 
-  static void showSuccess({
-    required String message,
-  }) {
+  static void showSuccess({required String message}) {
     _showCustomToast(
       context: SkyTrading.context,
       content: message,
-      boxColor: rootContext.context.colorScheme.primary,
+      boxColor: SkyTrading.context.colorScheme.primary,
     );
   }
 
@@ -36,7 +35,8 @@ class MToast {
       boxColor: color,
       duration: const Duration(seconds: 2),
       fontWeight: FontWeight.w500,
-      fontSize: FoontSize.font18,
+      fontSize: FoontSize.font16,
+      fontFamily: Fonts.roboto,
       hideDismissIcon: true,
       dismissDirections: [FlashDismissDirection.vertical],
       onBuild: onBuild,
@@ -55,9 +55,11 @@ class MToast {
     double? fontSize,
     bool hideDismissIcon = false,
     List<FlashDismissDirection>? dismissDirections,
+    String? fontFamily,
   }) {
     return showFlash(
-      barrierDismissible: true,
+      barrierDismissible: false,
+      barrierColor: Colors.transparent,
       context: context,
       persistent: true,
       transitionDuration: const Duration(milliseconds: 400),
@@ -78,6 +80,7 @@ class MToast {
                   color: boxColor,
                   borderRadius: MBorderRadius.set(all: 12.0),
                 ),
+                margin: const MPadding.set(horizontal: 12.0),
                 padding: const MPadding.set(vertical: 12.0, start: 12.0),
                 child: Row(
                   children: [
@@ -86,6 +89,7 @@ class MToast {
                         text: content,
                         weight: fontWeight ?? FontWeight.w400,
                         size: fontSize ?? FoontSize.font16,
+                        fontFamily: fontFamily,
                         color: Coolors.white,
                         maxLines: 5,
                         autoSized: true,
@@ -99,7 +103,7 @@ class MToast {
                       ).addAction(
                         padding: const MPadding.set(horizontal: 12.0),
                         onGesture: () => controller.dismiss(),
-                      )
+                      ),
                   ],
                 ),
               ),

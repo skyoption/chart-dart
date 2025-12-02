@@ -23,7 +23,7 @@ class _AccountFoundItemWidgetState extends State<AccountFoundItemWidget> {
         ),
         borderRadius: MBorderRadius.set(all: 8.0),
       ),
-      margin: const MPadding.set(top: 6.0, horizontal: 21.0),
+      margin: const MPadding.set(bottom: 16.0, horizontal: 21.0),
       padding: const MPadding.set(vertical: 6.0),
       child: Row(
         children: [
@@ -33,7 +33,7 @@ class _AccountFoundItemWidgetState extends State<AccountFoundItemWidget> {
               children: [
                 MText(
                   text: widget.item.type,
-                  color: context.colorScheme.scrim,
+                  color: context.colorScheme.onSurface,
                   weight: FontWeight.w600,
                   size: FoontSize.font16,
                 ).addPadding(end: 12.0, bottom: 4.0),

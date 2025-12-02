@@ -1,8 +1,7 @@
-import 'package:example/core/builder/flow_builder.dart';
 import 'package:example/core/consts/exports.dart';
+import 'package:example/features/symbols/views/widgets/currencies_item_widget.dart';
 import 'package:example/features/symbols/logic/quotes_cubit.dart';
 import 'package:example/features/symbols/models/symbol_entity.dart';
-import 'package:example/features/symbols/views/widgets/currencies_item_widget.dart';
 
 class SymbolsWidget extends StatefulWidget {
   final bool isTransparent;

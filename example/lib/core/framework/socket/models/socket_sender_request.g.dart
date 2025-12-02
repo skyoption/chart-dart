@@ -14,9 +14,9 @@ SocketSenderRequest _$SocketSenderRequestFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$SocketSenderRequestToJson(
-        SocketSenderRequest instance) =>
-    <String, dynamic>{
-      'request_id': instance.requestId,
-      'data': instance.data,
-      'action': instance.action,
-    };
+  SocketSenderRequest instance,
+) => <String, dynamic>{
+  'request_id': instance.requestId,
+  'data': instance.data,
+  'action': instance.action,
+};

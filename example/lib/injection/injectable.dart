@@ -3,66 +3,58 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:example/core/consts/constants.dart';
-import 'package:example/core/consts/exports.dart';
-import 'package:example/core/framework/accountBox.dart';
-import 'package:example/core/framework/objectBox.dart';
-import 'package:example/core/framework/socket/socket.dart';
-import 'package:example/features/auth/data_source/connected_account_data_source.dart';
+import 'package:example/core/framework/app_info.dart';
+import 'package:example/features/auth/data/client-services/auth_client_services.dart';
 import 'package:example/unauthored.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:example/core/consts/exports.dart';
+import 'package:example/core/router/app_router.dart';
+import 'package:example/core/framework/app_prefs.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
-
+import 'package:location/location.dart';
 import 'injectable.config.dart';
 
 final getIt = GetIt.instance;
 
-@InjectableInit()
-Future<void> configureDependencies() async {
-  await getIt.init();
+@InjectableInit(
+  initializerName: 'init',
+  preferRelativeImports: true,
+  asExtension: true,
+)
+Future<void> configureDependencies() async => await getIt.init();
+
+@module
+abstract class CoreModule {
+  @preResolve
+  @Injectable(order: -3)
+  Future<SharedPreferences> get prefs => SharedPreferences.getInstance();
+
+  @Injectable(order: -2)
+  AppPreferences get appPreferences =>
+      AppPreferences(getIt<SharedPreferences>());
+
+  @Singleton(order: -1)
+  AppRouter get appRouter => AppRouter(appPreferences);
 }
 
 @module
 abstract class InjectionModule {
-  @singleton
-  @preResolve
-  Future<AccountBox> get accountBox => AccountBox().create();
-
-  @singleton
-  ObjectBox get objectBox => ObjectBox();
-
-  @preResolve
-  Future<SharedPreferences> get prefs => SharedPreferences.getInstance();
-
-  @singleton
-  Sockeet get socket => Sockeet(
-      accountBox: getIt<AccountBox>(),
-      objectBox: getIt<ObjectBox>(),
-      sharedPreferences: getIt<SharedPreferences>());
-  @singleton
-  ConnectedAccountDataSource get connectedAccountDataSource =>
-      ConnectedAccountDataSourceImp(getIt<Sockeet>(), getIt<AccountBox>());
-
   @injectable
   InternetConnection get internetConnectionChecker => InternetConnection();
+  @injectable
+  GlobalKey<NavigatorState> get nav => getIt<AppRouter>().navigatorKey;
 
   @injectable
-  GlobalKey<NavigatorState> get nav => GlobalKey<NavigatorState>();
-
+  MainContext get mainContext => MainContext(nav: nav);
   @injectable
-  TextEditingController get textEditingController => TextEditingController();
-
-  @injectable
-  ScrollController get scrollController => ScrollController();
+  Location get location => Location();
 
   @injectable
   StreamController<bool> get stream => StreamController<bool>.broadcast();
 
   @injectable
   PhoneValidator get phoneValidator => PhoneValidator(stream);
-
-  @injectable
-  MainContext get mainContext => MainContext(nav: nav);
 
   @injectable
   Validate get validate => Validate();
@@ -74,10 +66,19 @@ abstract class InjectionModule {
   String get text => '';
 
   @injectable
-  bool get boolean => true;
+  bool get boolean => false;
 
   @injectable
   List<String> get strings => [];
+
+  @injectable
+  List<int> get ints => [];
+
+  @injectable
+  List<File> get files => [];
+
+  @injectable
+  List<MultipartFile> get multipartFiles => [];
 
   @injectable
   int get intNumber => 0;
@@ -89,19 +90,26 @@ abstract class InjectionModule {
   File get file => File('');
 
   @injectable
-  Dio get dio => Dio(
-        BaseOptions(
-          baseUrl: Constants.URL,
-          receiveTimeout: const Duration(milliseconds: Constants.API_TIMEOUT),
-          sendTimeout: const Duration(milliseconds: Constants.API_TIMEOUT),
-          validateStatus: (status) {
-            if (status == 403) {
-              getIt<Unauthorized>().onUnauthorized();
-            }
-            return status! < 500;
-          },
-        ),
-      )
+  MultipartFile get multipartFile => MultipartFile.fromString('');
+
+  @injectable
+  TextEditingController get textEditingController => TextEditingController();
+
+  @injectable
+  Dio get dio =>
+      Dio(
+          BaseOptions(
+            baseUrl: Constants.URL,
+            receiveTimeout: const Duration(milliseconds: Constants.API_TIMEOUT),
+            sendTimeout: const Duration(milliseconds: Constants.API_TIMEOUT),
+            validateStatus: (status) {
+              if (status == 401 || status == 403) {
+                getIt<Unauthorized>().onUnauthorized();
+              }
+              return status! <= 500;
+            },
+          ),
+        )
         ..interceptors.add(
           LogInterceptor(
             requestBody: kDebugMode,
@@ -122,28 +130,33 @@ abstract class InjectionModule {
             onError: (e, interceptor) async {},
           ),
         );
+
+  @injectable
+  AuthClientServices get authClientServices => AuthClientServices(dio);
 }
 
 class Headers {
   static final _pref = getIt<SharedPreferences>();
 
-  static String get lng => _pref.getString(Constants.LANGUAGECASHED) ?? 'ar';
+  static String lng() => _pref.getString(Constants.LANG) ?? 'en';
 
-  static String get userCached => _pref.getString(Constants.USERCACHED) ?? '';
+  static String get userToken {
+    final token = _pref.getString(Constants.TOKENCACHED) ?? '';
+    return token;
+  }
 
   static Map<String, dynamic> to() {
     Map<String, dynamic> header = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'language': lng,
-      'os-type': Platform.isAndroid ? 'android' : 'ios',
+      'Accept-Language': lng(),
+      'OsType': Platform.isAndroid ? 'android' : 'ios',
+      'OsSkyVersion': AppInfo.version,
     };
-    // if (userCached.isNotEmpty) {
-    //   final user = UserModel.fromJson(jsonDecode(userCached));
-    //   if (user.token.isNotEmpty) {
-    //     header['Authorization'] = 'Bearer ${user.token}';
-    //   }
-    // }
+    if (userToken.isNotEmpty) {
+      header['Authorization'] = userToken;
+      kPrint(userToken);
+    }
     return header;
   }
 }

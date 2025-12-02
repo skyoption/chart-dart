@@ -22,7 +22,7 @@ class _TimeLimitWidgetState extends State<TimeLimitWidget> {
       alignment: Alignment.center,
       child: MSvg(
         name: Svgs.timeLimit,
-        color: context.colorScheme.scrim,
+        color: context.colorScheme.onSurface,
         height: 24.0,
       ),
     ).addAction(onGesture: widget.onGesture);

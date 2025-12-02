@@ -1,7 +1,7 @@
 import 'package:example/core/consts/exports.dart';
-import 'package:example/features/symbols/models/symbol_entity.dart';
 import 'package:example/features/symbols/views/widgets/quotes_table_header.dart';
 import 'package:example/features/symbols/views/widgets/quotes_values_table.dart';
+import 'package:example/features/symbols/models/symbol_entity.dart';
 
 class QuotesTableWidget extends StatefulWidget {
   final List<SymbolEntity> items;

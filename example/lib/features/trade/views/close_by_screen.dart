@@ -1,9 +1,8 @@
 import 'package:example/core/consts/exports.dart';
 import 'package:example/features/trade/views/widgets/close_by_item_widget.dart';
 
+@RoutePage()
 class CloseByScreen extends StatefulWidget {
-  static const id = 'CloseByScreen';
-
   const CloseByScreen({super.key});
 
   @override
@@ -23,12 +22,12 @@ class _CloseByScreenState extends State<CloseByScreen> {
             children: [
               Icon(
                 Icons.clear,
-                color: context.colorScheme.scrim,
+                color: context.colorScheme.onSurface,
                 size: 30.0,
               ).addAction(
                 padding: const MPadding.set(vertical: 21.0, end: 8.0),
                 onGesture: () {
-                  context.pop();
+                  AutoRouterX(context).pop();
                 },
               ),
               MText(

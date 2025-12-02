@@ -44,7 +44,7 @@ class DatePicker extends StatelessWidget {
                   title: context.tr.done,
                   onTap: () {
                     onChangeTime(selectedTime);
-                    context.pop();
+                    AutoRouterX(context).pop();
                   },
                 ).addPadding(vertical: 30.0),
               ],
@@ -107,7 +107,7 @@ class TimePicker extends StatelessWidget {
                   title: context.tr.done,
                   onTap: () {
                     onChageTime(selectedTime);
-                    context.pop();
+                    AutoRouterX(context).pop();
                   },
                 ).addPadding(vertical: 30.0),
               ],
@@ -170,7 +170,7 @@ class DateTimePicker extends StatelessWidget {
                   title: context.tr.done,
                   onTap: () {
                     onChangeTime(selectedTime);
-                    context.pop();
+                    AutoRouterX(context).pop();
                   },
                 ).addPadding(vertical: 30.0, horizontal: 21.0),
               ],

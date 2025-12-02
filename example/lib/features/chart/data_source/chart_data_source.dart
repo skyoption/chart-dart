@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:example/core/consts/exports.dart';
+import 'package:example/core/framework/functions.dart';
 import 'package:example/core/framework/objectBox.dart';
 import 'package:example/core/framework/socket/socket.dart';
 import 'package:example/features/chart/models/requests/get_candles_request.dart';
@@ -10,7 +11,7 @@ import 'package:example/features/symbols/models/schema/symbol_model.dart';
 import 'package:example/features/symbols/models/symbol_entity.dart';
 
 abstract class ChartDataSource {
-  void getCandles(GetCandlesRequest request);
+  void getCandles({required GetCandlesRequest request});
 
   bool getTimeframeStart(int timestamp, int lastTime, String timeframe);
 
@@ -25,6 +26,7 @@ abstract class ChartDataSource {
   void setDefaultSymbol({
     required ValueNotifier<SymbolEntity?> value,
     required Function(String symbol, double ask, double bid) onAskAndBidUpdated,
+    required Function(List<KLineEntity> items, int offset) onReceiveRequest,
   });
 
   void setCandleTimeFormat(CandleTimeFormat frame);
@@ -38,7 +40,7 @@ class QuotesDataSourceImp implements ChartDataSource {
   Map<String, SymbolModel> symbols = {};
   late ValueNotifier<SymbolEntity?> currentSymbol;
   int offset = 0;
-  String timeFrame = 'M15';
+  CandleTimeFormat timeFrame = CandleTimeFormat.M15;
 
   QuotesDataSourceImp(this.socket, this.objectBox);
 
@@ -46,18 +48,20 @@ class QuotesDataSourceImp implements ChartDataSource {
   void setDefaultSymbol({
     required ValueNotifier<SymbolEntity?> value,
     required Function(String symbol, double ask, double bid) onAskAndBidUpdated,
+    required Function(List<KLineEntity> items, int offset) onReceiveRequest,
   }) {
     currentSymbol = value;
-    currentSymbol.addListener(() {
+    currentSymbol.addListener(() async {
       if (currentSymbol.value != null) {
         offset = 0;
+        final request = GetCandlesRequest(
+          symbol: currentSymbol.value!.symbol,
+          timeFrame: timeFrame,
+          offset: offset,
+        );
         socket.sendRequest(
           event: SocketEvent.get_chart_data,
-          data: GetCandlesRequest(
-            symbol: currentSymbol.value!.symbol,
-            timeFrame: timeFrame,
-            offset: offset,
-          ).toJson(),
+          data: request.toJson(),
         );
         onAskAndBidUpdated(
           currentSymbol.value!.symbol,
@@ -65,25 +69,37 @@ class QuotesDataSourceImp implements ChartDataSource {
           currentSymbol.value!.bid,
         );
         updatedAt = DateTime(1990);
+        await chartProperties.getDefaultSettings(
+          onGetting: (frame, symbol, candles) {
+            kPrint('onGetting: $frame, $symbol, ${candles.length}');
+            if (request.symbol.isEmpty) {
+              timeFrame = frame;
+              request.symbol = symbol;
+              request.timeFrame = frame;
+            }
+            onReceiveRequest(candles, offset);
+          },
+        );
       }
     });
   }
 
   @override
   void setCandleTimeFormat(CandleTimeFormat frame) {
-    timeFrame = frame.name;
+    timeFrame = frame;
   }
 
   @override
-  void getCandles(GetCandlesRequest request) {
+  Future<void> getCandles({required GetCandlesRequest request}) async {
     timeFrame = request.timeFrame;
     offset = request.offset;
-    if (request.symbol.isEmpty) {
-      request.symbol = 'GBPUSD';
-    }
     socket.sendRequest(
       event: SocketEvent.get_chart_data,
       data: request.toJson(),
+    );
+    chartProperties.updateDefaultSettings(
+      frame: request.timeFrame,
+      symbol: request.symbol,
     );
     final items = objectBox.symbolBox!.getAll();
     for (var item in items) {
@@ -115,6 +131,7 @@ class QuotesDataSourceImp implements ChartDataSource {
               items.add(candle);
             }
             onReceiveRequest(items, offset);
+            await chartProperties.addCandles(items);
             updatedAt = DateTime.now().add(Duration(milliseconds: 100));
           }
         }
@@ -127,13 +144,17 @@ class QuotesDataSourceImp implements ChartDataSource {
             if (symbol != null && currentSymbol.value?.symbol == symbol.name) {
               if (values.last == '1') {
                 final value = double.tryParse(values[1]) ?? 0.0;
-                final amount = symbol.askDifference * symbol.contractSize;
-                final ask = value + amount;
+                final ask = truncateToFixedDecimal(
+                  value + symbol.askDifference,
+                  symbol.digits,
+                );
                 onAskUpdated(symbol.name, ask);
               } else {
                 final value = double.tryParse(values[1]) ?? 0.0;
-                final amount = symbol.bidDifference * symbol.contractSize;
-                final bid = value + amount;
+                final bid = truncateToFixedDecimal(
+                  value + symbol.bidDifference,
+                  symbol.digits,
+                );
                 onBidUpdated(symbol.name, bid);
               }
             }
@@ -161,6 +182,8 @@ class QuotesDataSourceImp implements ChartDataSource {
   @override
   bool getTimeframeStart(int timestampSeconds, int lastTime, String timeframe) {
     switch (timeframe) {
+      case "S5":
+        return timestampSeconds - lastTime > 5;
       case "M1":
         return timestampSeconds - lastTime > 60;
       case "M5":

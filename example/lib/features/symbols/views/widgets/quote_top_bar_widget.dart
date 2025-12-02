@@ -44,7 +44,9 @@ class _QuoteTopBarWidgetState extends State<QuoteTopBarWidget> {
             child: MText(
               text: item.value,
               size: FoontSize.font14,
-              color: active ? AppColors.white : AppColors.grey,
+              color: active
+                  ? context.colorScheme.onPrimary
+                  : context.colorScheme.onSurfaceVariant,
               weight: active ? FontWeight.w600 : FontWeight.w500,
             ),
           ).addAction(
