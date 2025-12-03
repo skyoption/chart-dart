@@ -786,7 +786,8 @@ class KChartWidgetState extends State<KChartWidget>
             return;
           } else if (object != null) {
             _tapPosition = details.localPosition;
-            if (!widget.editableSLOrTP.contains(object!.id)) {
+            if (widget.editableSLOrTP.isNotEmpty &&
+                !widget.editableSLOrTP.contains(object!.id)) {
               _tapPosition = null;
               objectType = null;
               object = null;
