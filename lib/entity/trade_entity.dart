@@ -17,8 +17,10 @@ class TradeEntity {
 }
 
 extension TradeEntityExtension on TradeEntity {
-  int get openTimeInMilliseconds {
-    final timestamp = DateTime.parse(openTime).toUtc().millisecondsSinceEpoch;
+  int? get openTimeInMilliseconds {
+    final dateTime = DateTime.tryParse(openTime);
+    if (dateTime == null) return null;
+    final timestamp = dateTime.toUtc().millisecondsSinceEpoch;
     return timestamp ~/ 1000;
   }
 

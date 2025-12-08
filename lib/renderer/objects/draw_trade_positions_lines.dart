@@ -20,39 +20,62 @@ mixin DrawTradePositionsLines on ChartDetails {
     for (int i = 0; i < trades.length; i++) {
       final position = trades[i];
       final openTime = position.openTimeInMilliseconds;
+      if (openTime == null) continue;
       final curOpenX = getXFromTime(openTime, data);
       final cutOpenY = getMainY(position.openPrice);
       final isBuy = position.isBuy;
       // Blue arrow up for open positions
-      _drawArrowUp(
-        canvas,
-        curOpenX,
-        cutOpenY!,
-        Colors.blue,
-      );
+      if (cutOpenY != null) {
+        _drawPostion(
+          canvas,
+          curOpenX,
+          cutOpenY,
+          true,
+        );
+      }
       final closeTime = position.closeTimeInMilliseconds;
       if (closeTime != null) {
         final curCloseX = getXFromTime(closeTime, data);
         final cutCloseY = getMainY(position.closePrice!);
-        final fillPaint = Paint()
-          ..color = isBuy ? Colors.redAccent : Colors.blue
-          ..style = PaintingStyle.fill
-          ..isAntiAlias = true
-          ..filterQuality = FilterQuality.high;
-        drawDashLine(
-          canvas,
-          Offset(curOpenX, cutOpenY),
-          Offset(curCloseX, cutCloseY!),
-          fillPaint,
-        );
         // Red arrow down for close positions
-        _drawArrowDown(
-          canvas,
-          curCloseX,
-          cutCloseY,
-          Colors.redAccent,
-        );
+        if (cutCloseY != null) {
+          final fillPaint = Paint()
+            ..color = isBuy ? Colors.redAccent : Colors.blue
+            ..style = PaintingStyle.fill
+            ..isAntiAlias = true
+            ..filterQuality = FilterQuality.high;
+          drawDashLine(
+            canvas,
+            Offset(curOpenX, cutCloseY),
+            Offset(curCloseX, cutCloseY),
+            fillPaint,
+          );
+          _drawPostion(
+            canvas,
+            curCloseX,
+            cutCloseY,
+            false,
+          );
+        }
       }
+    }
+  }
+
+  void _drawPostion(Canvas canvas, double x, double y, bool isOpen) {
+    if (isOpen) {
+      _drawArrowUp(
+        canvas,
+        x,
+        y,
+        Colors.blue,
+      );
+    } else {
+      _drawArrowDown(
+        canvas,
+        x,
+        y,
+        Colors.redAccent,
+      );
     }
   }
 
