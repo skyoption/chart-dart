@@ -24,7 +24,9 @@ extension TradeEntityExtension on TradeEntity {
 
   int? get closeTimeInMilliseconds {
     if (closeTime == null) return null;
-    final timestamp = DateTime.parse(closeTime!).toUtc().millisecondsSinceEpoch;
+    final dateTime = DateTime.tryParse(closeTime!);
+    if (dateTime == null) return null;
+    final timestamp = dateTime.toUtc().millisecondsSinceEpoch;
     return timestamp ~/ 1000;
   }
 }
