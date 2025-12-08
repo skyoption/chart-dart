@@ -183,14 +183,13 @@ mixin Indicators {
     }
   }
 
-  Future<void> _reset({List<TradeEntity> trades = const []}) async {
+  Future<void> _reset() async {
     await _getIndicators();
     await _getSecondaryIndicators();
     await IndicatorUtils.calculate(
       candles,
       indicators,
       secondaries,
-      trades: trades,
     );
   }
 
@@ -203,7 +202,6 @@ mixin Indicators {
       candles,
       indicators,
       secondaries,
-      trades: trades,
     );
   }
 }

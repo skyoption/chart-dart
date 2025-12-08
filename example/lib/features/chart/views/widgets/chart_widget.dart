@@ -1,4 +1,5 @@
 import 'package:candle_chart/entity/line_entity.dart';
+import 'package:candle_chart/entity/trade_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart'
     show
         KChartWidgetState,
@@ -21,6 +22,7 @@ import 'package:example/features/trade/logic/orders_cubit.dart';
 import 'package:example/features/trade/logic/positions_cubit.dart';
 import 'package:example/features/trade/models/order_entity.dart';
 import 'package:example/features/trade/models/position_entity.dart';
+import 'package:example/features/trade_history/logic/history_positions_cubit.dart';
 
 enum UpdatePosition { TP, SL, Price, TP_Pending, SL_Pending, Price_Pending }
 
@@ -70,6 +72,32 @@ class _ChartWidgetState extends State<ChartWidget> {
   double tpValue = 0, initTpValue = 0;
   double slValue = 0, initSlValue = 0;
   List<int> editableSLOrTP = [];
+  List<TradeEntity> trades = [];
+
+  void _setTrades() {
+    final cubit = context.read<PositionsCubit>();
+    final historyCubit = context.read<HistoryPositionsCubit>();
+    final currentTrades = cubit.positions.map((e) {
+      return TradeEntity(
+        id: e.id,
+        openTime: e.openTime,
+        openPrice: e.openPrice,
+        isBuy: e.direction == 'BUY',
+      );
+    }).toList();
+    final historyTrades = historyCubit.positions.map((e) {
+      return TradeEntity(
+        id: e.id,
+        openTime: e.openTime,
+        openPrice: e.openPrice,
+        isBuy: e.direction == 'BUY',
+        closeTime: e.closeTime,
+        closePrice: e.closePrice,
+      );
+    }).toList();
+    trades = [...currentTrades, ...historyTrades];
+    kPrint('Trades ${trades.map((e) => e.openTime).toList()}');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +106,7 @@ class _ChartWidgetState extends State<ChartWidget> {
         return FlowBuilder<QuotesCubit>(
           builder: (context, state, quotesCubit) {
             if (quotesCubit.symbols.isEmpty) return const SizedBox();
+            _setTrades();
             return ValueListenableBuilder<SymbolEntity?>(
               valueListenable: quotesCubit.currentSymbol,
               builder: (context, symbol, child) {
@@ -142,6 +171,7 @@ class _ChartWidgetState extends State<ChartWidget> {
                                                           constraints.maxHeight,
                                                     ),
                                                     child: KChartWidget(
+                                                      trades: trades,
                                                       key: widget.chartKey,
                                                       editableSLOrTP:
                                                           editableSLOrTP,
@@ -154,8 +184,9 @@ class _ChartWidgetState extends State<ChartWidget> {
                                                             !value;
                                                       },
                                                       onLoadMore: (value) {
-                                                        if (value)
+                                                        if (value) {
                                                           _updateChart();
+                                                        }
                                                       },
                                                       chartStyle: ChartStyle(
                                                         scaleStep: 0.000048,

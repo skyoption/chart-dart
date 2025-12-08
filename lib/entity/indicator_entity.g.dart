@@ -579,6 +579,7 @@ const _IndicatorEntitytypeEnumValueMap = {
   'SO_SMA': 20,
   'WPR': 21,
   'MFI': 22,
+  'TRADE_POSITIONS': 23,
 };
 const _IndicatorEntitytypeValueEnumMap = {
   0: IndicatorType.MA_LINEAR,
@@ -604,6 +605,7 @@ const _IndicatorEntitytypeValueEnumMap = {
   20: IndicatorType.SO_SMA,
   21: IndicatorType.WPR,
   22: IndicatorType.MFI,
+  23: IndicatorType.TRADE_POSITIONS,
 };
 
 Id _indicatorEntityGetId(IndicatorEntity object) {

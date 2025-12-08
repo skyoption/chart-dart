@@ -45,7 +45,7 @@ enum IndicatorType {
   TRADE_POSITIONS,
 }
 
-enum CandleTimeFormat { S5, M1, M5, M15, M30, H1, H4, D1, W1, MN1 }
+enum CandleTimeFormat { M1, M5, M15, M30, H1, H4, D1, W1, MN1 }
 
 class TimeFormat {
   static const List<String> YEAR_MONTH_DAY = [yyyy, '-', mm, '-', dd];
@@ -400,6 +400,7 @@ class KChartWidgetState extends State<KChartWidget>
       hideIndicators: widget.hideIndicators,
       isIndicatorResizeMode: isIndicatorResizeMode,
       currentResizeRectIndex: currentResizeRectIndex,
+      trades: widget.trades,
     );
 
     return LayoutBuilder(

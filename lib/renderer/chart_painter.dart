@@ -2,13 +2,14 @@ import 'dart:async' show StreamSink;
 
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
+import 'package:candle_chart/entity/trade_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
 import 'package:candle_chart/renderer/objects/draw_cursor_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_indicator_resize.dart';
 import 'package:candle_chart/renderer/objects/draw_rectangle_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_tp_and_sl_lines.dart';
-import 'package:candle_chart/renderer/objects/draw_trade_lines.dart';
+import 'package:candle_chart/renderer/objects/draw_trade_positions_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_trend_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_vertical_lines.dart';
 import 'package:candle_chart/renderer/objects/update_point_position.dart';
@@ -53,7 +54,7 @@ class ChartPainter extends BaseChartPainter
         DrawTPAndSLLines,
         DrawCursorLines,
         DrawIndicatorResize,
-        DrawTradeLines,
+        DrawTradePositionsLines,
         ChartCalc {
   static get maxScrollX => BaseChartPainter.maxScrollX;
   late BaseChartRenderer mMainRenderer;
@@ -83,6 +84,7 @@ class ChartPainter extends BaseChartPainter
   final List<LineEntity> askAndBid;
   final bool isIndicatorResizeMode;
   final int? currentResizeRectIndex;
+  final List<TradeEntity> trades;
 
   ChartPainter(
     this.chartStyle,
@@ -110,6 +112,7 @@ class ChartPainter extends BaseChartPainter
     this.hideIndicators = false,
     this.isIndicatorResizeMode = false,
     this.currentResizeRectIndex,
+    required this.trades,
   }) : super(
           chartStyle,
           data: data,
@@ -125,6 +128,7 @@ class ChartPainter extends BaseChartPainter
           hideGrid: hideGrid,
           secondaryIndicators: secondaryIndicators,
           xFrontPadding: xFrontPadding,
+          trades: trades,
         ) {
     chartPosition = ChartPosition();
     dot = Paint()..color = Colors.grey;
@@ -341,7 +345,7 @@ class ChartPainter extends BaseChartPainter
     drawVerticalLines(canvas, size, false, data ?? []);
     drawTrendLines(canvas, size, false, data ?? []);
     drawRectangles(canvas, size, false, data ?? []);
-    drawTradeLines(canvas, size, false, data ?? []);
+    drawTradePositions(canvas, size, false, data ?? [], trades);
     canvas.restore();
   }
 

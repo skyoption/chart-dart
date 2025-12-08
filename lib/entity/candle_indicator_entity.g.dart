@@ -554,6 +554,7 @@ const _CandleIndicatorEntitytypeEnumValueMap = {
   'SO_SMA': 20,
   'WPR': 21,
   'MFI': 22,
+  'TRADE_POSITIONS': 23,
 };
 const _CandleIndicatorEntitytypeValueEnumMap = {
   0: IndicatorType.MA_LINEAR,
@@ -579,6 +580,7 @@ const _CandleIndicatorEntitytypeValueEnumMap = {
   20: IndicatorType.SO_SMA,
   21: IndicatorType.WPR,
   22: IndicatorType.MFI,
+  23: IndicatorType.TRADE_POSITIONS,
 };
 
 extension CandleIndicatorEntityQueryFilter on QueryBuilder<

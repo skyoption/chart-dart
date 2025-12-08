@@ -24,6 +24,7 @@ class HistoryPositionEntity implements History {
   @override
   String comment;
   String openTime;
+  String closeTime;
   double closePrice;
   @override
   String source;
@@ -49,6 +50,7 @@ class HistoryPositionEntity implements History {
     required this.swap,
     required this.comment,
     required this.openTime,
+    required this.closeTime,
     required this.source,
     required this.isA,
   });
@@ -58,7 +60,7 @@ class HistoryPositionEntity implements History {
       id: id,
       margin: margin,
       direction: direction,
-      closeTime: date,
+      closeTime: closeTime,
       comment: comment,
       commission: commission,
       closePrice: closePrice,
@@ -96,6 +98,7 @@ final fakeHistoryPosition = HistoryPositionEntity(
   amount: 500.0,
   volumeInit: 200.0,
   date: DateTime.now().toIso8601String(),
+  closeTime: DateTime.now().toIso8601String(),
   volumeCurrent: 150.0,
   openPrice: 2800.75,
   tp: 2900.0,
