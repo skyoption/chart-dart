@@ -43,10 +43,11 @@ mixin DrawTradePositionsLines on ChartDetails {
             ..color = isBuy ? Colors.redAccent : Colors.blue
             ..style = PaintingStyle.fill
             ..isAntiAlias = true
+            ..strokeWidth = 1.5
             ..filterQuality = FilterQuality.high;
           drawDashLine(
             canvas,
-            Offset(curOpenX, cutCloseY),
+            Offset(curOpenX, cutOpenY!),
             Offset(curCloseX, cutCloseY),
             fillPaint,
           );
