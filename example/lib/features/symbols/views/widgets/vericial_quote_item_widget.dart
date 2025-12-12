@@ -17,9 +17,7 @@ class VerticalQuoteWidget extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: context.colorScheme.surfaceContainerLow,
-        border: Border.all(
-          color: context.colorScheme.outline,
-        ),
+        border: Border.all(color: context.colorScheme.outline),
         borderRadius: MBorderRadius.set(all: 8.0),
       ),
       margin: const MPadding.set(top: 6.0),
@@ -28,10 +26,7 @@ class VerticalQuoteWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              QuoteSlogoItemWidget(
-                height: 60.0,
-                item: item,
-              ),
+              QuoteSlogoItemWidget(height: 60.0, item: item),
               Align(
                 alignment: AlignmentDirectional.topCenter,
                 child: ValueListenableBuilder(
@@ -144,7 +139,7 @@ class VerticalQuoteWidget extends StatelessWidget {
                 builder: (context, value, child) {
                   return QuotePriceItemWidget(
                     digits: item.digits,
-                    value: double.parse(value.toStringAsFixed(item.digits)),
+                    value: value,
                     title: context.tr.askPrice,
                     color: item.askColor.value,
                   );
@@ -162,15 +157,12 @@ class VerticalQuoteWidget extends StatelessWidget {
                 },
               ),
             ],
-          ).addPadding(end: 8.0)
+          ).addPadding(end: 8.0),
         ],
       ),
     ).addAction(
       onGesture: () {
-        showQuoteBottomSheet(
-          context: context,
-          symbol: item,
-        );
+        showQuoteBottomSheet(context: context, symbol: item);
       },
     );
   }

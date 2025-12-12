@@ -1,13 +1,14 @@
 import 'dart:math';
 
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/entity/trade_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/renderer/objects/draw_cursor_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_indicator_resize.dart';
 import 'package:candle_chart/renderer/objects/draw_rectangle_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_tp_and_sl_lines.dart';
-import 'package:candle_chart/renderer/objects/draw_trade_lines.dart';
+import 'package:candle_chart/renderer/objects/draw_trade_positions_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_trend_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_vertical_lines.dart';
 import 'package:candle_chart/renderer/objects/update_point_position.dart';
@@ -31,12 +32,13 @@ abstract class BaseChartPainter extends CustomPainter
         DrawVerticalLines,
         DrawCursorLines,
         DrawIndicatorResize,
-        DrawTradeLines,
+        DrawTradePositionsLines,
         DrawTPAndSLLines {
   static double maxScrollX = 0.0;
   List<KLineEntity>? data; // data of chart
   List<ObjectEntity> horizontalLines; // data of chart
 
+  final List<TradeEntity> trades;
   final List<IndicatorEntity> indicators;
 
   final Map<int, List<IndicatorEntity>> secondaryIndicators;
@@ -108,6 +110,7 @@ abstract class BaseChartPainter extends CustomPainter
     this.isIndicatorResizeMode = false,
     this.currentResizeRectIndex,
     this.hideIndicators = false,
+    this.trades = const [],
   }) {
     mItemCount = data?.length ?? 0;
     mPointWidth = this.chartStyle.pointWidth;
@@ -165,7 +168,6 @@ abstract class BaseChartPainter extends CustomPainter
     drawBg(canvas, size);
     drawGrid(canvas);
     if (data != null && data!.isNotEmpty) {
-      drawTradeLines(canvas, size, true, data ?? []);
       drawChart(canvas, size);
       drawVerticalText(canvas);
       drawDate(canvas, size);

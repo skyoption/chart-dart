@@ -45,7 +45,7 @@ enum IndicatorType {
   TRADE_POSITIONS,
 }
 
-enum CandleTimeFormat { S5, M1, M5, M15, M30, H1, H4, D1, W1, MN1 }
+enum CandleTimeFormat { M1, M5, M15, M30, H1, H4, D1, W1, MN1 }
 
 class TimeFormat {
   static const List<String> YEAR_MONTH_DAY = [yyyy, '-', mm, '-', dd];
@@ -90,6 +90,7 @@ class KChartWidget extends StatefulWidget {
   final bool hideIndicators;
   final bool hideGrid;
   final List<String> timeFormat;
+  final List<int> editableSLOrTP;
   final Function(bool value)? onLoadMore;
   final Function(bool value)? onZoomingStart;
   final Function(LineEntity position, double newValue) onUpdatePosition;
@@ -134,6 +135,7 @@ class KChartWidget extends StatefulWidget {
     this.flingTime = 600,
     this.flingRatio = 0.5,
     this.flingCurve = Curves.decelerate,
+    this.editableSLOrTP = const [],
     this.isOnDrag,
     this.initialScale = 0.4,
     this.initialScaleY = 0.99999,
@@ -398,6 +400,7 @@ class KChartWidgetState extends State<KChartWidget>
       hideIndicators: widget.hideIndicators,
       isIndicatorResizeMode: isIndicatorResizeMode,
       currentResizeRectIndex: currentResizeRectIndex,
+      trades: widget.trades,
     );
 
     return LayoutBuilder(
@@ -784,6 +787,15 @@ class KChartWidgetState extends State<KChartWidget>
             return;
           } else if (object != null) {
             _tapPosition = details.localPosition;
+            if (widget.editableSLOrTP.isNotEmpty &&
+                !widget.editableSLOrTP.contains(object!.id)) {
+              _tapPosition = null;
+              objectType = null;
+              object = null;
+              objectEditable = false;
+              notifyChanged();
+              return;
+            }
             if (object!.type == ObjectType.Trend) {
               if (isSecondOffset) {
                 _painter!.setTrendLineOffset2(

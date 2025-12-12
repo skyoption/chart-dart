@@ -124,9 +124,10 @@ class SecondaryRect {
           resMin = _findMinMA(item.momentumValues ?? [], indicator.windowId);
           space = 2;
         } else if (indicator.type == IndicatorType.MFI) {
-          resMax = _findMaxMA(item.mfiValues ?? [], indicator.windowId);
-          resMin = _findMinMA(item.mfiValues ?? [], indicator.windowId);
+          mMaxValue = resMax = 100;
+          mMinValue = resMin = 0;
           space = 0.5;
+          break;
         } else if (indicator.type == IndicatorType.DEM) {
           resMax = _findMaxMA(item.deMarkerValues ?? [], indicator.windowId);
           resMin = _findMinMA(item.deMarkerValues ?? [], indicator.windowId);

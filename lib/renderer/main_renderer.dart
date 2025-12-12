@@ -1,5 +1,4 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/entity/trade_point_entity.dart';
 import 'package:candle_chart/renderer/rects/render_rect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -124,13 +123,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         true,
       );
     }
-    subMainRenderer.drawTradePositions(
-      lastPoint,
-      curPoint,
-      canvas,
-      lastX,
-      curX,
-    );
+   
   }
 
   @override
@@ -480,13 +473,7 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
       false,
       true,
     );
-    drawTradePositions(
-      lastPoint,
-      curPoint,
-      canvas,
-      lastX,
-      curX,
-    );
+   
   }
 
   @override
@@ -772,120 +759,6 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
         );
       }
     }
-  }
-
-  void drawTradePositions(
-    CandleEntity lastPoint,
-    CandleEntity curPoint,
-    Canvas canvas,
-    double lastX,
-    double curX,
-  ) {
-    // Process current point for trade positions
-    if (curPoint.tradePositionsValues != null) {
-      for (int i = 0; i < curPoint.tradePositionsValues!.length; i++) {
-        final tradeData = curPoint.tradePositionsValues![i];
-        final price = tradeData.price;
-
-        if (price > 0) {
-          // Blue arrow up for open positions
-          if (tradeData.type == TradePointType.open) {
-            _drawArrowUp(
-              canvas,
-              curX,
-              getY(price),
-              Colors.blue,
-            );
-          }
-          // Red arrow down for close positions
-          else if (tradeData.type == TradePointType.close) {
-            _drawArrowDown(
-              canvas,
-              curX,
-              getY(price),
-              Colors.redAccent,
-            );
-          }
-        }
-      }
-    }
-  }
-
-  void _drawArrowUp(Canvas canvas, double x, double y, Color color) {
-    // Draw a filled upward-pointing triangle arrow (like in the image)
-    // Arrow size scales with zoom but has minimum/maximum bounds for visibility
-    final baseSize = (8.0 / scaleX).clamp(8.0, 10.0);
-    final baseWidth = (8.0 / scaleX).clamp(8.0, 12.0);
-    final arrowHeight = baseSize;
-    final arrowWidth = baseWidth;
-    y = y + arrowHeight;
-    final path = Path();
-    // Start at the top point (tip) of the arrow
-    path.moveTo(x, y - arrowHeight);
-    // Draw to bottom-left corner
-    path.lineTo(x - arrowWidth, y);
-    // Draw to bottom-right corner
-    path.lineTo(x + arrowWidth, y);
-    // Close the path back to the top
-    path.close();
-
-    // Draw filled arrow
-    final fillPaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill
-      ..isAntiAlias = true
-      ..filterQuality = FilterQuality.high;
-
-    canvas.drawPath(path, fillPaint);
-
-    // Draw border for better definition (slightly darker)
-    final borderPaint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0
-      ..isAntiAlias = true
-      ..filterQuality = FilterQuality.high;
-
-    canvas.drawPath(path, borderPaint);
-  }
-
-  void _drawArrowDown(Canvas canvas, double x, double y, Color color) {
-    // Draw a filled downward-pointing triangle arrow (like in the image)
-    // Arrow size scales with zoom but has minimum/maximum bounds for visibility
-    final baseSize = (8.0 / scaleX).clamp(8.0, 10.0);
-    final baseWidth = (8.0 / scaleX).clamp(8.0, 12.0);
-    final arrowHeight = baseSize;
-    final arrowWidth = baseWidth;
-
-    y = y - arrowHeight;
-    final path = Path();
-    // Start at the top-left corner of the arrow base
-    path.moveTo(x - arrowWidth, y);
-    // Draw to bottom point (tip)
-    path.lineTo(x, y + arrowHeight);
-    // Draw to top-right corner
-    path.lineTo(x + arrowWidth, y);
-    // Close the path back to the start
-    path.close();
-
-    // Draw filled arrow
-    final fillPaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill
-      ..isAntiAlias = true
-      ..filterQuality = FilterQuality.high;
-
-    canvas.drawPath(path, fillPaint);
-
-    // Draw border for better definition (slightly darker)
-    final borderPaint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0
-      ..isAntiAlias = true
-      ..filterQuality = FilterQuality.high;
-
-    canvas.drawPath(path, borderPaint);
   }
 
   void drawIchimokuLine(

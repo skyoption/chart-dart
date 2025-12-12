@@ -1,8 +1,8 @@
 class TradeEntity {
   int id;
-  int openTime;
+  String openTime;
   double openPrice;
-  int? closeTime;
+  String? closeTime;
   double? closePrice;
   bool isBuy;
 
@@ -14,4 +14,21 @@ class TradeEntity {
     this.closePrice,
     this.isBuy = true,
   });
+}
+
+extension TradeEntityExtension on TradeEntity {
+  int? get openTimeInMilliseconds {
+    final dateTime = DateTime.tryParse(openTime);
+    if (dateTime == null) return null;
+    final timestamp = dateTime.toUtc().millisecondsSinceEpoch;
+    return timestamp ~/ 1000;
+  }
+
+  int? get closeTimeInMilliseconds {
+    if (closeTime == null) return null;
+    final dateTime = DateTime.tryParse(closeTime!);
+    if (dateTime == null) return null;
+    final timestamp = dateTime.toUtc().millisecondsSinceEpoch;
+    return timestamp ~/ 1000;
+  }
 }

@@ -75,6 +75,7 @@ class HistoryPositionModel {
       amount: floating,
       openPrice: openPrice,
       openTime: openTime,
+      closeTime: closeTime,
       sl: sl,
       closePrice: closePrice,
       swap: swap,

@@ -43,6 +43,7 @@ extension OnHistory on History {
       volumeInit: 0,
       closePrice: 0,
       openTime: '',
+      closeTime: '',
       symbol: '',
       direction: '',
     );

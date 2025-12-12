@@ -3,18 +3,12 @@ import 'dart:math';
 import 'package:candle_chart/entity/candle_indicator_entity.dart';
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/k_line_entity.dart';
-import 'package:candle_chart/entity/trade_entity.dart';
-import 'package:candle_chart/entity/trade_point_entity.dart';
 import 'package:candle_chart/renderer/rects/secondary_rect.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 
 class IndicatorUtils {
-  static calculate(
-    List<KLineEntity> data,
-    List<IndicatorEntity> indicators,
-    Map<int, List<IndicatorEntity>> secondaries, {
-    List<TradeEntity> trades = const [],
-  }) async {
+  static calculate(List<KLineEntity> data, List<IndicatorEntity> indicators,
+      Map<int, List<IndicatorEntity>> secondaries) async {
     List<IndicatorEntity> MA_SMA = [],
         MA_EMA = [],
         MA_LINEAR = [],
@@ -136,7 +130,7 @@ class IndicatorUtils {
     if (BOLL.isNotEmpty) calc_BOLL(data, BOLL);
     if (PARABOLIC.isNotEmpty) calc_Parabolic_SAR(data, PARABOLIC);
     if (ICHIMOKU.isNotEmpty) calc_Ichimoku(data, ICHIMOKU);
-    if (trades.isNotEmpty) calc_Trade_Positions(data, trades);
+    // if (trades.isNotEmpty) calc_Trade_Positions(data, trades);
 
     /// calc the volume indicator
     calcVolumeMA(data);
@@ -1376,60 +1370,6 @@ class IndicatorUtils {
       return items.first.value;
     } else {
       return items.last.value;
-    }
-  }
-
-  static void calc_Trade_Positions(
-    List<KLineEntity> dataList,
-    List<TradeEntity> trades,
-  ) {
-    if (dataList.isEmpty || trades.isEmpty) return;
-
-    // Create a map of time to candle index for quick lookup
-    Map<int, int> timeToIndex = {};
-    for (int i = 0; i < dataList.length; i++) {
-      timeToIndex[dataList[i].time] = i;
-      dataList[i].tradeEntities = [];
-      dataList[i].tradePositionsValues = [];
-    }
-
-    // Process each indicator
-    // Process each trade
-    for (var trade in trades) {
-      // Find the candle index for open time
-      int? openIndex = timeToIndex[trade.openTime];
-      if (openIndex != null && openIndex < dataList.length) {
-        KLineEntity openEntity = dataList[openIndex];
-        final point = TradePointEntity(
-          time: trade.openTime,
-          price: trade.openPrice,
-          type: TradePointType.open,
-          isBuy: trade.isBuy,
-        );
-        openEntity.tradePositionsValues = [];
-        openEntity.tradeEntities = [];
-        openEntity.tradePositionsValues!.add(point);
-        openEntity.tradeEntities!.add(trade);
-      }
-
-      // Find the candle index for close time (if exists)
-      if (trade.closeTime != null && trade.closePrice != null) {
-        int? closeIndex = timeToIndex[trade.closeTime!];
-        if (closeIndex != null && closeIndex < dataList.length) {
-          KLineEntity closeEntity = dataList[closeIndex];
-          final point = TradePointEntity(
-            id: trade.id,
-            time: trade.closeTime!,
-            price: trade.closePrice!,
-            type: TradePointType.close,
-            isBuy: trade.isBuy,
-          );
-          closeEntity.tradePositionsValues ??= [];
-          closeEntity.tradeEntities ??= [];
-          closeEntity.tradePositionsValues!.add(point);
-          closeEntity.tradeEntities!.add(trade);
-        }
-      }
     }
   }
 }
