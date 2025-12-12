@@ -143,22 +143,20 @@ mixin ChartCalc {
     final lowTime = data[0].time;
     final topTime = data.last.time;
     int timeDiff = topTime - lowTime;
-    double pixelTime = timeDiff /
-        (getX(data.length) -
-            (candleSpace * (scaleX < 1 ? 2.0 : 1.5)) / scaleX.clamp(0.5, 1));
+    double pixelTime =
+        timeDiff / (getX(data.length) - (candleSpace * scaleX / scaleX));
     double currentTime = lowTime + x * pixelTime;
     return currentTime.toInt();
   }
 
   double getXFromTime(int time, List<KLineEntity> data) {
     if (data.isEmpty) return 0;
-    const candleSpace = 10.0;
+    final candleSpace = 10.0;
     final lowTime = data[0].time;
     final topTime = data.last.time;
     int timeDiff = topTime - lowTime;
-    double pixelTime = timeDiff /
-        (getX(data.length) -
-            (candleSpace * (scaleX < 1 ? 2.0 : 1.5)) / scaleX.clamp(0.5, 1));
+    double pixelTime =
+        timeDiff / (getX(data.length) - (candleSpace * scaleX) / scaleX);
 
     return (time - lowTime) / pixelTime;
   }

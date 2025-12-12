@@ -74,6 +74,12 @@ class _ChartWidgetState extends State<ChartWidget> {
   List<int> editableSLOrTP = [];
   List<TradeEntity> trades = [];
 
+  @override
+  void initState() {
+    super.initState();
+    _setTrades();
+  }
+
   void _setTrades() {
     final cubit = context.read<PositionsCubit>();
     final historyCubit = context.read<HistoryPositionsCubit>();
@@ -85,17 +91,17 @@ class _ChartWidgetState extends State<ChartWidget> {
         isBuy: e.direction == 'BUY',
       );
     }).toList();
-    final historyTrades = historyCubit.positions.map((e) {
-      return TradeEntity(
-        id: e.id,
-        openTime: e.openTime,
-        openPrice: e.openPrice,
-        isBuy: e.direction == 'BUY',
-        closeTime: e.closeTime,
-        closePrice: e.closePrice,
-      );
-    }).toList();
-    trades = [...currentTrades, ...historyTrades];
+    // final historyTrades = historyCubit.positions.map((e) {
+    //   return TradeEntity(
+    //     id: e.id,
+    //     openTime: e.openTime,
+    //     openPrice: e.openPrice,
+    //     isBuy: e.direction == 'BUY',
+    //     closeTime: e.closeTime,
+    //     closePrice: e.closePrice,
+    //   );
+    // }).toList();
+    trades = currentTrades;
     kPrint('Trades ${trades.map((e) => e.openTime).toList()}');
   }
 
@@ -106,7 +112,6 @@ class _ChartWidgetState extends State<ChartWidget> {
         return FlowBuilder<QuotesCubit>(
           builder: (context, state, quotesCubit) {
             if (quotesCubit.symbols.isEmpty) return const SizedBox();
-            _setTrades();
             return ValueListenableBuilder<SymbolEntity?>(
               valueListenable: quotesCubit.currentSymbol,
               builder: (context, symbol, child) {
@@ -122,6 +127,7 @@ class _ChartWidgetState extends State<ChartWidget> {
                           FlowBuilder<PositionsCubit>(
                             buildWhenCubit: (cubit) => false,
                             listener: (context, state, cubit) {
+                              _setTrades();
                               if (state.type == StateType.delete) {
                                 widget.removePosition(state.data);
                               } else {

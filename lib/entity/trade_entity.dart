@@ -20,7 +20,7 @@ extension TradeEntityExtension on TradeEntity {
   int? get openTimeInMilliseconds {
     final dateTime = DateTime.tryParse(openTime);
     if (dateTime == null) return null;
-    final timestamp = dateTime.toUtc().millisecondsSinceEpoch;
+    final timestamp = dateTime.millisecondsSinceEpoch;
     return timestamp ~/ 1000;
   }
 
@@ -28,7 +28,7 @@ extension TradeEntityExtension on TradeEntity {
     if (closeTime == null) return null;
     final dateTime = DateTime.tryParse(closeTime!);
     if (dateTime == null) return null;
-    final timestamp = dateTime.toUtc().millisecondsSinceEpoch;
+    final timestamp = dateTime.millisecondsSinceEpoch;
     return timestamp ~/ 1000;
   }
 }

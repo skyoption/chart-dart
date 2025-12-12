@@ -22,42 +22,39 @@ mixin DrawTradePositionsLines on ChartDetails {
       final openTime = position.openTimeInMilliseconds;
       if (openTime == null) continue;
       final curOpenX = getXFromTime(openTime, data);
-      final cutOpenY = getMainY(position.openPrice);
+      final cutOpenY = getMainYInChart(position.openPrice);
       final isBuy = position.isBuy;
       // Blue arrow up for open positions
-      if (cutOpenY != null) {
-        _drawPostion(
-          canvas,
-          curOpenX,
-          cutOpenY,
-          true,
-        );
-      }
+      _drawPostion(
+        canvas,
+        curOpenX,
+        cutOpenY,
+        true,
+      );
       final closeTime = position.closeTimeInMilliseconds;
       if (closeTime != null) {
         final curCloseX = getXFromTime(closeTime, data);
-        final cutCloseY = getMainY(position.closePrice!);
+        final cutCloseY = getMainYInChart(position.closePrice!);
         // Red arrow down for close positions
-        if (cutCloseY != null) {
-          final fillPaint = Paint()
-            ..color = isBuy ? Colors.redAccent : Colors.blue
-            ..style = PaintingStyle.fill
-            ..isAntiAlias = true
-            ..strokeWidth = 1.5
-            ..filterQuality = FilterQuality.high;
-          drawDashLine(
-            canvas,
-            Offset(curOpenX, cutOpenY!),
-            Offset(curCloseX, cutCloseY),
-            fillPaint,
-          );
-          _drawPostion(
-            canvas,
-            curCloseX,
-            cutCloseY,
-            false,
-          );
-        }
+
+        final fillPaint = Paint()
+          ..color = isBuy ? Colors.redAccent : Colors.blue
+          ..style = PaintingStyle.fill
+          ..isAntiAlias = true
+          ..strokeWidth = 1.5
+          ..filterQuality = FilterQuality.high;
+        drawDashLine(
+          canvas,
+          Offset(curOpenX, cutOpenY),
+          Offset(curCloseX, cutCloseY),
+          fillPaint,
+        );
+        _drawPostion(
+          canvas,
+          curCloseX,
+          cutCloseY,
+          false,
+        );
       }
     }
   }
@@ -83,11 +80,12 @@ mixin DrawTradePositionsLines on ChartDetails {
   void _drawArrowUp(Canvas canvas, double x, double y, Color color) {
     // Draw a filled upward-pointing triangle arrow (like in the image)
     // Arrow size scales with zoom but has minimum/maximum bounds for visibility
-    final baseSize = (8.0 / scaleX).clamp(8.0, 10.0);
-    final baseWidth = (8.0 / scaleX).clamp(8.0, 12.0);
+    final baseSize = 8.0;
+    final baseWidth = 12.0;
     final arrowHeight = baseSize;
     final arrowWidth = baseWidth;
-    y = y + arrowHeight;
+    x = x - arrowWidth * 1.5;
+    y = y + arrowHeight * 1.5;
     final path = Path();
     // Start at the top point (tip) of the arrow
     path.moveTo(x, y - arrowHeight);
@@ -121,12 +119,12 @@ mixin DrawTradePositionsLines on ChartDetails {
   void _drawArrowDown(Canvas canvas, double x, double y, Color color) {
     // Draw a filled downward-pointing triangle arrow (like in the image)
     // Arrow size scales with zoom but has minimum/maximum bounds for visibility
-    final baseSize = (8.0 / scaleX).clamp(8.0, 10.0);
-    final baseWidth = (8.0 / scaleX).clamp(8.0, 12.0);
+    final baseSize = 8.0;
+    final baseWidth = 12.0;
     final arrowHeight = baseSize;
     final arrowWidth = baseWidth;
-
-    y = y - arrowHeight;
+    x = x - arrowWidth * 1.5;
+    y = y + arrowHeight * 1.5;
     final path = Path();
     // Start at the top-left corner of the arrow base
     path.moveTo(x - arrowWidth, y);
