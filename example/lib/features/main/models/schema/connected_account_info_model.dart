@@ -47,7 +47,7 @@ class ConnectedAccountInfoModel {
   int? rights;
   @JsonKey(defaultValue: false)
   bool isDefault;
-  @JsonKey(fromJson: double.parse)
+  @JsonKey(defaultValue: 0.0)
   double marginCallLevel;
   @JsonKey(defaultValue: "")
   final String connectionMode;

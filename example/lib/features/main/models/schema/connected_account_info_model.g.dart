@@ -25,7 +25,7 @@ ConnectedAccountInfoModel _$ConnectedAccountInfoModelFromJson(
   limitPending: (json['limitPending'] as num?)?.toInt(),
   rights: (json['rights'] as num?)?.toInt(),
   isDefault: json['isDefault'] as bool? ?? false,
-  marginCallLevel: double.parse(json['marginCallLevel'] as String),
+  marginCallLevel: (json['marginCallLevel'] as num?)?.toDouble() ?? 0.0,
   connectionMode: json['connectionMode'] as String? ?? '',
 );
 
