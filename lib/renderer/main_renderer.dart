@@ -123,7 +123,6 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         true,
       );
     }
-   
   }
 
   @override
@@ -251,7 +250,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 
     Rect rect = Rect.fromLTWH(
       chartRect.width + 1,
-      topPadding,
+      0,
       100.0,
       chartRect.height,
     );
@@ -473,7 +472,6 @@ class SubMainRenderer extends BaseChartRenderer<CandleEntity> {
       false,
       true,
     );
-   
   }
 
   @override

@@ -365,7 +365,7 @@ class ChartPainter extends BaseChartPainter
     Rect topRect = Rect.fromLTRB(
       0,
       0,
-      mMainRect.width,
+      mMainRect.width + 5.0,
       30.0,
     );
 
