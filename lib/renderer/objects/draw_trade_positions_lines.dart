@@ -156,7 +156,7 @@ mixin DrawTradePositionsLines on ChartDetails {
       ..filterQuality = FilterQuality.high;
 
     canvas.drawPath(path, borderPaint);
-    return Offset(x, y + baseSize / 2);
+    return Offset(x, y + baseSize);
   }
 
   void drawDashLine(
