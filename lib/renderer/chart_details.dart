@@ -151,14 +151,56 @@ mixin ChartCalc {
 
   double getXFromTime(int time, List<KLineEntity> data) {
     if (data.isEmpty) return 0;
-    final candleSpace = 10.0;
-    final lowTime = data[0].time;
-    final topTime = data.last.time;
-    int timeDiff = topTime - lowTime;
-    double pixelTime =
-        timeDiff / (getX(data.length) - (candleSpace * scaleX) / scaleX);
 
-    return (time - lowTime) / pixelTime;
+    // First, try to find exact match
+    for (int i = 0; i < data.length; i++) {
+      if (data[i].time == time) {
+        return getX(i);
+      }
+    }
+
+    // If no exact match, find the two candles that bracket this time
+    // and interpolate between them
+    int? beforeIndex;
+    int? afterIndex;
+
+    for (int i = 0; i < data.length - 1; i++) {
+      if (data[i].time <= time && data[i + 1].time >= time) {
+        beforeIndex = i;
+        afterIndex = i + 1;
+        break;
+      }
+    }
+
+    // If time is before first candle
+    if (time < data[0].time) {
+      return getX(0);
+    }
+
+    // If time is after last candle
+    if (time > data.last.time) {
+      return getX(data.length - 1);
+    }
+
+    // Interpolate between the two candles
+    if (beforeIndex != null && afterIndex != null) {
+      final beforeTime = data[beforeIndex].time;
+      final afterTime = data[afterIndex].time;
+      final timeDiff = afterTime - beforeTime;
+
+      if (timeDiff == 0) {
+        return getX(beforeIndex);
+      }
+
+      final timeRatio = (time - beforeTime) / timeDiff;
+      final beforeX = getX(beforeIndex);
+      final afterX = getX(afterIndex);
+
+      return beforeX + (afterX - beforeX) * timeRatio;
+    }
+
+    // Fallback: use the first candle's position
+    return getX(0);
   }
 
   // translate x
