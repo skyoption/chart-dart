@@ -28,6 +28,7 @@ mixin Objects {
   ObjectEntity? lastItem;
 
   Future<void> loadObjects(String symbol) async {
+    this.symbol = symbol;
     await _getObjects(symbol);
   }
 
