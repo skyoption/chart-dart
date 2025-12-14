@@ -236,8 +236,8 @@ class KChartWidgetState extends State<KChartWidget>
     notifyChanged();
   }
 
-  Future<void> setLoadedObjects() async {
-    await chartProperties.loadObjects();
+  Future<void> setLoadedObjects(String symbol) async {
+    await chartProperties.loadObjects(symbol);
     notifyChanged();
   }
 

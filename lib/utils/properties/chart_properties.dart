@@ -29,7 +29,7 @@ class ChartProperties with Indicators, Objects {
     try {
       await sharedPreferences.setString('frame', frame.name);
       await sharedPreferences.setString('symbol', symbol);
-      await loadObjects();
+      await loadObjects(symbol);
       await loadIndicators();
     } catch (e) {
       kPrint(e.toString());
@@ -55,7 +55,7 @@ class ChartProperties with Indicators, Objects {
   }
 
   Future<void> updateObjects() async {
-    await loadObjects();
+    await loadObjects(symbol);
   }
 
   Future<void> loadCandles() async {

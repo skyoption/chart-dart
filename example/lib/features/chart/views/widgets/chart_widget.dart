@@ -77,7 +77,6 @@ class _ChartWidgetState extends State<ChartWidget> {
   @override
   void initState() {
     super.initState();
-    _setTrades();
   }
 
   void _setTrades() {
@@ -124,6 +123,7 @@ class _ChartWidgetState extends State<ChartWidget> {
 
   @override
   Widget build(BuildContext context) {
+    _setTrades();
     return LayoutBuilder(
       builder: (context, constraints) {
         return FlowBuilder<QuotesCubit>(

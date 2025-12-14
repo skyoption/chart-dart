@@ -27,8 +27,8 @@ mixin Objects {
   List<ObjectEntity> rectangles = [];
   ObjectEntity? lastItem;
 
-  Future<void> loadObjects() async {
-    await _getObjects();
+  Future<void> loadObjects(String symbol) async {
+    await _getObjects(symbol);
   }
 
   ObjectEntity setCopy(ObjectEntity item) {
@@ -56,16 +56,16 @@ mixin Objects {
     KChart.write(query: (db) async {
       await db.objectEntitys.put(value);
     });
-    _getObjects();
+    _getObjects(symbol);
   }
 
   Future<void> addTrendLine(ObjectEntity value) async {
     lastItem = value;
-    value.symbol = symbol;
     value.type = ObjectType.Trend;
     value.frame = frame;
     value.currentEditIndex = trendLines.length;
     value = setCopy(value);
+    value.symbol = symbol;
     trendLines.add(value);
     KChart.write(query: (db) async {
       await db.objectEntitys.put(value);
@@ -74,11 +74,11 @@ mixin Objects {
 
   Future<void> addHorizontalLine(ObjectEntity value) async {
     lastItem = value;
-    value.symbol = symbol;
     value.type = ObjectType.Horizontal;
     value.frame = frame;
     value.currentEditIndex = horizontalLines.length;
     value = setCopy(value);
+    value.symbol = symbol;
     horizontalLines.add(value);
     KChart.write(query: (db) async {
       await db.objectEntitys.put(value);
@@ -94,11 +94,11 @@ mixin Objects {
 
   Future<void> addRectangle(ObjectEntity value) async {
     lastItem = value;
-    value.symbol = symbol;
     value.type = ObjectType.Rectangle;
     value.frame = frame;
     value.currentEditIndex = rectangles.length;
     value = setCopy(value);
+    value.symbol = symbol;
     rectangles.add(value);
     KChart.write(query: (db) async {
       await db.objectEntitys.put(value);
@@ -231,7 +231,7 @@ mixin Objects {
     }
   }
 
-  Future<void> _getObjects() async {
+  Future<void> _getObjects(String symbol) async {
     try {
       final objects = await KChart.query.objectEntitys
           .filter()

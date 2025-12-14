@@ -29,8 +29,11 @@ class ChartScreen extends StatefulWidget {
   final ValueNotifier<bool> isFullscreen;
   final SymbolEntity? currentSymbol;
 
-  const ChartScreen(
-      {super.key, required this.isFullscreen, this.currentSymbol});
+  const ChartScreen({
+    super.key,
+    required this.isFullscreen,
+    this.currentSymbol,
+  });
 
   @override
   State<ChartScreen> createState() => _ChartScreenState();
@@ -51,9 +54,7 @@ class _ChartScreenState extends State<ChartScreen>
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      chartProperties.getDefaultSettings(
-        onGetting: onGettingSettings,
-      );
+      chartProperties.getDefaultSettings(onGetting: onGettingSettings);
       _lastOrientation = MediaQuery.of(context).orientation;
     });
     WidgetsBinding.instance.addObserver(this);
@@ -124,11 +125,7 @@ class _ChartScreenState extends State<ChartScreen>
               return SafeArea(
                 left: !context.isLandscape,
                 minimum: context.isLandscape
-                    ? const EdgeInsets.only(
-                        left: 12.0,
-                        top: 10.0,
-                        right: 12.0,
-                      )
+                    ? const EdgeInsets.only(left: 12.0, top: 10.0, right: 12.0)
                     : EdgeInsets.zero,
                 child: context.isLandscape
                     ? Container(
@@ -259,34 +256,36 @@ class _ChartScreenState extends State<ChartScreen>
                   final isMainAccount = account?.isMainAccount ?? true;
                   if (!isMainAccount) return const SizedBox.shrink();
                   return ZoomWidget(
-                      onOptions: () => showOptions.value = !showOptions.value);
+                    onOptions: () => showOptions.value = !showOptions.value,
+                  );
                 },
               ),
             ),
             if (!context.isTablet)
               GuideTooltipWidget(
                 config: ChartTooltip.screenRotation.config,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: context.colorScheme.surfaceContainerLow,
-                    borderRadius: MBorderRadius.set(all: 10.0),
-                  ),
-                  height: 45.0,
-                  width: 45.0,
-                  child: Icon(
-                    Icons.screen_rotation,
-                    color: context.colorScheme.onSurface,
-                    size: 24.0,
-                  ),
-                ).addAction(
-                  onTap: () async {
-                    if (context.isLandscape) {
-                      await OrientationHelper.lockToPortrait();
-                    } else {
-                      await OrientationHelper.lockToLandscape();
-                    }
-                  },
-                ),
+                child:
+                    Container(
+                      decoration: BoxDecoration(
+                        color: context.colorScheme.surfaceContainerLow,
+                        borderRadius: MBorderRadius.set(all: 10.0),
+                      ),
+                      height: 45.0,
+                      width: 45.0,
+                      child: Icon(
+                        Icons.screen_rotation,
+                        color: context.colorScheme.onSurface,
+                        size: 24.0,
+                      ),
+                    ).addAction(
+                      onTap: () async {
+                        if (context.isLandscape) {
+                          await OrientationHelper.lockToPortrait();
+                        } else {
+                          await OrientationHelper.lockToLandscape();
+                        }
+                      },
+                    ),
               ),
             ValueListenableBuilder<CandleTimeFormat>(
               valueListenable: timeframe,
@@ -367,7 +366,8 @@ class _ChartScreenState extends State<ChartScreen>
                   builder: (context, fullscreen, child) {
                     if ((fullscreen && !options) || !options) {
                       return SizedBox(
-                          height: !fullscreen && !options ? 50.0 : 0.0);
+                        height: !fullscreen && !options ? 50.0 : 0.0,
+                      );
                     }
                     return Container(
                       constraints: BoxConstraints(
@@ -376,13 +376,17 @@ class _ChartScreenState extends State<ChartScreen>
                       ),
                       child: GuideTooltipWidget(
                         config: ChartTooltip.tradingPanel.config,
-                        child: const SymbolOptionsWidget(
-                          type: TransactionOptions.market_order,
-                        ).addPadding(
-                          horizontal: 21.0,
-                          top: 8.0,
-                          bottom: _calculateBottomPadding(context, fullscreen),
-                        ),
+                        child:
+                            const SymbolOptionsWidget(
+                              type: TransactionOptions.market_order,
+                            ).addPadding(
+                              horizontal: 21.0,
+                              top: 8.0,
+                              bottom: _calculateBottomPadding(
+                                context,
+                                fullscreen,
+                              ),
+                            ),
                       ),
                     );
                   },
@@ -411,7 +415,7 @@ class _ChartScreenState extends State<ChartScreen>
     quotesCubit.setSymbol(symbol);
     key.currentState?.clearSLOrTPOrPosition();
     await Future.delayed(const Duration(milliseconds: 200));
-    key.currentState?.setLoadedObjects();
+    key.currentState?.setLoadedObjects(symbol);
     key.currentState?.goToEnd();
     if (mounted) context.read<PositionsCubit>().resetPositions();
     if (mounted) context.read<OrdersCubit>().resetOrders();
@@ -581,9 +585,10 @@ class _ChartScreenState extends State<ChartScreen>
     final chartCubit = context.read<ChartCubit>();
     final quotesCubit = context.read<QuotesCubit>();
     if (quotesCubit.currentSymbol.value != null) {
+      final symbol = quotesCubit.currentSymbol.value!.symbol;
       chartCubit.getCandles(
         timeFrame: timeframe.value,
-        symbol: quotesCubit.currentSymbol.value!.symbol,
+        symbol: symbol,
         offset: offset,
       );
       await Future.delayed(const Duration(milliseconds: 300));
@@ -591,7 +596,7 @@ class _ChartScreenState extends State<ChartScreen>
         ask: quotesCubit.currentSymbol.value!.ask,
         bid: quotesCubit.currentSymbol.value!.bid,
       );
-      await key.currentState?.setLoadedObjects();
+      await key.currentState?.setLoadedObjects(symbol);
       if (offset == 0) key.currentState?.goToEnd();
     }
   }
