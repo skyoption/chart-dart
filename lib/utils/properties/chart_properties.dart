@@ -48,6 +48,7 @@ class ChartProperties with Indicators, Objects {
       symbol = await sharedPreferences.getString('symbol') ?? 'GBPUSD';
       frame = CandleTimeFormat.values.firstWhere((e) => e.name == res);
       await loadCandles();
+      await chartProperties.loadObjects(symbol);
       onGetting(frame, symbol, lineCandles);
     } catch (e) {
       kPrint(e.toString());

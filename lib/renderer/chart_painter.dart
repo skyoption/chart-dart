@@ -362,7 +362,26 @@ class ChartPainter extends BaseChartPainter
   @override
   void drawDate(Canvas canvas, Size size) {
     if (data == null) return;
+    Rect rect = Rect.fromLTWH(
+      mMainRect.width,
+      mMainRect.top,
+      mMainRect.width,
+      20.0,
+    );
 
+    Rect bottomRect = Rect.fromLTWH(
+      mMainRect.width,
+      mMainRect.bottom,
+      mMainRect.width,
+      20.0,
+    );
+
+    Paint paint = Paint()
+      ..color = chartColors.bgColor
+      ..style = PaintingStyle.fill;
+
+    canvas.drawRect(rect, paint);
+    canvas.drawRect(bottomRect, paint);
     double columnSpace = size.rWidth / this.chartStyle.gridColumns;
     double startX = getX(mStartIndex) - mPointWidth / 2;
     double stopX = getX(mStopIndex) + mPointWidth / 2;
