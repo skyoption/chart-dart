@@ -139,14 +139,35 @@ mixin ChartCalc {
 
   int getXTime(double x, List<KLineEntity> data) {
     if (data.isEmpty) return 0;
-    const candleSpace = 10.0;
-    final lowTime = data[0].time;
-    final topTime = data.last.time;
-    int timeDiff = topTime - lowTime;
-    double pixelTime =
-        timeDiff / (getX(data.length) - (candleSpace * scaleX / scaleX));
-    double currentTime = lowTime + x * pixelTime;
-    return currentTime.toInt();
+
+    // Find which candle index this X coordinate corresponds to
+    // getX(i) = i * mPointWidth + mPointWidth / 2
+    // So: i = (x - mPointWidth / 2) / mPointWidth
+
+    // Calculate the index from X coordinate
+    double index = (x - mPointWidth / 2) / mPointWidth;
+    int lowerIndex = index.floor().clamp(0, data.length - 1);
+    int upperIndex = (index.ceil()).clamp(0, data.length - 1);
+
+    // If exactly on a candle
+    if (lowerIndex == upperIndex) {
+      return data[lowerIndex].time;
+    }
+
+    // Interpolate between the two candles
+    final lowerX = getX(lowerIndex);
+    final upperX = getX(upperIndex);
+
+    if (upperX == lowerX) {
+      return data[lowerIndex].time;
+    }
+
+    final xRatio = (x - lowerX) / (upperX - lowerX);
+    final lowerTime = data[lowerIndex].time;
+    final upperTime = data[upperIndex].time;
+    final timeDiff = upperTime - lowerTime;
+
+    return (lowerTime + timeDiff * xRatio).toInt();
   }
 
   double getXFromTime(int time, List<KLineEntity> data) {
