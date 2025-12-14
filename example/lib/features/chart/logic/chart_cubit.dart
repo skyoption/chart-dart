@@ -133,4 +133,9 @@ class ChartCubit extends Cubit<FlowState> {
     items = candles;
     emit(state.copyWith(data: Data.secure, type: StateType.none));
   }
+
+  DateTime get oldTime {
+    if (items.isEmpty) return DateTime.now();
+    return DateTime.fromMillisecondsSinceEpoch(items.last.time * 1000);
+  }
 }

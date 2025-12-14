@@ -25,7 +25,7 @@ mixin DrawTradePositionsLines on ChartDetails {
       final cutOpenY = getMainYInChart(position.openPrice);
       final isBuy = position.isBuy;
       // Blue arrow up for open positions
-      _drawPostion(
+      final openOffset = _drawPostion(
         canvas,
         curOpenX,
         cutOpenY,
@@ -43,32 +43,33 @@ mixin DrawTradePositionsLines on ChartDetails {
           ..isAntiAlias = true
           ..strokeWidth = 1.5
           ..filterQuality = FilterQuality.high;
-        drawDashLine(
-          canvas,
-          Offset(curOpenX, cutOpenY),
-          Offset(curCloseX, cutCloseY),
-          fillPaint,
-        );
-        _drawPostion(
+
+        final closeOffset = _drawPostion(
           canvas,
           curCloseX,
           cutCloseY,
           false,
         );
+        drawDashLine(
+          canvas,
+          openOffset,
+          closeOffset,
+          fillPaint,
+        );
       }
     }
   }
 
-  void _drawPostion(Canvas canvas, double x, double y, bool isOpen) {
+  Offset _drawPostion(Canvas canvas, double x, double y, bool isOpen) {
     if (isOpen) {
-      _drawArrowUp(
+      return _drawArrowUp(
         canvas,
         x,
         y,
         Colors.blue,
       );
     } else {
-      _drawArrowDown(
+      return _drawArrowDown(
         canvas,
         x,
         y,
@@ -77,7 +78,7 @@ mixin DrawTradePositionsLines on ChartDetails {
     }
   }
 
-  void _drawArrowUp(Canvas canvas, double x, double y, Color color) {
+  Offset _drawArrowUp(Canvas canvas, double x, double y, Color color) {
     // Draw a filled upward-pointing triangle arrow (like in the image)
     // Arrow size scales with zoom but has minimum/maximum bounds for visibility
     final baseSize = 8.0;
@@ -114,9 +115,10 @@ mixin DrawTradePositionsLines on ChartDetails {
       ..filterQuality = FilterQuality.high;
 
     canvas.drawPath(path, borderPaint);
+    return Offset(x, y);
   }
 
-  void _drawArrowDown(Canvas canvas, double x, double y, Color color) {
+  Offset _drawArrowDown(Canvas canvas, double x, double y, Color color) {
     // Draw a filled downward-pointing triangle arrow (like in the image)
     // Arrow size scales with zoom but has minimum/maximum bounds for visibility
     final baseSize = 8.0;
@@ -153,6 +155,7 @@ mixin DrawTradePositionsLines on ChartDetails {
       ..filterQuality = FilterQuality.high;
 
     canvas.drawPath(path, borderPaint);
+    return Offset(x, y);
   }
 
   void drawDashLine(

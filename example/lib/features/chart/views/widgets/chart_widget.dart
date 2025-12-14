@@ -81,28 +81,45 @@ class _ChartWidgetState extends State<ChartWidget> {
   }
 
   void _setTrades() {
+    final platform = context.read<PlatformSettingsCubit>();
     final cubit = context.read<PositionsCubit>();
     final historyCubit = context.read<HistoryPositionsCubit>();
-    final currentTrades = cubit.positions.map((e) {
-      return TradeEntity(
-        id: e.id,
-        openTime: e.openTime,
-        openPrice: e.openPrice,
-        isBuy: e.direction == 'BUY',
-      );
-    }).toList();
-    // final historyTrades = historyCubit.positions.map((e) {
-    //   return TradeEntity(
-    //     id: e.id,
-    //     openTime: e.openTime,
-    //     openPrice: e.openPrice,
-    //     isBuy: e.direction == 'BUY',
-    //     closeTime: e.closeTime,
-    //     closePrice: e.closePrice,
-    //   );
-    // }).toList();
-    trades = currentTrades;
-    kPrint('Trades ${trades.map((e) => e.openTime).toList()}');
+    final symbol = context.read<QuotesCubit>().currentSymbol.value;
+    final oldCandleDateTime = context.read<ChartCubit>().oldTime;
+    if (symbol == null) return;
+    trades = [];
+    // if (platform.settings.drawTradesOnChart) {
+    for (var e in cubit.positions) {
+      if (e.groupSymbol == symbol.symbol &&
+          oldCandleDateTime.isBefore(DateTime.parse(e.openTime))) {
+        trades.add(
+          TradeEntity(
+            id: e.id,
+            openTime: e.openTime,
+            openPrice: e.openPrice,
+            isBuy: e.direction == 'BUY',
+          ),
+        );
+      }
+      // }
+    }
+    // if (platform.settings.drawTradesHistoryOnChart) {
+    for (var e in historyCubit.positions) {
+      if (e.symbol == symbol.symbol &&
+          oldCandleDateTime.isBefore(DateTime.parse(e.openTime))) {
+        trades.add(
+          TradeEntity(
+            id: e.id,
+            openTime: e.openTime,
+            openPrice: e.openPrice,
+            isBuy: e.direction == 'BUY',
+            closeTime: e.closeTime,
+            closePrice: e.closePrice,
+          ),
+        );
+      }
+      // }
+    }
   }
 
   @override
