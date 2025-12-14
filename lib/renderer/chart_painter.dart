@@ -362,17 +362,17 @@ class ChartPainter extends BaseChartPainter
   @override
   void drawDate(Canvas canvas, Size size) {
     if (data == null) return;
-    Rect rect = Rect.fromLTWH(
-      mMainRect.width,
+    Rect rect = Rect.fromLTRB(
+      0,
       mMainRect.top,
-      mMainRect.width,
+      mMainRect.width - 100.0,
       20.0,
     );
 
-    Rect bottomRect = Rect.fromLTWH(
-      mMainRect.width,
+    Rect bottomRect = Rect.fromLTRB(
+      0,
       mMainRect.bottom,
-      mMainRect.width,
+      mMainRect.width - 100.0,
       20.0,
     );
 
