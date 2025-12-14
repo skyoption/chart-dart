@@ -85,7 +85,7 @@ mixin DrawTradePositionsLines on ChartDetails {
     final baseWidth = 12.0;
     final arrowHeight = baseSize;
     final arrowWidth = baseWidth;
-    final double yOffset = y;
+    final double yOffset = y - 2.0;
     x = x - arrowWidth * 1.5;
     y = y + arrowHeight * 1.5;
     final path = Path();
@@ -126,7 +126,6 @@ mixin DrawTradePositionsLines on ChartDetails {
     final baseWidth = 12.0;
     final arrowHeight = baseSize;
     final arrowWidth = baseWidth;
-    final double yOffset = y;
     x = x - arrowWidth * 1.5;
     y = y + arrowHeight * 1.5;
     final path = Path();
@@ -157,7 +156,7 @@ mixin DrawTradePositionsLines on ChartDetails {
       ..filterQuality = FilterQuality.high;
 
     canvas.drawPath(path, borderPaint);
-    return Offset(x, yOffset);
+    return Offset(x, y);
   }
 
   void drawDashLine(
