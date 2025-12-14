@@ -115,6 +115,9 @@ mixin DrawTPAndSLLines on ChartDetails {
       if (mMainLowMinValue >= value) continue;
       double? y = getMainY(value);
       if (y == null) return;
+      if (mMainLowMinValue >= value || mMainHighMaxValue <= value) {
+        return;
+      }
 
       double startX = 0;
       final max = -mTranslateX + (mWidth + 20) / scaleX;
