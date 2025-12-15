@@ -16,7 +16,7 @@ class LoggingPusher {
       message: logSuccessMessage,
       color: color ?? getIt<AppColorScheme>().light.primary,
     );
-    getIt<TradingLogsCubit>().log(logSuccessMessage);
+    // getIt<TradingLogsCubit>().log(logSuccessMessage);
   }
 
   static void error({
@@ -31,6 +31,6 @@ class LoggingPusher {
       color: color ?? getIt<AppColorScheme>().light.error,
       isSuccess: false,
     );
-    getIt<TradingLogsCubit>().log(logErrorMessage);
+    // getIt<TradingLogsCubit>().log(logErrorMessage);
   }
 }

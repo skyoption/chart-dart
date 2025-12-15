@@ -105,7 +105,7 @@ class _ChartWidgetState extends State<ChartWidget> {
     // if (platform.settings.drawTradesHistoryOnChart) {
     for (var e in historyCubit.positions) {
       if (e.symbol == symbol.symbol &&
-          oldCandleDateTime.isBefore(DateTime.parse(e.openTime))) {
+          oldCandleDateTime.isAfter(DateTime.parse(e.openTime))) {
         trades.add(
           TradeEntity(
             id: e.id,
@@ -144,7 +144,6 @@ class _ChartWidgetState extends State<ChartWidget> {
                           FlowBuilder<PositionsCubit>(
                             buildWhenCubit: (cubit) => false,
                             listener: (context, state, cubit) {
-                              _setTrades();
                               if (state.type == StateType.delete) {
                                 widget.removePosition(state.data);
                               } else {
@@ -177,6 +176,7 @@ class _ChartWidgetState extends State<ChartWidget> {
                                         cubit,
                                         platform,
                                       );
+                                      _setTrades();
                                     },
                                     builder: (context, state, cubit) {
                                       return ValueListenableBuilder<GraphStyle>(

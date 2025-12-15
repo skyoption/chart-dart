@@ -16,6 +16,7 @@ mixin DrawTradePositionsLines on ChartDetails {
     List<KLineEntity> data,
     List<TradeEntity> trades,
   ) {
+    final baseSize = 8.0;
     // Process current point for trade positions
     for (int i = 0; i < trades.length; i++) {
       final position = trades[i];
@@ -24,18 +25,17 @@ mixin DrawTradePositionsLines on ChartDetails {
       final curOpenX = getXFromTime(openTime, data);
       final cutOpenY = getMainYInChart(position.openPrice);
       final isBuy = position.isBuy;
+      final double yOffset = cutOpenY + baseSize / 2;
       // Blue arrow up for open positions
-      final openOffset = _drawPostion(
-        canvas,
-        curOpenX,
-        cutOpenY,
-        true,
-      );
+      final openOffset = Offset(curOpenX, yOffset);
+
       final closeTime = position.closeTimeInMilliseconds;
       if (closeTime != null) {
         final curCloseX = getXFromTime(closeTime, data);
         final cutCloseY = getMainYInChart(position.closePrice!);
         // Red arrow down for close positions
+
+        final double yOffsetClose = cutCloseY + baseSize * 2.0;
 
         final fillPaint = Paint()
           ..color = isBuy ? Colors.redAccent : Colors.blue
@@ -44,19 +44,26 @@ mixin DrawTradePositionsLines on ChartDetails {
           ..strokeWidth = 1.5
           ..filterQuality = FilterQuality.high;
 
-        final closeOffset = _drawPostion(
-          canvas,
-          curCloseX,
-          cutCloseY,
-          false,
-        );
+        final closeOffset = Offset(curCloseX, yOffsetClose);
         drawDashLine(
           canvas,
           openOffset,
           closeOffset,
           fillPaint,
         );
+        _drawPostion(
+          canvas,
+          curCloseX,
+          cutCloseY,
+          false,
+        );
       }
+      _drawPostion(
+        canvas,
+        curOpenX,
+        cutOpenY,
+        true,
+      );
     }
   }
 
@@ -86,7 +93,7 @@ mixin DrawTradePositionsLines on ChartDetails {
     final arrowHeight = baseSize;
     final arrowWidth = baseWidth;
     final double yOffset = y + baseSize / 2;
-    x = x - arrowWidth * 1.5;
+    // x = x ;
     y = y + arrowHeight * 1.5;
     final path = Path();
     // Start at the top point (tip) of the arrow
@@ -126,7 +133,7 @@ mixin DrawTradePositionsLines on ChartDetails {
     final baseWidth = 12.0;
     final arrowHeight = baseSize;
     final arrowWidth = baseWidth;
-    x = x - arrowWidth * 1.5;
+    // x = x - arrowWidth * 1.5;
     y = y + arrowHeight * 1.5;
     final path = Path();
     // Start at the top-left corner of the arrow base
