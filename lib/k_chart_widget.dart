@@ -278,10 +278,6 @@ class KChartWidgetState extends State<KChartWidget>
     final index = tp_sl_positions.indexWhere((e) => e.id == item.id);
     if (index == -1) {
       tp_sl_positions.add(item);
-    } else {
-      tp_sl_positions[index] = item;
-    }
-    if (index == -1) {
       final object = ObjectEntity(
         id: item.id,
         name: item.type,
@@ -294,8 +290,10 @@ class KChartWidgetState extends State<KChartWidget>
       );
       await chartProperties.addTPAndSLLine(object);
       _painter!.setTPAndSLLineValue(object, item.value);
-      notifyChanged();
+    } else {
+      tp_sl_positions[index] = item;
     }
+    notifyChanged();
   }
 
   void removeAskBid(int id) {
