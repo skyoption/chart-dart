@@ -38,7 +38,7 @@ mixin DrawTradePositionsLines on ChartDetails {
         final double yOffsetClose = cutCloseY + baseSize * 2.0;
 
         final fillPaint = Paint()
-          ..color = isBuy ? Colors.redAccent : Colors.blue
+          ..color = isBuy ? Colors.blue : Colors.redAccent
           ..style = PaintingStyle.fill
           ..isAntiAlias = true
           ..strokeWidth = 1.5
