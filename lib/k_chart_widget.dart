@@ -281,21 +281,21 @@ class KChartWidgetState extends State<KChartWidget>
     } else {
       tp_sl_positions[index] = item;
     }
-    final object = ObjectEntity(
-      id: item.id,
-      name: item.type,
-      title: item.title,
-      value: item.value,
-      style: ObjectStyle.dash,
-      type: ObjectType.Position,
-      editable: item.editable,
-      color: colorToHex(item.color),
-    );
     if (index == -1) {
+      final object = ObjectEntity(
+        id: item.id,
+        name: item.type,
+        title: item.title,
+        value: item.value,
+        style: ObjectStyle.dash,
+        type: ObjectType.Position,
+        editable: item.editable,
+        color: colorToHex(item.color),
+      );
       await chartProperties.addTPAndSLLine(object);
+      _painter!.setTPAndSLLineValue(object, item.value);
+      notifyChanged();
     }
-    _painter!.setTPAndSLLineValue(object, item.value);
-    notifyChanged();
   }
 
   void removeAskBid(int id) {
