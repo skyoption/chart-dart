@@ -28,11 +28,14 @@ enum PriceField {
   Close_Close,
 }
 
+enum Methods { Simple, Exponential, Smoothed, Linear_Weighted }
+
 @collection
 class IndicatorEntity {
   int windowId = 0;
   Id id = Isar.autoIncrement;
   String name;
+  String key;
   int shift, period;
   double? deviations, maximum, steps;
   double heightRetro;
@@ -70,6 +73,7 @@ class IndicatorEntity {
 
   IndicatorEntity({
     this.name = '',
+    this.key = '',
     this.shift = 0,
     this.windowId = 0,
     this.period = 5,
@@ -113,6 +117,7 @@ class IndicatorEntity {
 
   CandleIndicatorEntity copyToCandle({
     name,
+    key,
     shift,
     period,
     method,
@@ -151,6 +156,7 @@ class IndicatorEntity {
     kValue,
   }) {
     return CandleIndicatorEntity(
+      key: key ?? this.key,
       period: period ?? this.period,
       value: value ?? this.value,
       type: method ?? this.type,

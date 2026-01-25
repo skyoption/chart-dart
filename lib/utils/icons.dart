@@ -7,4 +7,7 @@ class Svgs {
   static String rectangle = 'chart/rectangle-icon';
   static String longDashLine = 'chart/line-long-dash-icon';
   static String dashLine = 'chart/line-dash-icon';
+  static String search = 'chart/search-icon';
+  static String fav = 'chart/fav-icon';
+  static String favOutline = 'chart/fav-outline-icon';
 }

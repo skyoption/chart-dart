@@ -1,20 +1,18 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/indicators/indicator_levels_screen.dart';
-import 'package:candle_chart/indicators/indicator_pixels_screen.dart';
-import 'package:candle_chart/indicators/indicators_methods_screen.dart';
-import 'package:candle_chart/indicators/price_field_screen.dart';
+import 'package:candle_chart/indicators/widgets/dropdown_item_widget.dart';
 import 'package:candle_chart/indicators/widgets/indicator_color_widget.dart';
+import 'package:candle_chart/indicators/widgets/indicator_info_widget.dart';
+import 'package:candle_chart/indicators/widgets/input_item_widget.dart';
+import 'package:candle_chart/indicators/widgets/levels_item_widget.dart';
 import 'package:candle_chart/k_chart_plus.dart';
-import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
-import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
-import 'package:candle_chart/utils/kprint.dart';
 
 import 'package:candle_chart/indicators/widgets/top_header_widget.dart';
+import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-import '../indicator_properties_screen.dart';
+import '../main/indicator_properties_screen.dart';
 
 @immutable
 class SOPropertiesScreen extends StatefulWidget {
@@ -52,6 +50,7 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
       slowingController.text = indicator!.stochastic!.slowing.toString();
     } else {
       indicator = IndicatorEntity(
+        key: "stochastic_oscillator",
         name: widget.name!,
         type: IndicatorType.SO_SMA,
         stochastic: Stochastic(),
@@ -70,235 +69,176 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
         preferredSize: const Size(double.infinity, 60.0),
         child: SafeArea(
           child: TopHeaderWidget(
-            title: context.tr.properties,
+            title: name,
             onBack: () => Navigator.of(context).pop(),
-            onDone: () {
-              _onDone();
-            },
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        // padding: EdgeInsets.symmetric(vertical: 12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            PropertiesTitleWidget(
-              title: '${name.toUpperCase()}',
-            ),
-            PropertiesItemWidget(
-              title: context.tr.k_period,
-              child: SizedBox(
-                width: 60.0,
-                height: 20.0,
-                child: TextField(
-                  cursorHeight: 12.0,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: KChartWidget.colors!.primary,
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: MPadding.set(horizontal: 21.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  IndicatorInfoWidget(
+                    options: [
+                      context.tr.inputs,
+                      context.tr.visibility,
+                      context.tr.style,
+                    ],
+                    children: [
+                      Column(
+                        spacing: 21.0,
+                        children: [
+                          InputItemWidget(
+                            title: context.tr.k_period,
+                            onChanged: (value) {
+                              final res = int.tryParse(value);
+                              if (res != null)
+                                indicator!.stochastic!.kPeriod = res;
+                            },
+                            controller: kPeriodController,
+                            keyboardType:
+                                TextInputType.numberWithOptions(signed: false),
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(3),
+                              NumericalRangeFormatter(min: 1, max: 100),
+                            ],
+                          ),
+                          InputItemWidget(
+                            onChanged: (value) {
+                              final res = int.tryParse(value);
+                              if (res != null)
+                                indicator!.stochastic!.dPeriod = res;
+                            },
+                            title: context.tr.d_period,
+                            controller: dPeriodController,
+                            keyboardType:
+                                TextInputType.numberWithOptions(signed: false),
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(3),
+                              NumericalRangeFormatter(min: 1, max: 100),
+                            ],
+                          ),
+                          InputItemWidget(
+                            onChanged: (value) {
+                              final res = int.tryParse(value);
+                              if (res != null)
+                                indicator!.stochastic!.slowing = res;
+                            },
+                            title: context.tr.slowing,
+                            controller: slowingController,
+                            keyboardType:
+                                TextInputType.numberWithOptions(signed: false),
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(3),
+                              NumericalRangeFormatter(min: 1, max: 100),
+                            ],
+                          ),
+                          LevelsItemWidget(
+                            indicator: indicator!,
+                            onChange: (color, levels) {
+                              indicator!.levels = levels;
+                              indicator!.levelsColor = color;
+                            },
+                          ),
+                          DropdownItemWidget<PriceField>(
+                            title: context.tr.priceField,
+                            items: PriceField.values,
+                            onTitle: (value) => value.name.replaceAll('_', '/'),
+                            value: indicator?.stochastic?.priceField,
+                            onChanged: (value) {
+                              indicator?.stochastic?.priceField = value;
+                              setState(() {});
+                            },
+                          ),
+                          DropdownItemWidget<Methods>(
+                            title: context.tr.method,
+                            items: Methods.values,
+                            onTitle: (value) => value.name.replaceAll('_', ' '),
+                            value: getType(),
+                            onChanged: (value) {
+                              setType(value);
+                              setState(() {});
+                            },
+                          ),
+                        ],
                       ),
-                  onChanged: (value) {
-                    final res = int.tryParse(value);
-                    if (res != null) indicator!.stochastic!.kPeriod = res;
-                  },
-                  autofocus: false,
-                  controller: kPeriodController,
-                  textAlignVertical: TextAlignVertical.center,
-                  keyboardType: TextInputType.numberWithOptions(signed: false),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 11.0),
-                  ),
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(3),
-                    NumericalRangeFormatter(min: 1, max: 100),
-                  ],
-                ),
-              ),
-              margin: EdgeInsets.zero,
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: context.tr.d_period,
-              child: SizedBox(
-                width: 60.0,
-                height: 20.0,
-                child: TextField(
-                  cursorHeight: 12.0,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: KChartWidget.colors!.primary,
+                      Column(
+                        children: [
+                          DropdownItemWidget<String>(
+                            title: context.tr.timeframe,
+                            items: [context.tr.all_timeframes],
+                            onTitle: (value) => value,
+                            onChanged: (value) {},
+                          ),
+                        ],
                       ),
-                  onChanged: (value) {
-                    final res = int.tryParse(value);
-                    if (res != null) indicator!.stochastic!.dPeriod = res;
-                  },
-                  autofocus: false,
-                  controller: dPeriodController,
-                  textAlignVertical: TextAlignVertical.center,
-                  keyboardType: TextInputType.numberWithOptions(signed: false),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 11.0),
-                  ),
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(3),
-                    NumericalRangeFormatter(min: 1, max: 100),
-                  ],
-                ),
-              ),
-              margin: EdgeInsets.zero,
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: context.tr.slowing,
-              child: SizedBox(
-                width: 60.0,
-                height: 20.0,
-                child: TextField(
-                  cursorHeight: 12.0,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                        color: KChartWidget.colors!.primary,
+                      Column(
+                        spacing: 21.0,
+                        children: [
+                          IndicatorColorWidget(
+                            title: context.tr.main,
+                            color: colorFromHex(
+                                indicator?.stochastic?.mainColor ?? ''),
+                            onChange: (color, drawAsBackground) {
+                              indicator?.stochastic?.mainColor =
+                                  color.toHexString();
+                            },
+                          ),
+                          IndicatorColorWidget(
+                            title: context.tr.signal,
+                            color: colorFromHex(
+                                indicator?.stochastic?.signalColor ?? ''),
+                            onChange: (color, drawAsBackground) {
+                              indicator?.stochastic?.signalColor =
+                                  color.toHexString();
+                            },
+                          ),
+                        ],
                       ),
-                  onChanged: (value) {
-                    final res = int.tryParse(value);
-                    if (res != null) indicator!.stochastic!.slowing = res;
-                  },
-                  autofocus: false,
-                  controller: slowingController,
-                  textAlignVertical: TextAlignVertical.center,
-                  keyboardType: TextInputType.numberWithOptions(signed: false),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 11.0),
+                    ],
                   ),
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(3),
-                    NumericalRangeFormatter(min: 1, max: 100),
-                  ],
-                ),
+                ],
               ),
-              margin: EdgeInsets.zero,
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: context.tr.priceField,
-              subTitle:
-                  indicator?.stochastic?.priceField.name.replaceAll('_', '/'),
-              margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => PriceFieldScreen(
-                      field: indicator?.stochastic?.priceField,
-                      onApply: (field) {
-                        indicator?.stochastic?.priceField = field;
-                        setState(() {});
-                      },
+          ),
+          GestureDetector(
+            onTap: _onDone,
+            child: Container(
+              height: 50.0,
+              margin: MPadding.set(
+                horizontal: 21.0,
+                top: 21.0,
+                bottom: context.bottomPadding,
+              ),
+              decoration: BoxDecoration(
+                color: context.scheme.primary,
+                borderRadius: BorderRadius.circular(6.0),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                context.tr.apply,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: context.scheme.onPrimary,
                     ),
-                  ),
-                );
-              },
+              ),
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: context.tr.method,
-              subTitle:
-                  (setMethod(indicator)?.name ?? 'Sample').replaceAll('_', ' '),
-              margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => IndicatorMethodsScreen(
-                      method: setMethod(indicator),
-                      onMethod: (method) {
-                        setType(method);
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            PropertiesItemWidget(
-              title: context.tr.levels,
-              margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
-              subTitle: indicator!.levels.join(', '),
-              onTap: () {
-                kPrint(widget.indicator?.levelsColor);
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => IndicatorLevelsScreen(
-                      color: indicator!.levelsColor ?? '',
-                      setLevels: (color, levels) {
-                        indicator!.levels = levels;
-                        indicator!.levelsColor = color;
-                        setState(() {});
-                        kPrint(widget.indicator?.levelsColor);
-                      },
-                      levels: indicator!.levels,
-                    ),
-                  ),
-                );
-              },
-            ),
-            PropertiesTitleWidget(title: context.tr.visualization),
-            PropertiesItemWidget(
-              title: context.tr.timeframe,
-              subTitle: context.tr.all_timeframes,
-              margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
-              onTap: () {},
-            ),
-            PropertiesTitleWidget(title: 'style'),
-            PropertiesItemWidget(
-              title: context.tr.pixel,
-              subTitle:
-                  '${widget.indicator?.strokeWidth ?? 1} ${context.tr.pixel}',
-              margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withOpacity(0.8),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => IndicatorPixelsScreen(
-                      pixel: indicator!.strokeWidth,
-                      onConfirm: (pixel) {
-                        indicator!.strokeWidth = pixel;
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            IndicatorColorWidget(
-              title: context.tr.main,
-              color: colorFromHex(indicator?.stochastic?.mainColor ?? ''),
-              onChange: (color, drawAsBackground) {
-                indicator?.stochastic?.mainColor = color.toHexString();
-              },
-            ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
-            IndicatorColorWidget(
-              title: context.tr.signal,
-              color: colorFromHex(indicator?.stochastic?.signalColor ?? ''),
-              onChange: (color, drawAsBackground) {
-                indicator?.stochastic?.signalColor = color.toHexString();
-              },
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
+  }
+
+  Methods? getType() {
+    if (indicator?.type == IndicatorType.SO_EMA) return Methods.Exponential;
+    if (indicator?.type == IndicatorType.SO_LINEAR)
+      return Methods.Linear_Weighted;
+    if (indicator?.type == IndicatorType.SO_SMA) return Methods.Simple;
+    if (indicator?.type == IndicatorType.SO_SMMA) return Methods.Smoothed;
+    return null;
   }
 
   void setType(method) {

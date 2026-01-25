@@ -1,6 +1,9 @@
-import 'package:candle_chart/k_chart_widget.dart';
+import 'package:candle_chart/k_chart_plus.dart';
+import 'package:candle_chart/objects/widgets/delete_widget.dart';
 import 'package:candle_chart/objects/widgets/svg.dart';
 import 'package:candle_chart/widgets/paddings.dart';
+import 'package:candle_chart/widgets/radius.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ObjectItemWidget extends StatefulWidget {
@@ -43,11 +46,12 @@ class _ObjectItemWidgetState extends State<ObjectItemWidget> {
     final child = GestureDetector(
       onTap: () => widget.onTap(),
       child: Container(
-        color: widget.backgroundColor ?? Colors.grey.withOpacity(0.2),
-        padding: EdgeInsetsDirectional.symmetric(
-          vertical: 16.0,
-          horizontal: 21.0,
+        decoration: BoxDecoration(
+          color: context.scheme.surfaceBright,
+          borderRadius: MBorderRadius.set(all: 8.0),
         ),
+        margin: MPadding.set(horizontal: 21.0),
+        padding: MPadding.set(horizontal: 21.0, vertical: 16.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -56,7 +60,7 @@ class _ObjectItemWidgetState extends State<ObjectItemWidget> {
                 if (widget.iconSize != null && widget.icon != null)
                   Container(
                     width: widget.iconSize! + 5,
-                    margin: EdgeInsetsDirectional.only(end: 12.0),
+                    margin: MPadding.set(end: 12.0),
                     child: MSvg(
                       name: widget.icon,
                       width: widget.iconSize,
@@ -69,18 +73,15 @@ class _ObjectItemWidgetState extends State<ObjectItemWidget> {
                   children: [
                     Text(
                       widget.title!,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w400,
-                            color: widget.color,
-                          ),
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                     if (widget.subtitle != null)
                       Text(
                         widget.subtitle!,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey,
-                            ),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(fontSize: 10.0),
                       ),
                   ],
                 ),
@@ -103,37 +104,17 @@ class _ObjectItemWidgetState extends State<ObjectItemWidget> {
         child: child,
       );
     }
-    return Padding(
-      padding: widget.margin ?? MPadding.set(bottom: 8.0),
-      child: Dismissible(
-        key: Key(widget.id!),
-        onUpdate: (details) {
-          direction = details.direction;
-          setState(() {});
-        },
-        onDismissed: (value) {
-          if (widget.onDelete != null) widget.onDelete!();
-        },
-        background: Container(
-          color: Colors.red.withOpacity(0.1),
-          child: Padding(
-            padding: MPadding.set(horizontal: 21.0),
-            child: Row(
-              mainAxisAlignment: direction == DismissDirection.startToEnd
-                  ? MainAxisAlignment.start
-                  : MainAxisAlignment.end,
-              children: [
-                Icon(
-                  Icons.delete_outline_outlined,
-                  color: Colors.red,
-                  size: 28.0,
-                ),
-              ],
-            ),
-          ),
-        ),
-        child: child,
-      ),
-    );
+    return Dismissible(
+      key: Key(widget.id!),
+      onUpdate: (details) {
+        direction = details.direction;
+        setState(() {});
+      },
+      onDismissed: (value) {
+        if (widget.onDelete != null) widget.onDelete!();
+      },
+      background: DeleteWidget(direction: direction),
+      child: child,
+    ).addPadding(bottom: 12.0);
   }
 }

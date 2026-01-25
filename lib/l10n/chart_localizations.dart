@@ -577,6 +577,84 @@ abstract class ChartLocalizations {
   /// In en, this message translates to:
   /// **'Rectangle'**
   String get rectangle;
+
+  /// No description provided for @tools.
+  ///
+  /// In en, this message translates to:
+  /// **'Tools'**
+  String get tools;
+
+  /// No description provided for @searchByIndicatorName.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by indicator name'**
+  String get searchByIndicatorName;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @favorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favorites;
+
+  /// No description provided for @applied.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied'**
+  String get applied;
+
+  /// No description provided for @noIndicatorsAppliedYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No indicators applied yet'**
+  String get noIndicatorsAppliedYet;
+
+  /// No description provided for @noFavoritesAppliedYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorites applied yet'**
+  String get noFavoritesAppliedYet;
+
+  /// No description provided for @inputs.
+  ///
+  /// In en, this message translates to:
+  /// **'Inputs'**
+  String get inputs;
+
+  /// No description provided for @visibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Visibility'**
+  String get visibility;
+
+  /// No description provided for @value.
+  ///
+  /// In en, this message translates to:
+  /// **'Value'**
+  String get value;
+
+  /// No description provided for @selectItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Item'**
+  String get selectItem;
+
+  /// No description provided for @pleaseChooseItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose item'**
+  String get pleaseChooseItem;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
 }
 
 class _ChartLocalizationsDelegate

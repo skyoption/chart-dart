@@ -32,6 +32,14 @@ mixin Indicators {
     return maxWindowId + 1;
   }
 
+  bool isApplied(String name) {
+    return [...indicators, ..._secondaryIndicators].any((e) => e.key == name);
+  }
+
+  bool get isEmptyApplied {
+    return [...indicators, ..._secondaryIndicators].isEmpty;
+  }
+
   Map<int, List<IndicatorEntity>> get secondaries {
     Map<int, List<IndicatorEntity>> items = {};
     for (var item in _secondaryIndicators) {

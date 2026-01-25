@@ -247,4 +247,43 @@ class ChartLocalizationsEn extends ChartLocalizations {
 
   @override
   String get rectangle => 'Rectangle';
+
+  @override
+  String get tools => 'Tools';
+
+  @override
+  String get searchByIndicatorName => 'Search by indicator name';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get favorites => 'Favorites';
+
+  @override
+  String get applied => 'Applied';
+
+  @override
+  String get noIndicatorsAppliedYet => 'No indicators applied yet';
+
+  @override
+  String get noFavoritesAppliedYet => 'No favorites applied yet';
+
+  @override
+  String get inputs => 'Inputs';
+
+  @override
+  String get visibility => 'Visibility';
+
+  @override
+  String get value => 'Value';
+
+  @override
+  String get selectItem => 'Select Item';
+
+  @override
+  String get pleaseChooseItem => 'Please choose item';
+
+  @override
+  String get apply => 'Apply';
 }

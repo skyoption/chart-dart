@@ -70,129 +70,134 @@ const CandleIndicatorEntitySchema = Schema(
       name: r'kValue',
       type: IsarType.double,
     ),
-    r'kijunSen': PropertySchema(
+    r'key': PropertySchema(
       id: 11,
+      name: r'key',
+      type: IsarType.string,
+    ),
+    r'kijunSen': PropertySchema(
+      id: 12,
       name: r'kijunSen',
       type: IsarType.double,
     ),
     r'level': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'level',
       type: IsarType.byte,
       enumMap: _CandleIndicatorEntitylevelEnumValueMap,
     ),
     r'levels': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'levels',
       type: IsarType.doubleList,
     ),
     r'levelsColor': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'levelsColor',
       type: IsarType.string,
     ),
     r'longEMA': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'longEMA',
       type: IsarType.double,
     ),
     r'macd': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'macd',
       type: IsarType.object,
       target: r'MACD',
     ),
     r'maximum': PropertySchema(
-      id: 17,
+      id: 18,
       name: r'maximum',
       type: IsarType.double,
     ),
     r'name': PropertySchema(
-      id: 18,
+      id: 19,
       name: r'name',
       type: IsarType.string,
     ),
     r'period': PropertySchema(
-      id: 19,
+      id: 20,
       name: r'period',
       type: IsarType.long,
     ),
     r'secondColor': PropertySchema(
-      id: 20,
+      id: 21,
       name: r'secondColor',
       type: IsarType.string,
     ),
     r'senkouSpanA': PropertySchema(
-      id: 21,
+      id: 22,
       name: r'senkouSpanA',
       type: IsarType.double,
     ),
     r'senkouSpanB': PropertySchema(
-      id: 22,
+      id: 23,
       name: r'senkouSpanB',
       type: IsarType.double,
     ),
     r'shift': PropertySchema(
-      id: 23,
+      id: 24,
       name: r'shift',
       type: IsarType.long,
     ),
     r'shortEMA': PropertySchema(
-      id: 24,
+      id: 25,
       name: r'shortEMA',
       type: IsarType.double,
     ),
     r'steps': PropertySchema(
-      id: 25,
+      id: 26,
       name: r'steps',
       type: IsarType.double,
     ),
     r'stochastic': PropertySchema(
-      id: 26,
+      id: 27,
       name: r'stochastic',
       type: IsarType.object,
       target: r'Stochastic',
     ),
     r'strokeWidth': PropertySchema(
-      id: 27,
+      id: 28,
       name: r'strokeWidth',
       type: IsarType.double,
     ),
     r'style': PropertySchema(
-      id: 28,
+      id: 29,
       name: r'style',
       type: IsarType.byte,
       enumMap: _CandleIndicatorEntitystyleEnumValueMap,
     ),
     r'tenkanSen': PropertySchema(
-      id: 29,
+      id: 30,
       name: r'tenkanSen',
       type: IsarType.double,
     ),
     r'timeframe': PropertySchema(
-      id: 30,
+      id: 31,
       name: r'timeframe',
       type: IsarType.byte,
       enumMap: _CandleIndicatorEntitytimeframeEnumValueMap,
     ),
     r'type': PropertySchema(
-      id: 31,
+      id: 32,
       name: r'type',
       type: IsarType.byte,
       enumMap: _CandleIndicatorEntitytypeEnumValueMap,
     ),
     r'up': PropertySchema(
-      id: 32,
+      id: 33,
       name: r'up',
       type: IsarType.double,
     ),
     r'value': PropertySchema(
-      id: 33,
+      id: 34,
       name: r'value',
       type: IsarType.double,
     ),
     r'windowId': PropertySchema(
-      id: 34,
+      id: 35,
       name: r'windowId',
       type: IsarType.long,
     )
@@ -222,6 +227,7 @@ int _candleIndicatorEntityEstimateSize(
           IchimokuSchema.estimateSize(value, allOffsets[Ichimoku]!, allOffsets);
     }
   }
+  bytesCount += 3 + object.key.length * 3;
   bytesCount += 3 + object.levels.length * 8;
   {
     final value = object.levelsColor;
@@ -276,40 +282,41 @@ void _candleIndicatorEntitySerialize(
   writer.writeBool(offsets[8], object.isMain);
   writer.writeBool(offsets[9], object.isSecondary);
   writer.writeDouble(offsets[10], object.kValue);
-  writer.writeDouble(offsets[11], object.kijunSen);
-  writer.writeByte(offsets[12], object.level.index);
-  writer.writeDoubleList(offsets[13], object.levels);
-  writer.writeString(offsets[14], object.levelsColor);
-  writer.writeDouble(offsets[15], object.longEMA);
+  writer.writeString(offsets[11], object.key);
+  writer.writeDouble(offsets[12], object.kijunSen);
+  writer.writeByte(offsets[13], object.level.index);
+  writer.writeDoubleList(offsets[14], object.levels);
+  writer.writeString(offsets[15], object.levelsColor);
+  writer.writeDouble(offsets[16], object.longEMA);
   writer.writeObject<MACD>(
-    offsets[16],
+    offsets[17],
     allOffsets,
     MACDSchema.serialize,
     object.macd,
   );
-  writer.writeDouble(offsets[17], object.maximum);
-  writer.writeString(offsets[18], object.name);
-  writer.writeLong(offsets[19], object.period);
-  writer.writeString(offsets[20], object.secondColor);
-  writer.writeDouble(offsets[21], object.senkouSpanA);
-  writer.writeDouble(offsets[22], object.senkouSpanB);
-  writer.writeLong(offsets[23], object.shift);
-  writer.writeDouble(offsets[24], object.shortEMA);
-  writer.writeDouble(offsets[25], object.steps);
+  writer.writeDouble(offsets[18], object.maximum);
+  writer.writeString(offsets[19], object.name);
+  writer.writeLong(offsets[20], object.period);
+  writer.writeString(offsets[21], object.secondColor);
+  writer.writeDouble(offsets[22], object.senkouSpanA);
+  writer.writeDouble(offsets[23], object.senkouSpanB);
+  writer.writeLong(offsets[24], object.shift);
+  writer.writeDouble(offsets[25], object.shortEMA);
+  writer.writeDouble(offsets[26], object.steps);
   writer.writeObject<Stochastic>(
-    offsets[26],
+    offsets[27],
     allOffsets,
     StochasticSchema.serialize,
     object.stochastic,
   );
-  writer.writeDouble(offsets[27], object.strokeWidth);
-  writer.writeByte(offsets[28], object.style.index);
-  writer.writeDouble(offsets[29], object.tenkanSen);
-  writer.writeByte(offsets[30], object.timeframe.index);
-  writer.writeByte(offsets[31], object.type.index);
-  writer.writeDouble(offsets[32], object.up);
-  writer.writeDouble(offsets[33], object.value);
-  writer.writeLong(offsets[34], object.windowId);
+  writer.writeDouble(offsets[28], object.strokeWidth);
+  writer.writeByte(offsets[29], object.style.index);
+  writer.writeDouble(offsets[30], object.tenkanSen);
+  writer.writeByte(offsets[31], object.timeframe.index);
+  writer.writeByte(offsets[32], object.type.index);
+  writer.writeDouble(offsets[33], object.up);
+  writer.writeDouble(offsets[34], object.value);
+  writer.writeLong(offsets[35], object.windowId);
 }
 
 CandleIndicatorEntity _candleIndicatorEntityDeserialize(
@@ -336,46 +343,47 @@ CandleIndicatorEntity _candleIndicatorEntityDeserialize(
     isMain: reader.readBoolOrNull(offsets[8]) ?? false,
     isSecondary: reader.readBoolOrNull(offsets[9]) ?? false,
     kValue: reader.readDoubleOrNull(offsets[10]) ?? 0,
-    kijunSen: reader.readDoubleOrNull(offsets[11]),
+    key: reader.readStringOrNull(offsets[11]) ?? '',
+    kijunSen: reader.readDoubleOrNull(offsets[12]),
     level: _CandleIndicatorEntitylevelValueEnumMap[
-            reader.readByteOrNull(offsets[12])] ??
+            reader.readByteOrNull(offsets[13])] ??
         Levels.None,
-    levels: reader.readDoubleList(offsets[13]) ?? const [],
-    levelsColor: reader.readStringOrNull(offsets[14]),
-    longEMA: reader.readDoubleOrNull(offsets[15]),
+    levels: reader.readDoubleList(offsets[14]) ?? const [],
+    levelsColor: reader.readStringOrNull(offsets[15]),
+    longEMA: reader.readDoubleOrNull(offsets[16]),
     macd: reader.readObjectOrNull<MACD>(
-      offsets[16],
+      offsets[17],
       MACDSchema.deserialize,
       allOffsets,
     ),
-    maximum: reader.readDoubleOrNull(offsets[17]),
-    name: reader.readStringOrNull(offsets[18]) ?? '',
-    period: reader.readLongOrNull(offsets[19]) ?? 5,
-    secondColor: reader.readStringOrNull(offsets[20]),
-    senkouSpanA: reader.readDoubleOrNull(offsets[21]),
-    senkouSpanB: reader.readDoubleOrNull(offsets[22]),
-    shift: reader.readLongOrNull(offsets[23]) ?? 0,
-    shortEMA: reader.readDoubleOrNull(offsets[24]),
-    steps: reader.readDoubleOrNull(offsets[25]),
+    maximum: reader.readDoubleOrNull(offsets[18]),
+    name: reader.readStringOrNull(offsets[19]) ?? '',
+    period: reader.readLongOrNull(offsets[20]) ?? 5,
+    secondColor: reader.readStringOrNull(offsets[21]),
+    senkouSpanA: reader.readDoubleOrNull(offsets[22]),
+    senkouSpanB: reader.readDoubleOrNull(offsets[23]),
+    shift: reader.readLongOrNull(offsets[24]) ?? 0,
+    shortEMA: reader.readDoubleOrNull(offsets[25]),
+    steps: reader.readDoubleOrNull(offsets[26]),
     stochastic: reader.readObjectOrNull<Stochastic>(
-      offsets[26],
+      offsets[27],
       StochasticSchema.deserialize,
       allOffsets,
     ),
-    strokeWidth: reader.readDoubleOrNull(offsets[27]) ?? 1.0,
+    strokeWidth: reader.readDoubleOrNull(offsets[28]) ?? 1.0,
     style: _CandleIndicatorEntitystyleValueEnumMap[
-            reader.readByteOrNull(offsets[28])] ??
+            reader.readByteOrNull(offsets[29])] ??
         ObjectStyle.normal,
-    tenkanSen: reader.readDoubleOrNull(offsets[29]),
+    tenkanSen: reader.readDoubleOrNull(offsets[30]),
     timeframe: _CandleIndicatorEntitytimeframeValueEnumMap[
-            reader.readByteOrNull(offsets[30])] ??
+            reader.readByteOrNull(offsets[31])] ??
         Timeframes.All_Timeframes,
     type: _CandleIndicatorEntitytypeValueEnumMap[
-            reader.readByteOrNull(offsets[31])] ??
+            reader.readByteOrNull(offsets[32])] ??
         IndicatorType.MA_SMA,
-    up: reader.readDoubleOrNull(offsets[32]),
-    value: reader.readDoubleOrNull(offsets[33]) ?? 0,
-    windowId: reader.readLongOrNull(offsets[34]) ?? 0,
+    up: reader.readDoubleOrNull(offsets[33]),
+    value: reader.readDoubleOrNull(offsets[34]) ?? 0,
+    windowId: reader.readLongOrNull(offsets[35]) ?? 0,
   );
   return object;
 }
@@ -416,68 +424,70 @@ P _candleIndicatorEntityDeserializeProp<P>(
     case 10:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
     case 11:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 12:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 13:
       return (_CandleIndicatorEntitylevelValueEnumMap[
               reader.readByteOrNull(offset)] ??
           Levels.None) as P;
-    case 13:
-      return (reader.readDoubleList(offset) ?? const []) as P;
     case 14:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readDoubleList(offset) ?? const []) as P;
     case 15:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 16:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 17:
       return (reader.readObjectOrNull<MACD>(
         offset,
         MACDSchema.deserialize,
         allOffsets,
       )) as P;
-    case 17:
-      return (reader.readDoubleOrNull(offset)) as P;
     case 18:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 19:
-      return (reader.readLongOrNull(offset) ?? 5) as P;
-    case 20:
-      return (reader.readStringOrNull(offset)) as P;
-    case 21:
       return (reader.readDoubleOrNull(offset)) as P;
+    case 19:
+      return (reader.readStringOrNull(offset) ?? '') as P;
+    case 20:
+      return (reader.readLongOrNull(offset) ?? 5) as P;
+    case 21:
+      return (reader.readStringOrNull(offset)) as P;
     case 22:
       return (reader.readDoubleOrNull(offset)) as P;
     case 23:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    case 24:
       return (reader.readDoubleOrNull(offset)) as P;
+    case 24:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 25:
       return (reader.readDoubleOrNull(offset)) as P;
     case 26:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 27:
       return (reader.readObjectOrNull<Stochastic>(
         offset,
         StochasticSchema.deserialize,
         allOffsets,
       )) as P;
-    case 27:
-      return (reader.readDoubleOrNull(offset) ?? 1.0) as P;
     case 28:
+      return (reader.readDoubleOrNull(offset) ?? 1.0) as P;
+    case 29:
       return (_CandleIndicatorEntitystyleValueEnumMap[
               reader.readByteOrNull(offset)] ??
           ObjectStyle.normal) as P;
-    case 29:
-      return (reader.readDoubleOrNull(offset)) as P;
     case 30:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 31:
       return (_CandleIndicatorEntitytimeframeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           Timeframes.All_Timeframes) as P;
-    case 31:
+    case 32:
       return (_CandleIndicatorEntitytypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           IndicatorType.MA_SMA) as P;
-    case 32:
-      return (reader.readDoubleOrNull(offset)) as P;
     case 33:
-      return (reader.readDoubleOrNull(offset) ?? 0) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 34:
+      return (reader.readDoubleOrNull(offset) ?? 0) as P;
+    case 35:
       return (reader.readLongOrNull(offset) ?? 0) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1225,6 +1235,144 @@ extension CandleIndicatorEntityQueryFilter on QueryBuilder<
         upper: upper,
         includeUpper: includeUpper,
         epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<CandleIndicatorEntity, CandleIndicatorEntity,
+      QAfterFilterCondition> keyEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'key',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CandleIndicatorEntity, CandleIndicatorEntity,
+      QAfterFilterCondition> keyGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'key',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CandleIndicatorEntity, CandleIndicatorEntity,
+      QAfterFilterCondition> keyLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'key',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CandleIndicatorEntity, CandleIndicatorEntity,
+      QAfterFilterCondition> keyBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'key',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CandleIndicatorEntity, CandleIndicatorEntity,
+      QAfterFilterCondition> keyStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'key',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CandleIndicatorEntity, CandleIndicatorEntity,
+      QAfterFilterCondition> keyEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'key',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CandleIndicatorEntity, CandleIndicatorEntity,
+          QAfterFilterCondition>
+      keyContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'key',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CandleIndicatorEntity, CandleIndicatorEntity,
+          QAfterFilterCondition>
+      keyMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'key',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CandleIndicatorEntity, CandleIndicatorEntity,
+      QAfterFilterCondition> keyIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'key',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<CandleIndicatorEntity, CandleIndicatorEntity,
+      QAfterFilterCondition> keyIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'key',
+        value: '',
       ));
     });
   }

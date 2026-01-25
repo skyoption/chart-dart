@@ -9,6 +9,7 @@ part 'candle_indicator_entity.g.dart';
 @embedded
 class CandleIndicatorEntity {
   String name;
+  String key;
   int shift, period;
   double? deviations, maximum, steps;
   @enumerated
@@ -46,6 +47,7 @@ class CandleIndicatorEntity {
 
   CandleIndicatorEntity({
     this.name = '',
+    this.key = '',
     this.shift = 0,
     this.period = 5,
     this.windowId = 0,
@@ -88,6 +90,7 @@ class CandleIndicatorEntity {
 
   CandleIndicatorEntity copy({
     name,
+    key,
     shift,
     period,
     shortEMA,
@@ -126,6 +129,7 @@ class CandleIndicatorEntity {
     kValue,
   }) {
     return CandleIndicatorEntity(
+      key: key ?? this.key,
       period: period ?? this.period,
       shortEMA: shortEMA ?? this.shortEMA,
       value: value ?? this.value,

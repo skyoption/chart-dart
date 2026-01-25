@@ -22,29 +22,28 @@ class TopHeaderWidget extends StatelessWidget {
         children: [
           Align(
             alignment: AlignmentDirectional.centerStart,
-            child: InkWell(
-              onTap: () {
-                if (onBack != null) {
-                  onBack?.call();
-                } else {
-                  Navigator.of(context).pop();
-                }
-              },
-              child: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 21.0,
-                color: KChartWidget.colors!.iconColor,
-              ).addPadding(horizontal: 21.0, vertical: 14.0),
+            child: Row(
+              children: [
+                InkWell(
+                  onTap: () {
+                    if (onBack != null) {
+                      onBack?.call();
+                    } else {
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  child: Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    size: 21.0,
+                    color: KChartWidget.colors!.iconColor,
+                  ).addPadding(horizontal: 21.0, vertical: 14.0),
+                ),
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                )
+              ],
             ),
-          ),
-          Align(
-            alignment: AlignmentDirectional.center,
-            child: Text(
-              title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
-            ).addPadding(vertical: 14.0),
           ),
           if (onDone != null)
             Align(

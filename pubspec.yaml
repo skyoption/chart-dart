@@ -5,7 +5,7 @@ version: 1.1.5
 homepage: https://github.com/skyoption/chart-dart
 
 environment:
-  sdk: '>=3.0.5 <4.0.0'
+  sdk: ">=3.0.5 <4.0.0"
 
 dependencies:
   decimal: ^2.3.3
@@ -17,14 +17,13 @@ dependencies:
   shimmer: ^3.0.0
   zoom_widget: ^2.0.1
   flutter_svg: ^2.0.16
-  flutter_colorpicker: ^1.1.0  
+  flutter_colorpicker: ^1.1.0
   isar_community: ^3.3.0
   isar_community_flutter_libs: ^3.3.0
   path_provider: ^2.1.5
   flutter_cupertino_datetime_picker: ^3.0.0
   gesture_x_detector: ^1.1.1
   shared_preferences: ^2.5.3
-
 
 dev_dependencies:
   flutter_test:
@@ -35,10 +34,8 @@ dev_dependencies:
 flutter:
   generate: true
   assets:
-  - assets/svgs/
-  - assets/svgs/chart/
-
-
+    - assets/svgs/
+    - assets/svgs/chart/
 
   # chmod +x check_elf_alignment.sh
 # ./check_elf_alignment.sh example/build/app/outputs/apk/release/app-release.apk

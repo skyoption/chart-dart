@@ -1,27 +1,24 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
+import 'package:candle_chart/indicators/properties/main/indicator_properties_screen.dart';
 import 'package:candle_chart/indicators/widgets/dropdown_item_widget.dart';
 import 'package:candle_chart/indicators/widgets/indicator_color_widget.dart';
 import 'package:candle_chart/indicators/widgets/indicator_info_widget.dart';
 import 'package:candle_chart/indicators/widgets/input_item_widget.dart';
-import 'package:candle_chart/indicators/widgets/levels_item_widget.dart';
-import 'package:candle_chart/k_chart_plus.dart';
-
 import 'package:candle_chart/indicators/widgets/top_header_widget.dart';
+import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-import '../main/indicator_properties_screen.dart';
-
 @immutable
-class DeMarkerPropertiesScreen extends StatefulWidget {
+class ParabolicPropertiesScreen extends StatefulWidget {
   final String? name;
   final IndicatorEntity? indicator;
-  final int? windowId;
   final Function onDone;
+  final int? windowId;
 
-  DeMarkerPropertiesScreen({
+  ParabolicPropertiesScreen({
     super.key,
     required this.onDone,
     this.name,
@@ -30,12 +27,13 @@ class DeMarkerPropertiesScreen extends StatefulWidget {
   });
 
   @override
-  State<DeMarkerPropertiesScreen> createState() =>
-      _DeMarkerPropertiesScreenState();
+  State<ParabolicPropertiesScreen> createState() =>
+      _ParabolicPropertiesScreenState();
 }
 
-class _DeMarkerPropertiesScreenState extends State<DeMarkerPropertiesScreen> {
-  late final periodController = TextEditingController(text: '14');
+class _ParabolicPropertiesScreenState extends State<ParabolicPropertiesScreen> {
+  late final stepsController = TextEditingController(text: '0.02');
+  late final maximumController = TextEditingController(text: '0.2');
 
   late String name = widget.name ?? widget.indicator!.name;
   IndicatorEntity? indicator;
@@ -44,16 +42,17 @@ class _DeMarkerPropertiesScreenState extends State<DeMarkerPropertiesScreen> {
   void initState() {
     if (widget.indicator != null) {
       indicator = widget.indicator;
-      periodController.text = indicator!.period.toString();
+      stepsController.text = indicator!.steps.toString();
+      maximumController.text = indicator!.maximum.toString();
     } else {
       indicator = IndicatorEntity(
-        key: "demarker",
-        period: 14,
+        key: "parabolic_sar",
+        maximum: 0.2,
+        steps: 0.02,
         name: widget.name!,
-        type: IndicatorType.DEM,
-        levels: [0.3, 0.7],
+        type: IndicatorType.PARABOLIC,
         windowId: widget.windowId ?? 0,
-        isSecondary: true,
+        isSecondary: (widget.windowId ?? 0) != 0,
       );
     }
     super.initState();
@@ -66,7 +65,7 @@ class _DeMarkerPropertiesScreenState extends State<DeMarkerPropertiesScreen> {
         preferredSize: const Size(double.infinity, 60.0),
         child: SafeArea(
           child: TopHeaderWidget(
-            title: name,
+            title: context.tr.properties,
             onBack: () => Navigator.of(context).pop(),
           ),
         ),
@@ -75,7 +74,7 @@ class _DeMarkerPropertiesScreenState extends State<DeMarkerPropertiesScreen> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: MPadding.set(horizontal: 21.0),
+              padding: EdgeInsets.symmetric(horizontal: 12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -90,25 +89,32 @@ class _DeMarkerPropertiesScreenState extends State<DeMarkerPropertiesScreen> {
                         spacing: 21.0,
                         children: [
                           InputItemWidget(
-                            title: context.tr.period,
-                            controller: periodController,
+                            title: context.tr.steps,
+                            controller: stepsController,
                             keyboardType:
                                 TextInputType.numberWithOptions(signed: false),
                             onChanged: (value) {
-                              final res = int.tryParse(value);
-                              if (res != null) indicator?.period = res;
+                              final res = double.tryParse(value);
+                              if (res != null) indicator?.steps = res;
                             },
                             inputFormatters: [
-                              LengthLimitingTextInputFormatter(3),
-                              NumericalRangeFormatter(min: 1, max: 100),
+                              LengthLimitingTextInputFormatter(6),
+                              NumericalDoubleRangeFormatter(min: 0, max: 100),
                             ],
                           ),
-                          LevelsItemWidget(
-                            indicator: indicator!,
-                            onChange: (color, levels) {
-                              indicator!.levels = levels;
-                              indicator!.levelsColor = color;
+                          InputItemWidget(
+                            title: context.tr.maximum,
+                            controller: maximumController,
+                            keyboardType:
+                                TextInputType.numberWithOptions(signed: false),
+                            onChanged: (value) {
+                              final res = double.tryParse(value);
+                              if (res != null) indicator?.maximum = res;
                             },
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(6),
+                              NumericalDoubleRangeFormatter(min: 0, max: 100),
+                            ],
                           ),
                         ],
                       ),
@@ -125,16 +131,6 @@ class _DeMarkerPropertiesScreenState extends State<DeMarkerPropertiesScreen> {
                       Column(
                         spacing: 21.0,
                         children: [
-                          DropdownItemWidget<double>(
-                            title: context.tr.pixels,
-                            items: [1.0, 2.0, 3.0, 4.0],
-                            onTitle: (value) => '$value ${context.tr.pixel}',
-                            value: indicator?.strokeWidth,
-                            onChanged: (pixel) {
-                              indicator?.strokeWidth = pixel;
-                              setState(() {});
-                            },
-                          ),
                           IndicatorColorWidget(
                             title: context.tr.style,
                             color: colorFromHex(indicator!.color!),
@@ -180,24 +176,37 @@ class _DeMarkerPropertiesScreenState extends State<DeMarkerPropertiesScreen> {
     );
   }
 
+  @override
+  void dispose() {
+    stepsController.dispose();
+    maximumController.dispose();
+    super.dispose();
+  }
+
   void _onDone() async {
-    if (widget.indicator == null) {
-      await chartProperties.addSecondaryIndicator(
-        indicator!,
-        widget.windowId,
-      );
+    if (indicator!.isSecondary) {
+      if (widget.indicator == null) {
+        await chartProperties.addSecondaryIndicator(
+          indicator!,
+          widget.windowId,
+        );
+      } else {
+        await chartProperties.updateSecondaryIndicator(
+          indicator!,
+        );
+      }
     } else {
-      await chartProperties.updateSecondaryIndicator(
-        indicator!,
-      );
+      if (widget.indicator == null) {
+        await chartProperties.addIndicator(
+          indicator!,
+        );
+      } else {
+        await chartProperties.updateIndicator(
+          indicator!,
+        );
+      }
     }
     widget.onDone();
     Navigator.of(context).pop();
-  }
-
-  @override
-  void dispose() {
-    periodController.dispose();
-    super.dispose();
   }
 }

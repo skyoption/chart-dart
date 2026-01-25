@@ -1,23 +1,12 @@
-import 'package:candle_chart/entity/indicator_entity.dart';
-import 'package:candle_chart/indicators/new_indicator_screen.dart';
-import 'package:candle_chart/indicators/properties/indicator_properties_screen.dart';
-import 'package:candle_chart/indicators/properties/oscillators/atr_properties_screen.dart';
-import 'package:candle_chart/indicators/properties/oscillators/cci_properties_screen.dart';
-import 'package:candle_chart/indicators/properties/oscillators/dem_properties_screen.dart';
-import 'package:candle_chart/indicators/properties/oscillators/macd_properties_screen.dart';
-import 'package:candle_chart/indicators/properties/oscillators/mom_properties_screen.dart';
-import 'package:candle_chart/indicators/properties/oscillators/rsi_properties_screen.dart';
-import 'package:candle_chart/indicators/properties/oscillators/so_properties_screen.dart';
-import 'package:candle_chart/indicators/properties/oscillators/wpr_properties_screen.dart';
-import 'package:candle_chart/indicators/properties/parabolic_properties_screen.dart';
-import 'package:candle_chart/indicators/properties/volumes/mfi_properties_screen.dart';
+import 'package:candle_chart/indicators/tabs/all_indicators_tab.dart';
+import 'package:candle_chart/indicators/tabs/applied_indicators_tab.dart';
+import 'package:candle_chart/indicators/tabs/favorites_indicators_tab.dart';
 import 'package:candle_chart/indicators/widgets/top_header_widget.dart';
-import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
+import 'package:candle_chart/objects/widgets/svg.dart';
+import 'package:candle_chart/utils/icons.dart';
 import 'package:candle_chart/widgets/paddings.dart';
 import 'package:flutter/material.dart';
 import 'package:candle_chart/k_chart_plus.dart';
-
-import 'properties/ichimoku_properties_screen.dart';
 
 class IndicatorsScreen extends StatefulWidget {
   final Function onDone;
@@ -34,6 +23,15 @@ class IndicatorsScreen extends StatefulWidget {
 class _IndicatorsScreenState extends State<IndicatorsScreen> {
   DismissDirection? direction;
 
+  late final tabs = [
+    TabItem(title: context.tr.all, index: 0),
+    TabItem(title: context.tr.favorites, index: 1),
+    TabItem(title: context.tr.applied, index: 2),
+  ];
+
+  final index = ValueNotifier(0);
+  final search = ValueNotifier('');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,339 +44,106 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(vertical: 14.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            PropertiesItemWidget(
-              title: context.tr.main_window,
-              margin: EdgeInsets.zero,
-              titleColor: KChartWidget.colors!.primary,
-              child: Icon(
-                Icons.add_circle_outline_rounded,
-                color: KChartWidget.colors!.primary,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            style: context.text.bodySmall,
+            decoration: InputDecoration(
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: 20.0,
+                minHeight: 20.0,
               ),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => NewIndicatorScreen(
-                      onDone: () {
-                        widget.onDone();
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                );
-              },
+              prefixIcon: MSvg(
+                name: Svgs.search,
+                height: 20.0,
+                width: 20.0,
+                color: context.scheme.onSurface,
+              ).addPadding(start: 16.0, end: 4.0),
+              hintText: context.tr.searchByIndicatorName,
+              hintStyle: context.text.bodySmall!.copyWith(
+                color: context.scheme.onSurfaceDisabled,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6.0),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              fillColor: context.scheme.surfaceContainerLow,
+              contentPadding: const MPadding.set(horizontal: 16.0),
             ),
-            ...chartProperties.indicators.asMap().entries.map(
-              (e) {
-                return Dismissible(
-                  key: Key('${e.value.id}'),
-                  onUpdate: (details) {
-                    direction = details.direction;
-                    setState(() {});
-                  },
-                  onDismissed: (value) async {
-                    await chartProperties.removeIndicator(e.key);
-                    widget.onDone();
-                  },
-                  background: Container(
-                    color: Colors.red.withAlpha(10),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 21.0),
-                      child: Row(
-                        mainAxisAlignment:
-                            direction == DismissDirection.startToEnd
-                                ? MainAxisAlignment.start
-                                : MainAxisAlignment.end,
-                        children: [
-                          Icon(
-                            Icons.delete_outline_outlined,
-                            color: Colors.red,
-                            size: 28.0,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Divider(height: 1.0, color: Colors.grey.withAlpha(40)),
-                      PropertiesItemWidget(
-                        margin: EdgeInsets.zero,
-                        title: _getIndicatorName(e.value),
-                        onTap: () => _onTap(e.value, null),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-            ...chartProperties.secondaries.entries.map(
-              (e) {
+            textAlign: TextAlign.start,
+            keyboardType: TextInputType.text,
+            onChanged: (value) {
+              search.value = value.trim();
+            },
+          ).addPadding(horizontal: 21.0, bottom: 21.0),
+          Expanded(
+            child: ValueListenableBuilder(
+              valueListenable: index,
+              builder: (context, value, child) {
                 return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    PropertiesItemWidget(
-                      title: '${context.tr.window} ${e.key}',
-                      margin: EdgeInsets.zero,
-                      titleColor: KChartWidget.colors!.primary,
-                      child: Icon(
-                        Icons.add_circle_outline_rounded,
-                        color: KChartWidget.colors!.primary,
-                      ),
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => NewIndicatorScreen(
-                              onDone: () {
-                                widget.onDone();
-                                setState(() {});
-                              },
-                              windowId: e.key,
+                    Row(
+                      spacing: 12.0,
+                      children: tabs.map((e) {
+                        return GestureDetector(
+                          onTap: () => index.value = e.index,
+                          child: Container(
+                            width: 82.0,
+                            decoration: BoxDecoration(
+                              color: e.index == value
+                                  ? context.scheme.primary
+                                  : context.scheme.surfaceContainerLow,
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            alignment: Alignment.center,
+                            padding: const MPadding.set(vertical: 8.0),
+                            child: Text(
+                              e.title,
+                              style: context.text.bodySmall,
                             ),
                           ),
                         );
-                      },
-                    ),
-                    ...e.value.asMap().entries.map((item) {
-                      return Dismissible(
-                        key: Key('${item.value.id}'),
-                        onUpdate: (details) {
-                          direction = details.direction;
-                          setState(() {});
-                        },
-                        onDismissed: (value) async {
-                          await chartProperties
-                              .removeSecondaryIndicator(item.value);
-                          widget.onDone();
-                          setState(() {});
-                        },
-                        background: Container(
-                          color: Colors.red.withAlpha(10),
-                          child: Padding(
-                            padding: MPadding.set(horizontal: 21.0),
-                            child: Row(
-                              mainAxisAlignment:
-                                  direction == DismissDirection.startToEnd
-                                      ? MainAxisAlignment.start
-                                      : MainAxisAlignment.end,
-                              children: [
-                                Icon(
-                                  Icons.delete_outline_outlined,
-                                  color: Colors.red,
-                                  size: 28.0,
-                                ),
-                              ],
-                            ),
-                          ),
+                      }).toList(),
+                    ).addPadding(bottom: 21.0),
+                    Expanded(
+                      child: [
+                        AllIndicatorsTab(
+                          onDone: widget.onDone,
+                          search: search,
                         ),
-                        child: Column(
-                          children: [
-                            Divider(
-                              height: 1.0,
-                              color: Colors.grey.withAlpha(40),
-                            ),
-                            PropertiesItemWidget(
-                              title: _getIndicatorName(item.value),
-                              margin: EdgeInsets.zero,
-                              onTap: () => _onTap(item.value, e.key),
-                            ),
-                          ],
+                        FavoritesIndicatorsTab(
+                          onDone: widget.onDone,
+                          search: search,
                         ),
-                      );
-                    })
+                        AppliedIndicatorsTab(
+                          onDone: widget.onDone,
+                          search: search,
+                        )
+                      ][value],
+                    )
                   ],
-                ).addPadding(top: 30.0);
+                );
               },
-            ),
-          ],
-        ),
+            ).addPadding(horizontal: 21.0),
+          ),
+        ],
       ),
     );
   }
 
-  String _getIndicatorName(IndicatorEntity item) {
-    if (item.type.name.contains('LINEAR')) {
-      return '${item.name} (Linear Weighted)';
-    } else if (item.type.name.contains('SMMA')) {
-      return '${item.name} (Smoothed)';
-    } else if (item.type.name.contains('EMA')) {
-      return '${item.name} (Exponential)';
-    } else if (item.type.name.contains('SMA')) {
-      return '${item.name} (Simple)';
-    }
-    return '${item.name}';
+  @override
+  void dispose() {
+    index.dispose();
+    search.dispose();
+    super.dispose();
   }
+}
 
-  void _onTap(IndicatorEntity item, int? windowId) {
-    if (item.type == IndicatorType.ICHIMOKU) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => IchimokuPropertiesScreen(
-            indicator: item,
-            windowId: windowId,
-            onDone: () {
-              widget.onDone();
-              setState(() {});
-            },
-          ),
-        ),
-      );
-    } else if (item.type == IndicatorType.ATR) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => ATRPropertiesScreen(
-            indicator: item,
-            windowId: windowId,
-            onDone: () {
-              widget.onDone();
-              setState(() {});
-            },
-          ),
-        ),
-      );
-    } else if (item.type == IndicatorType.CCI) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => CCIPropertiesScreen(
-            indicator: item,
-            windowId: windowId,
-            onDone: () {
-              widget.onDone();
-              setState(() {});
-            },
-          ),
-        ),
-      );
-    } else if (item.type == IndicatorType.DEM) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => DeMarkerPropertiesScreen(
-            indicator: item,
-            windowId: windowId,
-            onDone: () {
-              widget.onDone();
-              setState(() {});
-            },
-          ),
-        ),
-      );
-    } else if (item.type == IndicatorType.MOM) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => MOMPropertiesScreen(
-            indicator: item,
-            windowId: windowId,
-            onDone: () {
-              widget.onDone();
-              setState(() {});
-            },
-          ),
-        ),
-      );
-    } else if (item.type == IndicatorType.SO_EMA ||
-        item.type == IndicatorType.SO_LINEAR ||
-        item.type == IndicatorType.SO_SMA ||
-        item.type == IndicatorType.SO_SMMA) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => SOPropertiesScreen(
-            indicator: item,
-            windowId: windowId,
-            onDone: () {
-              widget.onDone();
-              setState(() {});
-            },
-          ),
-        ),
-      );
-    } else if (item.type == IndicatorType.WPR) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => WPRPropertiesScreen(
-            indicator: item,
-            windowId: windowId,
-            onDone: () {
-              widget.onDone();
-              setState(() {});
-            },
-          ),
-        ),
-      );
-    } else if (item.type == IndicatorType.MFI) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => MFIPropertiesScreen(
-            indicator: item,
-            windowId: windowId,
-            onDone: () {
-              widget.onDone();
-              setState(() {});
-            },
-          ),
-        ),
-      );
-    } else if (item.type == IndicatorType.MACD) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => MACDPropertiesScreen(
-            indicator: item,
-            windowId: windowId,
-            onDone: () {
-              widget.onDone();
-              setState(() {});
-            },
-          ),
-        ),
-      );
-    } else if (item.type == IndicatorType.RSI) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => RSIPropertiesScreen(
-            indicator: item,
-            windowId: windowId,
-            onDone: () {
-              widget.onDone();
-              setState(() {});
-            },
-          ),
-        ),
-      );
-    } else if (item.type == IndicatorType.PARABOLIC) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => ParabolicPropertiesScreen(
-            indicator: item,
-            windowId: windowId,
-            onDone: () {
-              widget.onDone();
-              setState(() {});
-            },
-          ),
-        ),
-      );
-    } else {
-      final isENVELOPS = item.type.name.contains('ENVELOPS');
-      final isMA = item.type.name.contains('MA');
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => IndicatorPropertiesScreen(
-            indicator: item,
-            windowId: windowId,
-            onDone: () {
-              widget.onDone();
-              setState(() {});
-            },
-            haveDeviations: isENVELOPS || item.type == IndicatorType.BOLL,
-            haveMethods: isENVELOPS || isMA,
-            haveTwoBands: isENVELOPS,
-            isENVELOPS: isENVELOPS,
-          ),
-        ),
-      );
-    }
-  }
+class TabItem {
+  final String title;
+  final int index;
+
+  TabItem({required this.title, required this.index});
 }

@@ -1,5 +1,6 @@
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:candle_chart/utils/kprint.dart';
+import 'package:candle_chart/utils/properties/fav.dart';
 import 'package:candle_chart/utils/properties/indicators.dart';
 import 'package:candle_chart/utils/properties/objects.dart';
 import 'package:isar_community/isar.dart';
@@ -10,7 +11,7 @@ import 'package:candle_chart/utils/isar.dart';
 
 late final ChartProperties chartProperties;
 
-class ChartProperties with Indicators, Objects {
+class ChartProperties with Indicators, Objects, Fav {
   String symbol = 'GBPUSD';
   CandleTimeFormat frame = CandleTimeFormat.M15;
   ChartProperties(this.sharedPreferences);
@@ -31,6 +32,7 @@ class ChartProperties with Indicators, Objects {
       await sharedPreferences.setString('symbol', symbol);
       await loadObjects(symbol);
       await loadIndicators();
+      await getFavs();
     } catch (e) {
       kPrint(e.toString());
     }

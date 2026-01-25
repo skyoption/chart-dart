@@ -247,4 +247,43 @@ class ChartLocalizationsAr extends ChartLocalizations {
 
   @override
   String get rectangle => 'مستطيل';
+
+  @override
+  String get tools => 'الأدوات';
+
+  @override
+  String get searchByIndicatorName => 'بحث عن اسم المؤشر';
+
+  @override
+  String get all => 'الكل';
+
+  @override
+  String get favorites => 'المفضلة';
+
+  @override
+  String get applied => 'التطبيق';
+
+  @override
+  String get noIndicatorsAppliedYet => 'لا توجد مؤشرات مطبقة';
+
+  @override
+  String get noFavoritesAppliedYet => 'لا توجد مؤشرات مفضلة';
+
+  @override
+  String get inputs => 'المدخلات';
+
+  @override
+  String get visibility => 'الإظهار';
+
+  @override
+  String get value => 'القيمة';
+
+  @override
+  String get selectItem => 'اختر عنصر';
+
+  @override
+  String get pleaseChooseItem => 'اختر عنصر';
+
+  @override
+  String get apply => 'تطبيق';
 }
