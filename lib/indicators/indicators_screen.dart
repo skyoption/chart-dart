@@ -101,7 +101,11 @@ class _IndicatorsScreenState extends State<IndicatorsScreen> {
                             padding: const MPadding.set(vertical: 8.0),
                             child: Text(
                               e.title,
-                              style: context.text.bodySmall,
+                              style: context.text.bodySmall!.copyWith(
+                                color: e.index == value
+                                    ? context.scheme.onPrimary
+                                    : context.scheme.onSurface,
+                              ),
                             ),
                           ),
                         );
