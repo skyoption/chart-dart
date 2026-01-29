@@ -286,4 +286,7 @@ class ChartLocalizationsAr extends ChartLocalizations {
 
   @override
   String get apply => 'تطبيق';
+
+  @override
+  String get objectSettings => 'إعدادات العنصر';
 }

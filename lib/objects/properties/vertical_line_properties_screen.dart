@@ -13,12 +13,14 @@ class VerticalLinePropertiesScreen extends StatefulWidget {
   final Function(ObjectType? type) onDone;
   final ObjectEntity? object;
   final List<KLineEntity> data;
+  final ChartStyle chartStyle;
 
   const VerticalLinePropertiesScreen({
     super.key,
     required this.onDone,
     this.data = const [],
     required this.object,
+    required this.chartStyle,
   });
 
   @override
@@ -37,12 +39,14 @@ class _VerticalLinePropertiesScreenState
   @override
   void initState() {
     ///points
-    point = TextEditingController(text: object.value.toStringAsFixed(2));
+    point = TextEditingController(
+      text: object.value.toStringAsFixed(widget.chartStyle.digits),
+    );
 
     ///datetime
-    lastTime = DateTime.fromMillisecondsSinceEpoch(widget.data.last.time);
-    firstTime = DateTime.fromMillisecondsSinceEpoch(widget.data[0].time);
-    currentTime = DateTime.fromMillisecondsSinceEpoch(widget.object!.datetime);
+    lastTime = chartProperties.getTime(widget.data.last.time);
+    firstTime = chartProperties.getTime(widget.data[0].time);
+    currentTime = chartProperties.getTime(widget.object!.datetime);
 
     ///date
     date = dateFormat(currentTime, formats);

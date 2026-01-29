@@ -15,12 +15,14 @@ class TrendLinePropertiesScreen extends StatefulWidget {
   final Function(ObjectType? type) onDone;
   final ObjectEntity? object;
   final List<KLineEntity> data;
+  final ChartStyle chartStyle;
 
   const TrendLinePropertiesScreen({
     super.key,
     required this.onDone,
     this.data = const [],
     required this.object,
+    required this.chartStyle,
   });
 
   @override
@@ -38,14 +40,16 @@ class _TrendLinePropertiesScreenState extends State<TrendLinePropertiesScreen> {
   @override
   void initState() {
     ///points
-    point1 = TextEditingController(text: object.value.toStringAsFixed(2));
-    point2 = TextEditingController(text: object.value2.toStringAsFixed(2));
+    point1 = TextEditingController(
+        text: object.value.toStringAsFixed(widget.chartStyle.digits));
+    point2 = TextEditingController(
+        text: object.value2.toStringAsFixed(widget.chartStyle.digits));
 
     ///datetime
-    lastTime = DateTime.fromMillisecondsSinceEpoch(widget.data.last.time);
-    firstTime = DateTime.fromMillisecondsSinceEpoch(widget.data[0].time);
-    current1 = DateTime.fromMillisecondsSinceEpoch(widget.object!.datetime);
-    current2 = DateTime.fromMillisecondsSinceEpoch(widget.object!.datetime2);
+    lastTime = chartProperties.getTime(widget.data.last.time);
+    firstTime = chartProperties.getTime(widget.data[0].time);
+    current1 = chartProperties.getTime(widget.object!.datetime);
+    current2 = chartProperties.getTime(widget.object!.datetime2);
 
     ///date
     date1 = dateFormat(current1, formats);

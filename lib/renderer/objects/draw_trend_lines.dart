@@ -98,7 +98,6 @@ mixin DrawTrendLines on ChartDetails {
       if (trendLines[i].drawAsBackground != isBackground ||
           (mMainLowMinValue >= trendLines[i].value &&
               mMainLowMinValue >= trendLines[i].value2)) continue;
-
       double x1 = getXFromTime(trendLines[i].datetime, data);
       double x2 = getXFromTime(trendLines[i].datetime2, data);
       double? y1 = getMainY(trendLines[i].value);
@@ -120,7 +119,7 @@ mixin DrawTrendLines on ChartDetails {
         y2 = getMainY(mMainHighMaxValue);
       }
       if (y2 == null) return;
-      double strokeWidth = (trendLines[i].height / scaleX).clamp(1, 4.0);
+      double strokeWidth = (trendLines[i].height / scaleX).clamp(0.1, 1.0);
       final pricePaint = Paint()
         ..filterQuality = FilterQuality.high
         ..isAntiAlias = true

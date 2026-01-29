@@ -1,4 +1,3 @@
-
 import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/bottom_sheets/color_picker.dart';
@@ -58,6 +57,7 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
     );
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -67,37 +67,43 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
         Container(
           color: Colors.grey.withOpacity(0.2),
           padding: EdgeInsetsDirectional.symmetric(
-            vertical: 12.0,
+            vertical: 16.0,
             horizontal: 12.0,
           ),
           child: Column(
             children: [
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Text(
+              //       context.tr.style,
+              //       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              //             fontWeight: FontWeight.w400,
+              //           ),
+              //     ),
+              //     MSvg(
+              //       name: [
+              //         Svgs.horizontalLine,
+              //         Svgs.longDashLine,
+              //         Svgs.dashLine,
+              //       ][index],
+              //       width: 30.0,
+              //       height: 30.0,
+              //       fit: BoxFit.fill,
+              //       color: color,
+              //     )
+              //   ],
+              // ),
+              // SizedBox(height: 8.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     context.tr.style,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w400,
-                    ),
+                          fontWeight: FontWeight.w400,
+                        ),
                   ),
-                  MSvg(
-                    name: [
-                      Svgs.horizontalLine,
-                      Svgs.longDashLine,
-                      Svgs.dashLine,
-                    ][index],
-                    width: 30.0,
-                    height: 30.0,
-                    fit: BoxFit.fill,
-                    color: color,
-                  )
-                ],
-              ),
-              SizedBox(height: 8.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
                   GestureDetector(
                     onTap: () {
                       showPickerColor(
@@ -124,63 +130,63 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                       ),
                     ),
                   ),
-                  Spacer(),
-                  Expanded(
-                    flex: 8,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [1.0, 1.5, 2.0, 2.5].asMap().entries.map(
-                            (item) {
-                          return Expanded(
-                            child: Row(
-                              children: [
-                                InkResponse(
-                                  onTap: () {
-                                    strokeWidth = item.value;
-                                    setState(() {});
-                                    widget.onChange(
-                                      color,
-                                      drawAsBackground,
-                                      strokeWidth,
-                                      style,
-                                    );
-                                  },
-                                  child: Container(
-                                    margin: EdgeInsets.all(1.0),
-                                    padding: EdgeInsets.all(
-                                      strokeWidth == item.value ? 0.0 : 2.0,
-                                    ),
-                                    width: (item.value * 1.5) + 10,
-                                    height: (item.value * 1.5) + 10,
-                                    decoration: BoxDecoration(
-                                      color: strokeWidth == item.value
-                                          ? Colors.black87
-                                          : color,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: color,
-                                        width: 1.2,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                if (item.key < 3)
-                                  Expanded(
-                                    child: Container(
-                                      height: 1.0,
-                                      color: color,
-                                    ),
-                                  )
-                              ],
-                            ),
-                          );
-                        },
-                      ).toList(),
-                    ),
-                  )
+                  // Spacer(),
+                  // Expanded(
+                  //   flex: 8,
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.end,
+                  //     children: [1.0, 1.5, 2.0, 2.5].asMap().entries.map(
+                  //       (item) {
+                  //         return Expanded(
+                  //           child: Row(
+                  //             children: [
+                  //               InkResponse(
+                  //                 onTap: () {
+                  //                   strokeWidth = item.value;
+                  //                   setState(() {});
+                  //                   widget.onChange(
+                  //                     color,
+                  //                     drawAsBackground,
+                  //                     strokeWidth,
+                  //                     style,
+                  //                   );
+                  //                 },
+                  //                 child: Container(
+                  //                   margin: EdgeInsets.all(1.0),
+                  //                   padding: EdgeInsets.all(
+                  //                     strokeWidth == item.value ? 0.0 : 2.0,
+                  //                   ),
+                  //                   width: (item.value * 1.5) + 10,
+                  //                   height: (item.value * 1.5) + 10,
+                  //                   decoration: BoxDecoration(
+                  //                     color: strokeWidth == item.value
+                  //                         ? Colors.black87
+                  //                         : color,
+                  //                     shape: BoxShape.circle,
+                  //                     border: Border.all(
+                  //                       color: color,
+                  //                       width: 1.2,
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //               if (item.key < 3)
+                  //                 Expanded(
+                  //                   child: Container(
+                  //                     height: 1.0,
+                  //                     color: color,
+                  //                   ),
+                  //                 )
+                  //             ],
+                  //           ),
+                  //         );
+                  //       },
+                  //     ).toList(),
+                  //   ),
+                  // )
                 ],
               ),
-              SizedBox(height: 8.0),
+              SizedBox(height: 12.0),
               if (!widget.hideStyle)
                 Container(
                   margin: EdgeInsets.symmetric(
@@ -198,7 +204,7 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
                         // Svgs.longDashLine,
                         Svgs.dashLine,
                       ].asMap().entries.map(
-                            (item) {
+                        (item) {
                           return Expanded(
                             child: GestureDetector(
                               onTap: () {
@@ -262,7 +268,6 @@ class _ObjectStyleWidgetState extends State<ObjectStyleWidget> {
       ],
     );
   }
-
 
   void _setStyle(index) {
     switch (index) {

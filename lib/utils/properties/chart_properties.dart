@@ -105,4 +105,8 @@ class ChartProperties with Indicators, Objects, Fav {
       await db.kLineEntitys.clear();
     });
   }
+
+  DateTime getTime(int datetime) {
+    return DateTime.fromMillisecondsSinceEpoch(datetime * 1000);
+  }
 }

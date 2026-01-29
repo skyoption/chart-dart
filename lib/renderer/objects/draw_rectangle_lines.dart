@@ -13,7 +13,7 @@ mixin DrawRectangleLines on ChartDetails {
   late final ChartPosition chartPosition;
   late final ChartStyle chartStyle;
   late Paint dot;
-  late double scaleX;
+  late double scaleX, scaleY;
   late double mMainHighMaxValue, mMainLowMinValue;
 
   ObjectEntity? setRectangleOffset1(
@@ -100,22 +100,21 @@ mixin DrawRectangleLines on ChartDetails {
       double x1 = getXFromTime(rectangles[i].datetime, data);
       double x2 = getXFromTime(rectangles[i].datetime2, data);
       double? y1 = getMainY(rectangles[i].value);
-      if (y1 == null) return;
       double? y2 = getMainY(rectangles[i].value2);
-      if (y2 == null) return;
 
-      if (mMainLowMinValue >= rectangles[i].value) {
-        y1 = getMainY(mMainLowMinValue);
-      } else if (mMainHighMaxValue <= rectangles[i].value) {
-        y1 = getMainY(mMainHighMaxValue);
-      }
+      // if (mMainLowMinValue >= rectangles[i].value) {
+      //   y1 = getMainY(mMainLowMinValue);
+      // } else if (mMainHighMaxValue <= rectangles[i].value) {
+      //   y1 = getMainY(mMainHighMaxValue);
+      // }
 
-      if (mMainLowMinValue >= rectangles[i].value2) {
-        y2 = getMainY(mMainLowMinValue);
-      } else if (mMainHighMaxValue <= rectangles[i].value2) {
-        y2 = getMainY(mMainHighMaxValue);
-      }
-      double strokeWidth = (rectangles[i].height / scaleX).clamp(1, 4.0);
+      // if (mMainLowMinValue >= rectangles[i].value2) {
+      //   y2 = getMainY(mMainLowMinValue);
+      // } else if (mMainHighMaxValue <= rectangles[i].value2) {
+      //   y2 = getMainY(mMainHighMaxValue);
+      // }
+      double strokeWidth = (rectangles[i].height / scaleX).clamp(0.1, 1.0);
+      double strokeWidth2 = (rectangles[i].height / scaleX).clamp(0.1, 10.0);
       final pricePaint = Paint()
         ..filterQuality = FilterQuality.high
         ..isAntiAlias = true
@@ -160,15 +159,28 @@ mixin DrawRectangleLines on ChartDetails {
             Offset(x1, y1),
           );
         } else {
-          canvas.drawPoints(
-            PointMode.polygon,
-            [
-              Offset(x1, y1),
-              Offset(x2, y1),
-              Offset(x2, y2),
-              Offset(x1, y2),
-              Offset(x1, y1),
-            ],
+          _drawLine(
+            canvas,
+            Offset(x1, y1),
+            Offset(x2, y1),
+            pricePaint,
+          );
+          _drawLine(
+            canvas,
+            Offset(x2, y2),
+            Offset(x1, y2),
+            pricePaint,
+          );
+          _drawLine(
+            canvas,
+            Offset(x2, y1),
+            Offset(x2, y2),
+            pricePaint..strokeWidth = strokeWidth2,
+          );
+          _drawLine(
+            canvas,
+            Offset(x1, y2),
+            Offset(x1, y1),
             pricePaint,
           );
         }
@@ -244,5 +256,18 @@ mixin DrawRectangleLines on ChartDetails {
       );
       startY += space * 2.0;
     }
+  }
+
+  void _drawLine(
+    Canvas canvas,
+    Offset offset1,
+    Offset offset2,
+    Paint paint,
+  ) {
+    canvas.drawLine(
+      Offset(offset1.dx, offset1.dy),
+      Offset(offset2.dx, offset2.dy),
+      paint,
+    );
   }
 }

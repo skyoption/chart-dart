@@ -286,4 +286,7 @@ class ChartLocalizationsEn extends ChartLocalizations {
 
   @override
   String get apply => 'Apply';
+
+  @override
+  String get objectSettings => 'Object Settings';
 }

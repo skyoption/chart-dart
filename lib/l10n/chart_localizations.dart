@@ -655,6 +655,12 @@ abstract class ChartLocalizations {
   /// In en, this message translates to:
   /// **'Apply'**
   String get apply;
+
+  /// No description provided for @objectSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Object Settings'**
+  String get objectSettings;
 }
 
 class _ChartLocalizationsDelegate

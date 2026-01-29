@@ -93,6 +93,7 @@ class KChartWidget extends StatefulWidget {
   final List<int> editableSLOrTP;
   final Function(bool value)? onLoadMore;
   final Function(bool value)? onZoomingStart;
+  final Function(bool startEditingObjects)? onStartEditingObjects;
   final Function(LineEntity position, double newValue) onUpdatePosition;
   final int fixedLength;
   final List<int> maDayList;
@@ -142,6 +143,7 @@ class KChartWidget extends StatefulWidget {
     this.onZoomingStart,
     this.verticalTextAlignment = VerticalTextAlignment.right,
     this.isLongFocusDurationTime = 500,
+    this.onStartEditingObjects,
   }) : super(key: key) {
     KChartWidget.colors = chartColors;
   }
@@ -199,6 +201,7 @@ class KChartWidgetState extends State<KChartWidget>
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ObjectsScreen(
+          chartStyle: widget.chartStyle,
           data: lineCandles,
           onDone: (type) {
             objectType = type;
@@ -560,6 +563,7 @@ class KChartWidgetState extends State<KChartWidget>
           context: context,
           item: object!,
           data: lineCandles,
+          chartStyle: widget.chartStyle,
           onDone: (type) {
             bottomSheetShown = false;
             notifyChanged();
@@ -570,6 +574,7 @@ class KChartWidgetState extends State<KChartWidget>
   }
 
   void _objectSetOnUpdate(details) {
+    widget.onStartEditingObjects?.call(true);
     if (objectEditable) {
       object?.currentEditIndex = -1;
       object = null;

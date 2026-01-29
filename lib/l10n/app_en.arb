@@ -96,5 +96,6 @@
   "value": "Value",
   "selectItem": "Select Item",
   "pleaseChooseItem": "Please choose item",
-  "apply": "Apply"
+  "apply": "Apply",
+  "objectSettings": "Object Settings"
 }

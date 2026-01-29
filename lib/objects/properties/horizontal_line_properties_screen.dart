@@ -9,11 +9,13 @@ class HorizontalLinePropertiesScreen extends StatefulWidget {
   static const id = 'HorizontalLinePropertiesScreen';
   final Function(ObjectType? type) onDone;
   final ObjectEntity? object;
+  final ChartStyle chartStyle;
 
   const HorizontalLinePropertiesScreen({
     super.key,
     required this.onDone,
     required this.object,
+    required this.chartStyle,
   });
 
   @override
@@ -23,8 +25,8 @@ class HorizontalLinePropertiesScreen extends StatefulWidget {
 
 class _HorizontalLinePropertiesScreenState
     extends State<HorizontalLinePropertiesScreen> {
-  late final controller =
-      TextEditingController(text: object.value.toStringAsFixed(2));
+  late final controller = TextEditingController(
+      text: object.value.toStringAsFixed(widget.chartStyle.digits));
 
   late final ObjectEntity object = widget.object ?? ObjectEntity();
   @override

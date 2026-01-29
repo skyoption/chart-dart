@@ -95,5 +95,6 @@
   "value": "القيمة",
   "selectItem": "اختر عنصر",
   "pleaseChooseItem": "اختر عنصر",
-  "apply": "تطبيق"
+  "apply": "تطبيق",
+  "objectSettings": "إعدادات العنصر"
 }

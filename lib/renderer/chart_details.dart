@@ -99,7 +99,8 @@ mixin ChartCalc {
 
   double? getMainY(double y) {
     try {
-      return mMainRenderer.getY(y);
+      final res = mMainRenderer.getY(y);
+      return res;
     } catch (e) {
       return null;
     }

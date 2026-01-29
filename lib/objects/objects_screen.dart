@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 
 class ObjectsScreen extends StatefulWidget {
   static const id = 'ObjectsScreen';
+  final ChartStyle chartStyle;
 
   final List<KLineEntity> data;
   final Function(ObjectType? type) onDone;
@@ -20,6 +21,7 @@ class ObjectsScreen extends StatefulWidget {
   const ObjectsScreen({
     super.key,
     required this.onDone,
+    required this.chartStyle,
     this.data = const [],
   });
 
@@ -116,7 +118,8 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
                 title: id,
                 subtitle: _name(e.value),
                 onTap: () {
-                  onTap(context, e.value, widget.data, widget.onDone);
+                  onTap(context, e.value, widget.data, widget.onDone,
+                      widget.chartStyle);
                 },
                 onDelete: () async {
                   await onDelete(e.value.type, e.value.id, widget.onDone);
@@ -177,6 +180,7 @@ void onTap(
   ObjectEntity item,
   List<KLineEntity> data,
   Function(ObjectType? type) onDone,
+  ChartStyle chartStyle,
 ) {
   if (item.type == ObjectType.Horizontal) {
     Navigator.of(context).push(
@@ -184,6 +188,7 @@ void onTap(
         builder: (context) => HorizontalLinePropertiesScreen(
           onDone: onDone,
           object: item,
+          chartStyle: chartStyle,
         ),
       ),
     );
@@ -193,6 +198,7 @@ void onTap(
         builder: (context) => VerticalLinePropertiesScreen(
           onDone: onDone,
           data: data,
+          chartStyle: chartStyle,
           object: item,
         ),
       ),
@@ -203,6 +209,7 @@ void onTap(
         builder: (context) => RectangleLinePropertiesScreen(
           onDone: onDone,
           data: data,
+          chartStyle: chartStyle,
           object: item,
         ),
       ),
@@ -213,6 +220,7 @@ void onTap(
         builder: (context) => TrendLinePropertiesScreen(
           onDone: onDone,
           data: data,
+          chartStyle: chartStyle,
           object: item,
         ),
       ),

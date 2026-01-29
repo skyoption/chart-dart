@@ -369,19 +369,19 @@ class ChartPainter extends BaseChartPainter
       30.0,
     );
 
-    // Rect bottomRect = Rect.fromLTWH(
-    //   0,
-    //   mMainRect.bottom,
-    //   mMainRect.width,
-    //   20.0,
-    // );
+    Rect bottomRect = Rect.fromLTWH(
+      0,
+      mMainRect.bottom + 1.0,
+      mMainRect.width + 5,
+      20.0,
+    );
 
     Paint paint = Paint()
       ..color = chartColors.bgColor
       ..style = PaintingStyle.fill;
 
     canvas.drawRect(topRect, paint);
-    // canvas.drawRect(bottomRect, paint);
+    canvas.drawRect(bottomRect, paint);
     double columnSpace = size.rWidth / this.chartStyle.gridColumns;
     double startX = getX(mStartIndex) - mPointWidth / 2;
     double stopX = getX(mStopIndex) + mPointWidth / 2;

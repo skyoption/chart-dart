@@ -3,7 +3,6 @@ import 'package:candle_chart/objects/widgets/delete_widget.dart';
 import 'package:candle_chart/objects/widgets/svg.dart';
 import 'package:candle_chart/widgets/paddings.dart';
 import 'package:candle_chart/widgets/radius.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ObjectItemWidget extends StatefulWidget {
@@ -65,7 +64,7 @@ class _ObjectItemWidgetState extends State<ObjectItemWidget> {
                       name: widget.icon,
                       width: widget.iconSize,
                       height: widget.iconSize,
-                      color: KChartWidget.colors!.iconColor,
+                      color: widget.color ?? context.scheme.onSurface,
                     ),
                   ),
                 Column(
@@ -73,15 +72,14 @@ class _ObjectItemWidgetState extends State<ObjectItemWidget> {
                   children: [
                     Text(
                       widget.title!,
-                      style: Theme.of(context).textTheme.bodySmall,
+                      style: context.text.bodySmall!.copyWith(
+                        color: widget.color ?? context.scheme.onSurface,
+                      ),
                     ),
                     if (widget.subtitle != null)
                       Text(
                         widget.subtitle!,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(fontSize: 10.0),
+                        style: context.text.bodySmall,
                       ),
                   ],
                 ),
@@ -92,7 +90,7 @@ class _ObjectItemWidgetState extends State<ObjectItemWidget> {
               Icon(
                 Icons.arrow_forward_ios_sharp,
                 size: 20.0,
-                color: widget.color ?? KChartWidget.colors!.iconColor,
+                color: widget.color ?? context.scheme.onSurface,
               )
           ],
         ),

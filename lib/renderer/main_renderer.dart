@@ -251,7 +251,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       chartRect.width + 1,
       0,
       100.0,
-      chartRect.height,
+      chartRect.height * 2,
     );
 
     Paint paint = Paint()
@@ -298,7 +298,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       } else {
         if (this.chartStyle.isShowLeftTopicPoint || i > 0)
           tp.paint(canvas,
-              Offset(offsetX, rowSpace * i - (tp.height * 0.7) + topPadding));
+              Offset(offsetX, rowSpace * i - (tp.height * 0.6) + topPadding));
       }
     }
   }
