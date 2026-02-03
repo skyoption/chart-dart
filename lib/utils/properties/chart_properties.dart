@@ -14,12 +14,17 @@ late final ChartProperties chartProperties;
 class ChartProperties with Indicators, Objects, Fav {
   String symbol = 'GBPUSD';
   CandleTimeFormat frame = CandleTimeFormat.M15;
+  CandleTimeFormat defaultFrame = CandleTimeFormat.M15;
   ChartProperties(this.sharedPreferences);
   final SharedPreferences sharedPreferences;
   //For properties
   Map<String, dynamic> properties = {};
 
   List<KLineEntity> lineCandles = [];
+
+  void setDefaultFrame(CandleTimeFormat frame) {
+    defaultFrame = frame;
+  }
 
   Future<void> updateDefaultSettings({
     required CandleTimeFormat frame,
@@ -46,7 +51,8 @@ class ChartProperties with Indicators, Objects, Fav {
     ) onGetting,
   }) async {
     try {
-      final res = await sharedPreferences.getString('frame') ?? 'M15';
+      final res =
+          await sharedPreferences.getString('frame') ?? defaultFrame.name;
       symbol = await sharedPreferences.getString('symbol') ?? 'GBPUSD';
       frame = CandleTimeFormat.values.firstWhere((e) => e.name == res);
       await loadCandles();

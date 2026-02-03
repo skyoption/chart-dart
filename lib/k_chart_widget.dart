@@ -113,6 +113,7 @@ class KChartWidget extends StatefulWidget {
   final double secondaryRetro;
   final double initialScale;
   final double initialScaleY;
+  final CandleTimeFormat defaultFrame;
 
   KChartWidget({
     Key? key,
@@ -144,6 +145,7 @@ class KChartWidget extends StatefulWidget {
     this.verticalTextAlignment = VerticalTextAlignment.right,
     this.isLongFocusDurationTime = 500,
     this.onStartEditingObjects,
+    this.defaultFrame = CandleTimeFormat.M15,
   }) : super(key: key) {
     KChartWidget.colors = chartColors;
   }
@@ -191,6 +193,12 @@ class KChartWidgetState extends State<KChartWidget>
   BaseDimension? currentBaseDimension;
   Random rand = Random();
   int pointerCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    chartProperties.setDefaultFrame(widget.defaultFrame);
+  }
 
   Future<void> getIndicators() async {
     if (widget.hideIndicators) return;
