@@ -423,6 +423,32 @@ class SecondaryRenderer extends BaseChartRenderer<CandleEntity> {
         scaleX: scaleX,
       );
     }
+    // Draw MACD (DIF) Line (stored in shortEMA)
+    // We use the same color as mainColor but maybe different shade or just let it be?
+    // Usually MACD line has its own color in config, but here config is limited.
+    // Let's use 'mainColor' for the Histogram and 'signalColor' for the Signal line.
+    // The MACD line (DIF) often shares color with Histogram but is a line.
+    // Or we can default to a standard color if not configured.
+    // existing config: macd.mainColor (for bars/hist), macd.signalColor (for signal line).
+    // I will reuse mainColor for the DIF line as well? Or maybe there isn't a 3rd color config.
+    // I will use `mainColor` for the DIF line as well for now.
+
+    if (lastPoint.macdValues?[index].shortEMA != null &&
+        curPoint.macdValues?[index].shortEMA != null) {
+      // We need to check if we can draw line.
+      // shortEMA stores the DIF value.
+      drawLine(
+        lastPoint.macdValues?[index].shortEMA,
+        curPoint.macdValues?[index].shortEMA,
+        canvas,
+        lastX,
+        curX,
+        this.indicator.color != null
+            ? colorFromHex(this.indicator.color!)!
+            : Colors.white,
+        scaleX: scaleX,
+      );
+    }
   }
 
   void drawDEM(

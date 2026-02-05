@@ -149,7 +149,7 @@ class _AppliedIndicatorsTabState extends State<AppliedIndicatorsTab> {
                         ).addPadding(top: 6.0);
                       })
                     ],
-                  );
+                  ).addPadding(bottom: 12.0);
                 },
               ),
             ],

@@ -381,7 +381,7 @@ class ChartPainter extends BaseChartPainter
       ..style = PaintingStyle.fill;
 
     canvas.drawRect(topRect, paint);
-    canvas.drawRect(bottomRect, paint);
+    if (mSecondaryRendererList.isEmpty) canvas.drawRect(bottomRect, paint);
     double columnSpace = size.rWidth / this.chartStyle.gridColumns;
     double startX = getX(mStartIndex) - mPointWidth / 2;
     double stopX = getX(mStopIndex) + mPointWidth / 2;
