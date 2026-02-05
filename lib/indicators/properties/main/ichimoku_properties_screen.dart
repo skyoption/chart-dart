@@ -1,6 +1,5 @@
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/indicators/properties/main/indicator_properties_screen.dart';
-import 'package:candle_chart/indicators/widgets/dropdown_item_widget.dart';
 import 'package:candle_chart/indicators/widgets/indicator_color_widget.dart';
 import 'package:candle_chart/indicators/widgets/indicator_info_widget.dart';
 import 'package:candle_chart/indicators/widgets/input_item_widget.dart';
