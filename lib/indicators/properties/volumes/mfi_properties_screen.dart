@@ -80,7 +80,7 @@ class _MFIPropertiesScreenState extends State<MFIPropertiesScreen> {
                   IndicatorInfoWidget(
                     options: [
                       context.tr.inputs,
-                      context.tr.visibility,
+                      // context.tr.visibility,
                       context.tr.style,
                     ],
                     children: [
@@ -110,19 +110,19 @@ class _MFIPropertiesScreenState extends State<MFIPropertiesScreen> {
                           ),
                         ],
                       ),
-                      Column(
-                        children: [
-                          Padding(
-                            padding: MPadding.set(bottom: 21.0),
-                            child: DropdownItemWidget<String>(
-                              title: context.tr.timeframe,
-                              items: [context.tr.all_timeframes],
-                              onTitle: (value) => value,
-                              onChanged: (value) {},
-                            ),
-                          ),
-                        ],
-                      ),
+                      // Column(
+                      //   children: [
+                      //     Padding(
+                      //       padding: MPadding.set(bottom: 21.0),
+                      //       child: DropdownItemWidget<String>(
+                      //         title: context.tr.timeframe,
+                      //         items: [context.tr.all_timeframes],
+                      //         onTitle: (value) => value,
+                      //         onChanged: (value) {},
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                       Column(
                         spacing: 21.0,
                         children: [

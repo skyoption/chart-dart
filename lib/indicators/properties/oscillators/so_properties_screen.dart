@@ -85,7 +85,7 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
                   IndicatorInfoWidget(
                     options: [
                       context.tr.inputs,
-                      context.tr.visibility,
+                      // context.tr.visibility,
                       context.tr.style,
                     ],
                     children: [
@@ -166,16 +166,16 @@ class _SOPropertiesScreenState extends State<SOPropertiesScreen> {
                           ),
                         ],
                       ),
-                      Column(
-                        children: [
-                          DropdownItemWidget<String>(
-                            title: context.tr.timeframe,
-                            items: [context.tr.all_timeframes],
-                            onTitle: (value) => value,
-                            onChanged: (value) {},
-                          ),
-                        ],
-                      ),
+                      // Column(
+                      //   children: [
+                      //     DropdownItemWidget<String>(
+                      //       title: context.tr.timeframe,
+                      //       items: [context.tr.all_timeframes],
+                      //       onTitle: (value) => value,
+                      //       onChanged: (value) {},
+                      //     ),
+                      //   ],
+                      // ),
                       Column(
                         spacing: 21.0,
                         children: [

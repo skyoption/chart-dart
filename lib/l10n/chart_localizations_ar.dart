@@ -289,4 +289,7 @@ class ChartLocalizationsAr extends ChartLocalizations {
 
   @override
   String get objectSettings => 'إعدادات العنصر';
+
+  @override
+  String get color => 'اللون';
 }

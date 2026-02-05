@@ -8,13 +8,7 @@ extension LocalizationExtension on BuildContext {
 
   double get h => MediaQuery.of(this).size.height;
 
-  double get bottomPadding {
-    final res = MediaQuery.of(this).viewInsets.bottom;
-    if (res > 0) {
-      return res + 21.0;
-    }
-    return 32.0;
-  }
+  double get bottomPadding => 32.0;
 }
 
 extension ColorSchemeExt on ColorScheme {

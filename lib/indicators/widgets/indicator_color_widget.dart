@@ -77,7 +77,7 @@ class _IndicatorColorWidgetState extends State<IndicatorColorWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      widget.title,
+                      context.tr.color,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w400,
                           ),

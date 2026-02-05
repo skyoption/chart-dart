@@ -289,4 +289,7 @@ class ChartLocalizationsEn extends ChartLocalizations {
 
   @override
   String get objectSettings => 'Object Settings';
+
+  @override
+  String get color => 'Color';
 }

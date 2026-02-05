@@ -82,7 +82,7 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
                   IndicatorInfoWidget(
                     options: [
                       context.tr.inputs,
-                      context.tr.visibility,
+                      // context.tr.visibility,
                       context.tr.style,
                     ],
                     children: [
@@ -133,16 +133,16 @@ class _MACDPropertiesScreenState extends State<MACDPropertiesScreen> {
                           ),
                         ],
                       ),
-                      Column(
-                        children: [
-                          DropdownItemWidget<String>(
-                            title: context.tr.timeframe,
-                            items: [context.tr.all_timeframes],
-                            onTitle: (value) => value,
-                            onChanged: (value) {},
-                          ),
-                        ],
-                      ),
+                      // Column(
+                      //   children: [
+                      //     DropdownItemWidget<String>(
+                      //       title: context.tr.timeframe,
+                      //       items: [context.tr.all_timeframes],
+                      //       onTitle: (value) => value,
+                      //       onChanged: (value) {},
+                      //     ),
+                      //   ],
+                      // ),
                       Column(
                         spacing: 21.0,
                         children: [

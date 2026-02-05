@@ -96,5 +96,6 @@
   "selectItem": "اختر عنصر",
   "pleaseChooseItem": "اختر عنصر",
   "apply": "تطبيق",
-  "objectSettings": "إعدادات العنصر"
+  "objectSettings": "إعدادات العنصر",
+  "color": "اللون"
 }

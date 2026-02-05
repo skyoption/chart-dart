@@ -661,6 +661,12 @@ abstract class ChartLocalizations {
   /// In en, this message translates to:
   /// **'Object Settings'**
   String get objectSettings;
+
+  /// No description provided for @color.
+  ///
+  /// In en, this message translates to:
+  /// **'Color'**
+  String get color;
 }
 
 class _ChartLocalizationsDelegate
