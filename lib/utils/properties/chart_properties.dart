@@ -12,7 +12,7 @@ import 'package:candle_chart/utils/isar.dart';
 late final ChartProperties chartProperties;
 
 class ChartProperties with Indicators, Objects, Fav {
-  String symbol = 'GBPUSD';
+  String symbol = 'XAUUSD';
   CandleTimeFormat frame = CandleTimeFormat.M15;
   CandleTimeFormat defaultFrame = CandleTimeFormat.M15;
   ChartProperties(this.sharedPreferences);
@@ -53,7 +53,7 @@ class ChartProperties with Indicators, Objects, Fav {
     try {
       final res =
           await sharedPreferences.getString('frame') ?? defaultFrame.name;
-      symbol = await sharedPreferences.getString('symbol') ?? 'GBPUSD';
+      symbol = await sharedPreferences.getString('symbol') ?? 'XAUUSD';
       frame = CandleTimeFormat.values.firstWhere((e) => e.name == res);
       await loadCandles();
       await chartProperties.loadObjects(symbol);
