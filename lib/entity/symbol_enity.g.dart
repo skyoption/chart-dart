@@ -40,7 +40,7 @@ const SymbolSchema = CollectionSchema(
   getId: _symbolGetId,
   getLinks: _symbolGetLinks,
   attach: _symbolAttach,
-  version: '3.3.0',
+  version: '3.3.2',
 );
 
 int _symbolEstimateSize(

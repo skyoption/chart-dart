@@ -226,7 +226,7 @@ const IndicatorEntitySchema = CollectionSchema(
   getId: _indicatorEntityGetId,
   getLinks: _indicatorEntityGetLinks,
   attach: _indicatorEntityAttach,
-  version: '3.3.0',
+  version: '3.3.2',
 );
 
 int _indicatorEntityEstimateSize(

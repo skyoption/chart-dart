@@ -70,7 +70,7 @@ const KLineEntitySchema = CollectionSchema(
   getId: _kLineEntityGetId,
   getLinks: _kLineEntityGetLinks,
   attach: _kLineEntityAttach,
-  version: '3.3.0',
+  version: '3.3.2',
 );
 
 int _kLineEntityEstimateSize(

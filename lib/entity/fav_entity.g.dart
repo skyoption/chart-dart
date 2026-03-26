@@ -34,7 +34,7 @@ const FavEntitySchema = CollectionSchema(
   getId: _favEntityGetId,
   getLinks: _favEntityGetLinks,
   attach: _favEntityAttach,
-  version: '3.3.0',
+  version: '3.3.2',
 );
 
 int _favEntityEstimateSize(
