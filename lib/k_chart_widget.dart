@@ -547,6 +547,7 @@ class KChartWidgetState extends State<KChartWidget>
   void _objectSetOnBottomSheet(details) {
     final nearObject = _painter!.findNearOffset(
       offset: details.localPosition,
+      data: lineCandles,
     );
     objectEditable = nearObject.object != null;
     if (objectEditable) {
@@ -609,6 +610,7 @@ class KChartWidgetState extends State<KChartWidget>
     } else {
       final nearObject = _painter!.findNearOffset(
         offset: details.localPosition,
+        data: lineCandles,
       );
       objectEditable = nearObject.object != null;
       if (objectEditable && !bottomSheetShown) {

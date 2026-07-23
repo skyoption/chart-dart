@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/entity/object_entity.dart';
 import 'package:candle_chart/renderer/base_chart_renderer.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
@@ -14,7 +15,10 @@ mixin UpdatePointPosition on ChartCalc {
   late double scaleX;
   late double scaleY;
 
-  NearObject findNearOffset({required Offset offset}) {
+  NearObject findNearOffset({
+    required Offset offset,
+    List<KLineEntity> data = const [],
+  }) {
     final nearObject = NearObject();
     int horizontalCount = 0,
         verticalCount = 0,
@@ -33,6 +37,13 @@ mixin UpdatePointPosition on ChartCalc {
       ...chartProperties.objects,
       ...chartProperties.tPAndSLLines
     ];
+
+    // Handle X must be derived from the point's datetime (same as drawing), not
+    // the stored dx — after a restart/reload the candle array can re-index, so
+    // the stored dx goes stale while getXFromTime stays correct. Falls back to
+    // the stored dx when no data is available.
+    double handleX(int datetime, double storedDx) =>
+        data.isEmpty ? storedDx : getXFromTime(datetime, data);
 
     for (int i = 0; i < objects.length; i++) {
       var object = objects[i];
@@ -68,7 +79,7 @@ mixin UpdatePointPosition on ChartCalc {
         positionCount++;
       } else if (object.type == ObjectType.Vertical) {
         final dx1 = getX(mStartIndex) + (offset.dx / scaleX);
-        final dx2 = object.dx1;
+        final dx2 = handleX(object.datetime, object.dx1);
         final disDx = dx2 - dx1;
         if (disDx.abs() <= 20) {
           object.currentEditIndex = verticalCount;
@@ -105,10 +116,10 @@ mixin UpdatePointPosition on ChartCalc {
         final y1 = getMainY(object.value);
         final y2 = getMainY(object.value2);
         final near1 = y1 != null &&
-            (object.dx1 - dx0).abs() <= 20 &&
+            (handleX(object.datetime, object.dx1) - dx0).abs() <= 20 &&
             (y1 - dy0).abs() <= 20;
         final near2 = y2 != null &&
-            (object.dx2 - dx0).abs() <= 20 &&
+            (handleX(object.datetime2, object.dx2) - dx0).abs() <= 20 &&
             (y2 - dy0).abs() <= 20;
         if (near1) {
           object.currentEditIndex = timeZoneCount;
@@ -129,10 +140,10 @@ mixin UpdatePointPosition on ChartCalc {
         final y1 = getMainY(object.value);
         final y2 = getMainY(object.value2);
         final near1 = y1 != null &&
-            (object.dx1 - dx0).abs() <= 20 &&
+            (handleX(object.datetime, object.dx1) - dx0).abs() <= 20 &&
             (y1 - dy0).abs() <= 20;
         final near2 = y2 != null &&
-            (object.dx2 - dx0).abs() <= 20 &&
+            (handleX(object.datetime2, object.dx2) - dx0).abs() <= 20 &&
             (y2 - dy0).abs() <= 20;
         if (near1) {
           object.currentEditIndex = fanCount;
@@ -153,10 +164,10 @@ mixin UpdatePointPosition on ChartCalc {
         final y1 = getMainY(object.value);
         final y2 = getMainY(object.value2);
         final near1 = y1 != null &&
-            (object.dx1 - dx0).abs() <= 20 &&
+            (handleX(object.datetime, object.dx1) - dx0).abs() <= 20 &&
             (y1 - dy0).abs() <= 20;
         final near2 = y2 != null &&
-            (object.dx2 - dx0).abs() <= 20 &&
+            (handleX(object.datetime2, object.dx2) - dx0).abs() <= 20 &&
             (y2 - dy0).abs() <= 20;
         if (near1) {
           object.currentEditIndex = arcsCount;
@@ -190,9 +201,9 @@ mixin UpdatePointPosition on ChartCalc {
           return ddx + ddy;
         }
 
-        final d1 = dist(y1, object.dx1);
-        final d2 = dist(y2, object.dx2);
-        final d3 = dist(y3, object.dx3);
+        final d1 = dist(y1, handleX(object.datetime, object.dx1));
+        final d2 = dist(y2, handleX(object.datetime2, object.dx2));
+        final d3 = dist(y3, handleX(object.datetime3, object.dx3));
         if (d1 != null || d2 != null || d3 != null) {
           int best = 0;
           double bestD = double.infinity;
@@ -231,9 +242,9 @@ mixin UpdatePointPosition on ChartCalc {
           return ddx + ddy;
         }
 
-        final d1 = dist(y1, object.dx1);
-        final d2 = dist(y2, object.dx2);
-        final d3 = dist(y3, object.dx3);
+        final d1 = dist(y1, handleX(object.datetime, object.dx1));
+        final d2 = dist(y2, handleX(object.datetime2, object.dx2));
+        final d3 = dist(y3, handleX(object.datetime3, object.dx3));
         if (d1 != null || d2 != null || d3 != null) {
           int best = 0;
           double bestD = double.infinity;
@@ -270,8 +281,8 @@ mixin UpdatePointPosition on ChartCalc {
           }
           continue;
         }
-        final dx1 = object.dx1;
-        final dx2 = object.dx2;
+        final dx1 = handleX(object.datetime, object.dx1);
+        final dx2 = handleX(object.datetime2, object.dx2);
 
         final disDx1 = dx1 - dx0;
         final disDx2 = dx2 - dx0;
