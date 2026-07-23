@@ -21,7 +21,8 @@ mixin UpdatePointPosition on ChartCalc {
         positionCount = 0,
         rectangleCount = 0,
         trendCount = 0,
-        fibonacciCount = 0;
+        fibonacciCount = 0,
+        timeZoneCount = 0;
     for (var item in chartProperties.tPAndSLLines) item.currentEditIndex = -1;
     for (var item in chartProperties.objects) item.currentEditIndex = -1;
     final objects = [
@@ -84,6 +85,29 @@ mixin UpdatePointPosition on ChartCalc {
           return nearObject;
         }
         fibonacciCount++;
+      } else if (object.type == ObjectType.FibonacciTimeZones) {
+        // Two anchor points define the unit interval; grab either one.
+        final dx0 = getX(mStartIndex) + (offset.dx / scaleX);
+        final dy0 = offset.dy;
+        final y1 = getMainY(object.value);
+        final y2 = getMainY(object.value2);
+        if (y1 == null || y2 == null) return nearObject;
+        final disDx1 = (object.dx1 - dx0).abs();
+        final disDx2 = (object.dx2 - dx0).abs();
+        final disDy1 = (y1 - dy0).abs();
+        final disDy2 = (y2 - dy0).abs();
+        if (disDx1 <= 20 && disDy1 <= 20) {
+          object.currentEditIndex = timeZoneCount;
+          nearObject.object = object;
+          nearObject.isSecondPoint = false;
+          return nearObject;
+        } else if (disDx2 <= 20 && disDy2 <= 20) {
+          object.currentEditIndex = timeZoneCount;
+          nearObject.object = object;
+          nearObject.isSecondPoint = true;
+          return nearObject;
+        }
+        timeZoneCount++;
       } else if (object.type == ObjectType.Rectangle ||
           object.type == ObjectType.Trend) {
         final dx0 = getX(mStartIndex) + (offset.dx / scaleX);

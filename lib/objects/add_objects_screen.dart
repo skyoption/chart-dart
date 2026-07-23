@@ -109,7 +109,10 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
               iconColor: Colors.blueAccent,
               title: context.tr.fibonacciTimeZones,
               margin: EdgeInsets.zero,
-              onTap: () {},
+              onTap: () {
+                widget.onDone(ObjectType.FibonacciTimeZones);
+                Navigator.of(context).pop();
+              },
             ),
             ObjectItemWidget(
               iconSize: 26.0,

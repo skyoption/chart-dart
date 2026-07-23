@@ -317,6 +317,7 @@ const _ObjectEntitytypeEnumValueMap = {
   'Rectangle': 4,
   'Cursor': 5,
   'Fibonacci': 6,
+  'FibonacciTimeZones': 7,
 };
 const _ObjectEntitytypeValueEnumMap = {
   0: ObjectType.Vertical,
@@ -326,6 +327,7 @@ const _ObjectEntitytypeValueEnumMap = {
   4: ObjectType.Rectangle,
   5: ObjectType.Cursor,
   6: ObjectType.Fibonacci,
+  7: ObjectType.FibonacciTimeZones,
 };
 
 Id _objectEntityGetId(ObjectEntity object) {

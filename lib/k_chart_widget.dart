@@ -555,6 +555,8 @@ class KChartWidgetState extends State<KChartWidget>
         chartProperties.updateTrendLine(object!);
       } else if (objectType == ObjectType.Fibonacci) {
         chartProperties.updateFibonacci(object!);
+      } else if (objectType == ObjectType.FibonacciTimeZones) {
+        chartProperties.updateFibonacciTimeZone(object!);
       } else if (objectType == ObjectType.Rectangle) {
         chartProperties.updateRectangle(object!);
       } else if (objectType == ObjectType.Horizontal) {
@@ -607,6 +609,8 @@ class KChartWidgetState extends State<KChartWidget>
           chartProperties.updateTrendLine(object!);
         } else if (objectType == ObjectType.Fibonacci) {
           chartProperties.updateFibonacci(object!);
+        } else if (objectType == ObjectType.FibonacciTimeZones) {
+          chartProperties.updateFibonacciTimeZone(object!);
         } else if (objectType == ObjectType.Rectangle) {
           chartProperties.updateRectangle(object!);
         } else if (objectType == ObjectType.Horizontal) {
@@ -721,6 +725,22 @@ class KChartWidgetState extends State<KChartWidget>
               lineCandles,
             );
             notifyChanged();
+          } else if (objectType == ObjectType.FibonacciTimeZones) {
+            object = ObjectEntity(
+              type: objectType!,
+              name: 'Fibonacci Time Zones ${rand.nextInt(10000)}',
+              dx1: details.localPosition.dx,
+              dx2: details.localPosition.dx + 50,
+              dy1: details.localPosition.dy,
+              dy2: details.localPosition.dy + 50,
+            );
+            chartProperties.addFibonacciTimeZone(object!);
+            _painter!.setFibonacciTimeZoneOffset1(
+              object!,
+              details.localPosition,
+              lineCandles,
+            );
+            notifyChanged();
           } else if (objectType == ObjectType.Rectangle) {
             object = ObjectEntity(
               type: objectType!,
@@ -750,6 +770,12 @@ class KChartWidgetState extends State<KChartWidget>
               );
             } else if (object!.type == ObjectType.Fibonacci) {
               _painter!.setFibonacciOffset2(
+                object!,
+                details.localPosition,
+                lineCandles,
+              );
+            } else if (object!.type == ObjectType.FibonacciTimeZones) {
+              _painter!.setFibonacciTimeZoneOffset2(
                 object!,
                 details.localPosition,
                 lineCandles,
@@ -791,6 +817,13 @@ class KChartWidgetState extends State<KChartWidget>
                 lineCandles,
               );
               chartProperties.updateFibonacci(object!);
+            } else if (object!.type == ObjectType.FibonacciTimeZones) {
+              _painter!.setFibonacciTimeZoneOffset2(
+                object!,
+                details.localPosition,
+                lineCandles,
+              );
+              chartProperties.updateFibonacciTimeZone(object!);
             } else if (object!.type == ObjectType.Rectangle) {
               _painter!.setRectangleOffset2(
                 object!,
@@ -868,6 +901,20 @@ class KChartWidgetState extends State<KChartWidget>
                   lineCandles,
                 );
               }
+            } else if (object!.type == ObjectType.FibonacciTimeZones) {
+              if (isSecondOffset) {
+                _painter!.setFibonacciTimeZoneOffset2(
+                  object!,
+                  details.localPosition,
+                  lineCandles,
+                );
+              } else {
+                _painter!.setFibonacciTimeZoneOffset1(
+                  object!,
+                  details.localPosition,
+                  lineCandles,
+                );
+              }
             } else if (object!.type == ObjectType.Rectangle) {
               if (isSecondOffset) {
                 _painter!.setRectangleOffset2(
@@ -934,6 +981,21 @@ class KChartWidgetState extends State<KChartWidget>
                 );
               }
               chartProperties.updateFibonacci(object!);
+            } else if (object!.type == ObjectType.FibonacciTimeZones) {
+              if (isSecondOffset) {
+                object = _painter!.setFibonacciTimeZoneOffset2(
+                  object!,
+                  details.localPosition,
+                  lineCandles,
+                );
+              } else {
+                object = _painter!.setFibonacciTimeZoneOffset1(
+                  object!,
+                  details.localPosition,
+                  lineCandles,
+                );
+              }
+              chartProperties.updateFibonacciTimeZone(object!);
             } else if (object!.type == ObjectType.Rectangle) {
               if (isSecondOffset) {
                 object = _painter!.setRectangleOffset2(

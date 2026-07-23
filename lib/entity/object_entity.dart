@@ -15,6 +15,8 @@ enum ObjectType {
   Rectangle,
   Cursor,
   Fibonacci,
+  FibonacciTimeZones,
+  FibonacciFan,
 }
 
 /// Standard Fibonacci retracement levels (as ratios of the price move):
@@ -29,6 +31,29 @@ const List<double> kFibonacciLevels = [
   1.618,
   2.618,
   4.236,
+];
+
+/// Fibonacci Time Zone levels — multiples of the unit interval following the
+/// Fibonacci sequence: 0, 1, 2, 3, 5, 8, 13, 21, 34, 55.
+const List<double> kFibonacciTimeZoneLevels = [
+  0.0,
+  1.0,
+  2.0,
+  3.0,
+  5.0,
+  8.0,
+  13.0,
+  21.0,
+  34.0,
+  55.0,
+];
+
+/// Fibonacci Fan levels — the fan rays cross the vertical through the second
+/// point at 38.2%, 50% and 61.8% of the price range.
+const List<double> kFibonacciFanLevels = [
+  0.382,
+  0.5,
+  0.618,
 ];
 
 @collection
