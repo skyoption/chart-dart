@@ -249,6 +249,27 @@ class ChartLocalizationsAr extends ChartLocalizations {
   String get rectangle => 'مستطيل';
 
   @override
+  String get fibonacci => 'فيبوناتشي';
+
+  @override
+  String get fibonacciRetracement => 'تصحيح فيبوناتشي';
+
+  @override
+  String get fibonacciTimeZones => 'مناطق زمن فيبوناتشي';
+
+  @override
+  String get fibonacciFan => 'مروحة فيبوناتشي';
+
+  @override
+  String get fibonacciArcs => 'أقواس فيبوناتشي';
+
+  @override
+  String get fibonacciChannel => 'قناة فيبوناتشي';
+
+  @override
+  String get fibonacciExpansion => 'امتداد فيبوناتشي';
+
+  @override
   String get tools => 'الأدوات';
 
   @override

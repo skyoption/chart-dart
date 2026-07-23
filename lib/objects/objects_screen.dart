@@ -1,6 +1,8 @@
 import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/indicators/widgets/top_header_widget.dart';
 import 'package:candle_chart/k_chart_plus.dart';
+import 'package:candle_chart/objects/add_objects_screen.dart';
+import 'package:candle_chart/objects/properties/fibonacci_properties_screen.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
 import 'package:candle_chart/objects/properties/rectangle_line_properties_screen.dart';
 import 'package:candle_chart/objects/properties/trend_line_properties_screen.dart';
@@ -42,6 +44,10 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
           child: TopHeaderWidget(
             title: context.tr.tools,
             onBack: () => Navigator.of(context).pop(),
+            onAdd: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => AddObjectsScreen(onDone: widget.onDone))),
           ),
         ),
       ),
@@ -142,6 +148,8 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
       return Svgs.rectangle;
     } else if (item.type == ObjectType.Trend) {
       return Svgs.trendLine;
+    } else if (item.type == ObjectType.Fibonacci) {
+      return Svgs.fibonacci;
     }
     return '';
   }
@@ -153,6 +161,8 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
       return '${item.type.name} Line';
     } else if (item.type == ObjectType.Rectangle) {
       return item.type.name;
+    } else if (item.type == ObjectType.Fibonacci) {
+      return 'Fibonacci Retracement';
     }
     return '';
   }
@@ -171,6 +181,8 @@ Future<void> onDelete(
     await chartProperties.removeRectangle(id);
   } else if (type == ObjectType.Trend) {
     await chartProperties.removeTrendLine(id);
+  } else if (type == ObjectType.Fibonacci) {
+    await chartProperties.removeFibonacci(id);
   }
   onDone(null);
 }
@@ -218,6 +230,17 @@ void onTap(
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => TrendLinePropertiesScreen(
+          onDone: onDone,
+          data: data,
+          chartStyle: chartStyle,
+          object: item,
+        ),
+      ),
+    );
+  } else if (item.type == ObjectType.Fibonacci) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => FibonacciPropertiesScreen(
           onDone: onDone,
           data: data,
           chartStyle: chartStyle,

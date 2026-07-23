@@ -7,7 +7,29 @@ part 'object_entity.g.dart';
 
 enum ObjectStyle { dash, normal }
 
-enum ObjectType { Vertical, Horizontal, Position, Trend, Rectangle, Cursor }
+enum ObjectType {
+  Vertical,
+  Horizontal,
+  Position,
+  Trend,
+  Rectangle,
+  Cursor,
+  Fibonacci,
+}
+
+/// Standard Fibonacci retracement levels (as ratios of the price move):
+/// 0.0, 23.6, 38.2, 50, 61.8, 100, 161.8, 261.8, 423.6 percent.
+const List<double> kFibonacciLevels = [
+  0.0,
+  0.236,
+  0.382,
+  0.5,
+  0.618,
+  1.0,
+  1.618,
+  2.618,
+  4.236,
+];
 
 @collection
 class ObjectEntity {

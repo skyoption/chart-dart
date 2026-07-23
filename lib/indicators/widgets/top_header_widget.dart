@@ -7,12 +7,14 @@ class TopHeaderWidget extends StatelessWidget {
   final String? doneText;
   final Function()? onBack;
   final Function()? onDone;
+  final Function()? onAdd;
   const TopHeaderWidget(
       {super.key,
       required this.title,
       this.onBack,
-      this.onDone,
-      this.doneText});
+      this.onAdd,
+      this.doneText,
+      this.onDone});
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +60,19 @@ class TopHeaderWidget extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                         color: KChartWidget.colors!.primary,
                       ),
+                ).addPadding(vertical: 14.0),
+              ),
+            ),
+          if (onAdd != null)
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: InkWell(
+                onTap: () {
+                  onAdd?.call();
+                },
+                child: Icon(
+                  Icons.add,
+                  color: KChartWidget.colors!.primary,
                 ).addPadding(vertical: 14.0),
               ),
             ),

@@ -249,6 +249,27 @@ class ChartLocalizationsEn extends ChartLocalizations {
   String get rectangle => 'Rectangle';
 
   @override
+  String get fibonacci => 'Fibonacci';
+
+  @override
+  String get fibonacciRetracement => 'Fibonacci Retracement';
+
+  @override
+  String get fibonacciTimeZones => 'Fibonacci Time Zones';
+
+  @override
+  String get fibonacciFan => 'Fibonacci Fan';
+
+  @override
+  String get fibonacciArcs => 'Fibonacci Arcs';
+
+  @override
+  String get fibonacciChannel => 'Fibonacci Channel';
+
+  @override
+  String get fibonacciExpansion => 'Fibonacci Expansion';
+
+  @override
   String get tools => 'Tools';
 
   @override

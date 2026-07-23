@@ -20,7 +20,8 @@ mixin UpdatePointPosition on ChartCalc {
         verticalCount = 0,
         positionCount = 0,
         rectangleCount = 0,
-        trendCount = 0;
+        trendCount = 0,
+        fibonacciCount = 0;
     for (var item in chartProperties.tPAndSLLines) item.currentEditIndex = -1;
     for (var item in chartProperties.objects) item.currentEditIndex = -1;
     final objects = [
@@ -66,7 +67,8 @@ mixin UpdatePointPosition on ChartCalc {
         }
         verticalCount++;
       } else if (object.type == ObjectType.Rectangle ||
-          object.type == ObjectType.Trend) {
+          object.type == ObjectType.Trend ||
+          object.type == ObjectType.Fibonacci) {
         final dx0 = getX(mStartIndex) + (offset.dx / scaleX);
         final dy0 = offset.dy;
         final dy1 = getMainY(object.value);
@@ -86,6 +88,8 @@ mixin UpdatePointPosition on ChartCalc {
             object.currentEditIndex = rectangleCount;
           } else if (object.type == ObjectType.Trend) {
             object.currentEditIndex = trendCount;
+          } else if (object.type == ObjectType.Fibonacci) {
+            object.currentEditIndex = fibonacciCount;
           }
           nearObject.object = object;
           nearObject.isSecondPoint = false;
@@ -95,6 +99,8 @@ mixin UpdatePointPosition on ChartCalc {
             object.currentEditIndex = rectangleCount;
           } else if (object.type == ObjectType.Trend) {
             object.currentEditIndex = trendCount;
+          } else if (object.type == ObjectType.Fibonacci) {
+            object.currentEditIndex = fibonacciCount;
           }
           nearObject.object = object;
           nearObject.isSecondPoint = true;
@@ -104,6 +110,8 @@ mixin UpdatePointPosition on ChartCalc {
           rectangleCount++;
         } else if (object.type == ObjectType.Trend) {
           trendCount++;
+        } else if (object.type == ObjectType.Fibonacci) {
+          fibonacciCount++;
         }
       }
     }

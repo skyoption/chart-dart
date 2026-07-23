@@ -84,6 +84,66 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
               padding:
                   const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
               child: Text(
+                context.tr.fibonacci,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w400,
+                    ),
+              ),
+            ),
+            ObjectItemWidget(
+              iconSize: 30.0,
+              icon: Svgs.fibonacci,
+              title: context.tr.fibonacciRetracement,
+              margin: EdgeInsets.zero,
+              onTap: () {
+                widget.onDone(ObjectType.Fibonacci);
+                Navigator.of(context).pop();
+              },
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            ObjectItemWidget(
+              iconSize: 30.0,
+              icon: Svgs.fibonacci,
+              title: context.tr.fibonacciTimeZones,
+              margin: EdgeInsets.zero,
+              onTap: () {},
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            ObjectItemWidget(
+              iconSize: 30.0,
+              icon: Svgs.fibonacci,
+              title: context.tr.fibonacciFan,
+              margin: EdgeInsets.zero,
+              onTap: () {},
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            ObjectItemWidget(
+              iconSize: 30.0,
+              icon: Svgs.fibonacci,
+              title: context.tr.fibonacciArcs,
+              margin: EdgeInsets.zero,
+              onTap: () {},
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            ObjectItemWidget(
+              iconSize: 30.0,
+              icon: Svgs.fibonacci,
+              title: context.tr.fibonacciChannel,
+              margin: EdgeInsets.zero,
+              onTap: () {},
+            ),
+            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
+            ObjectItemWidget(
+              iconSize: 30.0,
+              icon: Svgs.fibonacci,
+              title: context.tr.fibonacciExpansion,
+              margin: EdgeInsets.zero,
+              onTap: () {},
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+              child: Text(
                 context.tr.shapes,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w400,

@@ -16,6 +16,7 @@ mixin Objects {
       ...verticalLines,
       ...trendLines,
       ...rectangles,
+      ...fibonaccis,
     ];
   }
 
@@ -25,6 +26,7 @@ mixin Objects {
   List<ObjectEntity> verticalLines = [];
   List<ObjectEntity> trendLines = [];
   List<ObjectEntity> rectangles = [];
+  List<ObjectEntity> fibonaccis = [];
   ObjectEntity? lastItem;
 
   Future<void> loadObjects(String symbol) async {
@@ -68,6 +70,19 @@ mixin Objects {
     value = setCopy(value);
     value.symbol = symbol;
     trendLines.add(value);
+    KChart.write(query: (db) async {
+      await db.objectEntitys.put(value);
+    });
+  }
+
+  Future<void> addFibonacci(ObjectEntity value) async {
+    lastItem = value;
+    value.type = ObjectType.Fibonacci;
+    value.frame = frame;
+    value.currentEditIndex = fibonaccis.length;
+    value = setCopy(value);
+    value.symbol = symbol;
+    fibonaccis.add(value);
     KChart.write(query: (db) async {
       await db.objectEntitys.put(value);
     });
@@ -126,6 +141,16 @@ mixin Objects {
     }
   }
 
+  Future<void> removeFibonacci(int id) async {
+    final index = fibonaccis.indexWhere((e) => e.id == id);
+    if (index != -1) {
+      fibonaccis.removeAt(index);
+      KChart.write(query: (db) async {
+        await db.objectEntitys.delete(id);
+      });
+    }
+  }
+
   Future<void> removeHorizontalLine(int id) async {
     final index = horizontalLines.indexWhere((e) => e.id == id);
     if (index != -1) {
@@ -167,6 +192,16 @@ mixin Objects {
     final index = trendLines.indexWhere((e) => e.id == value.id);
     if (index != -1) {
       trendLines[index] = value;
+      KChart.write(query: (db) async {
+        await db.objectEntitys.put(value);
+      });
+    }
+  }
+
+  Future<void> updateFibonacci(ObjectEntity value) async {
+    final index = fibonaccis.indexWhere((e) => e.id == value.id);
+    if (index != -1) {
+      fibonaccis[index] = value;
       KChart.write(query: (db) async {
         await db.objectEntitys.put(value);
       });
@@ -242,9 +277,12 @@ mixin Objects {
       trendLines.clear();
       verticalLines.clear();
       horizontalLines.clear();
+      fibonaccis.clear();
       for (var item in objects) {
         if (item.type == ObjectType.Rectangle) {
           rectangles.add(item);
+        } else if (item.type == ObjectType.Fibonacci) {
+          fibonaccis.add(item);
         } else if (item.type == ObjectType.Trend) {
           trendLines.add(item);
         } else if (item.type == ObjectType.Horizontal) {

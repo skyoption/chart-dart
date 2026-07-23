@@ -578,6 +578,48 @@ abstract class ChartLocalizations {
   /// **'Rectangle'**
   String get rectangle;
 
+  /// No description provided for @fibonacci.
+  ///
+  /// In en, this message translates to:
+  /// **'Fibonacci'**
+  String get fibonacci;
+
+  /// No description provided for @fibonacciRetracement.
+  ///
+  /// In en, this message translates to:
+  /// **'Fibonacci Retracement'**
+  String get fibonacciRetracement;
+
+  /// No description provided for @fibonacciTimeZones.
+  ///
+  /// In en, this message translates to:
+  /// **'Fibonacci Time Zones'**
+  String get fibonacciTimeZones;
+
+  /// No description provided for @fibonacciFan.
+  ///
+  /// In en, this message translates to:
+  /// **'Fibonacci Fan'**
+  String get fibonacciFan;
+
+  /// No description provided for @fibonacciArcs.
+  ///
+  /// In en, this message translates to:
+  /// **'Fibonacci Arcs'**
+  String get fibonacciArcs;
+
+  /// No description provided for @fibonacciChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fibonacci Channel'**
+  String get fibonacciChannel;
+
+  /// No description provided for @fibonacciExpansion.
+  ///
+  /// In en, this message translates to:
+  /// **'Fibonacci Expansion'**
+  String get fibonacciExpansion;
+
   /// No description provided for @tools.
   ///
   /// In en, this message translates to:
