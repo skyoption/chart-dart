@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:gesture_x_detector/gesture_x_detector.dart';
 
-enum GraphStyle { area, candles, line }
+enum GraphStyle { area, candles, line, heikinAshi }
 
 enum IndicatorType {
   MA_LINEAR,

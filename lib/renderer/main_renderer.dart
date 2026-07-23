@@ -105,7 +105,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     Size size,
     Canvas canvas,
   ) {
-    if (graphStyle == GraphStyle.candles) {
+    if (graphStyle == GraphStyle.candles ||
+        graphStyle == GraphStyle.heikinAshi) {
       drawCandle(curPoint, canvas, curX);
     } else {
       drawPolyline(lastPoint.close, curPoint.close, canvas, lastX, curX);
@@ -216,10 +217,14 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   }
 
   void drawCandle(CandleEntity curPoint, Canvas canvas, double curX) {
-    var high = getY(curPoint.high);
-    var low = getY(curPoint.low);
-    var open = getY(curPoint.open);
-    var close = getY(curPoint.close);
+    // Use Heikin Ashi values for the body/wick when that style is active and
+    // they have been computed; fall back to real prices otherwise.
+    final bool ha =
+        graphStyle == GraphStyle.heikinAshi && curPoint.haOpen != null;
+    var high = getY(ha ? curPoint.haHigh! : curPoint.high);
+    var low = getY(ha ? curPoint.haLow! : curPoint.low);
+    var open = getY(ha ? curPoint.haOpen! : curPoint.open);
+    var close = getY(ha ? curPoint.haClose! : curPoint.close);
     double r = mCandleWidth / 2;
     double lineR = mCandleLineWidth / 2;
     if (open >= close) {

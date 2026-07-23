@@ -11,6 +11,17 @@ mixin CandleEntity {
   late double low;
   late double close;
 
+  /// Heikin Ashi values (computed, not persisted). Only used for drawing when
+  /// the chart's GraphStyle is heikinAshi; indicators keep using real prices.
+  @ignore
+  double? haOpen;
+  @ignore
+  double? haHigh;
+  @ignore
+  double? haLow;
+  @ignore
+  double? haClose;
+
   ///MA
   @ignore
   List<CandleIndicatorEntity>? maEmaValues;

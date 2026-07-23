@@ -7,8 +7,33 @@ import 'package:candle_chart/renderer/rects/secondary_rect.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 
 class IndicatorUtils {
+  /// Computes Heikin Ashi values across the whole [data] series. The recurrence
+  /// for haOpen needs the full history, so this must run over the entire list.
+  /// Values are stored on each candle's computed (non-persisted) HA fields and
+  /// are only used for drawing — indicators keep using the real prices.
+  static void calcHeikinAshi(List<KLineEntity> data) {
+    if (data.isEmpty) return;
+    for (int i = 0; i < data.length; i++) {
+      final c = data[i];
+      final haClose = (c.open + c.high + c.low + c.close) / 4.0;
+      final double haOpen;
+      if (i == 0) {
+        haOpen = (c.open + c.close) / 2.0;
+      } else {
+        final prev = data[i - 1];
+        haOpen = ((prev.haOpen ?? prev.open) + (prev.haClose ?? prev.close)) / 2.0;
+      }
+      c.haOpen = haOpen;
+      c.haClose = haClose;
+      c.haHigh = [c.high, haOpen, haClose].reduce(max);
+      c.haLow = [c.low, haOpen, haClose].reduce(min);
+    }
+  }
+
   static calculate(List<KLineEntity> data, List<IndicatorEntity> indicators,
       Map<int, List<IndicatorEntity>> secondaries) async {
+    calcHeikinAshi(data);
+
     List<IndicatorEntity> MA_SMA = [],
         MA_EMA = [],
         MA_LINEAR = [],
