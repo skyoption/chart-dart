@@ -314,6 +314,12 @@ abstract class ChartLocalizations {
   /// **'Point 2'**
   String get point2;
 
+  /// No description provided for @point3.
+  ///
+  /// In en, this message translates to:
+  /// **'Point 3'**
+  String get point3;
+
   /// No description provided for @date.
   ///
   /// In en, this message translates to:

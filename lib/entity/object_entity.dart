@@ -18,6 +18,7 @@ enum ObjectType {
   FibonacciTimeZones,
   FibonacciFan,
   FibonacciArcs,
+  FibonacciChannel,
 }
 
 /// Standard Fibonacci retracement levels (as ratios of the price move):
@@ -65,6 +66,15 @@ const List<double> kFibonacciArcLevels = [
   0.618,
 ];
 
+/// Fibonacci Channel levels — parallel lines offset from the base line by
+/// these multiples of the channel width.
+const List<double> kFibonacciChannelLevels = [
+  0.618,
+  1.0,
+  1.618,
+  2.618,
+];
+
 /// Distinct colors used to render each Fibonacci level line, so levels are
 /// visually separable instead of sharing the object's single color.
 const List<Color> kFibonacciLevelColors = [
@@ -98,6 +108,10 @@ class ObjectEntity {
   CandleTimeFormat frame;
   double height;
   double dx1, dx2, dy1, dy2;
+  /// Third point (e.g. the Fibonacci Channel width point).
+  double value3;
+  double dx3, dy3;
+  int datetime3;
   String name;
   @ignore
   String Function(double value)? title;
@@ -118,6 +132,10 @@ class ObjectEntity {
     this.dx2 = 0,
     this.dy1 = 0,
     this.dy2 = 0,
+    this.value3 = 0,
+    this.dx3 = 0,
+    this.dy3 = 0,
+    this.datetime3 = 0,
     this.currentEditIndex = -1,
     this.color,
     this.name = '',

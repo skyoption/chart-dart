@@ -117,6 +117,9 @@ class ChartLocalizationsEn extends ChartLocalizations {
   String get point2 => 'Point 2';
 
   @override
+  String get point3 => 'Point 3';
+
+  @override
   String get date => 'Date';
 
   @override

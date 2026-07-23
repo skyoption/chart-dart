@@ -24,7 +24,8 @@ mixin UpdatePointPosition on ChartCalc {
         fibonacciCount = 0,
         timeZoneCount = 0,
         fanCount = 0,
-        arcsCount = 0;
+        arcsCount = 0,
+        channelCount = 0;
     for (var item in chartProperties.tPAndSLLines) item.currentEditIndex = -1;
     for (var item in chartProperties.objects) item.currentEditIndex = -1;
     final objects = [
@@ -93,17 +94,18 @@ mixin UpdatePointPosition on ChartCalc {
         final dy0 = offset.dy;
         final y1 = getMainY(object.value);
         final y2 = getMainY(object.value2);
-        if (y1 == null || y2 == null) return nearObject;
-        final disDx1 = (object.dx1 - dx0).abs();
-        final disDx2 = (object.dx2 - dx0).abs();
-        final disDy1 = (y1 - dy0).abs();
-        final disDy2 = (y2 - dy0).abs();
-        if (disDx1 <= 20 && disDy1 <= 20) {
+        final near1 = y1 != null &&
+            (object.dx1 - dx0).abs() <= 20 &&
+            (y1 - dy0).abs() <= 20;
+        final near2 = y2 != null &&
+            (object.dx2 - dx0).abs() <= 20 &&
+            (y2 - dy0).abs() <= 20;
+        if (near1) {
           object.currentEditIndex = timeZoneCount;
           nearObject.object = object;
           nearObject.isSecondPoint = false;
           return nearObject;
-        } else if (disDx2 <= 20 && disDy2 <= 20) {
+        } else if (near2) {
           object.currentEditIndex = timeZoneCount;
           nearObject.object = object;
           nearObject.isSecondPoint = true;
@@ -116,17 +118,18 @@ mixin UpdatePointPosition on ChartCalc {
         final dy0 = offset.dy;
         final y1 = getMainY(object.value);
         final y2 = getMainY(object.value2);
-        if (y1 == null || y2 == null) return nearObject;
-        final disDx1 = (object.dx1 - dx0).abs();
-        final disDx2 = (object.dx2 - dx0).abs();
-        final disDy1 = (y1 - dy0).abs();
-        final disDy2 = (y2 - dy0).abs();
-        if (disDx1 <= 20 && disDy1 <= 20) {
+        final near1 = y1 != null &&
+            (object.dx1 - dx0).abs() <= 20 &&
+            (y1 - dy0).abs() <= 20;
+        final near2 = y2 != null &&
+            (object.dx2 - dx0).abs() <= 20 &&
+            (y2 - dy0).abs() <= 20;
+        if (near1) {
           object.currentEditIndex = fanCount;
           nearObject.object = object;
           nearObject.isSecondPoint = false;
           return nearObject;
-        } else if (disDx2 <= 20 && disDy2 <= 20) {
+        } else if (near2) {
           object.currentEditIndex = fanCount;
           nearObject.object = object;
           nearObject.isSecondPoint = true;
@@ -139,23 +142,51 @@ mixin UpdatePointPosition on ChartCalc {
         final dy0 = offset.dy;
         final y1 = getMainY(object.value);
         final y2 = getMainY(object.value2);
-        if (y1 == null || y2 == null) return nearObject;
-        final disDx1 = (object.dx1 - dx0).abs();
-        final disDx2 = (object.dx2 - dx0).abs();
-        final disDy1 = (y1 - dy0).abs();
-        final disDy2 = (y2 - dy0).abs();
-        if (disDx1 <= 20 && disDy1 <= 20) {
+        final near1 = y1 != null &&
+            (object.dx1 - dx0).abs() <= 20 &&
+            (y1 - dy0).abs() <= 20;
+        final near2 = y2 != null &&
+            (object.dx2 - dx0).abs() <= 20 &&
+            (y2 - dy0).abs() <= 20;
+        if (near1) {
           object.currentEditIndex = arcsCount;
           nearObject.object = object;
           nearObject.isSecondPoint = false;
           return nearObject;
-        } else if (disDx2 <= 20 && disDy2 <= 20) {
+        } else if (near2) {
           object.currentEditIndex = arcsCount;
           nearObject.object = object;
           nearObject.isSecondPoint = true;
           return nearObject;
         }
         arcsCount++;
+      } else if (object.type == ObjectType.FibonacciChannel) {
+        // Three draggable points: base start, base end, and width point.
+        // Each point is tested independently — a point that is currently off
+        // the visible price range (getMainY == null) must not block grabbing
+        // the others, so either endpoint stays draggable at all times.
+        final dx0 = getX(mStartIndex) + (offset.dx / scaleX);
+        final dy0 = offset.dy;
+        final y1 = getMainY(object.value);
+        final y2 = getMainY(object.value2);
+        final y3 = getMainY(object.value3);
+        final near1 = y1 != null &&
+            (object.dx1 - dx0).abs() <= 20 &&
+            (y1 - dy0).abs() <= 20;
+        final near2 = y2 != null &&
+            (object.dx2 - dx0).abs() <= 20 &&
+            (y2 - dy0).abs() <= 20;
+        final near3 = y3 != null &&
+            (object.dx3 - dx0).abs() <= 20 &&
+            (y3 - dy0).abs() <= 20;
+        if (near1 || near2 || near3) {
+          object.currentEditIndex = channelCount;
+          nearObject.object = object;
+          nearObject.isSecondPoint = near2 && !near1;
+          nearObject.isWidthPoint = near3 && !near1 && !near2;
+          return nearObject;
+        }
+        channelCount++;
       } else if (object.type == ObjectType.Rectangle ||
           object.type == ObjectType.Trend) {
         final dx0 = getX(mStartIndex) + (offset.dx / scaleX);
@@ -204,7 +235,12 @@ mixin UpdatePointPosition on ChartCalc {
 
 class NearObject {
   bool isSecondPoint;
+  bool isWidthPoint;
   ObjectEntity? object;
 
-  NearObject({this.isSecondPoint = false, this.object});
+  NearObject({
+    this.isSecondPoint = false,
+    this.isWidthPoint = false,
+    this.object,
+  });
 }

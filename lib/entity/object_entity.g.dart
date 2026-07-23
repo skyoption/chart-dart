@@ -37,92 +37,112 @@ const ObjectEntitySchema = CollectionSchema(
       name: r'datetime2',
       type: IsarType.long,
     ),
-    r'drawAsBackground': PropertySchema(
+    r'datetime3': PropertySchema(
       id: 4,
+      name: r'datetime3',
+      type: IsarType.long,
+    ),
+    r'drawAsBackground': PropertySchema(
+      id: 5,
       name: r'drawAsBackground',
       type: IsarType.bool,
     ),
     r'dx1': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'dx1',
       type: IsarType.double,
     ),
     r'dx2': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'dx2',
       type: IsarType.double,
     ),
+    r'dx3': PropertySchema(
+      id: 8,
+      name: r'dx3',
+      type: IsarType.double,
+    ),
     r'dy1': PropertySchema(
-      id: 7,
+      id: 9,
       name: r'dy1',
       type: IsarType.double,
     ),
     r'dy2': PropertySchema(
-      id: 8,
+      id: 10,
       name: r'dy2',
       type: IsarType.double,
     ),
+    r'dy3': PropertySchema(
+      id: 11,
+      name: r'dy3',
+      type: IsarType.double,
+    ),
     r'editable': PropertySchema(
-      id: 9,
+      id: 12,
       name: r'editable',
       type: IsarType.bool,
     ),
     r'frame': PropertySchema(
-      id: 10,
+      id: 13,
       name: r'frame',
       type: IsarType.byte,
       enumMap: _ObjectEntityframeEnumValueMap,
     ),
     r'height': PropertySchema(
-      id: 11,
+      id: 14,
       name: r'height',
       type: IsarType.double,
     ),
     r'isFill': PropertySchema(
-      id: 12,
+      id: 15,
       name: r'isFill',
       type: IsarType.bool,
     ),
     r'name': PropertySchema(
-      id: 13,
+      id: 16,
       name: r'name',
       type: IsarType.string,
     ),
     r'rayLift': PropertySchema(
-      id: 14,
+      id: 17,
       name: r'rayLift',
       type: IsarType.bool,
     ),
     r'rayRight': PropertySchema(
-      id: 15,
+      id: 18,
       name: r'rayRight',
       type: IsarType.bool,
     ),
     r'style': PropertySchema(
-      id: 16,
+      id: 19,
       name: r'style',
       type: IsarType.byte,
       enumMap: _ObjectEntitystyleEnumValueMap,
     ),
     r'symbol': PropertySchema(
-      id: 17,
+      id: 20,
       name: r'symbol',
       type: IsarType.string,
     ),
     r'type': PropertySchema(
-      id: 18,
+      id: 21,
       name: r'type',
       type: IsarType.byte,
       enumMap: _ObjectEntitytypeEnumValueMap,
     ),
     r'value': PropertySchema(
-      id: 19,
+      id: 22,
       name: r'value',
       type: IsarType.double,
     ),
     r'value2': PropertySchema(
-      id: 20,
+      id: 23,
       name: r'value2',
+      type: IsarType.double,
+    ),
+    r'value3': PropertySchema(
+      id: 24,
+      name: r'value3',
       type: IsarType.double,
     )
   },
@@ -167,23 +187,27 @@ void _objectEntitySerialize(
   writer.writeLong(offsets[1], object.currentEditIndex);
   writer.writeLong(offsets[2], object.datetime);
   writer.writeLong(offsets[3], object.datetime2);
-  writer.writeBool(offsets[4], object.drawAsBackground);
-  writer.writeDouble(offsets[5], object.dx1);
-  writer.writeDouble(offsets[6], object.dx2);
-  writer.writeDouble(offsets[7], object.dy1);
-  writer.writeDouble(offsets[8], object.dy2);
-  writer.writeBool(offsets[9], object.editable);
-  writer.writeByte(offsets[10], object.frame.index);
-  writer.writeDouble(offsets[11], object.height);
-  writer.writeBool(offsets[12], object.isFill);
-  writer.writeString(offsets[13], object.name);
-  writer.writeBool(offsets[14], object.rayLift);
-  writer.writeBool(offsets[15], object.rayRight);
-  writer.writeByte(offsets[16], object.style.index);
-  writer.writeString(offsets[17], object.symbol);
-  writer.writeByte(offsets[18], object.type.index);
-  writer.writeDouble(offsets[19], object.value);
-  writer.writeDouble(offsets[20], object.value2);
+  writer.writeLong(offsets[4], object.datetime3);
+  writer.writeBool(offsets[5], object.drawAsBackground);
+  writer.writeDouble(offsets[6], object.dx1);
+  writer.writeDouble(offsets[7], object.dx2);
+  writer.writeDouble(offsets[8], object.dx3);
+  writer.writeDouble(offsets[9], object.dy1);
+  writer.writeDouble(offsets[10], object.dy2);
+  writer.writeDouble(offsets[11], object.dy3);
+  writer.writeBool(offsets[12], object.editable);
+  writer.writeByte(offsets[13], object.frame.index);
+  writer.writeDouble(offsets[14], object.height);
+  writer.writeBool(offsets[15], object.isFill);
+  writer.writeString(offsets[16], object.name);
+  writer.writeBool(offsets[17], object.rayLift);
+  writer.writeBool(offsets[18], object.rayRight);
+  writer.writeByte(offsets[19], object.style.index);
+  writer.writeString(offsets[20], object.symbol);
+  writer.writeByte(offsets[21], object.type.index);
+  writer.writeDouble(offsets[22], object.value);
+  writer.writeDouble(offsets[23], object.value2);
+  writer.writeDouble(offsets[24], object.value3);
 }
 
 ObjectEntity _objectEntityDeserialize(
@@ -197,27 +221,31 @@ ObjectEntity _objectEntityDeserialize(
     currentEditIndex: reader.readLongOrNull(offsets[1]) ?? -1,
     datetime: reader.readLongOrNull(offsets[2]) ?? 0,
     datetime2: reader.readLongOrNull(offsets[3]) ?? 0,
-    drawAsBackground: reader.readBoolOrNull(offsets[4]) ?? false,
-    dx1: reader.readDoubleOrNull(offsets[5]) ?? 0,
-    dx2: reader.readDoubleOrNull(offsets[6]) ?? 0,
-    dy1: reader.readDoubleOrNull(offsets[7]) ?? 0,
-    dy2: reader.readDoubleOrNull(offsets[8]) ?? 0,
-    editable: reader.readBoolOrNull(offsets[9]) ?? false,
-    frame: _ObjectEntityframeValueEnumMap[reader.readByteOrNull(offsets[10])] ??
+    datetime3: reader.readLongOrNull(offsets[4]) ?? 0,
+    drawAsBackground: reader.readBoolOrNull(offsets[5]) ?? false,
+    dx1: reader.readDoubleOrNull(offsets[6]) ?? 0,
+    dx2: reader.readDoubleOrNull(offsets[7]) ?? 0,
+    dx3: reader.readDoubleOrNull(offsets[8]) ?? 0,
+    dy1: reader.readDoubleOrNull(offsets[9]) ?? 0,
+    dy2: reader.readDoubleOrNull(offsets[10]) ?? 0,
+    dy3: reader.readDoubleOrNull(offsets[11]) ?? 0,
+    editable: reader.readBoolOrNull(offsets[12]) ?? false,
+    frame: _ObjectEntityframeValueEnumMap[reader.readByteOrNull(offsets[13])] ??
         CandleTimeFormat.H4,
-    height: reader.readDoubleOrNull(offsets[11]) ?? 1.0,
+    height: reader.readDoubleOrNull(offsets[14]) ?? 1.0,
     id: id,
-    isFill: reader.readBoolOrNull(offsets[12]) ?? false,
-    name: reader.readStringOrNull(offsets[13]) ?? '',
-    rayLift: reader.readBoolOrNull(offsets[14]) ?? false,
-    rayRight: reader.readBoolOrNull(offsets[15]) ?? false,
-    style: _ObjectEntitystyleValueEnumMap[reader.readByteOrNull(offsets[16])] ??
+    isFill: reader.readBoolOrNull(offsets[15]) ?? false,
+    name: reader.readStringOrNull(offsets[16]) ?? '',
+    rayLift: reader.readBoolOrNull(offsets[17]) ?? false,
+    rayRight: reader.readBoolOrNull(offsets[18]) ?? false,
+    style: _ObjectEntitystyleValueEnumMap[reader.readByteOrNull(offsets[19])] ??
         ObjectStyle.normal,
-    symbol: reader.readStringOrNull(offsets[17]) ?? '',
-    type: _ObjectEntitytypeValueEnumMap[reader.readByteOrNull(offsets[18])] ??
+    symbol: reader.readStringOrNull(offsets[20]) ?? '',
+    type: _ObjectEntitytypeValueEnumMap[reader.readByteOrNull(offsets[21])] ??
         ObjectType.Horizontal,
-    value: reader.readDoubleOrNull(offsets[19]) ?? 0,
-    value2: reader.readDoubleOrNull(offsets[20]) ?? 0,
+    value: reader.readDoubleOrNull(offsets[22]) ?? 0,
+    value2: reader.readDoubleOrNull(offsets[23]) ?? 0,
+    value3: reader.readDoubleOrNull(offsets[24]) ?? 0,
   );
   return object;
 }
@@ -238,9 +266,9 @@ P _objectEntityDeserializeProp<P>(
     case 3:
       return (reader.readLongOrNull(offset) ?? 0) as P;
     case 4:
-      return (reader.readBoolOrNull(offset) ?? false) as P;
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 5:
-      return (reader.readDoubleOrNull(offset) ?? 0) as P;
+      return (reader.readBoolOrNull(offset) ?? false) as P;
     case 6:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
     case 7:
@@ -248,31 +276,39 @@ P _objectEntityDeserializeProp<P>(
     case 8:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
     case 9:
-      return (reader.readBoolOrNull(offset) ?? false) as P;
+      return (reader.readDoubleOrNull(offset) ?? 0) as P;
     case 10:
-      return (_ObjectEntityframeValueEnumMap[reader.readByteOrNull(offset)] ??
-          CandleTimeFormat.H4) as P;
+      return (reader.readDoubleOrNull(offset) ?? 0) as P;
     case 11:
-      return (reader.readDoubleOrNull(offset) ?? 1.0) as P;
+      return (reader.readDoubleOrNull(offset) ?? 0) as P;
     case 12:
       return (reader.readBoolOrNull(offset) ?? false) as P;
     case 13:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return (_ObjectEntityframeValueEnumMap[reader.readByteOrNull(offset)] ??
+          CandleTimeFormat.H4) as P;
     case 14:
-      return (reader.readBoolOrNull(offset) ?? false) as P;
+      return (reader.readDoubleOrNull(offset) ?? 1.0) as P;
     case 15:
       return (reader.readBoolOrNull(offset) ?? false) as P;
     case 16:
+      return (reader.readStringOrNull(offset) ?? '') as P;
+    case 17:
+      return (reader.readBoolOrNull(offset) ?? false) as P;
+    case 18:
+      return (reader.readBoolOrNull(offset) ?? false) as P;
+    case 19:
       return (_ObjectEntitystyleValueEnumMap[reader.readByteOrNull(offset)] ??
           ObjectStyle.normal) as P;
-    case 17:
+    case 20:
       return (reader.readStringOrNull(offset) ?? '') as P;
-    case 18:
+    case 21:
       return (_ObjectEntitytypeValueEnumMap[reader.readByteOrNull(offset)] ??
           ObjectType.Horizontal) as P;
-    case 19:
+    case 22:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
-    case 20:
+    case 23:
+      return (reader.readDoubleOrNull(offset) ?? 0) as P;
+    case 24:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -320,6 +356,7 @@ const _ObjectEntitytypeEnumValueMap = {
   'FibonacciTimeZones': 7,
   'FibonacciFan': 8,
   'FibonacciArcs': 9,
+  'FibonacciChannel': 10,
 };
 const _ObjectEntitytypeValueEnumMap = {
   0: ObjectType.Vertical,
@@ -332,6 +369,7 @@ const _ObjectEntitytypeValueEnumMap = {
   7: ObjectType.FibonacciTimeZones,
   8: ObjectType.FibonacciFan,
   9: ObjectType.FibonacciArcs,
+  10: ObjectType.FibonacciChannel,
 };
 
 Id _objectEntityGetId(ObjectEntity object) {
@@ -749,6 +787,62 @@ extension ObjectEntityQueryFilter
   }
 
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      datetime3EqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'datetime3',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      datetime3GreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'datetime3',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      datetime3LessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'datetime3',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      datetime3Between(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'datetime3',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
       drawAsBackgroundEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -884,6 +978,69 @@ extension ObjectEntityQueryFilter
     });
   }
 
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dx3EqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dx3',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      dx3GreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dx3',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dx3LessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dx3',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dx3Between(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dx3',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dy1EqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -1001,6 +1158,69 @@ extension ObjectEntityQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'dy2',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dy3EqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dy3',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      dy3GreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dy3',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dy3LessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dy3',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> dy3Between(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dy3',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -1724,6 +1944,70 @@ extension ObjectEntityQueryFilter
       ));
     });
   }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> value3EqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'value3',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      value3GreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'value3',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      value3LessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'value3',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition> value3Between(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'value3',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
 }
 
 extension ObjectEntityQueryObject
@@ -1784,6 +2068,18 @@ extension ObjectEntityQuerySortBy
     });
   }
 
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDatetime3() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'datetime3', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDatetime3Desc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'datetime3', Sort.desc);
+    });
+  }
+
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy>
       sortByDrawAsBackground() {
     return QueryBuilder.apply(this, (query) {
@@ -1822,6 +2118,18 @@ extension ObjectEntityQuerySortBy
     });
   }
 
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDx3() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dx3', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDx3Desc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dx3', Sort.desc);
+    });
+  }
+
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDy1() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dy1', Sort.asc);
@@ -1843,6 +2151,18 @@ extension ObjectEntityQuerySortBy
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDy2Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dy2', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDy3() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dy3', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByDy3Desc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dy3', Sort.desc);
     });
   }
 
@@ -1989,6 +2309,18 @@ extension ObjectEntityQuerySortBy
       return query.addSortBy(r'value2', Sort.desc);
     });
   }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByValue3() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'value3', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> sortByValue3Desc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'value3', Sort.desc);
+    });
+  }
 }
 
 extension ObjectEntityQuerySortThenBy
@@ -2043,6 +2375,18 @@ extension ObjectEntityQuerySortThenBy
     });
   }
 
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDatetime3() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'datetime3', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDatetime3Desc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'datetime3', Sort.desc);
+    });
+  }
+
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy>
       thenByDrawAsBackground() {
     return QueryBuilder.apply(this, (query) {
@@ -2081,6 +2425,18 @@ extension ObjectEntityQuerySortThenBy
     });
   }
 
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDx3() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dx3', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDx3Desc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dx3', Sort.desc);
+    });
+  }
+
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDy1() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dy1', Sort.asc);
@@ -2102,6 +2458,18 @@ extension ObjectEntityQuerySortThenBy
   QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDy2Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dy2', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDy3() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dy3', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByDy3Desc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dy3', Sort.desc);
     });
   }
 
@@ -2260,6 +2628,18 @@ extension ObjectEntityQuerySortThenBy
       return query.addSortBy(r'value2', Sort.desc);
     });
   }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByValue3() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'value3', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterSortBy> thenByValue3Desc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'value3', Sort.desc);
+    });
+  }
 }
 
 extension ObjectEntityQueryWhereDistinct
@@ -2290,6 +2670,12 @@ extension ObjectEntityQueryWhereDistinct
     });
   }
 
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByDatetime3() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'datetime3');
+    });
+  }
+
   QueryBuilder<ObjectEntity, ObjectEntity, QDistinct>
       distinctByDrawAsBackground() {
     return QueryBuilder.apply(this, (query) {
@@ -2309,6 +2695,12 @@ extension ObjectEntityQueryWhereDistinct
     });
   }
 
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByDx3() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'dx3');
+    });
+  }
+
   QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByDy1() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dy1');
@@ -2318,6 +2710,12 @@ extension ObjectEntityQueryWhereDistinct
   QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByDy2() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dy2');
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByDy3() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'dy3');
     });
   }
 
@@ -2394,6 +2792,12 @@ extension ObjectEntityQueryWhereDistinct
       return query.addDistinctBy(r'value2');
     });
   }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByValue3() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'value3');
+    });
+  }
 }
 
 extension ObjectEntityQueryProperty
@@ -2428,6 +2832,12 @@ extension ObjectEntityQueryProperty
     });
   }
 
+  QueryBuilder<ObjectEntity, int, QQueryOperations> datetime3Property() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'datetime3');
+    });
+  }
+
   QueryBuilder<ObjectEntity, bool, QQueryOperations>
       drawAsBackgroundProperty() {
     return QueryBuilder.apply(this, (query) {
@@ -2447,6 +2857,12 @@ extension ObjectEntityQueryProperty
     });
   }
 
+  QueryBuilder<ObjectEntity, double, QQueryOperations> dx3Property() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'dx3');
+    });
+  }
+
   QueryBuilder<ObjectEntity, double, QQueryOperations> dy1Property() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dy1');
@@ -2456,6 +2872,12 @@ extension ObjectEntityQueryProperty
   QueryBuilder<ObjectEntity, double, QQueryOperations> dy2Property() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dy2');
+    });
+  }
+
+  QueryBuilder<ObjectEntity, double, QQueryOperations> dy3Property() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'dy3');
     });
   }
 
@@ -2529,6 +2951,12 @@ extension ObjectEntityQueryProperty
   QueryBuilder<ObjectEntity, double, QQueryOperations> value2Property() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'value2');
+    });
+  }
+
+  QueryBuilder<ObjectEntity, double, QQueryOperations> value3Property() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'value3');
     });
   }
 }

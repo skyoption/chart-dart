@@ -20,6 +20,7 @@ mixin Objects {
       ...fibonacciTimeZones,
       ...fibonacciFans,
       ...fibonacciArcs,
+      ...fibonacciChannels,
     ];
   }
 
@@ -33,6 +34,7 @@ mixin Objects {
   List<ObjectEntity> fibonacciTimeZones = [];
   List<ObjectEntity> fibonacciFans = [];
   List<ObjectEntity> fibonacciArcs = [];
+  List<ObjectEntity> fibonacciChannels = [];
   ObjectEntity? lastItem;
 
   Future<void> loadObjects(String symbol) async {
@@ -133,6 +135,19 @@ mixin Objects {
     });
   }
 
+  Future<void> addFibonacciChannel(ObjectEntity value) async {
+    lastItem = value;
+    value.type = ObjectType.FibonacciChannel;
+    value.frame = frame;
+    value.currentEditIndex = fibonacciChannels.length;
+    value = setCopy(value);
+    value.symbol = symbol;
+    fibonacciChannels.add(value);
+    KChart.write(query: (db) async {
+      await db.objectEntitys.put(value);
+    });
+  }
+
   Future<void> addHorizontalLine(ObjectEntity value) async {
     lastItem = value;
     value.type = ObjectType.Horizontal;
@@ -226,6 +241,16 @@ mixin Objects {
     }
   }
 
+  Future<void> removeFibonacciChannel(int id) async {
+    final index = fibonacciChannels.indexWhere((e) => e.id == id);
+    if (index != -1) {
+      fibonacciChannels.removeAt(index);
+      KChart.write(query: (db) async {
+        await db.objectEntitys.delete(id);
+      });
+    }
+  }
+
   Future<void> removeHorizontalLine(int id) async {
     final index = horizontalLines.indexWhere((e) => e.id == id);
     if (index != -1) {
@@ -313,6 +338,16 @@ mixin Objects {
     }
   }
 
+  Future<void> updateFibonacciChannel(ObjectEntity value) async {
+    final index = fibonacciChannels.indexWhere((e) => e.id == value.id);
+    if (index != -1) {
+      fibonacciChannels[index] = value;
+      KChart.write(query: (db) async {
+        await db.objectEntitys.put(value);
+      });
+    }
+  }
+
   Future<void> updateHorizontalLine(ObjectEntity value) async {
     final index = horizontalLines.indexWhere((e) => e.id == value.id);
     if (index != -1) {
@@ -386,6 +421,7 @@ mixin Objects {
       fibonacciTimeZones.clear();
       fibonacciFans.clear();
       fibonacciArcs.clear();
+      fibonacciChannels.clear();
       for (var item in objects) {
         if (item.type == ObjectType.Rectangle) {
           rectangles.add(item);
@@ -397,6 +433,8 @@ mixin Objects {
           fibonacciFans.add(item);
         } else if (item.type == ObjectType.FibonacciArcs) {
           fibonacciArcs.add(item);
+        } else if (item.type == ObjectType.FibonacciChannel) {
+          fibonacciChannels.add(item);
         } else if (item.type == ObjectType.Trend) {
           trendLines.add(item);
         } else if (item.type == ObjectType.Horizontal) {

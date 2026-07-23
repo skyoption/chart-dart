@@ -3,6 +3,7 @@ import 'package:candle_chart/indicators/widgets/top_header_widget.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/add_objects_screen.dart';
 import 'package:candle_chart/objects/properties/fibonacci_arcs_properties_screen.dart';
+import 'package:candle_chart/objects/properties/fibonacci_channel_properties_screen.dart';
 import 'package:candle_chart/objects/properties/fibonacci_fan_properties_screen.dart';
 import 'package:candle_chart/objects/properties/fibonacci_properties_screen.dart';
 import 'package:candle_chart/objects/properties/fibonacci_time_zones_properties_screen.dart';
@@ -159,6 +160,8 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
       return Svgs.fibonacciFan;
     } else if (item.type == ObjectType.FibonacciArcs) {
       return Svgs.fibonacciArcs;
+    } else if (item.type == ObjectType.FibonacciChannel) {
+      return Svgs.fibonacciChannel;
     }
     return '';
   }
@@ -178,6 +181,8 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
       return 'Fibonacci Fan';
     } else if (item.type == ObjectType.FibonacciArcs) {
       return 'Fibonacci Arcs';
+    } else if (item.type == ObjectType.FibonacciChannel) {
+      return 'Fibonacci Channel';
     }
     return '';
   }
@@ -204,6 +209,8 @@ Future<void> onDelete(
     await chartProperties.removeFibonacciFan(id);
   } else if (type == ObjectType.FibonacciArcs) {
     await chartProperties.removeFibonacciArcs(id);
+  } else if (type == ObjectType.FibonacciChannel) {
+    await chartProperties.removeFibonacciChannel(id);
   }
   onDone(null);
 }
@@ -295,6 +302,17 @@ void onTap(
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => FibonacciArcsPropertiesScreen(
+          onDone: onDone,
+          data: data,
+          chartStyle: chartStyle,
+          object: item,
+        ),
+      ),
+    );
+  } else if (item.type == ObjectType.FibonacciChannel) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => FibonacciChannelPropertiesScreen(
           onDone: onDone,
           data: data,
           chartStyle: chartStyle,
