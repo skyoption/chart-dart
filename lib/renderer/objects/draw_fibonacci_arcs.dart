@@ -127,8 +127,9 @@ mixin DrawFibonacciArcs on ChartDetails {
         ..strokeWidth = item.height.clamp(0.8, 2.5)
         ..color = color;
 
-      for (int l = 0; l < kFibonacciArcLevels.length; l++) {
-        final ratio = kFibonacciArcLevels[l];
+      final levels = effectiveLevels(item, kFibonacciArcLevels);
+      for (int l = 0; l < levels.length; l++) {
+        final ratio = levels[l];
         final rScreen = dScreen * ratio;
         final levelColor = fibonacciLevelColor(l);
         arcPaint.color = levelColor;

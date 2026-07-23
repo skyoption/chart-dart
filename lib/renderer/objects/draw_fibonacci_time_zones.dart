@@ -113,8 +113,9 @@ mixin DrawFibonacciTimeZones on ChartDetails {
       }
 
       // Vertical lines at Fibonacci multiples of the unit interval.
-      for (int l = 0; l < kFibonacciTimeZoneLevels.length; l++) {
-        final level = kFibonacciTimeZoneLevels[l];
+      final levels = effectiveLevels(item, kFibonacciTimeZoneLevels);
+      for (int l = 0; l < levels.length; l++) {
+        final level = levels[l];
         final x = x1 + unit * level;
 
         // Each level gets its own distinct color.

@@ -3,6 +3,7 @@ import 'package:candle_chart/indicators/widgets/top_header_widget.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/bottom_sheets/datepicker.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
+import 'package:candle_chart/objects/properties/levels_editor_screen.dart';
 import 'package:candle_chart/objects/widgets/object_style_widget.dart';
 import 'package:candle_chart/objects/widgets/properties_item_widget.dart';
 import 'package:candle_chart/widgets/paddings.dart';
@@ -195,17 +196,20 @@ class _FibonacciFanPropertiesScreenState
             PropertiesItemWidget(
               title: context.tr.levels,
               margin: EdgeInsets.zero,
-              subTitleColor: Colors.grey.withAlpha(80),
-              child: SizedBox(
-                width: 180.0,
-                child: Text(
-                  kFibonacciFanLevels.map((e) => e.toString()).join(', '),
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.end,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey.withAlpha(120),
-                      ),
-                ),
+              onTap: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => LevelsEditorScreen(
+                      object: object,
+                      defaults: kFibonacciFanLevels,
+                    ),
+                  ),
+                );
+                setState(() {});
+              },
+              child: LevelsPreview(
+                object: object,
+                defaults: kFibonacciFanLevels,
               ),
             ),
             PropertiesTitleWidget(title: context.tr.visualization),

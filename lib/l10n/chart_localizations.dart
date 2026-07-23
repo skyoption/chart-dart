@@ -122,6 +122,12 @@ abstract class ChartLocalizations {
   /// **'Levels'**
   String get levels;
 
+  /// No description provided for @level.
+  ///
+  /// In en, this message translates to:
+  /// **'Level'**
+  String get level;
+
   /// No description provided for @visualization.
   ///
   /// In en, this message translates to:

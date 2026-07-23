@@ -111,8 +111,9 @@ mixin DrawFibonacciFan on ChartDetails {
 
       // Fan rays: from point 1 through the level points on the invisible
       // vertical line at x2 (yL = y1 + (y2 - y1) * level).
-      for (int l = 0; l < kFibonacciFanLevels.length; l++) {
-        final level = kFibonacciFanLevels[l];
+      final levels = effectiveLevels(item, kFibonacciFanLevels);
+      for (int l = 0; l < levels.length; l++) {
+        final level = levels[l];
         final yL = y1 + (y2 - y1) * level;
 
         // Each level ray gets its own distinct color.

@@ -113,8 +113,9 @@ mixin DrawFibonacciChannel on ChartDetails {
           item.rayRight, item.rayLift);
 
       // Parallel Fibonacci offset lines.
-      for (int l = 0; l < kFibonacciChannelLevels.length; l++) {
-        final level = kFibonacciChannelLevels[l];
+      final levels = effectiveLevels(item, kFibonacciChannelLevels);
+      for (int l = 0; l < levels.length; l++) {
+        final level = levels[l];
         final ax = x1 + wx * level;
         final ay = y1 + wy * level;
         final bx = x2 + wx * level;

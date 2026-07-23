@@ -95,6 +95,28 @@ Color fibonacciLevelColor(int index) {
   return kFibonacciLevelColors[index % kFibonacciLevelColors.length];
 }
 
+/// The levels actually used for [item]: its user-edited [ObjectEntity.levels]
+/// when set, otherwise the type's [defaults].
+List<double> effectiveLevels(ObjectEntity item, List<double> defaults) {
+  return item.levels.isNotEmpty ? item.levels : defaults;
+}
+
+/// Default Fibonacci levels for a given object [type].
+List<double> defaultLevelsFor(ObjectType type) {
+  switch (type) {
+    case ObjectType.FibonacciTimeZones:
+      return kFibonacciTimeZoneLevels;
+    case ObjectType.FibonacciFan:
+      return kFibonacciFanLevels;
+    case ObjectType.FibonacciArcs:
+      return kFibonacciArcLevels;
+    case ObjectType.FibonacciChannel:
+      return kFibonacciChannelLevels;
+    default:
+      return kFibonacciLevels;
+  }
+}
+
 @collection
 class ObjectEntity {
   Id id;
@@ -112,6 +134,8 @@ class ObjectEntity {
   double value3;
   double dx3, dy3;
   int datetime3;
+  /// User-editable Fibonacci levels. Empty means "use the type default".
+  List<double> levels;
   String name;
   @ignore
   String Function(double value)? title;
@@ -136,6 +160,7 @@ class ObjectEntity {
     this.dx3 = 0,
     this.dy3 = 0,
     this.datetime3 = 0,
+    this.levels = const [],
     this.currentEditIndex = -1,
     this.color,
     this.name = '',

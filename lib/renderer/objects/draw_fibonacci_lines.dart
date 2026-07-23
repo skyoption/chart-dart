@@ -129,8 +129,9 @@ mixin DrawFibonacciLines on ChartDetails {
       // ratio 0 -> value (point1), ratio 1 -> value2 (point2).
       final priceMove = item.value2 - item.value;
 
-      for (int l = 0; l < kFibonacciLevels.length; l++) {
-        final ratio = kFibonacciLevels[l];
+      final levels = effectiveLevels(item, kFibonacciLevels);
+      for (int l = 0; l < levels.length; l++) {
+        final ratio = levels[l];
         final levelPrice = item.value + priceMove * ratio;
         double? y = getMainY(levelPrice);
         if (y == null) continue;

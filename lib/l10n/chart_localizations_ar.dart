@@ -21,6 +21,9 @@ class ChartLocalizationsAr extends ChartLocalizations {
   String get levels => 'المستويات';
 
   @override
+  String get level => 'المستوى';
+
+  @override
   String get visualization => 'التصور';
 
   @override

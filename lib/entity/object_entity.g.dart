@@ -98,50 +98,55 @@ const ObjectEntitySchema = CollectionSchema(
       name: r'isFill',
       type: IsarType.bool,
     ),
-    r'name': PropertySchema(
+    r'levels': PropertySchema(
       id: 16,
+      name: r'levels',
+      type: IsarType.doubleList,
+    ),
+    r'name': PropertySchema(
+      id: 17,
       name: r'name',
       type: IsarType.string,
     ),
     r'rayLift': PropertySchema(
-      id: 17,
+      id: 18,
       name: r'rayLift',
       type: IsarType.bool,
     ),
     r'rayRight': PropertySchema(
-      id: 18,
+      id: 19,
       name: r'rayRight',
       type: IsarType.bool,
     ),
     r'style': PropertySchema(
-      id: 19,
+      id: 20,
       name: r'style',
       type: IsarType.byte,
       enumMap: _ObjectEntitystyleEnumValueMap,
     ),
     r'symbol': PropertySchema(
-      id: 20,
+      id: 21,
       name: r'symbol',
       type: IsarType.string,
     ),
     r'type': PropertySchema(
-      id: 21,
+      id: 22,
       name: r'type',
       type: IsarType.byte,
       enumMap: _ObjectEntitytypeEnumValueMap,
     ),
     r'value': PropertySchema(
-      id: 22,
+      id: 23,
       name: r'value',
       type: IsarType.double,
     ),
     r'value2': PropertySchema(
-      id: 23,
+      id: 24,
       name: r'value2',
       type: IsarType.double,
     ),
     r'value3': PropertySchema(
-      id: 24,
+      id: 25,
       name: r'value3',
       type: IsarType.double,
     )
@@ -172,6 +177,7 @@ int _objectEntityEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  bytesCount += 3 + object.levels.length * 8;
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.symbol.length * 3;
   return bytesCount;
@@ -199,15 +205,16 @@ void _objectEntitySerialize(
   writer.writeByte(offsets[13], object.frame.index);
   writer.writeDouble(offsets[14], object.height);
   writer.writeBool(offsets[15], object.isFill);
-  writer.writeString(offsets[16], object.name);
-  writer.writeBool(offsets[17], object.rayLift);
-  writer.writeBool(offsets[18], object.rayRight);
-  writer.writeByte(offsets[19], object.style.index);
-  writer.writeString(offsets[20], object.symbol);
-  writer.writeByte(offsets[21], object.type.index);
-  writer.writeDouble(offsets[22], object.value);
-  writer.writeDouble(offsets[23], object.value2);
-  writer.writeDouble(offsets[24], object.value3);
+  writer.writeDoubleList(offsets[16], object.levels);
+  writer.writeString(offsets[17], object.name);
+  writer.writeBool(offsets[18], object.rayLift);
+  writer.writeBool(offsets[19], object.rayRight);
+  writer.writeByte(offsets[20], object.style.index);
+  writer.writeString(offsets[21], object.symbol);
+  writer.writeByte(offsets[22], object.type.index);
+  writer.writeDouble(offsets[23], object.value);
+  writer.writeDouble(offsets[24], object.value2);
+  writer.writeDouble(offsets[25], object.value3);
 }
 
 ObjectEntity _objectEntityDeserialize(
@@ -235,17 +242,18 @@ ObjectEntity _objectEntityDeserialize(
     height: reader.readDoubleOrNull(offsets[14]) ?? 1.0,
     id: id,
     isFill: reader.readBoolOrNull(offsets[15]) ?? false,
-    name: reader.readStringOrNull(offsets[16]) ?? '',
-    rayLift: reader.readBoolOrNull(offsets[17]) ?? false,
-    rayRight: reader.readBoolOrNull(offsets[18]) ?? false,
-    style: _ObjectEntitystyleValueEnumMap[reader.readByteOrNull(offsets[19])] ??
+    levels: reader.readDoubleList(offsets[16]) ?? const [],
+    name: reader.readStringOrNull(offsets[17]) ?? '',
+    rayLift: reader.readBoolOrNull(offsets[18]) ?? false,
+    rayRight: reader.readBoolOrNull(offsets[19]) ?? false,
+    style: _ObjectEntitystyleValueEnumMap[reader.readByteOrNull(offsets[20])] ??
         ObjectStyle.normal,
-    symbol: reader.readStringOrNull(offsets[20]) ?? '',
-    type: _ObjectEntitytypeValueEnumMap[reader.readByteOrNull(offsets[21])] ??
+    symbol: reader.readStringOrNull(offsets[21]) ?? '',
+    type: _ObjectEntitytypeValueEnumMap[reader.readByteOrNull(offsets[22])] ??
         ObjectType.Horizontal,
-    value: reader.readDoubleOrNull(offsets[22]) ?? 0,
-    value2: reader.readDoubleOrNull(offsets[23]) ?? 0,
-    value3: reader.readDoubleOrNull(offsets[24]) ?? 0,
+    value: reader.readDoubleOrNull(offsets[23]) ?? 0,
+    value2: reader.readDoubleOrNull(offsets[24]) ?? 0,
+    value3: reader.readDoubleOrNull(offsets[25]) ?? 0,
   );
   return object;
 }
@@ -291,24 +299,26 @@ P _objectEntityDeserializeProp<P>(
     case 15:
       return (reader.readBoolOrNull(offset) ?? false) as P;
     case 16:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return (reader.readDoubleList(offset) ?? const []) as P;
     case 17:
-      return (reader.readBoolOrNull(offset) ?? false) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 18:
       return (reader.readBoolOrNull(offset) ?? false) as P;
     case 19:
+      return (reader.readBoolOrNull(offset) ?? false) as P;
+    case 20:
       return (_ObjectEntitystyleValueEnumMap[reader.readByteOrNull(offset)] ??
           ObjectStyle.normal) as P;
-    case 20:
-      return (reader.readStringOrNull(offset) ?? '') as P;
     case 21:
+      return (reader.readStringOrNull(offset) ?? '') as P;
+    case 22:
       return (_ObjectEntitytypeValueEnumMap[reader.readByteOrNull(offset)] ??
           ObjectType.Horizontal) as P;
-    case 22:
-      return (reader.readDoubleOrNull(offset) ?? 0) as P;
     case 23:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
     case 24:
+      return (reader.readDoubleOrNull(offset) ?? 0) as P;
+    case 25:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1418,6 +1428,161 @@ extension ObjectEntityQueryFilter
         property: r'isFill',
         value: value,
       ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      levelsElementEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'levels',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      levelsElementGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'levels',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      levelsElementLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'levels',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      levelsElementBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'levels',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      levelsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'levels',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      levelsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'levels',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      levelsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'levels',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      levelsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'levels',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      levelsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'levels',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<ObjectEntity, ObjectEntity, QAfterFilterCondition>
+      levelsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'levels',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
     });
   }
 
@@ -2743,6 +2908,12 @@ extension ObjectEntityQueryWhereDistinct
     });
   }
 
+  QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByLevels() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'levels');
+    });
+  }
+
   QueryBuilder<ObjectEntity, ObjectEntity, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -2903,6 +3074,12 @@ extension ObjectEntityQueryProperty
   QueryBuilder<ObjectEntity, bool, QQueryOperations> isFillProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isFill');
+    });
+  }
+
+  QueryBuilder<ObjectEntity, List<double>, QQueryOperations> levelsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'levels');
     });
   }
 
