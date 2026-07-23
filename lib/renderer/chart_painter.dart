@@ -5,6 +5,7 @@ import 'package:candle_chart/entity/line_entity.dart';
 import 'package:candle_chart/entity/trade_entity.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
 import 'package:candle_chart/renderer/objects/draw_cursor_lines.dart';
+import 'package:candle_chart/renderer/objects/draw_fibonacci_fan.dart';
 import 'package:candle_chart/renderer/objects/draw_fibonacci_lines.dart';
 import 'package:candle_chart/renderer/objects/draw_fibonacci_time_zones.dart';
 import 'package:candle_chart/renderer/objects/draw_horizontal_lines.dart';
@@ -53,6 +54,7 @@ class ChartPainter extends BaseChartPainter
         DrawTrendLines,
         DrawFibonacciLines,
         DrawFibonacciTimeZones,
+        DrawFibonacciFan,
         DrawRectangleLines,
         UpdatePointPosition,
         DrawTPAndSLLines,
@@ -300,6 +302,7 @@ class ChartPainter extends BaseChartPainter
     drawTrendLines(canvas, size, true, data ?? []);
     drawFibonacciLines(canvas, size, true, data ?? []);
     drawFibonacciTimeZones(canvas, size, true, data ?? []);
+    drawFibonacciFan(canvas, size, true, data ?? []);
     drawRectangles(canvas, size, true, data ?? []);
 
     for (int i = mStartIndex; data != null && i <= mStopIndex; i++) {
@@ -352,6 +355,7 @@ class ChartPainter extends BaseChartPainter
     drawTrendLines(canvas, size, false, data ?? []);
     drawFibonacciLines(canvas, size, false, data ?? []);
     drawFibonacciTimeZones(canvas, size, false, data ?? []);
+    drawFibonacciFan(canvas, size, false, data ?? []);
     drawRectangles(canvas, size, false, data ?? []);
     drawTradePositions(canvas, size, false, data ?? [], trades);
     canvas.restore();

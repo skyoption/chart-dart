@@ -18,6 +18,7 @@ mixin Objects {
       ...rectangles,
       ...fibonaccis,
       ...fibonacciTimeZones,
+      ...fibonacciFans,
     ];
   }
 
@@ -29,6 +30,7 @@ mixin Objects {
   List<ObjectEntity> rectangles = [];
   List<ObjectEntity> fibonaccis = [];
   List<ObjectEntity> fibonacciTimeZones = [];
+  List<ObjectEntity> fibonacciFans = [];
   ObjectEntity? lastItem;
 
   Future<void> loadObjects(String symbol) async {
@@ -98,6 +100,19 @@ mixin Objects {
     value = setCopy(value);
     value.symbol = symbol;
     fibonacciTimeZones.add(value);
+    KChart.write(query: (db) async {
+      await db.objectEntitys.put(value);
+    });
+  }
+
+  Future<void> addFibonacciFan(ObjectEntity value) async {
+    lastItem = value;
+    value.type = ObjectType.FibonacciFan;
+    value.frame = frame;
+    value.currentEditIndex = fibonacciFans.length;
+    value = setCopy(value);
+    value.symbol = symbol;
+    fibonacciFans.add(value);
     KChart.write(query: (db) async {
       await db.objectEntitys.put(value);
     });
@@ -176,6 +191,16 @@ mixin Objects {
     }
   }
 
+  Future<void> removeFibonacciFan(int id) async {
+    final index = fibonacciFans.indexWhere((e) => e.id == id);
+    if (index != -1) {
+      fibonacciFans.removeAt(index);
+      KChart.write(query: (db) async {
+        await db.objectEntitys.delete(id);
+      });
+    }
+  }
+
   Future<void> removeHorizontalLine(int id) async {
     final index = horizontalLines.indexWhere((e) => e.id == id);
     if (index != -1) {
@@ -237,6 +262,16 @@ mixin Objects {
     final index = fibonacciTimeZones.indexWhere((e) => e.id == value.id);
     if (index != -1) {
       fibonacciTimeZones[index] = value;
+      KChart.write(query: (db) async {
+        await db.objectEntitys.put(value);
+      });
+    }
+  }
+
+  Future<void> updateFibonacciFan(ObjectEntity value) async {
+    final index = fibonacciFans.indexWhere((e) => e.id == value.id);
+    if (index != -1) {
+      fibonacciFans[index] = value;
       KChart.write(query: (db) async {
         await db.objectEntitys.put(value);
       });
@@ -314,6 +349,7 @@ mixin Objects {
       horizontalLines.clear();
       fibonaccis.clear();
       fibonacciTimeZones.clear();
+      fibonacciFans.clear();
       for (var item in objects) {
         if (item.type == ObjectType.Rectangle) {
           rectangles.add(item);
@@ -321,6 +357,8 @@ mixin Objects {
           fibonaccis.add(item);
         } else if (item.type == ObjectType.FibonacciTimeZones) {
           fibonacciTimeZones.add(item);
+        } else if (item.type == ObjectType.FibonacciFan) {
+          fibonacciFans.add(item);
         } else if (item.type == ObjectType.Trend) {
           trendLines.add(item);
         } else if (item.type == ObjectType.Horizontal) {

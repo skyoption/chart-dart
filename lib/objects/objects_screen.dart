@@ -2,6 +2,7 @@ import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/indicators/widgets/top_header_widget.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/add_objects_screen.dart';
+import 'package:candle_chart/objects/properties/fibonacci_fan_properties_screen.dart';
 import 'package:candle_chart/objects/properties/fibonacci_properties_screen.dart';
 import 'package:candle_chart/objects/properties/fibonacci_time_zones_properties_screen.dart';
 import 'package:candle_chart/objects/properties/horizontal_line_properties_screen.dart';
@@ -153,6 +154,8 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
       return Svgs.fibonacci;
     } else if (item.type == ObjectType.FibonacciTimeZones) {
       return Svgs.fibonacciTimeZones;
+    } else if (item.type == ObjectType.FibonacciFan) {
+      return Svgs.fibonacciFan;
     }
     return '';
   }
@@ -168,6 +171,8 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
       return 'Fibonacci Retracement';
     } else if (item.type == ObjectType.FibonacciTimeZones) {
       return 'Fibonacci Time Zones';
+    } else if (item.type == ObjectType.FibonacciFan) {
+      return 'Fibonacci Fan';
     }
     return '';
   }
@@ -190,6 +195,8 @@ Future<void> onDelete(
     await chartProperties.removeFibonacci(id);
   } else if (type == ObjectType.FibonacciTimeZones) {
     await chartProperties.removeFibonacciTimeZone(id);
+  } else if (type == ObjectType.FibonacciFan) {
+    await chartProperties.removeFibonacciFan(id);
   }
   onDone(null);
 }
@@ -259,6 +266,17 @@ void onTap(
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => FibonacciTimeZonesPropertiesScreen(
+          onDone: onDone,
+          data: data,
+          chartStyle: chartStyle,
+          object: item,
+        ),
+      ),
+    );
+  } else if (item.type == ObjectType.FibonacciFan) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => FibonacciFanPropertiesScreen(
           onDone: onDone,
           data: data,
           chartStyle: chartStyle,
