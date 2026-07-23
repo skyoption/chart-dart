@@ -37,6 +37,7 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 8.0,
           children: [
             Padding(
               padding:
@@ -49,7 +50,8 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
               ),
             ),
             ObjectItemWidget(
-              iconSize: 35.0,
+              iconColor: Colors.blueAccent,
+              iconSize: 26.0,
               icon: Svgs.horizontalLine,
               title: context.tr.horizontalLine,
               margin: EdgeInsets.zero,
@@ -58,9 +60,9 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
                 Navigator.of(context).pop();
               },
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             ObjectItemWidget(
-              iconSize: 30.0,
+              iconSize: 26.0,
+              iconColor: Colors.blueAccent,
               icon: Svgs.verticalLine,
               title: context.tr.verticalLine,
               margin: EdgeInsets.zero,
@@ -69,10 +71,10 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
                 Navigator.of(context).pop();
               },
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             ObjectItemWidget(
-              iconSize: 30.0,
+              iconSize: 26.0,
               icon: Svgs.trendLine,
+              iconColor: Colors.blueAccent,
               title: context.tr.trendLine,
               margin: EdgeInsets.zero,
               onTap: () {
@@ -91,8 +93,9 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
               ),
             ),
             ObjectItemWidget(
-              iconSize: 30.0,
-              icon: Svgs.fibonacci,
+              iconSize: 26.0,
+              icon: Svgs.fibonacciRetracement,
+              iconColor: Colors.blueAccent,
               title: context.tr.fibonacciRetracement,
               margin: EdgeInsets.zero,
               onTap: () {
@@ -100,42 +103,42 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
                 Navigator.of(context).pop();
               },
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             ObjectItemWidget(
-              iconSize: 30.0,
-              icon: Svgs.fibonacci,
+              iconSize: 26.0,
+              icon: Svgs.fibonacciTimeZones,
+              iconColor: Colors.blueAccent,
               title: context.tr.fibonacciTimeZones,
               margin: EdgeInsets.zero,
               onTap: () {},
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             ObjectItemWidget(
-              iconSize: 30.0,
-              icon: Svgs.fibonacci,
+              iconSize: 26.0,
+              icon: Svgs.fibonacciFan,
+              iconColor: Colors.blueAccent,
               title: context.tr.fibonacciFan,
               margin: EdgeInsets.zero,
               onTap: () {},
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             ObjectItemWidget(
-              iconSize: 30.0,
-              icon: Svgs.fibonacci,
+              iconSize: 26.0,
+              icon: Svgs.fibonacciArcs,
+              iconColor: Colors.blueAccent,
               title: context.tr.fibonacciArcs,
               margin: EdgeInsets.zero,
               onTap: () {},
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             ObjectItemWidget(
-              iconSize: 30.0,
-              icon: Svgs.fibonacci,
+              iconSize: 26.0,
+              icon: Svgs.fibonacciChannel,
+              iconColor: Colors.blueAccent,
               title: context.tr.fibonacciChannel,
               margin: EdgeInsets.zero,
               onTap: () {},
             ),
-            Divider(height: 1.0, color: Colors.grey.withOpacity(0.4)),
             ObjectItemWidget(
-              iconSize: 30.0,
-              icon: Svgs.fibonacci,
+              iconSize: 26.0,
+              icon: Svgs.fibonacciExpansion,
+              iconColor: Colors.blueAccent,
               title: context.tr.fibonacciExpansion,
               margin: EdgeInsets.zero,
               onTap: () {},
@@ -151,9 +154,10 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
               ),
             ),
             ObjectItemWidget(
-              iconSize: 30.0,
+              iconSize: 26.0,
               icon: Svgs.rectangle,
               title: context.tr.rectangle,
+              iconColor: Colors.blueAccent,
               onTap: () {
                 widget.onDone(ObjectType.Rectangle);
                 Navigator.of(context).pop();

@@ -12,6 +12,7 @@ class ObjectItemWidget extends StatefulWidget {
   final double? iconSize;
   final Widget? child;
   final Color? color;
+  final Color? iconColor;
   final Color? backgroundColor;
   final bool hideArrow;
   final String? id;
@@ -23,6 +24,7 @@ class ObjectItemWidget extends StatefulWidget {
     this.title,
     this.child,
     this.color,
+    this.iconColor,
     this.backgroundColor,
     this.subtitle,
     this.id,
@@ -50,7 +52,7 @@ class _ObjectItemWidgetState extends State<ObjectItemWidget> {
           borderRadius: MBorderRadius.set(all: 8.0),
         ),
         margin: MPadding.set(horizontal: 21.0),
-        padding: MPadding.set(horizontal: 21.0, vertical: 16.0),
+        padding: MPadding.set(horizontal: 16.0, vertical: 14.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -64,7 +66,9 @@ class _ObjectItemWidgetState extends State<ObjectItemWidget> {
                       name: widget.icon,
                       width: widget.iconSize,
                       height: widget.iconSize,
-                      color: widget.color ?? context.scheme.onSurface,
+                      color: widget.iconColor ??
+                          widget.color ??
+                          context.scheme.onSurface,
                     ),
                   ),
                 Column(
@@ -89,7 +93,7 @@ class _ObjectItemWidgetState extends State<ObjectItemWidget> {
             if (widget.child == null && !widget.hideArrow)
               Icon(
                 Icons.arrow_forward_ios_sharp,
-                size: 20.0,
+                size: 16.0,
                 color: widget.color ?? context.scheme.onSurface,
               )
           ],
