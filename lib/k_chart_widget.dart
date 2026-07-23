@@ -805,6 +805,16 @@ class KChartWidgetState extends State<KChartWidget>
               details.localPosition,
               lineCandles,
             );
+            // Default base end so the line is never degenerate even without a
+            // drag; the drag below updates it to the finger position.
+            _painter!.setFibonacciChannelOffset2(
+              object!,
+              Offset(
+                details.localPosition.dx + 60,
+                details.localPosition.dy + 30,
+              ),
+              lineCandles,
+            );
             // Default width point placed above the start point.
             _painter!.setFibonacciChannelOffset3(
               object!,

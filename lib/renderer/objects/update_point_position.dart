@@ -162,28 +162,46 @@ mixin UpdatePointPosition on ChartCalc {
         arcsCount++;
       } else if (object.type == ObjectType.FibonacciChannel) {
         // Three draggable points: base start, base end, and width point.
-        // Each point is tested independently — a point that is currently off
-        // the visible price range (getMainY == null) must not block grabbing
-        // the others, so either endpoint stays draggable at all times.
+        // Pick the CLOSEST point to the tap (not a priority order), so the
+        // end/width point can be grabbed even when it sits near another point.
+        // A point off the visible price range (getMainY == null) is skipped
+        // rather than blocking the others.
         final dx0 = getX(mStartIndex) + (offset.dx / scaleX);
         final dy0 = offset.dy;
         final y1 = getMainY(object.value);
         final y2 = getMainY(object.value2);
         final y3 = getMainY(object.value3);
-        final near1 = y1 != null &&
-            (object.dx1 - dx0).abs() <= 20 &&
-            (y1 - dy0).abs() <= 20;
-        final near2 = y2 != null &&
-            (object.dx2 - dx0).abs() <= 20 &&
-            (y2 - dy0).abs() <= 20;
-        final near3 = y3 != null &&
-            (object.dx3 - dx0).abs() <= 20 &&
-            (y3 - dy0).abs() <= 20;
-        if (near1 || near2 || near3) {
+
+        double? dist(double? y, double dxp) {
+          if (y == null) return null;
+          final ddx = (dxp - dx0).abs();
+          final ddy = (y - dy0).abs();
+          if (ddx > 20 || ddy > 20) return null;
+          return ddx + ddy;
+        }
+
+        final d1 = dist(y1, object.dx1);
+        final d2 = dist(y2, object.dx2);
+        final d3 = dist(y3, object.dx3);
+        if (d1 != null || d2 != null || d3 != null) {
+          int best = 0;
+          double bestD = double.infinity;
+          if (d1 != null && d1 < bestD) {
+            best = 0;
+            bestD = d1;
+          }
+          if (d2 != null && d2 < bestD) {
+            best = 1;
+            bestD = d2;
+          }
+          if (d3 != null && d3 < bestD) {
+            best = 2;
+            bestD = d3;
+          }
           object.currentEditIndex = channelCount;
           nearObject.object = object;
-          nearObject.isSecondPoint = near2 && !near1;
-          nearObject.isWidthPoint = near3 && !near1 && !near2;
+          nearObject.isSecondPoint = best == 1;
+          nearObject.isWidthPoint = best == 2;
           return nearObject;
         }
         channelCount++;
