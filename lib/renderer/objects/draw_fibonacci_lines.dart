@@ -143,7 +143,13 @@ mixin DrawFibonacciLines on ChartDetails {
         // Level label: "ratio (price)".
         final label = '${ratio.toStringAsFixed(3)}';
         final tp = getTextPainter(label, color, fontWeight: FontWeight.w500);
-        tp.paint(canvas, Offset(left + 2, y - tp.height - 1));
+        // The canvas is scaled by scaleX horizontally; counter-scale the text
+        // so it renders at its natural (unscaled) proportions.
+        canvas.save();
+        canvas.translate(left + 2, y - tp.height - 1);
+        canvas.scale(1 / scaleX, 1.0);
+        tp.paint(canvas, Offset.zero);
+        canvas.restore();
       }
 
       if (item.currentEditIndex == i) {
