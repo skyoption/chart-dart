@@ -66,9 +66,26 @@ mixin UpdatePointPosition on ChartCalc {
           return nearObject;
         }
         verticalCount++;
+      } else if (object.type == ObjectType.Fibonacci) {
+        // Fibonacci is defined by two horizontal boundary levels (0.0 and 1.0).
+        // Allow grabbing the top point (value) or bottom point (value2) by
+        // vertical proximity anywhere along the full width of the level line.
+        final dy0 = offset.dy;
+        final y1 = getMainY(object.value);
+        final y2 = getMainY(object.value2);
+        if (y1 == null || y2 == null) return nearObject;
+        final disDy1 = (y1 - dy0).abs();
+        final disDy2 = (y2 - dy0).abs();
+        if (disDy1 <= 20 || disDy2 <= 20) {
+          object.currentEditIndex = fibonacciCount;
+          nearObject.object = object;
+          // Grab whichever boundary point is closer to the tap.
+          nearObject.isSecondPoint = disDy2 < disDy1;
+          return nearObject;
+        }
+        fibonacciCount++;
       } else if (object.type == ObjectType.Rectangle ||
-          object.type == ObjectType.Trend ||
-          object.type == ObjectType.Fibonacci) {
+          object.type == ObjectType.Trend) {
         final dx0 = getX(mStartIndex) + (offset.dx / scaleX);
         final dy0 = offset.dy;
         final dy1 = getMainY(object.value);
@@ -88,8 +105,6 @@ mixin UpdatePointPosition on ChartCalc {
             object.currentEditIndex = rectangleCount;
           } else if (object.type == ObjectType.Trend) {
             object.currentEditIndex = trendCount;
-          } else if (object.type == ObjectType.Fibonacci) {
-            object.currentEditIndex = fibonacciCount;
           }
           nearObject.object = object;
           nearObject.isSecondPoint = false;
@@ -99,8 +114,6 @@ mixin UpdatePointPosition on ChartCalc {
             object.currentEditIndex = rectangleCount;
           } else if (object.type == ObjectType.Trend) {
             object.currentEditIndex = trendCount;
-          } else if (object.type == ObjectType.Fibonacci) {
-            object.currentEditIndex = fibonacciCount;
           }
           nearObject.object = object;
           nearObject.isSecondPoint = true;
@@ -110,8 +123,6 @@ mixin UpdatePointPosition on ChartCalc {
           rectangleCount++;
         } else if (object.type == ObjectType.Trend) {
           trendCount++;
-        } else if (object.type == ObjectType.Fibonacci) {
-          fibonacciCount++;
         }
       }
     }
