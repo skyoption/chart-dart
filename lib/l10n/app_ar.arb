@@ -89,6 +89,8 @@
   "fibonacciArcs": "أقواس فيبوناتشي",
   "fibonacciChannel": "قناة فيبوناتشي",
   "fibonacciExpansion": "امتداد فيبوناتشي",
+  "scale": "المقياس",
+  "ellipse": "بيضاوي",
   "objects": "الأدوات",
   "tools": "الأدوات",
   "searchByIndicatorName": "بحث عن اسم المؤشر",

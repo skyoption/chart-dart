@@ -91,6 +91,8 @@
   "fibonacciArcs": "Fibonacci Arcs",
   "fibonacciChannel": "Fibonacci Channel",
   "fibonacciExpansion": "Fibonacci Expansion",
+  "scale": "Scale",
+  "ellipse": "Ellipse",
   "tools": "Tools",
   "searchByIndicatorName": "Search by indicator name",
   "all": "All",

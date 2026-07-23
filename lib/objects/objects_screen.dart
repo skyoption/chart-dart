@@ -2,6 +2,7 @@ import 'package:candle_chart/entity/k_line_entity.dart';
 import 'package:candle_chart/indicators/widgets/top_header_widget.dart';
 import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/add_objects_screen.dart';
+import 'package:candle_chart/objects/properties/fibonacci_arcs_properties_screen.dart';
 import 'package:candle_chart/objects/properties/fibonacci_fan_properties_screen.dart';
 import 'package:candle_chart/objects/properties/fibonacci_properties_screen.dart';
 import 'package:candle_chart/objects/properties/fibonacci_time_zones_properties_screen.dart';
@@ -156,6 +157,8 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
       return Svgs.fibonacciTimeZones;
     } else if (item.type == ObjectType.FibonacciFan) {
       return Svgs.fibonacciFan;
+    } else if (item.type == ObjectType.FibonacciArcs) {
+      return Svgs.fibonacciArcs;
     }
     return '';
   }
@@ -173,6 +176,8 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
       return 'Fibonacci Time Zones';
     } else if (item.type == ObjectType.FibonacciFan) {
       return 'Fibonacci Fan';
+    } else if (item.type == ObjectType.FibonacciArcs) {
+      return 'Fibonacci Arcs';
     }
     return '';
   }
@@ -197,6 +202,8 @@ Future<void> onDelete(
     await chartProperties.removeFibonacciTimeZone(id);
   } else if (type == ObjectType.FibonacciFan) {
     await chartProperties.removeFibonacciFan(id);
+  } else if (type == ObjectType.FibonacciArcs) {
+    await chartProperties.removeFibonacciArcs(id);
   }
   onDone(null);
 }
@@ -277,6 +284,17 @@ void onTap(
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => FibonacciFanPropertiesScreen(
+          onDone: onDone,
+          data: data,
+          chartStyle: chartStyle,
+          object: item,
+        ),
+      ),
+    );
+  } else if (item.type == ObjectType.FibonacciArcs) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => FibonacciArcsPropertiesScreen(
           onDone: onDone,
           data: data,
           chartStyle: chartStyle,

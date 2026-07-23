@@ -620,6 +620,18 @@ abstract class ChartLocalizations {
   /// **'Fibonacci Expansion'**
   String get fibonacciExpansion;
 
+  /// No description provided for @scale.
+  ///
+  /// In en, this message translates to:
+  /// **'Scale'**
+  String get scale;
+
+  /// No description provided for @ellipse.
+  ///
+  /// In en, this message translates to:
+  /// **'Ellipse'**
+  String get ellipse;
+
   /// No description provided for @tools.
   ///
   /// In en, this message translates to:

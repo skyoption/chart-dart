@@ -270,6 +270,12 @@ class ChartLocalizationsEn extends ChartLocalizations {
   String get fibonacciExpansion => 'Fibonacci Expansion';
 
   @override
+  String get scale => 'Scale';
+
+  @override
+  String get ellipse => 'Ellipse';
+
+  @override
   String get tools => 'Tools';
 
   @override

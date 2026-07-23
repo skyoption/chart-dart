@@ -23,7 +23,8 @@ mixin UpdatePointPosition on ChartCalc {
         trendCount = 0,
         fibonacciCount = 0,
         timeZoneCount = 0,
-        fanCount = 0;
+        fanCount = 0,
+        arcsCount = 0;
     for (var item in chartProperties.tPAndSLLines) item.currentEditIndex = -1;
     for (var item in chartProperties.objects) item.currentEditIndex = -1;
     final objects = [
@@ -132,6 +133,29 @@ mixin UpdatePointPosition on ChartCalc {
           return nearObject;
         }
         fanCount++;
+      } else if (object.type == ObjectType.FibonacciArcs) {
+        // Two anchor points define the arcs; grab either one.
+        final dx0 = getX(mStartIndex) + (offset.dx / scaleX);
+        final dy0 = offset.dy;
+        final y1 = getMainY(object.value);
+        final y2 = getMainY(object.value2);
+        if (y1 == null || y2 == null) return nearObject;
+        final disDx1 = (object.dx1 - dx0).abs();
+        final disDx2 = (object.dx2 - dx0).abs();
+        final disDy1 = (y1 - dy0).abs();
+        final disDy2 = (y2 - dy0).abs();
+        if (disDx1 <= 20 && disDy1 <= 20) {
+          object.currentEditIndex = arcsCount;
+          nearObject.object = object;
+          nearObject.isSecondPoint = false;
+          return nearObject;
+        } else if (disDx2 <= 20 && disDy2 <= 20) {
+          object.currentEditIndex = arcsCount;
+          nearObject.object = object;
+          nearObject.isSecondPoint = true;
+          return nearObject;
+        }
+        arcsCount++;
       } else if (object.type == ObjectType.Rectangle ||
           object.type == ObjectType.Trend) {
         final dx0 = getX(mStartIndex) + (offset.dx / scaleX);

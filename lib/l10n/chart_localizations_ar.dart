@@ -270,6 +270,12 @@ class ChartLocalizationsAr extends ChartLocalizations {
   String get fibonacciExpansion => 'امتداد فيبوناتشي';
 
   @override
+  String get scale => 'المقياس';
+
+  @override
+  String get ellipse => 'بيضاوي';
+
+  @override
   String get tools => 'الأدوات';
 
   @override
