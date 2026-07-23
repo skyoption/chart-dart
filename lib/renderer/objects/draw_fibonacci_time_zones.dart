@@ -113,8 +113,13 @@ mixin DrawFibonacciTimeZones on ChartDetails {
       }
 
       // Vertical lines at Fibonacci multiples of the unit interval.
-      for (final level in kFibonacciTimeZoneLevels) {
+      for (int l = 0; l < kFibonacciTimeZoneLevels.length; l++) {
+        final level = kFibonacciTimeZoneLevels[l];
         final x = x1 + unit * level;
+
+        // Each level gets its own distinct color.
+        final levelColor = fibonacciLevelColor(l);
+        linePaint.color = levelColor;
 
         if (item.style == ObjectStyle.dash) {
           double startY = top;
@@ -134,7 +139,8 @@ mixin DrawFibonacciTimeZones on ChartDetails {
 
         // Level number label near the top, rendered at natural scale.
         final label = level.toStringAsFixed(0);
-        final tp = getTextPainter(label, color, fontWeight: FontWeight.w500);
+        final tp =
+            getTextPainter(label, levelColor, fontWeight: FontWeight.w500);
         canvas.save();
         canvas.translate(x + 2, top + 2);
         canvas.scale(1 / scaleX, 1.0);
@@ -142,10 +148,34 @@ mixin DrawFibonacciTimeZones on ChartDetails {
         canvas.restore();
       }
 
-      if (item.currentEditIndex == i) {
-        if (y1 != null) canvas.drawCircle(Offset(x1, y1), 2.5, dot);
-        if (y2 != null) canvas.drawCircle(Offset(x2, y2), 2.5, dot);
+      // Always-visible draggable start/end handles.
+      if (y1 != null) {
+        _drawHandle(canvas, Offset(x1, y1), color, item.currentEditIndex == i);
+      }
+      if (y2 != null) {
+        _drawHandle(canvas, Offset(x2, y2), color, item.currentEditIndex == i);
       }
     }
+  }
+
+  /// Draws a grab handle: a filled dot inside a ring. Enlarges when active.
+  /// Counter-scales the horizontal canvas scale so the handle stays circular.
+  void _drawHandle(Canvas canvas, Offset center, Color color, bool active) {
+    final radius = active ? 4.5 : 3.5;
+    final ringPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.4
+      ..isAntiAlias = true
+      ..color = color;
+    final fillPaint = Paint()
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true
+      ..color = Colors.white;
+    canvas.save();
+    canvas.translate(center.dx, center.dy);
+    canvas.scale(1 / scaleX, 1.0);
+    canvas.drawCircle(Offset.zero, radius, fillPaint);
+    canvas.drawCircle(Offset.zero, radius, ringPaint);
+    canvas.restore();
   }
 }

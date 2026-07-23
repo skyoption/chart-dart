@@ -129,10 +129,15 @@ mixin DrawFibonacciLines on ChartDetails {
       // ratio 0 -> value (point1), ratio 1 -> value2 (point2).
       final priceMove = item.value2 - item.value;
 
-      for (final ratio in kFibonacciLevels) {
+      for (int l = 0; l < kFibonacciLevels.length; l++) {
+        final ratio = kFibonacciLevels[l];
         final levelPrice = item.value + priceMove * ratio;
         double? y = getMainY(levelPrice);
         if (y == null) continue;
+
+        // Each level gets its own distinct color.
+        final levelColor = fibonacciLevelColor(l);
+        linePaint.color = levelColor;
 
         if (item.style == ObjectStyle.dash) {
           _drawDashLine(canvas, Offset(left, y), Offset(right, y), linePaint);
@@ -142,7 +147,8 @@ mixin DrawFibonacciLines on ChartDetails {
 
         // Level label: "ratio (price)".
         final label = '${ratio.toStringAsFixed(3)}';
-        final tp = getTextPainter(label, color, fontWeight: FontWeight.w500);
+        final tp =
+            getTextPainter(label, levelColor, fontWeight: FontWeight.w500);
         // The canvas is scaled by scaleX horizontally; counter-scale the text
         // so it renders at its natural (unscaled) proportions.
         canvas.save();
@@ -152,11 +158,31 @@ mixin DrawFibonacciLines on ChartDetails {
         canvas.restore();
       }
 
-      if (item.currentEditIndex == i) {
-        canvas.drawCircle(Offset(x1, y1), 2.5, dot);
-        canvas.drawCircle(Offset(x2, y2), 2.5, dot);
-      }
+      // Always-visible draggable start/end handles.
+      _drawHandle(canvas, Offset(x1, y1), color, item.currentEditIndex == i);
+      _drawHandle(canvas, Offset(x2, y2), color, item.currentEditIndex == i);
     }
+  }
+
+  /// Draws a grab handle: a filled dot inside a ring. Enlarges when active.
+  /// Counter-scales the horizontal canvas scale so the handle stays circular.
+  void _drawHandle(Canvas canvas, Offset center, Color color, bool active) {
+    final radius = active ? 4.5 : 3.5;
+    final ringPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.4
+      ..isAntiAlias = true
+      ..color = color;
+    final fillPaint = Paint()
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true
+      ..color = Colors.white;
+    canvas.save();
+    canvas.translate(center.dx, center.dy);
+    canvas.scale(1 / scaleX, 1.0);
+    canvas.drawCircle(Offset.zero, radius, fillPaint);
+    canvas.drawCircle(Offset.zero, radius, ringPaint);
+    canvas.restore();
   }
 
   void _drawDashLine(

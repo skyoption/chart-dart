@@ -56,6 +56,26 @@ const List<double> kFibonacciFanLevels = [
   0.618,
 ];
 
+/// Distinct colors used to render each Fibonacci level line, so levels are
+/// visually separable instead of sharing the object's single color.
+const List<Color> kFibonacciLevelColors = [
+  Color(0xFF9E9E9E), // grey
+  Color(0xFFEF5350), // red
+  Color(0xFFFF9800), // orange
+  Color(0xFF66BB6A), // green
+  Color(0xFF26C6DA), // cyan
+  Color(0xFF5C6BC0), // indigo
+  Color(0xFFAB47BC), // purple
+  Color(0xFFEC407A), // pink
+  Color(0xFF8D6E63), // brown
+  Color(0xFF9CCC65), // olive
+];
+
+/// Returns a distinct color for the Fibonacci level at [index] (cycles).
+Color fibonacciLevelColor(int index) {
+  return kFibonacciLevelColors[index % kFibonacciLevelColors.length];
+}
+
 @collection
 class ObjectEntity {
   Id id;

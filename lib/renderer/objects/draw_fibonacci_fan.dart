@@ -111,14 +111,19 @@ mixin DrawFibonacciFan on ChartDetails {
 
       // Fan rays: from point 1 through the level points on the invisible
       // vertical line at x2 (yL = y1 + (y2 - y1) * level).
-      for (final level in kFibonacciFanLevels) {
+      for (int l = 0; l < kFibonacciFanLevels.length; l++) {
+        final level = kFibonacciFanLevels[l];
         final yL = y1 + (y2 - y1) * level;
+
+        // Each level ray gets its own distinct color.
+        final levelColor = fibonacciLevelColor(l);
+        linePaint.color = levelColor;
         _drawRay(canvas, x1, y1, x2, yL, linePaint, isDash);
 
         // Level label near the intersection on the invisible vertical line.
         final tp = getTextPainter(
           level.toStringAsFixed(3),
-          color,
+          levelColor,
           fontWeight: FontWeight.w500,
         );
         canvas.save();
