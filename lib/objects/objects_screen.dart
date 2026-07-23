@@ -4,6 +4,7 @@ import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/add_objects_screen.dart';
 import 'package:candle_chart/objects/properties/fibonacci_arcs_properties_screen.dart';
 import 'package:candle_chart/objects/properties/fibonacci_channel_properties_screen.dart';
+import 'package:candle_chart/objects/properties/fibonacci_expansion_properties_screen.dart';
 import 'package:candle_chart/objects/properties/fibonacci_fan_properties_screen.dart';
 import 'package:candle_chart/objects/properties/fibonacci_properties_screen.dart';
 import 'package:candle_chart/objects/properties/fibonacci_time_zones_properties_screen.dart';
@@ -162,6 +163,8 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
       return Svgs.fibonacciArcs;
     } else if (item.type == ObjectType.FibonacciChannel) {
       return Svgs.fibonacciChannel;
+    } else if (item.type == ObjectType.FibonacciExpansion) {
+      return Svgs.fibonacciExpansion;
     }
     return '';
   }
@@ -183,6 +186,8 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
       return 'Fibonacci Arcs';
     } else if (item.type == ObjectType.FibonacciChannel) {
       return 'Fibonacci Channel';
+    } else if (item.type == ObjectType.FibonacciExpansion) {
+      return 'Fibonacci Expansion';
     }
     return '';
   }
@@ -211,6 +216,8 @@ Future<void> onDelete(
     await chartProperties.removeFibonacciArcs(id);
   } else if (type == ObjectType.FibonacciChannel) {
     await chartProperties.removeFibonacciChannel(id);
+  } else if (type == ObjectType.FibonacciExpansion) {
+    await chartProperties.removeFibonacciExpansion(id);
   }
   onDone(null);
 }
@@ -313,6 +320,17 @@ void onTap(
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => FibonacciChannelPropertiesScreen(
+          onDone: onDone,
+          data: data,
+          chartStyle: chartStyle,
+          object: item,
+        ),
+      ),
+    );
+  } else if (item.type == ObjectType.FibonacciExpansion) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => FibonacciExpansionPropertiesScreen(
           onDone: onDone,
           data: data,
           chartStyle: chartStyle,

@@ -153,7 +153,10 @@ class _AddObjectsScreenState extends State<AddObjectsScreen> {
               iconColor: Colors.blueAccent,
               title: context.tr.fibonacciExpansion,
               margin: EdgeInsets.zero,
-              onTap: () {},
+              onTap: () {
+                widget.onDone(ObjectType.FibonacciExpansion);
+                Navigator.of(context).pop();
+              },
             ),
             Padding(
               padding:

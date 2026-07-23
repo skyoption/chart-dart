@@ -19,6 +19,7 @@ enum ObjectType {
   FibonacciFan,
   FibonacciArcs,
   FibonacciChannel,
+  FibonacciExpansion,
 }
 
 /// Standard Fibonacci retracement levels (as ratios of the price move):
@@ -75,6 +76,14 @@ const List<double> kFibonacciChannelLevels = [
   2.618,
 ];
 
+/// Fibonacci Expansion levels — the third wave is projected from the reference
+/// point at these multiples of the first wave's height.
+const List<double> kFibonacciExpansionLevels = [
+  0.618,
+  1.0,
+  1.618,
+];
+
 /// Distinct colors used to render each Fibonacci level line, so levels are
 /// visually separable instead of sharing the object's single color.
 const List<Color> kFibonacciLevelColors = [
@@ -112,6 +121,8 @@ List<double> defaultLevelsFor(ObjectType type) {
       return kFibonacciArcLevels;
     case ObjectType.FibonacciChannel:
       return kFibonacciChannelLevels;
+    case ObjectType.FibonacciExpansion:
+      return kFibonacciExpansionLevels;
     default:
       return kFibonacciLevels;
   }

@@ -70,9 +70,12 @@ class TopHeaderWidget extends StatelessWidget {
                 onTap: () {
                   onAdd?.call();
                 },
-                child: Icon(
-                  Icons.add,
-                  color: KChartWidget.colors!.primary,
+                child: Text(
+                  context.tr.add,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: KChartWidget.colors!.primary,
+                      ),
                 ).addPadding(vertical: 14.0),
               ),
             ),

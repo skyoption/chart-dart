@@ -71,9 +71,8 @@ class _LevelsEditorScreenState extends State<LevelsEditorScreen> {
     final current = widget.object.levels.isNotEmpty
         ? widget.object.levels
         : widget.defaults;
-    controllers = current
-        .map((e) => TextEditingController(text: _fmt(e)))
-        .toList();
+    controllers =
+        current.map((e) => TextEditingController(text: _fmt(e))).toList();
     super.initState();
   }
 
@@ -112,7 +111,6 @@ class _LevelsEditorScreenState extends State<LevelsEditorScreen> {
           child: TopHeaderWidget(
             title: context.tr.levels,
             onBack: () => Navigator.of(context).pop(),
-            onAdd: _addLevel,
             onDone: _save,
           ),
         ),
@@ -207,7 +205,8 @@ class _LevelsEditorScreenState extends State<LevelsEditorScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.add, size: 20.0, color: Colors.blueAccent),
+                      const Icon(Icons.add,
+                          size: 20.0, color: Colors.blueAccent),
                       const SizedBox(width: 8.0),
                       Text(
                         context.tr.addLevel,

@@ -367,6 +367,7 @@ const _ObjectEntitytypeEnumValueMap = {
   'FibonacciFan': 8,
   'FibonacciArcs': 9,
   'FibonacciChannel': 10,
+  'FibonacciExpansion': 11,
 };
 const _ObjectEntitytypeValueEnumMap = {
   0: ObjectType.Vertical,
@@ -380,6 +381,7 @@ const _ObjectEntitytypeValueEnumMap = {
   8: ObjectType.FibonacciFan,
   9: ObjectType.FibonacciArcs,
   10: ObjectType.FibonacciChannel,
+  11: ObjectType.FibonacciExpansion,
 };
 
 Id _objectEntityGetId(ObjectEntity object) {

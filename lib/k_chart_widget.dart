@@ -564,6 +564,8 @@ class KChartWidgetState extends State<KChartWidget>
         chartProperties.updateFibonacciArcs(object!);
       } else if (objectType == ObjectType.FibonacciChannel) {
         chartProperties.updateFibonacciChannel(object!);
+      } else if (objectType == ObjectType.FibonacciExpansion) {
+        chartProperties.updateFibonacciExpansion(object!);
       } else if (objectType == ObjectType.Rectangle) {
         chartProperties.updateRectangle(object!);
       } else if (objectType == ObjectType.Horizontal) {
@@ -627,6 +629,8 @@ class KChartWidgetState extends State<KChartWidget>
           chartProperties.updateFibonacciArcs(object!);
         } else if (objectType == ObjectType.FibonacciChannel) {
           chartProperties.updateFibonacciChannel(object!);
+        } else if (objectType == ObjectType.FibonacciExpansion) {
+          chartProperties.updateFibonacciExpansion(object!);
         } else if (objectType == ObjectType.Rectangle) {
           chartProperties.updateRectangle(object!);
         } else if (objectType == ObjectType.Horizontal) {
@@ -825,6 +829,40 @@ class KChartWidgetState extends State<KChartWidget>
               lineCandles,
             );
             notifyChanged();
+          } else if (objectType == ObjectType.FibonacciExpansion) {
+            object = ObjectEntity(
+              type: objectType!,
+              name: 'Fibonacci Expansion ${rand.nextInt(10000)}',
+              dx1: details.localPosition.dx,
+              dx2: details.localPosition.dx + 50,
+              dy1: details.localPosition.dy,
+              dy2: details.localPosition.dy + 50,
+            );
+            chartProperties.addFibonacciExpansion(object!);
+            _painter!.setFibonacciExpansionOffset1(
+              object!,
+              details.localPosition,
+              lineCandles,
+            );
+            // Default end of first wave and end of second wave, so the object
+            // is never degenerate before the drag updates the second point.
+            _painter!.setFibonacciExpansionOffset2(
+              object!,
+              Offset(
+                details.localPosition.dx + 60,
+                details.localPosition.dy - 40,
+              ),
+              lineCandles,
+            );
+            _painter!.setFibonacciExpansionOffset3(
+              object!,
+              Offset(
+                details.localPosition.dx + 110,
+                details.localPosition.dy,
+              ),
+              lineCandles,
+            );
+            notifyChanged();
           } else if (objectType == ObjectType.Rectangle) {
             object = ObjectEntity(
               type: objectType!,
@@ -878,6 +916,12 @@ class KChartWidgetState extends State<KChartWidget>
               );
             } else if (object!.type == ObjectType.FibonacciChannel) {
               _painter!.setFibonacciChannelOffset2(
+                object!,
+                details.localPosition,
+                lineCandles,
+              );
+            } else if (object!.type == ObjectType.FibonacciExpansion) {
+              _painter!.setFibonacciExpansionOffset2(
                 object!,
                 details.localPosition,
                 lineCandles,
@@ -947,6 +991,13 @@ class KChartWidgetState extends State<KChartWidget>
                 lineCandles,
               );
               chartProperties.updateFibonacciChannel(object!);
+            } else if (object!.type == ObjectType.FibonacciExpansion) {
+              _painter!.setFibonacciExpansionOffset2(
+                object!,
+                details.localPosition,
+                lineCandles,
+              );
+              chartProperties.updateFibonacciExpansion(object!);
             } else if (object!.type == ObjectType.Rectangle) {
               _painter!.setRectangleOffset2(
                 object!,
@@ -1086,6 +1137,26 @@ class KChartWidgetState extends State<KChartWidget>
                   lineCandles,
                 );
               }
+            } else if (object!.type == ObjectType.FibonacciExpansion) {
+              if (isWidthOffset) {
+                _painter!.setFibonacciExpansionOffset3(
+                  object!,
+                  details.localPosition,
+                  lineCandles,
+                );
+              } else if (isSecondOffset) {
+                _painter!.setFibonacciExpansionOffset2(
+                  object!,
+                  details.localPosition,
+                  lineCandles,
+                );
+              } else {
+                _painter!.setFibonacciExpansionOffset1(
+                  object!,
+                  details.localPosition,
+                  lineCandles,
+                );
+              }
             } else if (object!.type == ObjectType.Rectangle) {
               if (isSecondOffset) {
                 _painter!.setRectangleOffset2(
@@ -1218,6 +1289,27 @@ class KChartWidgetState extends State<KChartWidget>
                 );
               }
               chartProperties.updateFibonacciChannel(object!);
+            } else if (object!.type == ObjectType.FibonacciExpansion) {
+              if (isWidthOffset) {
+                object = _painter!.setFibonacciExpansionOffset3(
+                  object!,
+                  details.localPosition,
+                  lineCandles,
+                );
+              } else if (isSecondOffset) {
+                object = _painter!.setFibonacciExpansionOffset2(
+                  object!,
+                  details.localPosition,
+                  lineCandles,
+                );
+              } else {
+                object = _painter!.setFibonacciExpansionOffset1(
+                  object!,
+                  details.localPosition,
+                  lineCandles,
+                );
+              }
+              chartProperties.updateFibonacciExpansion(object!);
             } else if (object!.type == ObjectType.Rectangle) {
               if (isSecondOffset) {
                 object = _painter!.setRectangleOffset2(

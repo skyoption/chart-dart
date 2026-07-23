@@ -25,7 +25,8 @@ mixin UpdatePointPosition on ChartCalc {
         timeZoneCount = 0,
         fanCount = 0,
         arcsCount = 0,
-        channelCount = 0;
+        channelCount = 0,
+        expansionCount = 0;
     for (var item in chartProperties.tPAndSLLines) item.currentEditIndex = -1;
     for (var item in chartProperties.objects) item.currentEditIndex = -1;
     final objects = [
@@ -38,7 +39,10 @@ mixin UpdatePointPosition on ChartCalc {
       if (object.type == ObjectType.Horizontal) {
         final dy1 = offset.dy;
         final dy2 = getMainY(object.value);
-        if (dy2 == null) return nearObject;
+        if (dy2 == null) {
+          horizontalCount++;
+          continue;
+        }
         final disDy = dy2 - dy1;
         if (disDy.abs() <= 20) {
           object.currentEditIndex = horizontalCount;
@@ -50,7 +54,10 @@ mixin UpdatePointPosition on ChartCalc {
       } else if (object.type == ObjectType.Position) {
         final dy1 = offset.dy;
         final dy2 = getMainY(object.value);
-        if (dy2 == null) return nearObject;
+        if (dy2 == null) {
+          positionCount++;
+          continue;
+        }
         final disDy = dy2 - dy1;
         if (disDy.abs() <= 20) {
           object.currentEditIndex = positionCount;
@@ -77,7 +84,10 @@ mixin UpdatePointPosition on ChartCalc {
         final dy0 = offset.dy;
         final y1 = getMainY(object.value);
         final y2 = getMainY(object.value2);
-        if (y1 == null || y2 == null) return nearObject;
+        if (y1 == null || y2 == null) {
+          fibonacciCount++;
+          continue;
+        }
         final disDy1 = (y1 - dy0).abs();
         final disDy2 = (y2 - dy0).abs();
         if (disDy1 <= 20 || disDy2 <= 20) {
@@ -205,14 +215,61 @@ mixin UpdatePointPosition on ChartCalc {
           return nearObject;
         }
         channelCount++;
+      } else if (object.type == ObjectType.FibonacciExpansion) {
+        // Three draggable points (two waves); pick the closest to the tap.
+        final dx0 = getX(mStartIndex) + (offset.dx / scaleX);
+        final dy0 = offset.dy;
+        final y1 = getMainY(object.value);
+        final y2 = getMainY(object.value2);
+        final y3 = getMainY(object.value3);
+
+        double? dist(double? y, double dxp) {
+          if (y == null) return null;
+          final ddx = (dxp - dx0).abs();
+          final ddy = (y - dy0).abs();
+          if (ddx > 20 || ddy > 20) return null;
+          return ddx + ddy;
+        }
+
+        final d1 = dist(y1, object.dx1);
+        final d2 = dist(y2, object.dx2);
+        final d3 = dist(y3, object.dx3);
+        if (d1 != null || d2 != null || d3 != null) {
+          int best = 0;
+          double bestD = double.infinity;
+          if (d1 != null && d1 < bestD) {
+            best = 0;
+            bestD = d1;
+          }
+          if (d2 != null && d2 < bestD) {
+            best = 1;
+            bestD = d2;
+          }
+          if (d3 != null && d3 < bestD) {
+            best = 2;
+            bestD = d3;
+          }
+          object.currentEditIndex = expansionCount;
+          nearObject.object = object;
+          nearObject.isSecondPoint = best == 1;
+          nearObject.isWidthPoint = best == 2;
+          return nearObject;
+        }
+        expansionCount++;
       } else if (object.type == ObjectType.Rectangle ||
           object.type == ObjectType.Trend) {
         final dx0 = getX(mStartIndex) + (offset.dx / scaleX);
         final dy0 = offset.dy;
         final dy1 = getMainY(object.value);
-        if (dy1 == null) return nearObject;
         final dy2 = getMainY(object.value2);
-        if (dy2 == null) return nearObject;
+        if (dy1 == null || dy2 == null) {
+          if (object.type == ObjectType.Rectangle) {
+            rectangleCount++;
+          } else {
+            trendCount++;
+          }
+          continue;
+        }
         final dx1 = object.dx1;
         final dx2 = object.dx2;
 
