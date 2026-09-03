@@ -109,6 +109,7 @@ class _RSIPropertiesScreenState extends State<RSIPropertiesScreen> {
                             onTitle: (value) => value.name
                                 .replaceAll('__', '/')
                                 .replaceAll('_', ' '),
+                            value: indicator?.applyTo,
                             onChanged: (value) {
                               indicator?.applyTo = value;
                               setState(() {});

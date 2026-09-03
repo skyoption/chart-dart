@@ -108,6 +108,7 @@ class _CCIPropertiesScreenState extends State<CCIPropertiesScreen> {
                             onTitle: (value) => value.name
                                 .replaceAll('__', '/')
                                 .replaceAll('_', ' '),
+                            value: indicator?.applyTo,
                             onChanged: (value) {
                               indicator?.applyTo = value;
                               setState(() {});

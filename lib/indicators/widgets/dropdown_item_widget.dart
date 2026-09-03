@@ -29,12 +29,11 @@ class _DropdownItemWidgetState<T> extends State<DropdownItemWidget<T>> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Only an explicit value is reported back. Falling back to the first item
+      // here used to overwrite the saved setting - a Moving Average kept coming
+      // back as Simple - just because the screen was opened.
       if (widget.value != null) {
         currentSort = widget.value;
-        controller.text = widget.onTitle(currentSort!);
-        widget.onChanged?.call(currentSort!);
-      } else if (widget.items.isNotEmpty) {
-        currentSort = widget.items.first;
         controller.text = widget.onTitle(currentSort!);
         widget.onChanged?.call(currentSort!);
       }

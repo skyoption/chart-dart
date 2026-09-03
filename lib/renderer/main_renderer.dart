@@ -298,13 +298,21 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
           break;
       }
 
-      if (i == 0 && this.chartStyle.isShowLeftTopicPoint) {
-        tp.paint(canvas, Offset(offsetX, 23.0));
-      } else {
-        if (this.chartStyle.isShowLeftTopicPoint || i > 0)
-          tp.paint(canvas,
-              Offset(offsetX, rowSpace * i - (tp.height * 0.6) + topPadding));
-      }
+      if (i == 0 && !this.chartStyle.isShowLeftTopicPoint) continue;
+
+      // Every label keeps the same grid spacing, the first one included.
+      // A fixed offset for i == 0 only lines up when topPadding matches it and
+      // collapses the gap to the next label otherwise (small charts).
+      double offsetY = rowSpace * i - (tp.height * 0.6) + topPadding;
+
+      // Keep the first and the last label fully inside the canvas, they are the
+      // only ones that can fall outside of it.
+      final double lastOffsetY =
+          chartRect.bottom + this.chartStyle.bottomPadding - tp.height;
+      if (offsetY < 0.0) offsetY = 0.0;
+      if (offsetY > lastOffsetY) offsetY = lastOffsetY;
+
+      tp.paint(canvas, Offset(offsetX, offsetY));
     }
   }
 

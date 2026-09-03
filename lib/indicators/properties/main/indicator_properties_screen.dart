@@ -167,6 +167,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                               items: Methods.values.toList(),
                               onTitle: (value) =>
                                   value.name.replaceAll('_', ' '),
+                              value: setMethod(indicator),
                               onChanged: (value) {
                                 _setType(value);
                                 setState(() {});
@@ -178,6 +179,7 @@ class _IndicatorPropertiesScreenState extends State<IndicatorPropertiesScreen> {
                             onTitle: (value) => value.name
                                 .replaceAll('__', '/')
                                 .replaceAll('_', ' '),
+                            value: indicator?.applyTo,
                             onChanged: (value) {
                               indicator?.applyTo = value;
                               setState(() {});
