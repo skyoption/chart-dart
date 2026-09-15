@@ -64,7 +64,13 @@ mixin UpdatePointPosition on ChartCalc {
         horizontalCount++;
       } else if (object.type == ObjectType.Position) {
         final dy1 = offset.dy;
-        final dy2 = getMainY(object.value);
+        // Hit-test the Y the line is actually drawn at: a TP/SL whose price sits
+        // outside the visible high/low window is pinned to the nearest edge, so
+        // testing the raw price would put the grab zone off screen.
+        final dy2 = getMainY(object.value.clamp(
+          chartPosition.bottomPrice,
+          chartPosition.topPrice,
+        ));
         if (dy2 == null) {
           positionCount++;
           continue;

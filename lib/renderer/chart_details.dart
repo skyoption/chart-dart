@@ -114,10 +114,14 @@ mixin ChartCalc {
   //   return false;
   // }
 
+  /// Inverse of [getMainY]. The main rect starts at [mMainRect.top] (the top
+  /// padding), so that offset has to come out of dy before scaling — without it
+  /// every dragged object lands topPadding pixels away from the finger.
   double getYPositionValue(double dy) {
     final scope = this.chartPosition.topPrice - this.chartPosition.bottomPrice;
     double perPixel = scope / mMainRect.height;
-    final value = this.chartPosition.topPrice - (dy * perPixel);
+    final value =
+        this.chartPosition.topPrice - ((dy - mMainRect.top) * perPixel);
     return value;
   }
 

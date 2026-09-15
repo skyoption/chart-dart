@@ -44,11 +44,11 @@ mixin DrawTPAndSLLines on ChartDetails {
         tPAndSLLines[i].dy1 = y;
       } else if (mMainHighMaxValue <= value) {
         tPAndSLLines[i].value = mMainHighMaxValue;
-        double? y = getMainY(mMainLowMinValue);
+        double? y = getMainY(mMainHighMaxValue);
         if (y == null) return null;
         tPAndSLLines[i].dy1 = y;
       } else {
-        double? y = getMainY(tPAndSLLines[i].value);
+        double? y = getMainY(value);
         if (y == null) return null;
         tPAndSLLines[i].dy1 = y;
         tPAndSLLines[i].value = value;
@@ -65,44 +65,43 @@ mixin DrawTPAndSLLines on ChartDetails {
     }
     for (int i = 0; i < tPAndSLLines.length; i++) {
       if (tPAndSLLines[i].drawAsBackground != isBackground) continue;
-      double value = tPAndSLLines[i].value;
-      if (value <= this.chartPosition.topPrice &&
-          value >= this.chartPosition.bottomPrice) {
-        double? y = getMainY(value);
-        if (y == null) return;
-        if (mMainLowMinValue >= value) {
-          y = getMainY(mMainLowMinValue);
-        } else if (mMainHighMaxValue <= value) {
-          y = getMainY(mMainHighMaxValue);
-        }
-        if (y == null) return;
-        final pricePaint = Paint()
-          ..filterQuality = FilterQuality.high
-          ..isAntiAlias = true
-          ..strokeWidth = tPAndSLLines[i].height
-          ..style = PaintingStyle.stroke
-          ..strokeCap = StrokeCap.round
-          ..strokeJoin = StrokeJoin.round
-          ..color = colorFromHex(tPAndSLLines[i].color!)!;
+      final double? y = pinnedY(tPAndSLLines[i].value);
+      if (y == null) continue;
+      final pricePaint = Paint()
+        ..filterQuality = FilterQuality.high
+        ..isAntiAlias = true
+        ..strokeWidth = tPAndSLLines[i].height
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round
+        ..color = colorFromHex(tPAndSLLines[i].color!)!;
 
-        double startX = 0;
-        final max = -mTranslateX + (mWidth + 20) / scaleX;
-        final strokeWidth =
-            (this.chartStyle.lineLength / scaleX).clamp(1, 10.0);
-        if (tPAndSLLines[i].style == ObjectStyle.dash) {
-          while (startX < max) {
-            canvas.drawLine(
-              Offset(startX, y),
-              Offset(startX + strokeWidth, y),
-              pricePaint,
-            );
-            startX += strokeWidth * 2;
-          }
-        } else {
-          canvas.drawLine(Offset(startX, y), Offset(max, y), pricePaint);
+      double startX = 0;
+      final max = -mTranslateX + (mWidth + 20) / scaleX;
+      final strokeWidth = (this.chartStyle.lineLength / scaleX).clamp(1, 10.0);
+      if (tPAndSLLines[i].style == ObjectStyle.dash) {
+        while (startX < max) {
+          canvas.drawLine(
+            Offset(startX, y),
+            Offset(startX + strokeWidth, y),
+            pricePaint,
+          );
+          startX += strokeWidth * 2;
         }
+      } else {
+        canvas.drawLine(Offset(startX, y), Offset(max, y), pricePaint);
       }
     }
+  }
+
+  /// Y for [value] pinned to the visible price range. A position/TP/SL whose
+  /// price has scrolled outside the candles' high/low window stays parked on
+  /// the nearest edge instead of vanishing — which also keeps its label on
+  /// screen. Both the line and the title use this, so they never drift apart.
+  double? pinnedY(double value) {
+    if (value <= mMainLowMinValue) return getMainY(mMainLowMinValue);
+    if (value >= mMainHighMaxValue) return getMainY(mMainHighMaxValue);
+    return getMainY(value);
   }
 
   void drawTPAndSLTitles(Canvas canvas, Size size) {
@@ -112,12 +111,11 @@ mixin DrawTPAndSLLines on ChartDetails {
     }
     for (int i = 0; i < tPAndSLLines.length; i++) {
       double value = tPAndSLLines[i].value;
-      if (mMainLowMinValue >= value) continue;
-      double? y = getMainY(value);
-      if (y == null) return;
-      if (mMainLowMinValue >= value || mMainHighMaxValue <= value) {
-        return;
-      }
+      final double? y = pinnedY(value);
+      if (y == null) continue;
+      // Parked on the top edge? Put the title under the line, otherwise it
+      // would be painted over the date bar in the top padding.
+      final bool pinnedTop = value >= mMainHighMaxValue;
 
       double startX = 0;
       final max = -mTranslateX + (mWidth + 20) / scaleX;
@@ -146,7 +144,11 @@ mixin DrawTPAndSLLines on ChartDetails {
           fontWeight: FontWeight.w600,
         );
 
-        title.paint(canvas, Offset(startX, y - title.height * 1.2));
+        title.paint(
+          canvas,
+          Offset(startX,
+              pinnedTop ? y + title.height * 0.2 : y - title.height * 1.2),
+        );
       }
 
       TextPainter tp = getTextPainter(
