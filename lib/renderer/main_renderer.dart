@@ -371,6 +371,10 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   }
 
   @override
+  /// Left edge of the grid / frame: a small gap from the screen edge.
+  double get _gridLeft =>
+      chartRect.left + (_isLiveLine ? chartStyle.liveLeftInset : 0.0);
+
   void drawGrid(Canvas canvas, int gridRows, int gridColumns, double width,
       double height) {
     if (!hideGrid) {
@@ -389,6 +393,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       int gridColumns = (width / cellSize).floor() + 1;
 
       double startX = width - (gridColumns * cellSize);
+      final left = _gridLeft;
+      final rowStartX = startX < left ? left : startX;
 
       // Live design: also close the grid with a line on the top edge, the
       // vertical lines otherwise run past the first row into empty space.
@@ -396,7 +402,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       for (int i = 0; i < rowCount; i++) {
         double yPos = chartRect.bottom - (rowSpace * i);
         canvas.drawLine(
-          Offset(startX, yPos),
+          Offset(rowStartX, yPos),
           Offset(width, yPos),
           gridPaint,
         );
@@ -404,6 +410,7 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 
       for (int i = 0; i <= gridColumns; i++) {
         double xPos = startX + (columnSpace * i);
+        if (xPos < left) continue;
         canvas.drawLine(
           Offset(xPos, chartRect.top),
           Offset(xPos, chartRect.bottom),
@@ -413,28 +420,29 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     } else {
       // Draw border lines when grid is hidden. Live + left labels: the frame
       // runs to the screen edge like the grid does.
+      final left = _gridLeft;
       final borderRight = chartRect.right +
           (_isLiveLine && verticalTextAlignment == VerticalTextAlignment.left
               ? chartStyle.priceWidth
               : 0.0);
       // Top border
       canvas.drawLine(
-        Offset(chartRect.left, chartRect.top),
+        Offset(left, chartRect.top),
         Offset(borderRight, chartRect.top),
         gridPaint,
       );
 
       // Bottom border
       canvas.drawLine(
-        Offset(chartRect.left, chartRect.bottom),
+        Offset(left, chartRect.bottom),
         Offset(borderRight, chartRect.bottom),
         gridPaint,
       );
 
       // Left border
       canvas.drawLine(
-        Offset(chartRect.left, chartRect.top),
-        Offset(chartRect.left, chartRect.bottom),
+        Offset(left, chartRect.top),
+        Offset(left, chartRect.bottom),
         gridPaint,
       );
 

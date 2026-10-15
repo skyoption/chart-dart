@@ -275,6 +275,9 @@ class ChartStyle {
   /// Future space (fraction of the width), used when [rightEmptySpace] is 0.
   double rightEmptySpaceRatio;
 
+  /// Gap (px) between the screen edge and the grid / frame on the left.
+  double liveLeftInset;
+
   /// Expiry time in ms since epoch; null hides the vertical line.
   int? expiryTime;
 
@@ -351,6 +354,7 @@ class ChartStyle {
     this.livePriceSource = LivePriceSource.bid,
     this.liveVerticalPadding = 0.12,
     this.rightEmptySpaceRatio = 0.12,
+    this.liveLeftInset = 12.0,
     this.expiryTime,
     this.liveDriftFrames = const {CandleTimeFormat.S5, CandleTimeFormat.S10},
     this.secondsPxPerSecond = 3.8,
