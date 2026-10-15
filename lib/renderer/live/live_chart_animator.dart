@@ -5,6 +5,9 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 
+/// Candle/quote time to epoch ms. Values below 1e12 are treated as seconds.
+int toEpochMs(int t) => t < 1000000000000 ? t * 1000 : t;
+
 /// Drives the live line chart: tick tweening, the glide when a point is
 /// appended, Y-range easing and the tip pulse. The painter repaints from this
 /// [Listenable], so animation frames never rebuild the widget tree.
@@ -14,7 +17,7 @@ class LiveChartAnimator extends ChangeNotifier {
     this.maxTickDuration = const Duration(milliseconds: 450),
     this.glideDuration = const Duration(milliseconds: 500),
     this.curve = Curves.easeOutCubic,
-  }) {
+  }) : _vsync = vsync {
     _tick =
         AnimationController(vsync: vsync, duration: maxTickDuration, value: 1)
           ..addListener(notifyListeners);
@@ -27,6 +30,7 @@ class LiveChartAnimator extends ChangeNotifier {
     range = RangeSmoother(notifyListeners);
   }
 
+  final TickerProvider _vsync;
   final Duration maxTickDuration, glideDuration;
   final Curve curve;
   late final AnimationController _tick, _glide, _pulse;
@@ -41,7 +45,7 @@ class LiveChartAnimator extends ChangeNotifier {
   int direction = 0;
 
   double get tickT => curve.transform(_tick.value);
-  double get growT => curve.transform(_glide.value);
+  double get growT => driftActive ? driftPhase : curve.transform(_glide.value);
   double get pulse => _pulse.value;
 
   /// Start or stop the idle tip pulse (it repaints every frame while running).
@@ -63,6 +67,60 @@ class LiveChartAnimator extends ChangeNotifier {
   double? get targetPrice => _toP;
   double? get targetAsk => _toA;
   double? get targetBid => _toB;
+
+  // ── Time-driven drift (S5 / S10) ──
+  Ticker? _driftTicker;
+  int? _frameMs; // non-null = drift mode
+  int _barTime = 0; // open time of the forming bar, ms
+  int _skewMs = 0; // serverNow - localNow (smoothed)
+  bool _skewKnown = false;
+
+  /// Test hook: replaces the wall clock (epoch ms).
+  @visibleForTesting
+  int Function()? nowMs;
+
+  int get _now => nowMs?.call() ?? DateTime.now().millisecondsSinceEpoch;
+
+  bool get driftActive => _frameMs != null;
+
+  /// Feed the server timestamp of each quote, if the feed has one.
+  void syncServerTime(int serverTime) {
+    final s = toEpochMs(serverTime) - _now;
+    _skewMs = _skewKnown ? (_skewMs * .8 + s * .2).round() : s;
+    _skewKnown = true;
+  }
+
+  /// 0 when the forming bar opens, 1 when it should close. Linear.
+  double get driftPhase {
+    final f = _frameMs;
+    if (f == null) return 1;
+    return ((_now + _skewMs - _barTime) / f).clamp(0.0, 1.0).toDouble();
+  }
+
+  /// Enter drift mode (frame switched to S5/S10, or a new bar opened).
+  void onNewBar({
+    required int barTime, // candle time, seconds or ms
+    required Duration frame,
+    required double pointWidth,
+  }) {
+    if (_disposed) return;
+    final barMs = toEpochMs(barTime);
+    // No server timestamps yet: assume the bar opened just now.
+    if (!_skewKnown) _skewMs = barMs - _now;
+    _frameMs = frame.inMilliseconds;
+    _barTime = barMs;
+    _glideDist = pointWidth;
+    _driftTicker ??= _vsync.createTicker((_) => notifyListeners());
+    if (!_driftTicker!.isActive) _driftTicker!.start();
+  }
+
+  /// Leave drift mode (any frame other than S5/S10).
+  void stopDrift() {
+    _frameMs = null;
+    _glideDist = 0;
+    _driftTicker?.stop();
+    if (!_disposed) notifyListeners();
+  }
 
   /// Extra translateX (data units). Starts at +pointWidth and eases to 0.
   double get glideOffset => _glideDist * (1 - growT);
@@ -122,12 +180,18 @@ class LiveChartAnimator extends ChangeNotifier {
     direction = 0;
     _glide.value = 1;
     _tick.value = 1;
+    _skewKnown = false;
+    _skewMs = 0;
+    _frameMs = null; // no notify: reset runs during sync/build
+    _glideDist = 0;
+    _driftTicker?.stop();
     range.reset();
   }
 
   @override
   void dispose() {
     _disposed = true;
+    _driftTicker?.dispose();
     range.dispose();
     _tick.dispose();
     _glide.dispose();

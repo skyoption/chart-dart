@@ -160,6 +160,8 @@ const _KLineEntityframeEnumValueMap = {
   'D1': 6,
   'W1': 7,
   'MN1': 8,
+  'S5': 9,
+  'S10': 10,
 };
 const _KLineEntityframeValueEnumMap = {
   0: CandleTimeFormat.M1,
@@ -171,6 +173,8 @@ const _KLineEntityframeValueEnumMap = {
   6: CandleTimeFormat.D1,
   7: CandleTimeFormat.W1,
   8: CandleTimeFormat.MN1,
+  9: CandleTimeFormat.S5,
+  10: CandleTimeFormat.S10,
 };
 
 Id _kLineEntityGetId(KLineEntity object) {

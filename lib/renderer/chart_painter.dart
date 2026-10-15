@@ -826,7 +826,11 @@ class ChartPainter extends BaseChartPainter
     if (pts.length < 2) return;
     pts = decimate(pts);
 
-    final path = chartStyle.lineInterpolation == LineInterpolation.monotone
+    // Seconds frames draw straight segments, as in the reference video.
+    final interp = (a?.driftActive ?? false)
+        ? chartStyle.secondsLineInterpolation
+        : chartStyle.lineInterpolation;
+    final path = interp == LineInterpolation.monotone
         ? monotoneCubicPath(pts)
         : (Path()..addPolygon(pts, false));
 

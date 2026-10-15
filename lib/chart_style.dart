@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart' show Color, Colors;
 
+import 'k_chart_widget.dart' show CandleTimeFormat;
+
 /// ChartColors
 ///
 /// Note:
@@ -276,6 +278,25 @@ class ChartStyle {
   /// Expiry time in ms since epoch; null hides the vertical line.
   int? expiryTime;
 
+  /// Frames that get the continuous video-style left drift.
+  Set<CandleTimeFormat> liveDriftFrames;
+
+  /// Drift speed on seconds frames, in screen px per second (video ≈ 3.8).
+  /// Sets the on-screen bar width: S5 = 19 px, S10 = 38 px.
+  double secondsPxPerSecond;
+
+  /// Line shape on seconds frames. The video draws straight segments.
+  LineInterpolation secondsLineInterpolation;
+
+  /// Candle body width as a fraction of the slot (0 = keep [candleWidth]).
+  double candleBodyRatio;
+
+  /// Candle body corner radius, in screen px.
+  double candleRadius;
+
+  /// Soft halo on the forming candle.
+  bool liveCandleGlow;
+
   ChartStyle({
     this.scaleStep = 0.000085,
     this.topPadding = 30.0,
@@ -329,7 +350,13 @@ class ChartStyle {
     this.lineInterpolation = LineInterpolation.monotone,
     this.livePriceSource = LivePriceSource.bid,
     this.liveVerticalPadding = 0.12,
-    this.rightEmptySpaceRatio = 0.5,
+    this.rightEmptySpaceRatio = 0.12,
     this.expiryTime,
+    this.liveDriftFrames = const {CandleTimeFormat.S5, CandleTimeFormat.S10},
+    this.secondsPxPerSecond = 3.8,
+    this.secondsLineInterpolation = LineInterpolation.monotone,
+    this.candleBodyRatio = 0.62,
+    this.candleRadius = 1.5,
+    this.liveCandleGlow = true,
   });
 }

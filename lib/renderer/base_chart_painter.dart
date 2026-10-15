@@ -141,14 +141,18 @@ abstract class BaseChartPainter extends CustomPainter
 
     int firstTime = data!.first.time;
     int secondTime = data![1].time;
-    int time = secondTime - firstTime;
-    time ~/= 1000;
+    // Candle times are seconds here; treat ms feeds the same way.
+    final raw = secondTime - firstTime;
+    int time = firstTime < 1000000000000 ? raw : raw ~/ 1000;
     // monthly line
     if (time >= 24 * 60 * 60 * 28) {
       mFormats = [yyyy, ' ', mm];
     } else if (time >= 24 * 60 * 60) {
       // daily line
       mFormats = [yyyy, ' ', mm, ' ', dd];
+    } else if (time < 60) {
+      // seconds frames (S5 / S10), e.g. 15:29:30
+      mFormats = [HH, ':', nn, ':', ss];
     } else {
       // hour line
       mFormats = [dd, ' ', M, ' ', HH, ':', nn];

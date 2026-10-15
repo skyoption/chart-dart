@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -83,7 +85,9 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       scaleX,
     );
 
-    mCandleWidth = this.chartStyle.candleWidth;
+    mCandleWidth = chartStyle.candleBodyRatio > 0
+        ? chartStyle.pointWidth * chartStyle.candleBodyRatio
+        : chartStyle.candleWidth;
     mCandleLineWidth = this.chartStyle.candleLineWidth;
     mLinePaint = Paint()
       ..isAntiAlias = true
@@ -241,31 +245,42 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       if (lp > highV) highV = lp;
       if (lp < lowV) lowV = lp;
     }
-    var high = getY(highV);
-    var low = getY(lowV);
-    var open = getY(ha ? curPoint.haOpen! : curPoint.open);
-    var close = getY(closeV);
-    double r = mCandleWidth / 2;
-    double lineR = mCandleLineWidth / 2;
-    if (open >= close) {
-      if (open - close < mCandleLineWidth) {
-        open = close + mCandleLineWidth;
-      }
-      chartPaint.color = this.chartColors.upColor;
-      canvas.drawRect(
-          Rect.fromLTRB(curX - r, close, curX + r, open), chartPaint);
-      canvas.drawRect(
-          Rect.fromLTRB(curX - lineR, high, curX + lineR, low), chartPaint);
-    } else if (close > open) {
-      if (close - open < mCandleLineWidth) {
-        open = close - mCandleLineWidth;
-      }
-      chartPaint.color = this.chartColors.dnColor;
-      canvas.drawRect(
-          Rect.fromLTRB(curX - r, open, curX + r, close), chartPaint);
-      canvas.drawRect(
-          Rect.fromLTRB(curX - lineR, high, curX + lineR, low), chartPaint);
+    final openV = ha ? curPoint.haOpen! : curPoint.open;
+    final yH = getY(highV), yL = getY(lowV);
+    final yO = getY(openV), yC = getY(closeV);
+    final up = closeV >= openV;
+    final color = up ? chartColors.upColor : chartColors.dnColor;
+    final isLive = identical(curPoint, liveCandle);
+
+    // Body: never thinner than 1 px (doji stays visible)
+    var top = math.min(yO, yC), bot = math.max(yO, yC);
+    if (bot - top < 1) {
+      final mid = (top + bot) / 2;
+      top = mid - .5;
+      bot = mid + .5;
     }
+    final r = mCandleWidth / 2;
+    chartPaint.color = color;
+
+    // The canvas is scaled by scaleX horizontally: divide to keep 1 screen px.
+    final wick = (mCandleLineWidth / scaleX) / 2;
+    canvas.drawRect(
+        Rect.fromLTRB(curX - wick, yH, curX + wick, yL), chartPaint);
+
+    final body = RRect.fromRectXY(
+      Rect.fromLTRB(curX - r, top, curX + r, bot),
+      chartStyle.candleRadius / scaleX,
+      chartStyle.candleRadius,
+    );
+    if (isLive && chartStyle.liveCandleGlow) {
+      canvas.drawRRect(
+        body.inflate(1.5),
+        Paint()
+          ..color = color.withOpacity(.28)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+      );
+    }
+    canvas.drawRRect(body, chartPaint);
   }
 
   @override

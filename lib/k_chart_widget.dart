@@ -47,7 +47,28 @@ enum IndicatorType {
   TRADE_POSITIONS,
 }
 
-enum CandleTimeFormat { M1, M5, M15, M30, H1, H4, D1, W1, MN1 }
+// Isar stores the frame by index: only ever append new values at the end.
+enum CandleTimeFormat { M1, M5, M15, M30, H1, H4, D1, W1, MN1, S5, S10 }
+
+extension CandleTimeFormatX on CandleTimeFormat {
+  /// Fixed bar length; null for calendar frames (MN1).
+  Duration? get duration => switch (this) {
+        CandleTimeFormat.S5 => const Duration(seconds: 5),
+        CandleTimeFormat.S10 => const Duration(seconds: 10),
+        CandleTimeFormat.M1 => const Duration(minutes: 1),
+        CandleTimeFormat.M5 => const Duration(minutes: 5),
+        CandleTimeFormat.M15 => const Duration(minutes: 15),
+        CandleTimeFormat.M30 => const Duration(minutes: 30),
+        CandleTimeFormat.H1 => const Duration(hours: 1),
+        CandleTimeFormat.H4 => const Duration(hours: 4),
+        CandleTimeFormat.D1 => const Duration(days: 1),
+        CandleTimeFormat.W1 => const Duration(days: 7),
+        CandleTimeFormat.MN1 => null,
+      };
+
+  bool get isSeconds =>
+      this == CandleTimeFormat.S5 || this == CandleTimeFormat.S10;
+}
 
 class TimeFormat {
   static const List<String> YEAR_MONTH_DAY = [yyyy, '-', mm, '-', dd];
@@ -225,7 +246,8 @@ class KChartWidgetState extends State<KChartWidget>
   bool get _isFollowing => mScrollX <= widget.chartStyle.pointWidth * .5;
 
   /// New preferred API. Call this on every quote tick.
-  void updateQuote({double? bid, double? ask}) {
+  void updateQuote({double? bid, double? ask, int? time}) {
+    if (time != null) animator.syncServerTime(time);
     if (bid != null) _bid = bid;
     if (ask != null) _ask = ask;
     final b = _bid, a = _ask;
@@ -267,11 +289,22 @@ class KChartWidgetState extends State<KChartWidget>
     }
   }
 
+  bool get _isDriftFrame =>
+      widget.chartStyle.liveDriftFrames.contains(chartProperties.frame);
+
   void _onPointAdded() {
     if (!_isLiveStyle) return;
     if (_isFollowing) {
       mScrollX = 0;
-      animator.onNewPoint(widget.chartStyle.pointWidth);
+      final frameDur = chartProperties.frame.duration;
+      if (_isDriftFrame && frameDur != null) {
+        animator.onNewBar(
+          barTime: lineCandles.last.time,
+          frame: frameDur,
+          pointWidth: widget.chartStyle.pointWidth,
+        );
+      }
+      // Any other frame: no left-moving animation, the point snaps in.
     } else {
       // Keep the viewport still when the user scrolled back.
       mScrollX += widget.chartStyle.pointWidth;
@@ -332,6 +365,7 @@ class KChartWidgetState extends State<KChartWidget>
       // First data, or a different series (symbol / timeframe changed).
       resetLive();
       animator.push(price: last.close);
+      _configureFrame(next);
     } else if (appended) {
       _onPointAdded();
       if (_bid == null && _ask == null) animator.push(price: last.close);
@@ -340,6 +374,35 @@ class KChartWidgetState extends State<KChartWidget>
       if (_bid == null && _ask == null) animator.push(price: last.close);
     }
     _storeSignature(next);
+  }
+
+  double? _basePointWidth;
+
+  /// Bar width + drift mode for the current frame.
+  void _configureFrame(List<KLineEntity> candles) {
+    final frame = chartProperties.frame;
+    final style = widget.chartStyle;
+    _basePointWidth ??= style.pointWidth;
+    final frameDur = frame.duration;
+    if (frame.isSeconds) {
+      // On-screen slot = speed x bar seconds (S5 = 19 px, S10 = 38 px).
+      final slotPx = style.secondsPxPerSecond * frame.duration!.inSeconds;
+      style.pointWidth = slotPx / mScaleX;
+    } else {
+      style.pointWidth = _basePointWidth!; // restore the host's width
+    }
+    if (_isLiveStyle &&
+        _isDriftFrame &&
+        frameDur != null &&
+        candles.isNotEmpty) {
+      animator.onNewBar(
+        barTime: candles.last.time,
+        frame: frameDur,
+        pointWidth: style.pointWidth,
+      );
+    } else {
+      animator.stopDrift();
+    }
   }
 
   Future<void> getIndicators() async {

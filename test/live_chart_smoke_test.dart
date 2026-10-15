@@ -90,4 +90,67 @@ void main() {
       });
     }
   }
+
+  group('S5 / S10 drift', () {
+    test('enum indices are stable', () {
+      expect(CandleTimeFormat.MN1.index, 8);
+      expect(CandleTimeFormat.S5.index, 9);
+      expect(CandleTimeFormat.S10.index, 10);
+    });
+
+    test('no drift until onNewBar; stopDrift clears it', () {
+      final a = LiveChartAnimator(vsync: _Vsync());
+      expect(a.driftActive, isFalse);
+      expect(a.glideOffset, 0);
+      a.onNewBar(
+          barTime: 1700000000,
+          frame: CandleTimeFormat.S5.duration!,
+          pointWidth: 6);
+      expect(a.driftActive, isTrue);
+      a.stopDrift();
+      expect(a.driftActive, isFalse);
+      expect(a.glideOffset, 0);
+      a.dispose();
+    });
+
+    for (final ms in [false, true]) {
+      test('linear phase (barTime in ${ms ? 'ms' : 's'})', () {
+        final a = LiveChartAnimator(vsync: _Vsync());
+        var now = 1700000000 * 1000;
+        a.nowMs = () => now;
+        a.onNewBar(
+            barTime: ms ? 1700000000 * 1000 : 1700000000,
+            frame: CandleTimeFormat.S5.duration!,
+            pointWidth: 19);
+        expect(a.driftPhase, closeTo(0, 1e-9));
+        expect(a.glideOffset, closeTo(19, 1e-9));
+        now += 2500;
+        expect(a.driftPhase, closeTo(0.5, 1e-9));
+        expect(a.glideOffset, closeTo(9.5, 1e-9));
+        now += 2500;
+        expect(a.driftPhase, closeTo(1, 1e-9));
+        expect(a.glideOffset, closeTo(0, 1e-9));
+        a.dispose();
+      });
+    }
+
+    test('late bar: phase and offset clamp, no run-past', () {
+      final a = LiveChartAnimator(vsync: _Vsync());
+      var now = 1700000000 * 1000;
+      a.nowMs = () => now;
+      a.onNewBar(
+          barTime: 1700000000,
+          frame: CandleTimeFormat.S10.duration!,
+          pointWidth: 38);
+      now += 60000;
+      expect(a.driftPhase, 1);
+      expect(a.glideOffset, 0);
+      a.dispose();
+    });
+
+    test('toEpochMs handles seconds and ms', () {
+      expect(toEpochMs(1700000000), 1700000000000);
+      expect(toEpochMs(1700000000000), 1700000000000);
+    });
+  });
 }
