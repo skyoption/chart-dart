@@ -97,14 +97,15 @@ mixin DrawTPAndSLLines on ChartDetails {
     }
   }
 
-  /// Y for [value] pinned to the visible price range. A position/TP/SL whose
-  /// price has scrolled outside the candles' high/low window stays parked on
-  /// the nearest edge instead of vanishing — which also keeps its label on
-  /// screen. Both the line and the title use this, so they never drift apart.
+  /// Y for [value] at its real price. The line and card follow the price up
+  /// and down with the chart; when the price is outside the visible chart area
+  /// this returns null so nothing is drawn there. Both the line and the title
+  /// use this, so they never drift apart.
   double? pinnedY(double value) {
-    if (value <= mMainLowMinValue) return getMainY(mMainLowMinValue);
-    if (value >= mMainHighMaxValue) return getMainY(mMainHighMaxValue);
-    return getMainY(value);
+    final y = getMainY(value);
+    if (y == null) return null;
+    if (y < mMainRect.top || y > mMainRect.bottom) return null;
+    return y;
   }
 
   void drawTPAndSLTitles(Canvas canvas, Size size) {
