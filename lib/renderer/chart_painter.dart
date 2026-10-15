@@ -1,4 +1,6 @@
 import 'dart:async' show StreamSink;
+import 'dart:math' as math;
+import 'dart:ui' show lerpDouble;
 
 import 'package:candle_chart/entity/indicator_entity.dart';
 import 'package:candle_chart/entity/line_entity.dart';
@@ -28,6 +30,8 @@ import '../k_chart_widget.dart';
 import 'base_chart_painter.dart';
 import 'base_chart_renderer.dart';
 import 'base_dimension.dart';
+import 'live/live_chart_animator.dart';
+import 'live/smooth_path.dart';
 import 'main_renderer.dart';
 import 'secondary_renderer.dart';
 import 'vol_renderer.dart';
@@ -98,6 +102,13 @@ class ChartPainter extends BaseChartPainter
   final int? currentResizeRectIndex;
   final List<TradeEntity> trades;
 
+  /// Rect of the live price pill from the last paint; hints avoid it.
+  Rect? _pillRect;
+
+  @override
+  bool get isLiveLineMode =>
+      graphStyle == GraphStyle.line || graphStyle == GraphStyle.area;
+
   ChartPainter(
     this.chartStyle,
     this.chartColors, {
@@ -125,6 +136,7 @@ class ChartPainter extends BaseChartPainter
     this.isIndicatorResizeMode = false,
     this.currentResizeRectIndex,
     required this.trades,
+    LiveChartAnimator? animator,
   }) : super(
           chartStyle,
           data: data,
@@ -141,6 +153,7 @@ class ChartPainter extends BaseChartPainter
           secondaryIndicators: secondaryIndicators,
           xFrontPadding: xFrontPadding,
           trades: trades,
+          animator: animator,
         ) {
     chartPosition = ChartPosition();
     dot = Paint()..color = Colors.grey;
@@ -162,6 +175,15 @@ class ChartPainter extends BaseChartPainter
   }
 
   @override
+  void resetFrameState() {
+    mMainHighMaxValue = double.minPositive;
+    mMainLowMinValue = double.maxFinite;
+    mVolMaxValue = double.minPositive;
+    mVolMinValue = double.maxFinite;
+    _pillRect = null;
+  }
+
+  @override
   void initChartRenderer(double height) {
     if (data != null && data!.isNotEmpty) {
       var t = data![0];
@@ -175,10 +197,27 @@ class ChartPainter extends BaseChartPainter
         this.chartStyle.gridRows = 18;
       }
     }
+    double maxV = mainRect!.mMainMaxValue, minV = mainRect!.mMainMinValue;
+    if (isLiveStyle) {
+      // Keep the live line, ask and bid inside the chart.
+      final a = animator;
+      if (a?.targetPrice != null) {
+        maxV = math.max(maxV, a!.targetAsk ?? a.targetPrice!);
+        minV = math.min(minV, a.targetBid ?? a.targetPrice!);
+        maxV = math.max(maxV, a.targetPrice!);
+        minV = math.min(minV, a.targetPrice!);
+      }
+      // Headroom for the hint tags.
+      final pad = (maxV - minV) * chartStyle.liveVerticalPadding;
+      maxV += pad;
+      minV -= pad;
+      if (a != null) (maxV, minV) = a.range.smooth(maxV, minV);
+    }
+
     mMainRenderer = MainRenderer(
       mMainRect,
-      mainRect!.mMainMaxValue / scaleY,
-      mainRect!.mMainMinValue * scaleY,
+      maxV / scaleY,
+      minV * scaleY,
       mTopPadding,
       chartPosition,
       fixedLength,
@@ -234,6 +273,16 @@ class ChartPainter extends BaseChartPainter
         }
       }
     }
+    final liveMain = mMainRenderer;
+    if (liveMain is MainRenderer &&
+        isLiveStyle &&
+        !isLiveLineMode &&
+        data != null &&
+        data!.isNotEmpty) {
+      // The forming candle follows the animated price.
+      liveMain.liveCandle = data!.last;
+      liveMain.livePrice = animator?.price;
+    }
     scaleY = mMainRenderer.scaleY;
     mMainHighMaxValue = mMainRenderer.maxValue;
     mMainLowMinValue = mMainRenderer.minValue;
@@ -249,6 +298,10 @@ class ChartPainter extends BaseChartPainter
       mMainRect.height + mTopPadding,
     );
     canvas.drawRect(mainRect, mBgPaint);
+    // With labels on the left the price column is plain chart area; paint it.
+    if (isLiveStyle) {
+      canvas.drawRect(Offset.zero & size, mBgPaint);
+    }
 
     if (mVolRect != null) {
       Rect volRect = Rect.fromLTRB(
@@ -333,6 +386,16 @@ class ChartPainter extends BaseChartPainter
       );
     }
 
+    if (isLiveLineMode) {
+      // The line and its fill are drawn once, in screen space, so the stroke
+      // keeps the same width at every zoom level.
+      canvas.restore();
+      drawLiveSeries(canvas, size);
+      canvas.save();
+      canvas.translate(mTranslateX * scaleX + this.chartStyle.leftPadding, 0.0);
+      canvas.scale(scaleX, 1.0);
+    }
+
     for (int i = mStartIndex; data != null && i <= mStopIndex; i++) {
       KLineEntity? curPoint = data?[i];
       if (curPoint == null) continue;
@@ -376,6 +439,14 @@ class ChartPainter extends BaseChartPainter
   @override
   void drawVerticalText(canvas) {
     var textStyle = getTextStyle(this.chartColors.black);
+    final main = mMainRenderer;
+    if (main is MainRenderer) {
+      final price = animator?.price;
+      main.avoidY =
+          (isLiveStyle && chartStyle.showLivePriceLine && price != null)
+              ? getMainY(price)
+              : null;
+    }
     mMainRenderer.drawVerticalText(canvas, textStyle, this.chartStyle.gridRows);
     mVolRenderer?.drawVerticalText(canvas, textStyle, this.chartStyle.gridRows);
     mSecondaryRendererList.forEach((element) {
@@ -546,7 +617,10 @@ class ChartPainter extends BaseChartPainter
 
   @override
   void drawMaxAndMin(Canvas canvas) {
-    // if (isLine == true) return;
+    if (isLiveStyle) {
+      _drawLiveHints(canvas);
+      return;
+    }
     if (!this.chartStyle.isShowHighOrLowPoint) return;
     //plot maxima and minima
     double x = translateXtoX(getX(mainRect!.mMainMinIndex));
@@ -640,7 +714,17 @@ class ChartPainter extends BaseChartPainter
       return;
     }
     for (var item in askAndBid) {
+      // In the live look ask and bid live on the single live price line.
+      final t = item.type.toLowerCase();
+      if (isLiveStyle &&
+          chartStyle.showLivePriceLine &&
+          (t == 'ask' || t == 'bid')) {
+        continue;
+      }
       _lineForm(canvas, item.color, item.value);
+    }
+    if (isLiveStyle && chartStyle.showLivePriceLine) {
+      drawLivePriceLine(canvas);
     }
     return;
     //view display area boundary value drawing
@@ -692,6 +776,243 @@ class ChartPainter extends BaseChartPainter
     //   nowPricePaint,
     // );
     // tp.paint(canvas, Offset(offsetX - 6, top + 2));
+  }
+
+  // ── Live line / area ─────────────────────────────────────────────────────
+
+  double _closeAt(int i) => (i == data!.length - 1 && animator?.price != null)
+      ? animator!.price!
+      : data![i].close;
+
+  /// Extremes used by the hint tags: closes in line/area mode, high/low for
+  /// candles. The forming candle uses the animated price.
+  double _hiAt(int i) {
+    if (isLiveLineMode) return _closeAt(i);
+    final h = data![i].high;
+    return (i == data!.length - 1 && animator?.price != null)
+        ? math.max(h, animator!.price!)
+        : h;
+  }
+
+  double _loAt(int i) {
+    if (isLiveLineMode) return _closeAt(i);
+    final l = data![i].low;
+    return (i == data!.length - 1 && animator?.price != null)
+        ? math.min(l, animator!.price!)
+        : l;
+  }
+
+  void drawLiveSeries(Canvas canvas, Size size) {
+    final d = data!;
+    if (d.isEmpty) return;
+    final a = animator;
+    final last = d.length - 1;
+    final from = math.max(0, mStartIndex - 1);
+    final to = math.min(last, mStopIndex + 1);
+
+    var pts = <Offset>[];
+    for (var i = from; i <= to; i++) {
+      var x = getX(i);
+      var v = d[i].close;
+      if (i == last && a != null) {
+        if (a.price != null) v = a.price!; // animated tick
+        if (last > 0)
+          x = lerpDouble(getX(last - 1), x, a.growT)!; // tip grows in
+      }
+      final y = getMainY(v);
+      if (y == null || y.isNaN) continue;
+      pts.add(Offset(translateXtoX(x) + chartStyle.leftPadding, y));
+    }
+    if (pts.length < 2) return;
+    pts = decimate(pts);
+
+    final path = chartStyle.lineInterpolation == LineInterpolation.monotone
+        ? monotoneCubicPath(pts)
+        : (Path()..addPolygon(pts, false));
+
+    canvas.save();
+    canvas.clipRect(Rect.fromLTRB(0, 0, mWidth, mMainRect.bottom));
+
+    // Area fill: one polygon, one gradient.
+    if (graphStyle == GraphStyle.area) {
+      final fill = Path.from(path)
+        ..lineTo(pts.last.dx, mMainRect.bottom)
+        ..lineTo(pts.first.dx, mMainRect.bottom)
+        ..close();
+      final topY = pts.map((p) => p.dy).reduce(math.min);
+      canvas.drawPath(
+        fill,
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              chartColors.areaColor.withAlpha(71), // 0.28
+              chartColors.areaColor.withAlpha(0),
+            ],
+          ).createShader(Rect.fromLTRB(0, topY, mWidth, mMainRect.bottom)),
+      );
+    }
+
+    final w = chartStyle.areaLineWidth; // constant: no division by scaleX
+    if (chartStyle.lineGlow) {
+      canvas.drawPath(
+        path,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = w + 3
+          ..color = chartColors.lineChartColor.withAlpha(64)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+      );
+    }
+    canvas.drawPath(
+      path,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = w
+        ..strokeJoin = StrokeJoin.round
+        ..strokeCap = StrokeCap.round
+        ..isAntiAlias = true
+        ..color = chartColors.lineChartColor,
+    );
+
+    // Live tip: pulsing halo + ring + white core (only on the live edge).
+    if (to == last) {
+      final tip = pts.last;
+      if (chartStyle.pulseEndpoint && a != null) {
+        final p = a.pulse;
+        canvas.drawCircle(
+          tip,
+          5 + 11 * p,
+          Paint()
+            ..color = chartColors.lineChartColor
+                .withAlpha((255 * 0.35 * (1 - p)).round()),
+        );
+      }
+      canvas.drawCircle(tip, 4.5, Paint()..color = chartColors.lineChartColor);
+      canvas.drawCircle(tip, 2.5, Paint()..color = const Color(0xFFFFFFFF));
+    }
+    canvas.restore();
+  }
+
+  void drawLivePriceLine(Canvas canvas) {
+    final a = animator;
+    final price = a?.price;
+    if (a == null || price == null) return;
+    final y = getMainY(price);
+    if (y == null || y.isNaN) return;
+    final c = chartColors;
+    final fullW = mWidth + chartStyle.priceWidth;
+
+    // 1. The single line.
+    canvas.drawLine(
+      Offset(0, y),
+      Offset(fullW, y),
+      Paint()
+        ..color = c.lineChartColor
+        ..strokeWidth = 1
+        ..isAntiAlias = true,
+    );
+
+    // 2. Pill.
+    final tp = getTextPainter(
+      price.toStringAsFixed(chartStyle.digits),
+      c.livePillTextColor,
+      sizeText: chartStyle.sizeText + 2,
+      fontWeight: FontWeight.w600,
+    );
+    final h = tp.height + 8, w = tp.width + 20;
+    final onLeft = verticalTextAlignment == VerticalTextAlignment.left;
+    final left = onLeft ? 4.0 : fullW - w - 4;
+    final rect = Rect.fromLTWH(left, y - h / 2, w, h);
+    final rr = RRect.fromRectAndRadius(rect, Radius.circular(h / 2));
+    _pillRect = rect;
+
+    Color pillColor = c.livePillColor;
+    if (chartStyle.flashPillOnTick && a.direction != 0) {
+      final flash = a.direction > 0 ? c.askTextColor : c.bidTextColor;
+      pillColor = Color.lerp(flash, c.livePillColor, a.tickT)!;
+    }
+    canvas.drawRRect(
+      rr.shift(const Offset(0, 2)),
+      Paint()
+        ..color = const Color(0x59000000)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+    );
+    canvas.drawRRect(rr, Paint()..color = pillColor);
+    tp.paint(canvas, Offset(left + (w - tp.width) / 2, y - tp.height / 2));
+
+    // 3. Ask above, bid below.
+    void side(String txt, Color color, bool above) {
+      final t = getTextPainter(txt, color, fontWeight: FontWeight.w500);
+      final x = onLeft ? rect.right + 6 : rect.left - 6 - t.width;
+      final ty = above ? y - 2 - t.height : y + 2;
+      t.paint(canvas, Offset(x, ty));
+    }
+
+    final dg = chartStyle.digits;
+    if (a.ask != null) {
+      side('▲ ${a.ask!.toStringAsFixed(dg)}', c.askTextColor, true);
+    }
+    if (a.bid != null) {
+      side('▼ ${a.bid!.toStringAsFixed(dg)}', c.bidTextColor, false);
+    }
+  }
+
+  void _drawLiveHints(Canvas canvas) {
+    if (!chartStyle.showPriceHints || data == null || data!.isEmpty) return;
+    int hi = mStartIndex, lo = mStartIndex;
+    for (var i = mStartIndex; i <= mStopIndex; i++) {
+      if (_hiAt(i) > _hiAt(hi)) hi = i;
+      if (_loAt(i) < _loAt(lo)) lo = i;
+    }
+    _hintTag(canvas, hi, _hiAt(hi), above: true);
+    if (lo != hi) _hintTag(canvas, lo, _loAt(lo), above: false);
+  }
+
+  void _hintTag(Canvas canvas, int i, double v, {required bool above}) {
+    final y = getMainY(v);
+    if (y == null || y.isNaN) return;
+    final x = translateXtoX(getX(i)) + chartStyle.leftPadding;
+    final tp = getTextPainter(
+      v.toStringAsFixed(chartStyle.digits),
+      chartColors.hintTextColor,
+    );
+    final w = tp.width + 10, h = tp.height + 4;
+    final maxLeft = mWidth - w - 2;
+    final left =
+        maxLeft <= 2 ? 2.0 : (x - w / 2).clamp(2.0, maxLeft).toDouble();
+    final top = above ? y - h - 8 : y + 8;
+    final r = Rect.fromLTWH(left, top, w, h);
+    if (_pillRect != null && _pillRect!.inflate(2).overlaps(r)) return;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(r, const Radius.circular(4)),
+      Paint()..color = chartColors.hintBgColor,
+    );
+    tp.paint(canvas, Offset(left + 5, top + 2));
+  }
+
+  @override
+  void drawExpiryLine(Canvas canvas, Size size) {
+    final t = chartStyle.expiryTime;
+    if (!isLiveStyle || t == null || data == null || data!.length < 2) {
+      return;
+    }
+    final last = data!.length - 1;
+    // Candle times are in seconds, the expiry is in milliseconds.
+    final tSec = t / 1000;
+    final interval = math.max(1, data![last].time - data![last - 1].time);
+    final xData =
+        getX(last) + (tSec - data![last].time) / interval * mPointWidth;
+    final x = translateXtoX(xData) + chartStyle.leftPadding;
+    if (x < 0 || x > mWidth) return;
+    canvas.drawLine(
+      Offset(x, mTopPadding),
+      Offset(x, size.height - mBottomPadding),
+      Paint()
+        ..color = chartColors.expiryLineColor
+        ..strokeWidth = 1,
+    );
   }
 
   void drawLine(

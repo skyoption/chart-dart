@@ -11,7 +11,11 @@ class MainRect {
   final List<IndicatorEntity> indicators;
   late double mMainHighMaxValue, mMainLowMinValue;
 
+  /// Line/area styles never reach high/low, so the range follows the close.
+  final bool lineMode;
+
   MainRect({
+    this.lineMode = false,
     required this.indicators,
     required this.mMainHighMaxValue,
     required this.mMainLowMinValue,
@@ -19,7 +23,9 @@ class MainRect {
 
   /// compute maximum and minimum value
   void getMainMaxMinValue(KLineEntity item, int i) {
-    double maxPrice = item.high, minPrice = item.low;
+    final double itemHigh = lineMode ? item.close : item.high;
+    final double itemLow = lineMode ? item.close : item.low;
+    double maxPrice = itemHigh, minPrice = itemLow;
     _setMaxAndMin(
       item,
       (max, min) {
@@ -31,12 +37,12 @@ class MainRect {
     mMainMaxValue = max(mMainMaxValue, maxPrice);
     mMainMinValue = min(mMainMinValue, minPrice);
 
-    if (mMainHighMaxValue < item.high) {
-      mMainHighMaxValue = item.high;
+    if (mMainHighMaxValue < itemHigh) {
+      mMainHighMaxValue = itemHigh;
       mMainMaxIndex = i;
     }
-    if (mMainLowMinValue > item.low) {
-      mMainLowMinValue = item.low;
+    if (mMainLowMinValue > itemLow) {
+      mMainLowMinValue = itemLow;
       mMainMinIndex = i;
     }
 
@@ -51,7 +57,8 @@ class MainRect {
     Function(double maxPrice, double minPrice) onSet,
     List<IndicatorEntity> indicators,
   ) {
-    double maxPrice = item.high, minPrice = item.low;
+    double maxPrice = lineMode ? item.close : item.high;
+    double minPrice = lineMode ? item.close : item.low;
     for (var indicator in indicators) {
       if (indicator.type == IndicatorType.ICHIMOKU) {
         maxPrice = max(_findMaxIchimoku(item.ichimokuValues ?? []), maxPrice);

@@ -80,6 +80,16 @@ class ChartColors {
 
   double sizeText = 10.0;
 
+  // ── Live price line ──
+  Color livePillColor;
+  Color livePillTextColor;
+  Color askTextColor;
+  Color bidTextColor;
+  // ── Hints ──
+  Color hintBgColor;
+  Color hintTextColor;
+  Color expiryLineColor;
+
   /// get MA color via index
   Color getMAColor(int index) {
     switch (index % 3) {
@@ -149,7 +159,29 @@ class ChartColors {
     this.maxColor = const Color(0xFF222223),
     this.minColor = const Color(0xFF222223),
     this.sizeText = 10.0,
+    this.livePillColor = const Color(0xFF2F9AFD),
+    this.livePillTextColor = const Color(0xFFFFFFFF),
+    this.askTextColor = const Color(0xFF2BC48A),
+    this.bidTextColor = const Color(0xFFE5414F),
+    this.hintBgColor = const Color(0xFF1B2130),
+    this.hintTextColor = const Color(0xFF8A93A6),
+    this.expiryLineColor = const Color(0xFFE8A33D),
   });
+
+  /// Preset that matches the live dark line chart (flat navy, blue line).
+  factory ChartColors.liveDark() => ChartColors(
+        bgColor: const Color(0xFF111219),
+        lineChartColor: const Color(0xFF239BFF),
+        areaColor: const Color(0xFF239BFF),
+        gridColor: const Color(0x00000000),
+        maxColor: const Color(0xFF8A93A6), // axis label text
+        minColor: const Color(0xFF8A93A6),
+        defaultTextColor: const Color(0xFF8A93A6),
+        upColor: const Color(0xFF2BC48A),
+        dnColor: const Color(0xFFE5414F),
+        nowPriceUpColor: const Color(0xFF2BC48A),
+        nowPriceDnColor: const Color(0xFFE5414F),
+      );
 }
 
 class ChartPosition {
@@ -161,6 +193,10 @@ class ChartPosition {
     this.topPrice = 0,
   });
 }
+
+enum LineInterpolation { linear, monotone }
+
+enum LivePriceSource { bid, ask, mid }
 
 class ChartStyle {
   double scaleStep;
@@ -206,6 +242,40 @@ class ChartStyle {
   double rightEmptySpace;
   double initialRightDistance;
 
+  /// Live look for every graph style (candles too): single price line with a
+  /// pill, hints, axis tags, future space, glide and an animated forming
+  /// candle. Line and area always use it.
+  bool liveStyle;
+
+  /// Single live price line (pill, ask above, bid below).
+  bool showLivePriceLine;
+
+  /// High/low tags on the visible extremes.
+  bool showPriceHints;
+
+  /// Dark tag behind each axis label.
+  bool showAxisLabelTags;
+
+  /// Pulsing halo around the live tip.
+  bool pulseEndpoint;
+
+  /// Soft blur under the line stroke.
+  bool lineGlow;
+
+  /// Pill flashes green/red on a tick, then eases back.
+  bool flashPillOnTick;
+  LineInterpolation lineInterpolation;
+  LivePriceSource livePriceSource;
+
+  /// Headroom above max / below min in line and area mode (fraction).
+  double liveVerticalPadding;
+
+  /// Future space (fraction of the width), used when [rightEmptySpace] is 0.
+  double rightEmptySpaceRatio;
+
+  /// Expiry time in ms since epoch; null hides the vertical line.
+  int? expiryTime;
+
   ChartStyle({
     this.scaleStep = 0.000085,
     this.topPadding = 30.0,
@@ -226,7 +296,7 @@ class ChartStyle {
     this.pointWidth = 15.0,
     this.candleWidth = 10.0,
     this.candleLineWidth = 1.0,
-    this.areaLineWidth = 1.0,
+    this.areaLineWidth = 2.0,
     this.volWidth = 8.5,
     this.volisDouble = false,
     this.macdWidth = 1.2,
@@ -249,5 +319,17 @@ class ChartStyle {
     this.isLongFocus = false,
     this.digits = 5,
     this.rightEmptySpace = 0.0,
+    this.liveStyle = true,
+    this.showLivePriceLine = true,
+    this.showPriceHints = true,
+    this.showAxisLabelTags = true,
+    this.pulseEndpoint = true,
+    this.lineGlow = true,
+    this.flashPillOnTick = true,
+    this.lineInterpolation = LineInterpolation.monotone,
+    this.livePriceSource = LivePriceSource.bid,
+    this.liveVerticalPadding = 0.12,
+    this.rightEmptySpaceRatio = 0.5,
+    this.expiryTime,
   });
 }

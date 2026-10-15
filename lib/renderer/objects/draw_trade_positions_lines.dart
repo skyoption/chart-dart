@@ -16,32 +16,36 @@ mixin DrawTradePositionsLines on ChartDetails {
     List<KLineEntity> data,
     List<TradeEntity> trades,
   ) {
-    final baseSize = 8.0;
     // Process current point for trade positions
     for (int i = 0; i < trades.length; i++) {
       final position = trades[i];
       final openTime = position.openTimeInMilliseconds;
       if (openTime == null) continue;
       final curOpenX = getXFromTime(openTime, data);
-      final cutOpenY = getMainYInChart(position.openPrice);
+      final cutOpenY =
+          (getMainY(position.openPrice) ?? getMainYInChart(position.openPrice));
       final isBuy = position.isBuy;
-      final double yOffset = cutOpenY + baseSize / 2;
+      // Buy badges sit below the price point, sell badges above it.
+      final double side = isBuy ? 1.0 : -1.0;
+      final double yOffset = cutOpenY + side * 15.5;
       // Blue arrow up for open positions
       final openOffset = Offset(curOpenX, yOffset);
 
       final closeTime = position.closeTimeInMilliseconds;
       if (closeTime != null) {
         final curCloseX = getXFromTime(closeTime, data);
-        final cutCloseY = getMainYInChart(position.closePrice!);
+        final cutCloseY = (getMainY(position.closePrice!) ??
+            getMainYInChart(position.closePrice!));
         // Red arrow down for close positions
 
-        final double yOffsetClose = cutCloseY + baseSize * 2.0;
+        final double yOffsetClose = cutCloseY + side * 15.5;
 
         final fillPaint = Paint()
-          ..color = isBuy ? Colors.blue : Colors.redAccent
+          ..color = isBuy ? chartColors.upColor : chartColors.dnColor
           ..style = PaintingStyle.fill
           ..isAntiAlias = true
-          ..strokeWidth = 1.5
+          ..strokeWidth = 1.2
+          ..strokeCap = StrokeCap.round
           ..filterQuality = FilterQuality.high;
 
         final closeOffset = Offset(curCloseX, yOffsetClose);
@@ -56,6 +60,7 @@ mixin DrawTradePositionsLines on ChartDetails {
           curCloseX,
           cutCloseY,
           false,
+          isBuy,
         );
       }
       _drawPostion(
@@ -63,107 +68,111 @@ mixin DrawTradePositionsLines on ChartDetails {
         curOpenX,
         cutOpenY,
         true,
+        isBuy,
       );
     }
   }
 
-  Offset _drawPostion(Canvas canvas, double x, double y, bool isOpen) {
-    if (isOpen) {
-      return _drawArrowUp(
-        canvas,
-        x,
-        y,
-        Colors.blue,
-      );
-    } else {
-      return _drawArrowDown(
-        canvas,
-        x,
-        y,
-        Colors.redAccent,
-      );
-    }
+  /// Buy trades use the up color and point up when opened; sell trades use the
+  /// down color and point down. The close marker flips the direction.
+  Offset _drawPostion(
+      Canvas canvas, double x, double y, bool isOpen, bool isBuy) {
+    final color = isBuy ? chartColors.upColor : chartColors.dnColor;
+    return _drawBadge(canvas, x, y, color, up: isOpen == isBuy, above: !isBuy);
   }
 
-  Offset _drawArrowUp(Canvas canvas, double x, double y, Color color) {
-    // Draw a filled upward-pointing triangle arrow (like in the image)
-    // Arrow size scales with zoom but has minimum/maximum bounds for visibility
-    final baseSize = 8.0;
-    final baseWidth = 12.0;
-    final arrowHeight = baseSize;
-    final arrowWidth = baseWidth;
-    final double yOffset = y + baseSize / 2;
-    // x = x ;
-    y = y + arrowHeight * 1.5;
-    final path = Path();
-    // Start at the top point (tip) of the arrow
-    path.moveTo(x, y - arrowHeight);
-    // Draw to bottom-left corner
-    path.lineTo(x - arrowWidth, y);
-    // Draw to bottom-right corner
-    path.lineTo(x + arrowWidth, y);
-    // Close the path back to the top
-    path.close();
+  /// Pin-style marker: a glowing gradient badge with an arrow, a short pointer
+  /// and an anchor dot on the exact price. Buy badges hang below the price,
+  /// sell badges sit above it.
+  Offset _drawBadge(
+    Canvas canvas,
+    double x,
+    double y,
+    Color color, {
+    required bool up,
+    bool above = false,
+  }) {
+    const radius = 9.5;
+    const reach = radius + 6.0; // distance from the price to the badge center
+    final d = above ? -1.0 : 1.0;
 
-    // Draw filled arrow
-    final fillPaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill
-      ..isAntiAlias = true
-      ..filterQuality = FilterQuality.high;
+    // The canvas is scaled horizontally by the zoom; undo it around the marker
+    // so the badge stays a circle at every zoom level.
+    canvas.save();
+    canvas.translate(x, 0);
+    canvas.scale(1 / scaleX, 1.0);
+    final center = Offset(0, y + d * reach);
 
-    canvas.drawPath(path, fillPaint);
+    // Soft glow.
+    canvas.drawCircle(
+      center,
+      radius + 2,
+      Paint()
+        ..color = color.withAlpha(110)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+    );
 
-    // Draw border for better definition (slightly darker)
-    final borderPaint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0
-      ..isAntiAlias = true
-      ..filterQuality = FilterQuality.high;
+    // Pointer from the badge to the price.
+    final tail = Path()
+      ..moveTo(-4.5, center.dy - d * (radius - 2))
+      ..lineTo(0, y + d * 1.0)
+      ..lineTo(4.5, center.dy - d * (radius - 2))
+      ..close();
+    canvas.drawPath(tail, Paint()..color = color);
 
-    canvas.drawPath(path, borderPaint);
-    return Offset(x, yOffset);
-  }
+    // Badge: light-to-solid gradient with a fine highlight ring.
+    final badgeRect = Rect.fromCircle(center: center, radius: radius);
+    canvas.drawCircle(
+      center,
+      radius,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color.lerp(color, Colors.white, 0.28)!, color],
+        ).createShader(badgeRect),
+    );
+    canvas.drawCircle(
+      center,
+      radius - 0.5,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1
+        ..color = Colors.white.withAlpha(120)
+        ..isAntiAlias = true,
+    );
 
-  Offset _drawArrowDown(Canvas canvas, double x, double y, Color color) {
-    // Draw a filled downward-pointing triangle arrow (like in the image)
-    // Arrow size scales with zoom but has minimum/maximum bounds for visibility
-    final baseSize = 8.0;
-    final baseWidth = 12.0;
-    final arrowHeight = baseSize;
-    final arrowWidth = baseWidth;
-    // x = x - arrowWidth * 1.5;
-    y = y + arrowHeight * 1.5;
-    final path = Path();
-    // Start at the top-left corner of the arrow base
-    path.moveTo(x - arrowWidth, y);
-    // Draw to bottom point (tip)
-    path.lineTo(x, y + arrowHeight);
-    // Draw to top-right corner
-    path.lineTo(x + arrowWidth, y);
-    // Close the path back to the start
-    path.close();
+    // Arrow icon.
+    final k = up ? -1.0 : 1.0;
+    final arrow = Path()
+      ..moveTo(center.dx, center.dy + k * 4.2)
+      ..lineTo(center.dx, center.dy - k * 4.2)
+      ..moveTo(center.dx - 3.6, center.dy - k * 0.7)
+      ..lineTo(center.dx, center.dy - k * 4.4)
+      ..lineTo(center.dx + 3.6, center.dy - k * 0.7);
+    canvas.drawPath(
+      arrow,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.2
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round
+        ..color = Colors.white
+        ..isAntiAlias = true,
+    );
 
-    // Draw filled arrow
-    final fillPaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill
-      ..isAntiAlias = true
-      ..filterQuality = FilterQuality.high;
-
-    canvas.drawPath(path, fillPaint);
-
-    // Draw border for better definition (slightly darker)
-    final borderPaint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0
-      ..isAntiAlias = true
-      ..filterQuality = FilterQuality.high;
-
-    canvas.drawPath(path, borderPaint);
-    return Offset(x, y + baseSize);
+    // Anchor dot on the exact price.
+    canvas.drawCircle(Offset(0, y), 3.2, Paint()..color = Colors.white);
+    canvas.drawCircle(
+      Offset(0, y),
+      3.2,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5
+        ..color = color,
+    );
+    canvas.restore();
+    return Offset(x, center.dy + d * radius);
   }
 
   void drawDashLine(

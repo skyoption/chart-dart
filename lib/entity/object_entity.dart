@@ -1,3 +1,4 @@
+import 'package:candle_chart/entity/position_card_info.dart';
 import 'package:candle_chart/k_chart_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -150,6 +151,8 @@ class ObjectEntity {
   String name;
   @ignore
   String Function(double value)? title;
+  @ignore
+  PositionCardInfo? card;
   int datetime, datetime2;
   String symbol;
   bool drawAsBackground;
@@ -179,6 +182,7 @@ class ObjectEntity {
     this.datetime2 = 0,
     this.symbol = '',
     this.title,
+    this.card,
     this.height = 1.0,
     this.style = ObjectStyle.normal,
     this.type = ObjectType.Horizontal,

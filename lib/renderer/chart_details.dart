@@ -4,6 +4,10 @@ import '../entity/k_line_entity.dart';
 import '../utils/date_format_util.dart';
 import 'base_chart_renderer.dart';
 
+/// Laying out text is the main per-frame cost of the live chart; axis labels
+/// and prices repeat a lot, so identical (text, style) pairs are reused.
+final Map<(String, TextStyle), TextPainter> _textPainterCache = {};
+
 mixin ChartDetails on ChartCalc {
   late final ChartPosition chartPosition;
   late final ChartStyle chartStyle;
@@ -52,9 +56,19 @@ mixin ChartDetails on ChartCalc {
       children.add(span);
       spanAll = TextSpan(children: children);
     }
+    final cacheable = addTextSpan == null;
+    final style = span.style!;
+    if (cacheable) {
+      final cached = _textPainterCache[("$text", style)];
+      if (cached != null) return cached;
+    }
     TextPainter tp =
         TextPainter(text: spanAll, textDirection: TextDirection.ltr);
     tp.layout();
+    if (cacheable) {
+      if (_textPainterCache.length > 300) _textPainterCache.clear();
+      _textPainterCache[("$text", style)] = tp;
+    }
     return tp;
   }
 

@@ -11,8 +11,10 @@ import 'package:candle_chart/k_chart_plus.dart';
 import 'package:candle_chart/objects/bottom_sheets/properties_bottom_sheet.dart';
 import 'package:candle_chart/objects/objects_screen.dart';
 import 'package:candle_chart/renderer/base_dimension.dart';
+import 'package:candle_chart/renderer/live/live_chart_animator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:gesture_x_detector/gesture_x_detector.dart';
 
@@ -195,10 +197,149 @@ class KChartWidgetState extends State<KChartWidget>
   Random rand = Random();
   int pointerCount = 0;
 
+  /// Drives the live line animation; the painter repaints from it.
+  late final LiveChartAnimator animator = LiveChartAnimator(vsync: this);
+
+  bool get _isLiveLineStyle =>
+      widget.graphStyle == GraphStyle.line ||
+      widget.graphStyle == GraphStyle.area;
+
+  bool get _isLiveStyle => _isLiveLineStyle || widget.chartStyle.liveStyle;
+
+  double? _bid, _ask;
+  Timer? _indicatorsDebounce;
+
   @override
   void initState() {
     super.initState();
     chartProperties.setDefaultFrame(widget.defaultFrame);
+    animator.setPulse(_isLiveLineStyle && widget.chartStyle.pulseEndpoint);
+  }
+
+  @override
+  void didUpdateWidget(covariant KChartWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    animator.setPulse(_isLiveLineStyle && widget.chartStyle.pulseEndpoint);
+  }
+
+  bool get _isFollowing => mScrollX <= widget.chartStyle.pointWidth * .5;
+
+  /// New preferred API. Call this on every quote tick.
+  void updateQuote({double? bid, double? ask}) {
+    if (bid != null) _bid = bid;
+    if (ask != null) _ask = ask;
+    final b = _bid, a = _ask;
+    final double? price = switch (widget.chartStyle.livePriceSource) {
+      LivePriceSource.bid => b ?? a,
+      LivePriceSource.ask => a ?? b,
+      LivePriceSource.mid => (a != null && b != null) ? (a + b) / 2 : (b ?? a),
+    };
+    if (price == null) return;
+    animator.push(price: price, ask: a, bid: b);
+  }
+
+  /// Append a new tick/candle with the glide animation.
+  void appendPoint(KLineEntity p, {double? bid, double? ask}) {
+    lineCandles.add(p);
+    _storeSignature(lineCandles);
+    _onPointAdded();
+    _pushPoint(p, bid: bid, ask: ask);
+    _scheduleIndicatorsUpdate();
+    notifyChanged();
+  }
+
+  /// Update the forming (last) point in place: tick tween only.
+  void updateLastPoint(KLineEntity p, {double? bid, double? ask}) {
+    if (lineCandles.isEmpty) return appendPoint(p, bid: bid, ask: ask);
+    lineCandles[lineCandles.length - 1] = p;
+    _pushPoint(p, bid: bid, ask: ask);
+  }
+
+  void _pushPoint(KLineEntity p, {double? bid, double? ask}) {
+    if (bid != null || ask != null) {
+      updateQuote(bid: bid, ask: ask);
+    } else {
+      animator.push(
+        price: p.close,
+        ask: animator.targetAsk,
+        bid: animator.targetBid,
+      );
+    }
+  }
+
+  void _onPointAdded() {
+    if (!_isLiveStyle) return;
+    if (_isFollowing) {
+      mScrollX = 0;
+      animator.onNewPoint(widget.chartStyle.pointWidth);
+    } else {
+      // Keep the viewport still when the user scrolled back.
+      mScrollX += widget.chartStyle.pointWidth;
+    }
+  }
+
+  void _scheduleIndicatorsUpdate() {
+    if (widget.hideIndicators) return;
+    _indicatorsDebounce?.cancel();
+    _indicatorsDebounce = Timer(const Duration(milliseconds: 250), () async {
+      if (!mounted) return;
+      await chartProperties.updateIndicators(lineCandles,
+          trades: widget.trades);
+      notifyChanged();
+    });
+  }
+
+  /// Forget the animated price (symbol or timeframe changed) so the new series
+  /// does not animate from the old one.
+  void resetLive() {
+    _bid = _ask = null;
+    animator.reset();
+  }
+
+  // Shape of the candle list at the last sync. The owner may mutate the same
+  // list in place, so the previous list itself cannot be compared.
+  int _sigLength = 0, _sigFirstTime = 0, _sigLastTime = 0;
+
+  void _storeSignature(List<KLineEntity> c) {
+    _sigLength = c.length;
+    _sigFirstTime = c.isEmpty ? 0 : c.first.time;
+    _sigLastTime = c.isEmpty ? 0 : c.last.time;
+  }
+
+  /// Keeps the animator in step with a full candle list set from outside.
+  void _syncAnimator(List<KLineEntity> next) {
+    if (next.isEmpty) {
+      _storeSignature(next);
+      return;
+    }
+    final last = next.last;
+    final hadData = _sigLength > 0 && animator.targetPrice != null;
+    final sameStart = next.first.time == _sigFirstTime;
+    final appended = hadData &&
+        sameStart &&
+        next.length == _sigLength + 1 &&
+        last.time > _sigLastTime;
+    final prepended = hadData &&
+        !sameStart &&
+        last.time == _sigLastTime &&
+        next.length > _sigLength;
+    final continues = hadData &&
+        sameStart &&
+        next.length == _sigLength &&
+        last.time == _sigLastTime;
+
+    if (!hadData || !(appended || prepended || continues)) {
+      // First data, or a different series (symbol / timeframe changed).
+      resetLive();
+      animator.push(price: last.close);
+    } else if (appended) {
+      _onPointAdded();
+      if (_bid == null && _ask == null) animator.push(price: last.close);
+    } else if (continues) {
+      // Quotes drive the live price; the candle close is only the fallback.
+      if (_bid == null && _ask == null) animator.push(price: last.close);
+    }
+    _storeSignature(next);
   }
 
   Future<void> getIndicators() async {
@@ -258,18 +399,27 @@ class KChartWidgetState extends State<KChartWidget>
     bool setIndicators = true,
   }) async {
     lineCandles = candles;
+    _syncAnimator(candles);
     if (!widget.hideIndicators) {
       await chartProperties.updateIndicators(candles, trades: widget.trades);
     }
     notifyChanged();
   }
 
+  /// Ask/bid lines (`type` 'ask' / 'bid') feed the single live price line in
+  /// line and area mode. They are also kept for the candle styles.
   void updateAskAndBid(LineEntity line) {
     final index = ask_bid.indexWhere((e) => e.id == line.id);
     if (index == -1) {
       ask_bid.add(line);
     } else {
       ask_bid[index] = line;
+    }
+    final t = line.type.toLowerCase();
+    if (t == 'bid') {
+      updateQuote(bid: line.value);
+    } else if (t == 'ask') {
+      updateQuote(ask: line.value);
     }
     notifyChanged();
   }
@@ -294,6 +444,7 @@ class KChartWidgetState extends State<KChartWidget>
         id: item.id,
         name: item.type,
         title: item.title,
+        card: item.card,
         value: item.value,
         style: ObjectStyle.dash,
         type: ObjectType.Position,
@@ -309,7 +460,17 @@ class KChartWidgetState extends State<KChartWidget>
   }
 
   void removeAskBid(int id) {
-    ask_bid.removeWhere((e) => e.id == id);
+    final index = ask_bid.indexWhere((e) => e.id == id);
+    if (index == -1) return;
+    final t = ask_bid[index].type.toLowerCase();
+    ask_bid.removeAt(index);
+    if (t == 'ask') {
+      _ask = null;
+      animator.clearAsk();
+    } else if (t == 'bid') {
+      _bid = null;
+      animator.clearBid();
+    }
     notifyChanged();
   }
 
@@ -338,6 +499,8 @@ class KChartWidgetState extends State<KChartWidget>
     mInfoWindowStream.sink.close();
     mInfoWindowStream.close();
     _controller?.dispose();
+    _indicatorsDebounce?.cancel();
+    animator.dispose();
     super.dispose();
   }
 
@@ -411,6 +574,7 @@ class KChartWidgetState extends State<KChartWidget>
       isIndicatorResizeMode: isIndicatorResizeMode,
       currentResizeRectIndex: currentResizeRectIndex,
       trades: widget.trades,
+      animator: animator,
     );
 
     return LayoutBuilder(
@@ -447,6 +611,7 @@ class KChartWidgetState extends State<KChartWidget>
                     if (!objectEditable) {
                       pointerCount = 1;
                       isScale = false;
+                      animator.range.snap = false;
                       _lastScaleX = mScaleX;
                     }
                   },
@@ -455,16 +620,22 @@ class KChartWidgetState extends State<KChartWidget>
                     if (!objectEditable) {
                       pointerCount = 2;
                       isScale = true;
+                      animator.range.snap =
+                          true; // instant rescale while pinching
                       isDrag = false;
                       isLongPress = false;
                     }
                   },
-                  child: CustomPaint(
-                    size: Size(
-                      double.infinity,
-                      currentBaseDimension!.mDisplayHeight,
+                  child: RepaintBoundary(
+                    child: CustomPaint(
+                      size: Size(
+                        double.infinity,
+                        currentBaseDimension!.mDisplayHeight,
+                      ),
+                      // The painter repaints from the animator (see
+                      // BaseChartPainter), so animation frames only paint.
+                      painter: _painter,
                     ),
-                    painter: _painter,
                   ),
                 ),
                 Positioned(
@@ -1557,7 +1728,6 @@ class KChartWidgetState extends State<KChartWidget>
     aniX = Tween<double>(begin: mScrollX, end: x * widget.flingRatio + mScrollX)
         .animate(CurvedAnimation(
             parent: _controller!.view, curve: widget.flingCurve));
-    print(_controller!.view);
     aniX!.addListener(() {
       mScrollX = aniX!.value;
       if (mScrollX <= 0) {
@@ -1587,8 +1757,14 @@ class KChartWidgetState extends State<KChartWidget>
   }
 
   void notifyChanged() {
-    try {
-      Future.delayed(Duration.zero, () => setState(() {}));
-    } catch (e) {}
+    if (!mounted) return;
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) setState(() {});
+      });
+    } else {
+      setState(() {});
+    }
   }
 }

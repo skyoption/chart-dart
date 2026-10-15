@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'position_card_info.dart';
+
 class LineEntity {
   final int id;
   final Color color;
@@ -8,6 +10,9 @@ class LineEntity {
   final String type;
   final String Function(double value) title;
 
+  /// Optional card details (side badge, subtitle, live P/L).
+  final PositionCardInfo? card;
+
   LineEntity({
     required this.id,
     required this.color,
@@ -15,5 +20,6 @@ class LineEntity {
     required this.title,
     this.type = '',
     this.editable = false,
+    this.card,
   });
 }

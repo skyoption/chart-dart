@@ -33,6 +33,18 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
   final GraphStyle graphStyle;
   final bool hideIndicators;
 
+  /// Y of the live price line; axis labels near it are skipped.
+  double? avoidY;
+
+  /// The forming candle and its animated price (live look, candle styles).
+  CandleEntity? liveCandle;
+  double? livePrice;
+
+  bool get _isLiveLine =>
+      graphStyle == GraphStyle.line ||
+      graphStyle == GraphStyle.area ||
+      chartStyle.liveStyle;
+
   MainRenderer(
     Rect mainRect,
     double maxValue,
@@ -108,9 +120,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     if (graphStyle == GraphStyle.candles ||
         graphStyle == GraphStyle.heikinAshi) {
       drawCandle(curPoint, canvas, curX);
-    } else {
-      drawPolyline(lastPoint.close, curPoint.close, canvas, lastX, curX);
     }
+    // line / area are drawn once by ChartPainter.drawLiveSeries
     if (!hideIndicators) {
       drawIndicators(
         lastPoint,
@@ -221,10 +232,19 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
     // they have been computed; fall back to real prices otherwise.
     final bool ha =
         graphStyle == GraphStyle.heikinAshi && curPoint.haOpen != null;
-    var high = getY(ha ? curPoint.haHigh! : curPoint.high);
-    var low = getY(ha ? curPoint.haLow! : curPoint.low);
+    double highV = ha ? curPoint.haHigh! : curPoint.high;
+    double lowV = ha ? curPoint.haLow! : curPoint.low;
+    double closeV = ha ? curPoint.haClose! : curPoint.close;
+    final lp = livePrice;
+    if (!ha && lp != null && identical(curPoint, liveCandle)) {
+      closeV = lp;
+      if (lp > highV) highV = lp;
+      if (lp < lowV) lowV = lp;
+    }
+    var high = getY(highV);
+    var low = getY(lowV);
     var open = getY(ha ? curPoint.haOpen! : curPoint.open);
-    var close = getY(ha ? curPoint.haClose! : curPoint.close);
+    var close = getY(closeV);
     double r = mCandleWidth / 2;
     double lineR = mCandleLineWidth / 2;
     if (open >= close) {
@@ -263,7 +283,11 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       ..color = chartColors.bgColor
       ..style = PaintingStyle.fill;
 
-    canvas.drawRect(rect, paint);
+    final bool liveLeft =
+        _isLiveLine && verticalTextAlignment == VerticalTextAlignment.left;
+    // The opaque cover only hides lines that run into the right-hand price
+    // column; with left labels in live mode that column is just chart.
+    if (!liveLeft) canvas.drawRect(rect, paint);
 
     for (var i = 0; i <= gridRows; ++i) {
       double price = (gridRows - i) * rowSpace / scaleY + minValue;
@@ -312,6 +336,21 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       if (offsetY < 0.0) offsetY = 0.0;
       if (offsetY > lastOffsetY) offsetY = lastOffsetY;
 
+      if (_isLiveLine) {
+        final bg = RRect.fromRectAndRadius(
+          Rect.fromLTWH(offsetX - 4, offsetY - 1, tp.width + 8, tp.height + 2),
+          const Radius.circular(4),
+        );
+        if (avoidY != null && (bg.center.dy - avoidY!).abs() < tp.height + 8) {
+          continue;
+        }
+        if (chartStyle.showAxisLabelTags) {
+          canvas.drawRRect(
+            bg,
+            Paint()..color = chartColors.hintBgColor.withAlpha(191),
+          );
+        }
+      }
       tp.paint(canvas, Offset(offsetX, offsetY));
     }
   }

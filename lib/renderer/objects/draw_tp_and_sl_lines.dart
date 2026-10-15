@@ -1,4 +1,7 @@
+import 'dart:math' as math;
+
 import 'package:candle_chart/entity/object_entity.dart';
+import 'package:candle_chart/entity/position_card_info.dart';
 import 'package:candle_chart/renderer/chart_details.dart';
 import 'package:candle_chart/utils/properties/chart_properties.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +77,7 @@ mixin DrawTPAndSLLines on ChartDetails {
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round
         ..strokeJoin = StrokeJoin.round
-        ..color = colorFromHex(tPAndSLLines[i].color!)!;
+        ..color = colorFromHex(tPAndSLLines[i].color!)!.withAlpha(200);
 
       double startX = 0;
       final max = -mTranslateX + (mWidth + 20) / scaleX;
@@ -113,16 +116,8 @@ mixin DrawTPAndSLLines on ChartDetails {
       double value = tPAndSLLines[i].value;
       final double? y = pinnedY(value);
       if (y == null) continue;
-      // Parked on the top edge? Put the title under the line, otherwise it
-      // would be painted over the date bar in the top padding.
-      final bool pinnedTop = value >= mMainHighMaxValue;
-
       double startX = 0;
       final max = -mTranslateX + (mWidth + 20) / scaleX;
-
-      final pricePaint = Paint()
-        ..color = colorFromHex(tPAndSLLines[i].color!)!
-        ..strokeWidth = tPAndSLLines[i].height;
 
       if (tPAndSLLines[i].currentEditIndex == i) {
         canvas.drawCircle(
@@ -136,45 +131,220 @@ mixin DrawTPAndSLLines on ChartDetails {
           dot,
         );
       }
-      if (tPAndSLLines[i].title != null &&
-          tPAndSLLines[i].title!(value).isNotEmpty) {
-        TextPainter title = getTextPainter(
-          tPAndSLLines[i].title!(value),
-          colorFromHex(tPAndSLLines[i].color!)!,
-          fontWeight: FontWeight.w600,
-        );
-
-        title.paint(
-          canvas,
-          Offset(startX,
-              pinnedTop ? y + title.height * 0.2 : y - title.height * 1.2),
-        );
-      }
-
-      TextPainter tp = getTextPainter(
-        value.toStringAsFixed(fixedLength),
-        this.chartColors.priceTextColor,
+      _drawChip(
+        canvas,
+        y: y,
+        color: colorFromHex(tPAndSLLines[i].color!)!,
+        title: tPAndSLLines[i].title?.call(value) ?? '',
+        price: value.toStringAsFixed(fixedLength),
+        card: tPAndSLLines[i].card,
       );
-
-      double offsetX = mWidth -
-          tp.width +
-          this.chartStyle.priceWidth -
-          this.chartStyle.leftPadding * 2;
-
-      double top = y - tp.height / 2;
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromLTRB(
-            offsetX - 12,
-            top - 2,
-            offsetX + tp.width * 1.5,
-            top + tp.height + 3,
-          ),
-          const Radius.circular(8.0),
-        ),
-        pricePaint,
-      );
-      tp.paint(canvas, Offset(offsetX, top + 2));
     }
+  }
+
+  /// One right-aligned chip per line: a tinted label with the title joined to a
+  /// solid price tag, both fully rounded. Sits next to the price column so it
+  /// never collides with the live price pill on the left.
+  void _drawChip(
+    Canvas canvas, {
+    required double y,
+    required Color color,
+    required String title,
+    required String price,
+    PositionCardInfo? card,
+  }) {
+    if (card != null) {
+      _drawCard(canvas,
+          y: y, color: color, title: title, price: price, card: card);
+      return;
+    }
+    final priceTp = getTextPainter(
+      price,
+      Colors.white,
+      sizeText: 10.0,
+      fontWeight: FontWeight.w700,
+    );
+    final titleTp = title.isEmpty
+        ? null
+        : getTextPainter(
+            title,
+            Colors.white,
+            sizeText: 10.0,
+            fontWeight: FontWeight.w600,
+          );
+    const padH = 9.0, gap = 1.0;
+    final h = priceTp.height + 10;
+    final priceW = priceTp.width + padH * 2;
+    final titleW = titleTp == null ? 0.0 : titleTp.width + padH * 2;
+    final right = mWidth + chartStyle.priceWidth - 4;
+    final priceRect = Rect.fromLTWH(right - priceW, y - h / 2, priceW, h);
+    final radius = Radius.circular(h / 2);
+
+    // Soft shadow under the whole chip.
+    final chipLeft = priceRect.left - (titleTp == null ? 0 : titleW + gap);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTRB(chipLeft, priceRect.top, right, priceRect.bottom)
+            .shift(const Offset(0, 2)),
+        radius,
+      ),
+      Paint()
+        ..color = const Color(0x40000000)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+    );
+
+    if (titleTp != null) {
+      final titleRect = Rect.fromLTWH(
+        priceRect.left - gap - titleW,
+        priceRect.top,
+        titleW + h / 2, // tucks under the price tag's rounded end
+        h,
+      );
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(titleRect, radius),
+        Paint()
+          ..color = Color.alphaBlend(color.withAlpha(120), chartColors.bgColor),
+      );
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(titleRect, radius),
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1
+          ..color = color.withAlpha(160),
+      );
+      titleTp.paint(
+        canvas,
+        Offset(titleRect.left + padH, y - titleTp.height / 2),
+      );
+    }
+    canvas.drawRRect(
+        RRect.fromRectAndRadius(priceRect, radius), Paint()..color = color);
+    priceTp.paint(
+      canvas,
+      Offset(priceRect.left + padH, y - priceTp.height / 2),
+    );
+  }
+
+  /// Two-row card for positions and pending orders: side badge, id and live
+  /// P/L on top; the price (bold) and the other details underneath.
+  void _drawCard(
+    Canvas canvas, {
+    required double y,
+    required Color color,
+    required String title,
+    required String price,
+    required PositionCardInfo card,
+  }) {
+    const padH = 10.0, padV = 7.0, rowGap = 4.0;
+    final badgeTp = getTextPainter(
+      card.badge,
+      Colors.white,
+      sizeText: 9.0,
+      fontWeight: FontWeight.w800,
+    );
+    final titleTp = getTextPainter(
+      title,
+      Colors.white,
+      sizeText: 10.0,
+      fontWeight: FontWeight.w700,
+    );
+    final trailingText = card.trailing?.call() ?? '';
+    final trailingTp = trailingText.isEmpty
+        ? null
+        : getTextPainter(
+            trailingText,
+            card.trailingColor?.call() ?? Colors.white,
+            sizeText: 11.0,
+            fontWeight: FontWeight.w800,
+          );
+    final subTp = getTextPainter(
+      card.subtitle(),
+      Colors.white.withAlpha(190),
+      sizeText: 9.0,
+      fontWeight: FontWeight.w500,
+    );
+    final priceTp = getTextPainter(
+      price,
+      Colors.white,
+      sizeText: 10.0,
+      fontWeight: FontWeight.w800,
+    );
+
+    final badgeW = badgeTp.width + 10, badgeH = badgeTp.height + 3;
+    final row1H = math.max(badgeH, titleTp.height);
+    final row1W = badgeW +
+        6 +
+        titleTp.width +
+        (trailingTp == null ? 0 : 14 + trailingTp.width);
+    const subGap = 8.0;
+    final row2W = priceTp.width + (subTp.width == 0 ? 0 : subGap + subTp.width);
+    final contentW = math.max(row1W, row2W);
+    final cardW = contentW + padH * 2;
+    final row2H = math.max(priceTp.height, subTp.height);
+    final cardH = padV * 2 + row1H + rowGap + row2H;
+
+    final right = mWidth + chartStyle.priceWidth - 4;
+    final cardRect = Rect.fromLTWH(right - cardW, y - cardH / 2, cardW, cardH);
+    final cardRRect =
+        RRect.fromRectAndRadius(cardRect, const Radius.circular(12));
+
+    canvas.drawRRect(
+      cardRRect.shift(const Offset(0, 3)),
+      Paint()
+        ..color = const Color(0x4D000000)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+    );
+    canvas.drawRRect(
+      cardRRect,
+      Paint()
+        ..color = Color.alphaBlend(color.withAlpha(90), chartColors.bgColor),
+    );
+    canvas.drawRRect(
+      cardRRect,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1
+        ..color = color.withAlpha(170),
+    );
+
+    // Row 1: badge, id, P/L (right aligned).
+    final top = cardRect.top + padV;
+    final badgeRect = Rect.fromLTWH(
+      cardRect.left + padH,
+      top + (row1H - badgeH) / 2,
+      badgeW,
+      badgeH,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(badgeRect, Radius.circular(badgeH / 2)),
+      Paint()..color = card.badgeColor,
+    );
+    badgeTp.paint(canvas, Offset(badgeRect.left + 5, badgeRect.top + 1.5));
+    titleTp.paint(
+      canvas,
+      Offset(badgeRect.right + 6, top + (row1H - titleTp.height) / 2),
+    );
+    if (trailingTp != null) {
+      trailingTp.paint(
+        canvas,
+        Offset(
+          cardRect.left + padH + contentW - trailingTp.width,
+          top + (row1H - trailingTp.height) / 2,
+        ),
+      );
+    }
+    // Row 2: the price, then the other details.
+    final row2Top = top + row1H + rowGap;
+    priceTp.paint(
+      canvas,
+      Offset(cardRect.left + padH, row2Top + (row2H - priceTp.height) / 2),
+    );
+    subTp.paint(
+      canvas,
+      Offset(
+        cardRect.left + padH + priceTp.width + subGap,
+        row2Top + (row2H - subTp.height) / 2,
+      ),
+    );
   }
 }

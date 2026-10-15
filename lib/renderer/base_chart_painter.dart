@@ -18,6 +18,7 @@ import 'package:candle_chart/renderer/rects/secondary_rect.dart';
 
 import '../entity/k_line_entity.dart';
 import 'base_dimension.dart';
+import 'live/live_chart_animator.dart';
 
 export 'package:flutter/material.dart'
     show Color, TextStyle, Rect, Canvas, Size, CustomPainter;
@@ -89,6 +90,9 @@ abstract class BaseChartPainter extends CustomPainter
   int? currentResizeRectIndex;
   bool hideIndicators = false;
 
+  /// Drives the live line animation; also the repaint [Listenable].
+  final LiveChartAnimator? animator;
+
   /// constructor BaseChartPainter
   ///
   BaseChartPainter(
@@ -111,7 +115,8 @@ abstract class BaseChartPainter extends CustomPainter
     this.currentResizeRectIndex,
     this.hideIndicators = false,
     this.trades = const [],
-  }) {
+    this.animator,
+  }) : super(repaint: animator) {
     mItemCount = data?.length ?? 0;
     mPointWidth = this.chartStyle.pointWidth;
     mTopPadding = this.chartStyle.topPadding;
@@ -156,6 +161,7 @@ abstract class BaseChartPainter extends CustomPainter
   @override
   void paint(Canvas canvas, Size size) {
     canvas.clipRect(Rect.fromLTRB(0, 0, size.width, size.height));
+    resetFrameState();
     mDisplayHeight = size.height - mTopPadding - mBottomPadding;
     mWidth = size.width - this.chartStyle.priceWidth;
     fDisplayHeight = size.height - mBottomPadding;
@@ -169,15 +175,17 @@ abstract class BaseChartPainter extends CustomPainter
     drawGrid(canvas);
     if (data != null && data!.isNotEmpty) {
       drawChart(canvas, size);
+      drawExpiryLine(canvas, size);
       drawVerticalText(canvas);
       drawDate(canvas, size);
       drawText(canvas, data!.last, 5);
+      // The live line goes first so its pill is known when the hints are laid out.
+      drawPositionsAndAskBidLines(canvas);
       drawMaxAndMin(canvas);
       drawHorizontalLinesTitles(canvas, size);
       drawTPAndSLTitles(canvas, size);
       drawCursorTitles(canvas, size, data!);
       drawCursorDate(canvas, size, data!);
-      drawPositionsAndAskBidLines(canvas);
       // if (this.chartStyle.isLongFocus &&
       //     (isLongPress == true ||
       //         (isTapShowInfoDialog && longPressTriggered))) {
@@ -201,8 +209,15 @@ abstract class BaseChartPainter extends CustomPainter
     canvas.restore();
   }
 
+  /// Clears values that accumulate while painting. The painter instance is now
+  /// repainted many times by the animator, not rebuilt for every frame.
+  void resetFrameState();
+
   /// init chart renderer
   void initChartRenderer(double height);
+
+  /// draw the vertical expiry line (line/area mode)
+  void drawExpiryLine(Canvas canvas, Size size) {}
 
   /// draw the background of chart
   void drawBg(Canvas canvas, Size size);
@@ -280,6 +295,7 @@ abstract class BaseChartPainter extends CustomPainter
       _secondaryHeight += secondary;
     }
     mainRect = MainRect(
+      lineMode: isLiveLineMode,
       indicators: indicators,
       mMainHighMaxValue: mMainHighMaxValue,
       mMainLowMinValue: mMainLowMinValue,
@@ -289,6 +305,12 @@ abstract class BaseChartPainter extends CustomPainter
       secondaryIndicators: secondaryIndicators,
     );
   }
+
+  /// True for the line/area styles that use the live line renderer.
+  bool get isLiveLineMode => false;
+
+  /// True when the live look applies (line/area always, candles by style flag).
+  bool get isLiveStyle => isLiveLineMode || chartStyle.liveStyle;
 
   /// calculate values
   calculateValue() {
@@ -336,16 +358,25 @@ abstract class BaseChartPainter extends CustomPainter
 
   /// scrollX convert to TranslateX
   void setTranslateXFromScrollX(double scrollX) {
-    mTranslateX = scrollX + getMinTranslateX();
+    final minX = getMinTranslateX();
+    mTranslateX = scrollX + minX;
+    // Glide only when content is wider than the view and we follow the edge:
+    // appending shifts minX by one point, the offset eases that shift out.
+    if (animator != null && minX < 0 && scrollX == 0) {
+      mTranslateX += animator!.glideOffset;
+    }
   }
 
   /// get the minimum value of translation
   double getMinTranslateX() {
+    final rightEmpty = this.chartStyle.rightEmptySpace != 0
+        ? this.chartStyle.rightEmptySpace
+        : (isLiveStyle ? mWidth * this.chartStyle.rightEmptySpaceRatio : 0.0);
     var x = -mDataLen +
         mWidth / scaleX -
         mPointWidth / 2 -
         xFrontPadding -
-        this.chartStyle.rightEmptySpace / scaleX;
+        rightEmpty / scaleX;
     return x >= 0 ? 0.0 : x;
   }
 
