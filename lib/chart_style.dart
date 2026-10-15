@@ -175,7 +175,7 @@ class ChartColors {
         bgColor: const Color(0xFF111219),
         lineChartColor: const Color(0xFF239BFF),
         areaColor: const Color(0xFF239BFF),
-        gridColor: const Color(0x00000000),
+        gridColor: const Color(0x228A93A6), // faint grid, toggled by hideGrid
         maxColor: const Color(0xFF8A93A6), // axis label text
         minColor: const Color(0xFF8A93A6),
         defaultTextColor: const Color(0xFF8A93A6),

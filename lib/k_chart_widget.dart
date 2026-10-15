@@ -162,7 +162,7 @@ class KChartWidget extends StatefulWidget {
     this.flingCurve = Curves.decelerate,
     this.editableSLOrTP = const [],
     this.isOnDrag,
-    this.initialScale = 0.4,
+    this.initialScale = 1.5,
     this.initialScaleY = 0.99999,
     this.onZoomingStart,
     this.verticalTextAlignment = VerticalTextAlignment.right,

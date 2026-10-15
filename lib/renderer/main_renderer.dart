@@ -375,14 +375,25 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
       double height) {
     if (!hideGrid) {
       double cellSize = height / gridRows;
-      double rowSpace = cellSize;
+      // Live design: rows sit exactly on the axis labels (chartRect based)
+      // and the hairline is thick enough to show on the dark background.
+      double rowSpace = _isLiveLine ? chartRect.height / gridRows : cellSize;
+      if (_isLiveLine) gridPaint.strokeWidth = 0.6;
       double columnSpace = cellSize;
 
+      // Left-label live design: the price column is part of the chart, so the
+      // grid runs edge to edge instead of stopping where the column starts.
+      if (_isLiveLine && verticalTextAlignment == VerticalTextAlignment.left) {
+        width += chartStyle.priceWidth;
+      }
       int gridColumns = (width / cellSize).floor() + 1;
 
       double startX = width - (gridColumns * cellSize);
 
-      for (int i = 0; i < gridRows; i++) {
+      // Live design: also close the grid with a line on the top edge, the
+      // vertical lines otherwise run past the first row into empty space.
+      final rowCount = _isLiveLine ? gridRows + 1 : gridRows;
+      for (int i = 0; i < rowCount; i++) {
         double yPos = chartRect.bottom - (rowSpace * i);
         canvas.drawLine(
           Offset(startX, yPos),
@@ -400,18 +411,23 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
         );
       }
     } else {
-      // Draw border lines when grid is hidden
+      // Draw border lines when grid is hidden. Live + left labels: the frame
+      // runs to the screen edge like the grid does.
+      final borderRight = chartRect.right +
+          (_isLiveLine && verticalTextAlignment == VerticalTextAlignment.left
+              ? chartStyle.priceWidth
+              : 0.0);
       // Top border
       canvas.drawLine(
         Offset(chartRect.left, chartRect.top),
-        Offset(chartRect.right, chartRect.top),
+        Offset(borderRight, chartRect.top),
         gridPaint,
       );
 
       // Bottom border
       canvas.drawLine(
         Offset(chartRect.left, chartRect.bottom),
-        Offset(chartRect.right, chartRect.bottom),
+        Offset(borderRight, chartRect.bottom),
         gridPaint,
       );
 
@@ -424,8 +440,8 @@ class MainRenderer extends BaseChartRenderer<CandleEntity> {
 
       // Right border
       canvas.drawLine(
-        Offset(chartRect.right, chartRect.top),
-        Offset(chartRect.right, chartRect.bottom),
+        Offset(borderRight, chartRect.top),
+        Offset(borderRight, chartRect.bottom),
         gridPaint,
       );
     }
